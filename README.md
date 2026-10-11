@@ -142,26 +142,52 @@ To add or modify questions on the homepage FAQ:
 
 ---
 
-## 6. Comprehensive Placeholder Checklist (TODO Items)
+## 6. Environment Variables Configuration
 
-In adherence to strict integrity policies, **no synthetic testimonials, fake logos, or invented team members have been fabricated**. All missing real-world credentials are explicitly marked with `TODO` markers. Use this checklist before production launch:
+Zero secrets are stored in this repository. Configure the following environment variables in your deployment dashboard (Cloudflare Pages or Vercel):
 
-| Item | Location | Current Value / Placeholder | Action Required |
+| Variable Name | Required | Default / Example | Purpose |
 | :--- | :--- | :--- | :--- |
-| **Legal Entity Name** | `src/components/Footer.astro`<br/>`src/pages/about.astro`<br/>`src/layouts/BaseLayout.astro` | `Strova Group` | Verified brand & trade name. Confirm official legal registration type (Proprietorship / LLP / Pvt Ltd). |
-| **Founder Role Title** | `src/pages/about.astro`<br/>JSON-LD Person schema | `[ROLE TITLE]` | Confirm official designation for Babita Kumari (e.g. Managing Director / Principal / Founder). |
-| **Registered Address** | `src/components/Footer.astro`<br/>`src/pages/contact.astro`<br/>`src/layouts/BaseLayout.astro`<br/>`src/pages/privacy.astro`<br/>`src/pages/about.astro` | `[ADDRESS]` | Supply official registered office street address, city, state, and PIN once confirmed. |
-| **Official Email** | Across all files & schemas | `info@strovagroups.in` | Configured across all pages, footers, headers, JSON-LD schemas, and forms. |
-| **Phone & WhatsApp** | Across all files, headers & footers | `+91 92880 77802`<br/>`https://wa.me/919288077802` | Configured with direct click-to-call and WhatsApp links. |
-| **Udyam MSME Number** | `src/components/Footer.astro`<br/>`src/pages/about.astro`<br/>`src/pages/contact.astro` | `[UDYAM NO. when issued]` | Replace placeholder with official government-issued Udyam certificate registration number once issued. |
-| **Social Media Profiles** | `src/layouts/BaseLayout.astro` | `sameAs: []` in JSON-LD | Add URLs to official LinkedIn, Twitter/X, and GitHub company pages once created. |
-| **Grievance Officer** | `src/pages/privacy.astro` | `[ADDRESS]` / `info@strovagroups.in` | Supply name and direct office desk address for statutory DPDP Act 2023 disclosure. |
-| **Analytics Token** | `src/layouts/BaseLayout.astro` | Commented Cloudflare beacon | Uncomment script and insert Cloudflare Web Analytics token. |
-| **Production Case Studies** | `src/pages/case-studies.astro` | Architecture reference blueprints | Replace or link public client case studies once formal NDA clearance is granted. |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Optional | `1x00000000000000000000AA` (Always passes) | Cloudflare Turnstile public client-side widget key. |
+| `TURNSTILE_SECRET_KEY` | Recommended | `1x0000000000000000000000000000000AA` | Server-side Turnstile secret key for cryptographic verification in `/api/contact`. |
+| `WEB3FORMS_ACCESS_KEY` | Optional | `your-web3forms-uuid` | Forwards inbound inquiries to your inbox via Web3Forms API. |
+| `FORMSPREE_ENDPOINT` | Optional | `https://formspree.io/f/xyz` | Alternative email forwarding endpoint. |
+| `CONTACT_RECEIVER_EMAIL` | Optional | `info@strovagroups.in` | Target email address where customer notifications are directed. |
 
 ---
 
-## 7. Post-Deployment Lighthouse & Quality Checklist
+## 7. Business Facts & Missing Information Report
+
+In accordance with strict brand integrity and anti-fabrication standards:
+- **No synthetic testimonials, fake logos, fictitious awards, or fake team members have been added.**
+- **All unsupplied business facts have been safely omitted from public UI rather than shipping broken bracket placeholders.**
+
+### Confirmed & Implemented Facts:
+- **Brand**: Strova Group
+- **Divisions**: Strova Technologies, Strova Digital, Strova Commerce (Marked "Coming Soon")
+- **Tagline**: "AI & automation for growing businesses."
+- **Founder**: Babita Kumari
+- **MSME Udyam Registration**: `UDYAM-JH-20-0147452` (Rendered across Header, Footer, About, Contact, and `llms.txt`)
+- **Canonical Origin**: `https://strovagroups.in`
+- **Email**: `info@strovagroups.in`
+- **Phone & WhatsApp**: `+91 92880 77802` (`tel:+919288077802`, `https://wa.me/919288077802`)
+- **Operating Hours**: Monday – Saturday, 10:00 AM – 7:00 PM IST (UTC+05:30)
+- **Commercial Model**: 50% upfront deposit upon technical architecture, 50% upon staging demonstration & sign-off prior to production domain cutover.
+
+### Missing Information List (Safely Omitted From Public UI):
+The following items were unsupplied and have been omitted from public UI to prevent publishing false data or bracket placeholders:
+1. **Registered Office Street Address**: Left unsupplied. The site displays "Operating from India". To add a full street address later, update `src/components/Footer.astro`, `src/pages/about.astro`, `src/pages/contact.astro`, and `src/layouts/BaseLayout.astro`.
+2. **Founder Role Title**: Left unsupplied. Displayed cleanly as "Founder" without bracket placeholders.
+3. **Founder Real Photograph**: Displayed via clean SVG/WebP initial badge.
+4. **Social Media Profile URLs**: Left unsupplied. `sameAs` array in JSON-LD is populated only when official verified profile URLs are provided.
+5. **Cloudflare Web Analytics Token**: Left unsupplied. Commented analytics script removed; zero invasive tracking scripts run.
+
+> [!IMPORTANT]
+> **Statutory Legal Notice**: Prior to commercial production deployment, a qualified lawyer or Chartered Accountant (CA) should review both the **Privacy Policy** (`src/pages/privacy.astro`) and **Terms of Service** (`src/pages/terms.astro`) to ensure customized alignment with your specific corporate entity structure.
+
+---
+
+## 8. Post-Deployment Quality & Lighthouse Checklist
 
 Run Google Lighthouse on the production build to verify the following thresholds:
 
@@ -191,11 +217,11 @@ Run Google Lighthouse on the production build to verify the following thresholds
 
 ---
 
-## 8. Deployment to Cloudflare Pages
+## 9. Deployment to Cloudflare Pages
 
 This site is optimized for zero-cost edge hosting on **Cloudflare Pages**:
 
-1. Push this repository to GitHub or GitLab.
+1. Push this repository to GitHub (`main` or production branch).
 2. In the Cloudflare Dashboard, navigate to **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**.
 3. Select the repository and configure the build settings:
    - **Framework Preset**: `Astro`
@@ -203,4 +229,6 @@ This site is optimized for zero-cost edge hosting on **Cloudflare Pages**:
    - **Build output directory**: `dist`
    - **Environment Variables**:
      - `NODE_VERSION`: `20` or higher (e.g. `24.21.0`)
-4. Click **Save and Deploy**. Cloudflare automatically applies the caching rules and security headers defined in `public/_headers`.
+     - `PUBLIC_TURNSTILE_SITE_KEY`: Your Cloudflare Turnstile site key
+     - `TURNSTILE_SECRET_KEY`: Your Cloudflare Turnstile secret key
+4. Click **Save and Deploy**. Cloudflare automatically applies the caching rules and security headers defined in `public/_headers` and binds the `/functions/api/contact.ts` serverless handler.

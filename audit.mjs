@@ -159,7 +159,23 @@ for (const filePath of htmlFiles) {
 
   // 9. Trust facts presence on every standard page (Header and Footer)
   if (!relPath.includes('404')) {
-    // Header trust elements
+    // Prohibited placeholders (Absolute Rules: no bracket placeholders or TODO markers allowed)
+    const prohibitedPlaceholders = [
+      '[ADDRESS]',
+      '[ROLE TITLE]',
+      '[UDYAM NO. when issued]',
+      '[UDYAM NO.]',
+      'TODO',
+      'Notice for Legal Review',
+      'Lorem',
+    ];
+    for (const placeholder of prohibitedPlaceholders) {
+      if (content.includes(placeholder)) {
+        errors.push(`[${relPath}] Prohibited placeholder found: "${placeholder}"`);
+      }
+    }
+
+    // Required trust facts presence on every standard page
     if (!content.includes('info@strovagroups.in')) {
       errors.push(`[${relPath}] Missing contact email info@strovagroups.in`);
     }
@@ -169,11 +185,8 @@ for (const filePath of htmlFiles) {
     if (!content.includes('https://wa.me/919288077802')) {
       errors.push(`[${relPath}] Missing WhatsApp link https://wa.me/919288077802`);
     }
-    if (!content.includes('[ADDRESS]')) {
-      errors.push(`[${relPath}] Missing registered address placeholder [ADDRESS]`);
-    }
-    if (!content.includes('[UDYAM NO. when issued]')) {
-      errors.push(`[${relPath}] Missing MSME Udyam registration placeholder [UDYAM NO. when issued]`);
+    if (!content.includes('UDYAM-JH-20-0147452')) {
+      errors.push(`[${relPath}] Missing confirmed MSME Udyam registration number UDYAM-JH-20-0147452`);
     }
     if (!content.includes('10:00 AM – 7:00 PM IST')) {
       errors.push(`[${relPath}] Missing business operating hours 10:00 AM – 7:00 PM IST`);
