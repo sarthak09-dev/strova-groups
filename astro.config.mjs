@@ -3,17 +3,14 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://strovagroups.in',
-  integrations: [
-    sitemap({
-      i18n: {
-        defaultLocale: 'en',
-        locales: { en: 'en', 'en-IN': 'en-IN' },
-      },
-    }),
-  ],
+  trailingSlash: 'always',
   build: {
+    format: 'directory',
     inlineStylesheets: 'auto',
   },
+  integrations: [
+    sitemap(),
+  ],
   vite: {
     build: {
       cssMinify: true,
@@ -28,4 +25,3 @@ export default defineConfig({
     },
   },
 });
-

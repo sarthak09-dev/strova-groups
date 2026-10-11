@@ -1,0 +1,22 @@
+{
+  "name": "Strova Group",
+  "short_name": "Strova",
+  "description": "AI & automation for growing businesses. High-performance web platforms, Android apps, and WhatsApp automation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08090D",
+  "theme_color": "#08090D",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+
