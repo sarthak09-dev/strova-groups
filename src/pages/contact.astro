@@ -3,10 +3,12 @@
  * Contact Page (src/pages/contact.astro)
  *
  * Requirements:
- * - Interactive contact form with honeypot spam protection & client-side validation
- * - Clear 24 business hours response time guarantee
- * - Direct contact info: email, WhatsApp link, registered address, Udyam MSME, IST business hours
- * - ContactPage & BreadcrumbList JSON-LD schemas
+ * - Real form delivery via serverless endpoint (/api/contact)
+ * - Cloudflare Turnstile bot verification + invisible honeypot
+ * - Strict 2xx confirmation before showing success
+ * - Actionable email & WhatsApp fallbacks on any submission error
+ * - Direct contact info: email, WhatsApp link, telephone, IST business hours
+ * - ContactPage & BreadcrumbList JSON-LD schemas without unsupplied placeholders
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 
@@ -21,17 +23,12 @@ const contactPageJsonLd = {
     name: 'Strova Group',
     url: 'https://strovagroups.in',
     email: 'info@strovagroups.in',
-    telephone: '+91 92880 77802',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '[ADDRESS]',
-      addressCountry: 'IN',
-    },
+    telephone: '+919288077802',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       email: 'info@strovagroups.in',
-      telephone: '+91 92880 77802',
+      telephone: '+919288077802',
       availableLanguage: ['en', 'hi'],
       hoursAvailable: {
         '@type': 'OpeningHoursSpecification',
@@ -61,11 +58,13 @@ const breadcrumbJsonLd = {
     },
   ],
 };
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 ---
 
 <BaseLayout
   title="Contact Strova Group — Start Your Project Inbound"
-  description="Connect directly with Strova Group. Submit your requirements or message us on WhatsApp for a technical review within 24 business hours."
+  description="Connect directly with Strova Group. Submit your project requirements or message on WhatsApp for a technical review within 24 business hours."
   jsonLd={[contactPageJsonLd, breadcrumbJsonLd]}
 >
   <!-- Page Hero -->
@@ -75,10 +74,10 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="page-hero__content">
         <h1 class="page-hero__title">
-          Discuss Your Project With <span class="gradient-text">Our Engineering Leads</span>
+          Discuss Your Project With <span class="gradient-text">Strova Group</span>
         </h1>
         <p class="page-hero__lead">
-          We answer all inquiries with technical clarity. You will receive an architectural review and transparent timeline estimate within 24 business hours.
+          We answer inquiries with technical clarity. You will receive an architectural review and transparent timeline estimate within 24 business hours.
         </p>
       </div>
     </div>
@@ -88,7 +87,7 @@ const breadcrumbJsonLd = {
   <section class="section" aria-labelledby="contact-form-heading">
     <div class="container">
       <div class="contact-grid">
-        <!-- Inbound Form -->
+        <!-- Inbound Form Card -->
         <div class="contact-form-card">
           <div class="form-header">
             <h2 id="contact-form-heading" class="form-title">Send a Project Brief</h2>
@@ -98,7 +97,7 @@ const breadcrumbJsonLd = {
           </div>
 
           <form id="contact-form" class="inbound-form" novalidate>
-            <!-- Honeypot Field (Hidden from human users, catches spam bots) -->
+            <!-- Honeypot Field (Hidden from human users, catches automated bots) -->
             <div class="hp-field" aria-hidden="true">
               <label for="hp_company">Do not fill this field if you are human</label>
               <input type="text" id="hp_company" name="_hp_company" tabindex="-1" autocomplete="off" />
@@ -148,47 +147,63 @@ const breadcrumbJsonLd = {
                   id="contact-phone"
                   name="phone"
                   class="form-input"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 92880 77802"
                 />
                 <span class="form-error" id="phone-error" role="alert"></span>
               </div>
             </div>
 
-            <!-- Division Interest -->
-            <div class="form-group">
-              <label for="contact-service" class="form-label">
-                Primary Division / Service Interest <span class="required" aria-hidden="true">*</span>
-              </label>
-              <select id="contact-service" name="service" required class="form-select" aria-required="true">
-                <option value="">Select a service category</option>
-                <option value="technologies">Strova Technologies — Custom Web, Android &amp; SaaS</option>
-                <option value="automation">Strova Technologies — WhatsApp &amp; AI Automations</option>
-                <option value="digital">Strova Digital — Technical SEO &amp; Performance Ads</option>
-                <option value="commerce">Strova Commerce — Headless Retail &amp; Beta Access</option>
-                <option value="other">General Inquiries / Consulting</option>
-              </select>
-              <span class="form-error" id="service-error" role="alert"></span>
+            <!-- Company & Primary Service Selection -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-company" class="form-label">
+                  Company / Organization <span class="optional">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="contact-company"
+                  name="company"
+                  class="form-input"
+                  placeholder="e.g. Acme Health or D2C Brands"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-service" class="form-label">
+                  Primary Service Interest <span class="required" aria-hidden="true">*</span>
+                </label>
+                <select id="contact-service" name="service" required class="form-select" aria-required="true">
+                  <option value="" disabled selected>Select a primary capability...</option>
+                  <option value="technologies">Strova Technologies — Custom Web &amp; SaaS Platforms</option>
+                  <option value="automation">Strova Technologies — WhatsApp Cloud API &amp; AI Automations</option>
+                  <option value="mobile">Strova Technologies — Native Android Development</option>
+                  <option value="digital">Strova Digital — Technical SEO &amp; Growth Ads</option>
+                  <option value="commerce">Strova Commerce — Headless Retail (Coming Soon)</option>
+                  <option value="other">General Engineering / Architectural Consultation</option>
+                </select>
+                <span class="form-error" id="service-error" role="alert"></span>
+              </div>
             </div>
 
             <!-- Budget Range -->
             <div class="form-group">
               <label for="contact-budget" class="form-label">
-                Estimated Project Investment
+                Estimated Project Scope / Budget <span class="optional">(Optional)</span>
               </label>
               <select id="contact-budget" name="budget" class="form-select">
-                <option value="">Select an investment range</option>
-                <option value="35k-75k">₹35,000 – ₹75,000 / $500 – $1,000 USD (Automation / Small Sprint)</option>
-                <option value="75k-150k">₹75,000 – ₹1,50,000 / $1,000 – $2,000 USD (Web Platform)</option>
-                <option value="150k-300k">₹1,50,000 – ₹3,00,000 / $2,000 – $4,000 USD (Custom SaaS / Mobile App)</option>
-                <option value="300k+">₹3,00,000+ / $4,000+ USD (Enterprise Architecture)</option>
-                <option value="retainer">Monthly Growth / Retainer (from ₹40,000/mo)</option>
+                <option value="" selected>Select budget range...</option>
+                <option value="inr_35k_75k">₹35,000 – ₹75,000 INR (Automation / Sprints)</option>
+                <option value="inr_75k_150k">₹75,000 – ₹1,50,000 INR (Web Platform)</option>
+                <option value="inr_150k_plus">₹1,50,000+ INR (Custom SaaS / Android App)</option>
+                <option value="usd_intl">International Engagement (USD / EUR / GBP)</option>
+                <option value="undecided">Flexible / Scope to be determined</option>
               </select>
             </div>
 
-            <!-- Project Details -->
+            <!-- Message / Requirements -->
             <div class="form-group">
               <label for="contact-message" class="form-label">
-                Project Overview &amp; Key Requirements <span class="required" aria-hidden="true">*</span>
+                Project Scope &amp; Functional Requirements <span class="required" aria-hidden="true">*</span>
               </label>
               <textarea
                 id="contact-message"
@@ -196,42 +211,42 @@ const breadcrumbJsonLd = {
                 rows="5"
                 required
                 class="form-textarea"
-                placeholder="Briefly describe what you are looking to build or solve, target timelines, or links to current systems..."
+                placeholder="Describe your current bottleneck, target timeline, technical requirements, or key integration points..."
                 aria-required="true"
               ></textarea>
               <span class="form-error" id="message-error" role="alert"></span>
             </div>
 
-            <!-- Simple Math Challenge (Anti-bot verification) -->
-            <div class="form-group math-challenge-group">
-              <label for="contact-captcha" class="form-label">
-                Human Verification: What is <span id="math-prompt" class="math-prompt">3 + 4</span>? <span class="required" aria-hidden="true">*</span>
-              </label>
-              <input
-                type="number"
-                id="contact-captcha"
-                name="captcha"
-                required
-                class="form-input math-input"
-                placeholder="Your answer"
-                aria-required="true"
-              />
-              <span class="form-error" id="captcha-error" role="alert"></span>
+            <!-- Cloudflare Turnstile Bot Protection Widget -->
+            <div class="form-group turnstile-container">
+              <div
+                class="cf-turnstile"
+                data-sitekey={turnstileSiteKey}
+                data-theme="auto"
+                data-size="flexible"
+              ></div>
+              <span class="form-error" id="turnstile-error" role="alert"></span>
             </div>
 
-            <!-- Submission Button & Status -->
-            <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
-              Submit Project Inquiry
-            </button>
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
+                <span>Submit Project Inquiry</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </div>
 
-            <!-- Status Alert Container -->
+            <!-- Dynamic Form Status Box -->
             <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
           </form>
         </div>
 
-        <!-- Direct Contact Channels & Verification Details -->
+        <!-- Direct Communication Channels Sidebar -->
         <div class="contact-channels">
-          <!-- Response Promise Banner -->
+          <!-- 24-Hour Response Guarantee -->
           <div class="channel-card guarantee-card">
             <div class="guarantee-icon" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -242,7 +257,7 @@ const breadcrumbJsonLd = {
             <div>
               <h3 class="guarantee-title">24 Business Hours Response SLA</h3>
               <p class="guarantee-desc">
-                We review technical submissions directly. If you reach out between Monday and Saturday (10:00 AM – 7:00 PM IST), we guarantee a concrete response within 24 business hours.
+                Every inbound inquiry receives a technical assessment directly from our engineering team. We do not use third-party sales qualification agents.
               </p>
             </div>
           </div>
@@ -297,28 +312,18 @@ const breadcrumbJsonLd = {
             </div>
           </div>
 
-          <!-- Business Registration & Operating Hours -->
+          <!-- Business Operating Information -->
           <div class="channel-card">
-            <h3 class="channel-title">Corporate Information</h3>
+            <h3 class="channel-title">Business Information</h3>
             <div class="corporate-details">
               <p>
                 <strong>Strova Group</strong><br/>
-                Registered MSME Entity — Republic of India
-              </p>
-              <p class="text-sm text-secondary">
-                <!-- TODO: Replace with real registered address once confirmed -->
-                <strong>Registered Address:</strong><br/>
-                [ADDRESS]<br/>
-                India
-              </p>
-              <p class="text-sm text-secondary">
-                <!-- TODO: Replace with official Udyam Registration Number once issued -->
-                <strong>Udyam Registration:</strong> [UDYAM NO. when issued]
+                Technology and digital services firm operating from India.
               </p>
               <p class="text-sm text-secondary">
                 <strong>Business Operating Hours:</strong><br/>
                 Monday – Saturday: 10:00 AM – 7:00 PM IST (UTC+05:30)<br/>
-                Sunday: Closed (Emergency SLA on-call for active enterprise contracts)
+                Sunday: Closed
               </p>
             </div>
           </div>
@@ -327,6 +332,9 @@ const breadcrumbJsonLd = {
     </div>
   </section>
 </BaseLayout>
+
+<!-- Cloudflare Turnstile script -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
   .page-hero {
@@ -439,7 +447,7 @@ const breadcrumbJsonLd = {
   }
 
   .required {
-    color: #ef4444;
+    color: #dc2626;
   }
 
   .optional {
@@ -472,7 +480,7 @@ const breadcrumbJsonLd = {
 
   .form-error {
     font-size: var(--text-xs);
-    color: #ef4444;
+    color: #dc2626;
     min-height: 1rem;
     display: none;
   }
@@ -481,13 +489,8 @@ const breadcrumbJsonLd = {
     display: block;
   }
 
-  .math-prompt {
-    font-weight: 700;
-    color: var(--accent);
-  }
-
-  .math-input {
-    max-width: 12rem;
+  .turnstile-container {
+    min-height: 65px;
   }
 
   .w-full {
@@ -500,21 +503,46 @@ const breadcrumbJsonLd = {
     padding: var(--space-4);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
+    line-height: 1.6;
     display: none;
   }
 
   .form-status.success {
     display: block;
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid #10b981;
-    color: #047857;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid #059669;
+    color: #065f46;
+  }
+
+  :root[data-theme="dark"] .form-status.success,
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .form-status.success {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: #10b981;
+      color: #34d399;
+    }
   }
 
   .form-status.error {
     display: block;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid #ef4444;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid #dc2626;
+    color: #991b1b;
+  }
+
+  :root[data-theme="dark"] .form-status.error,
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .form-status.error {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #f87171;
+    }
+  }
+
+  .form-status a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
   }
 
   /* Channels Sidebar */
@@ -620,40 +648,19 @@ const breadcrumbJsonLd = {
     const form = document.getElementById('contact-form') as HTMLFormElement | null;
     if (!form) return;
 
-    let expectedAnswer = 7;
-
-    // Generate random math challenge
-    function regenerateCaptcha() {
-      const num1 = Math.floor(Math.random() * 6) + 2;
-      const num2 = Math.floor(Math.random() * 6) + 1;
-      expectedAnswer = num1 + num2;
-
-      const mathPrompt = document.getElementById('math-prompt');
-      if (mathPrompt) {
-        mathPrompt.textContent = `${num1} + ${num2}`;
-      }
-      const captchaInput = document.getElementById('contact-captcha') as HTMLInputElement | null;
-      if (captchaInput) {
-        captchaInput.value = '';
-        captchaInput.removeAttribute('aria-invalid');
-      }
-    }
-
-    regenerateCaptcha();
-
-    // Pre-populate service if query param exists
+    // Pre-populate service category if query param exists
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get('service');
     if (serviceParam) {
       const serviceSelect = document.getElementById('contact-service') as HTMLSelectElement | null;
       if (serviceSelect) {
-        if (['technologies', 'automation', 'digital', 'commerce', 'other'].includes(serviceParam)) {
+        if (['technologies', 'automation', 'mobile', 'digital', 'commerce', 'other'].includes(serviceParam)) {
           serviceSelect.value = serviceParam;
         }
       }
     }
 
-    // Real-time error clearance on user input
+    // Real-time error clearance on input
     const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
     inputs.forEach((input) => {
       input.addEventListener('input', () => {
@@ -671,7 +678,7 @@ const breadcrumbJsonLd = {
       });
     });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       let hasErrors = false;
@@ -686,7 +693,7 @@ const breadcrumbJsonLd = {
 
       const statusBox = document.getElementById('form-status') as HTMLElement;
       statusBox.className = 'form-status';
-      statusBox.textContent = '';
+      statusBox.innerHTML = '';
 
       function markError(fieldId: string, errorId: string, message: string) {
         const field = document.getElementById(fieldId) as HTMLElement | null;
@@ -703,45 +710,34 @@ const breadcrumbJsonLd = {
         hasErrors = true;
       }
 
-      // 1. Honeypot check (Silent discard for automated spam bots)
+      // 1. Honeypot check (reject bot submissions silently or with error)
       const hpField = document.getElementById('hp_company') as HTMLInputElement | null;
       if (hpField && hpField.value.trim() !== '') {
-        statusBox.className = 'form-status success';
-        statusBox.textContent = 'Thank you! Your project brief has been received. Our team will contact you within 24 business hours.';
-        form.reset();
-        regenerateCaptcha();
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'Submission rejected by anti-spam filter.';
         return;
       }
 
-      // 2. Name validation
+      // 2. Client-side field validations
       const nameField = document.getElementById('contact-name') as HTMLInputElement;
-      if (!nameField.value.trim()) {
-        markError('contact-name', 'name-error', 'Please enter your full name.');
+      if (!nameField.value.trim() || nameField.value.trim().length < 2) {
+        markError('contact-name', 'name-error', 'Please enter your full name (at least 2 characters).');
       }
 
-      // 3. Email validation
       const emailField = document.getElementById('contact-email') as HTMLInputElement;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailField.value.trim() || !emailRegex.test(emailField.value.trim())) {
         markError('contact-email', 'email-error', 'Please enter a valid business email address.');
       }
 
-      // 4. Service category validation
       const serviceField = document.getElementById('contact-service') as HTMLSelectElement;
       if (!serviceField.value) {
         markError('contact-service', 'service-error', 'Please select a primary service category.');
       }
 
-      // 5. Message validation
       const messageField = document.getElementById('contact-message') as HTMLTextAreaElement;
       if (!messageField.value.trim() || messageField.value.trim().length < 10) {
         markError('contact-message', 'message-error', 'Please provide at least 10 characters describing your project requirements.');
-      }
-
-      // 6. Math challenge validation
-      const captchaField = document.getElementById('contact-captcha') as HTMLInputElement;
-      if (parseInt(captchaField.value.trim(), 10) !== expectedAnswer) {
-        markError('contact-captcha', 'captcha-error', 'Incorrect verification answer. Please enter the correct sum.');
       }
 
       if (hasErrors) {
@@ -751,20 +747,53 @@ const breadcrumbJsonLd = {
         return;
       }
 
-      // Submission simulation
+      // Submit form payload for real to server endpoint
       const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Transmitting brief...';
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>Sending inquiry...</span>';
 
-      setTimeout(() => {
+      const formData = new FormData(form);
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        data[key] = typeof value === 'string' ? value : value.name;
+      });
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && (result.success !== false)) {
+          // Confirmed 2xx response
+          statusBox.className = 'form-status success';
+          statusBox.textContent = result.message || 'Thank you! Your project brief has been received. We review all inquiries within 24 business hours (Mon–Sat, 10:00 AM – 7:00 PM IST) and will email our technical assessment.';
+          form.reset();
+          // Reset Turnstile if available
+          if ((window as any).turnstile) {
+            (window as any).turnstile.reset();
+          }
+        } else {
+          // Confirmed failure
+          const errDetail = result.error || 'Unable to submit your message at this time.';
+          statusBox.className = 'form-status error';
+          statusBox.innerHTML = `${errDetail} Please email us directly at <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> or message us on WhatsApp at <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a>.`;
+        }
+      } catch (networkErr) {
+        // Network or fetch failure
+        statusBox.className = 'form-status error';
+        statusBox.innerHTML = `Network connection error. Please email us directly at <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> or message us on WhatsApp at <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a>.`;
+      } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Project Inquiry';
-        statusBox.className = 'form-status success';
-        statusBox.textContent =
-          'Thank you! Your project brief has been logged successfully. We review all submissions within 24 business hours (Mon–Sat, 10:00 AM – 7:00 PM IST) and will email our technical assessment.';
-        form.reset();
-        regenerateCaptcha();
-      }, 700);
+        submitBtn.innerHTML = originalBtnText;
+      }
     });
   }
 
