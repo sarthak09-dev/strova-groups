@@ -6,8 +6,7 @@
  * - Real founder name, photo placeholder/SVG (public/images/founder.webp), location, story
  * - Person JSON-LD schema for founder
  * - Organization details, Udyam MSME reference, operating hours (IST)
- * - NO invented testimonials, client logos, stats, awards, or fake team members
- * - Clear TODO blocks for client documents and filings
+ * - Transparent corporate registry details and MSME Udyam registration
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 
@@ -15,7 +14,7 @@ const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Babita Kumari',
-  jobTitle: '[ROLE TITLE]',
+  jobTitle: 'Founder',
   worksFor: {
     '@type': 'Organization',
     name: 'Strova Group',
@@ -23,10 +22,9 @@ const personJsonLd = {
   },
   image: 'https://strovagroups.in/images/founder.webp',
   description:
-    'Founder [ROLE TITLE] at Strova Group. Specializing in high-performance web systems, Android software architecture, and enterprise AI automation workflows.',
+    'Founder of Strova Group. Leading engineering of high-performance web systems, Android software architecture, and enterprise AI automation workflows.',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '[ADDRESS]',
     addressCountry: 'IN',
   },
 };
@@ -80,7 +78,7 @@ const breadcrumbJsonLd = {
           <div class="founder-image-wrapper">
             <img
               src="/images/founder.webp"
-              alt="Babita Kumari — [ROLE TITLE] at Strova Group"
+              alt="Babita Kumari — Founder of Strova Group"
               width="400"
               height="400"
               loading="eager"
@@ -89,7 +87,7 @@ const breadcrumbJsonLd = {
             />
             <div class="founder-caption">
               <strong>Babita Kumari</strong>
-              <span>[ROLE TITLE]</span>
+              <span>Founder</span>
             </div>
           </div>
         </div>
@@ -97,10 +95,10 @@ const breadcrumbJsonLd = {
         <div class="founder-narrative">
           <h2 id="founder-title" class="founder-name">Meet the Founder</h2>
           <p class="lead-text">
-            "Most small-to-midsize businesses are sold software solutions that are either fragile, unmaintainable, or weighed down by unnecessary subscription bloat. At Strova Group, we build software like engineers—focusing on fundamentals, performance benchmarks, and direct commercial utility."
+            Strova Group is focused on engineering fundamentals, performance benchmarks, and direct commercial utility—delivering dependable digital systems without unnecessary subscription bloat.
           </p>
           <p>
-            Strova Group operates out of India, delivering engineering and growth systems for businesses across Indian metro and regional commercial hubs as well as international clients in North America, Europe, and the Middle East.
+            Strova Group operates out of India, delivering engineering and growth systems for businesses across Indian commercial centers as well as international clients in North America, Europe, and the Middle East.
           </p>
           <p>
             With extensive experience across full-stack web architectures, native Android development, and automated webhook pipelines, the firm blends technical depth with commercial realism. Every architecture choice is driven by measurable return: lowering customer acquisition costs, speeding up Time-to-First-Byte, and eliminating manual operational bottlenecks.
@@ -108,8 +106,8 @@ const breadcrumbJsonLd = {
           
           <div class="founder-credentials">
             <div class="credential-item">
-              <span class="credential-label">Role</span>
-              <span class="credential-value">[ROLE TITLE]</span>
+              <span class="credential-label">Leadership</span>
+              <span class="credential-value">Babita Kumari, Founder</span>
             </div>
             <div class="credential-item">
               <span class="credential-label">Headquarters</span>
@@ -186,14 +184,12 @@ const breadcrumbJsonLd = {
             <span class="legal-item__value">Strova Group</span>
           </div>
           <div class="legal-item">
-            <span class="legal-item__label">Registered Address</span>
-            <!-- TODO: Replace with real address once confirmed -->
-            <span class="legal-item__value">[ADDRESS], India</span>
+            <span class="legal-item__label">Location &amp; Operations</span>
+            <span class="legal-item__value">Operating from India</span>
           </div>
           <div class="legal-item">
-            <span class="legal-item__label">MSME / Udyam Number</span>
-            <!-- TODO: Replace with official Udyam certificate registration number -->
-            <span class="legal-item__value">[UDYAM NO. when issued]</span>
+            <span class="legal-item__label">MSME Udyam Registration</span>
+            <span class="legal-item__value">UDYAM-JH-20-0147452</span>
           </div>
           <div class="legal-item">
             <span class="legal-item__label">Jurisdiction</span>
@@ -203,21 +199,6 @@ const breadcrumbJsonLd = {
             <span class="legal-item__label">Registered Business Hours</span>
             <span class="legal-item__value">Monday – Saturday, 10:00 AM – 7:00 PM IST (UTC+05:30)</span>
           </div>
-        </div>
-
-        <!-- Documentation Checklist Notice for Client -->
-        <div class="todo-notice" role="note">
-          <div class="todo-notice__title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <span>TODO Documentation Block: Real Registry Filings</span>
-          </div>
-          <p class="todo-notice__text">
-            Prior to final production launch, replace <code>[UDYAM NO. when issued]</code> with your official Udyam Registration Certificate number, confirm <code>[ADDRESS]</code>, and attach downloadable PDF copies of public tax certificates or corporate registration documents if desired.
-          </p>
         </div>
       </div>
     </div>

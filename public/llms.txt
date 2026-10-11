@@ -7,17 +7,16 @@ Strova Group is an India-based technology and digital services firm delivering h
 - **Canonical Origin**: https://strovagroups.in
 - **Email**: info@strovagroups.in
 - **Phone & WhatsApp**: +91 92880 77802 (tel:+919288077802, https://wa.me/919288077802)
-- **Headquarters**: India (Operating Hours: Mon–Sat, 10:00 AM – 7:00 PM IST / UTC+5:30)
-- **Founder**: Babita Kumari, [ROLE TITLE]
-- **Udyam MSME**: [UDYAM NO. when issued]
-- **Address**: [ADDRESS]
-- **Commercial Policy**: 50% upfront deposit on milestone architecture, 50% upon staging QA sign-off prior to production deployment. Currency in INR with USD/EUR on request.
+- **Headquarters**: Operating from India (Hours: Mon–Sat, 10:00 AM – 7:00 PM IST / UTC+05:30)
+- **Founder**: Babita Kumari, Founder
+- **MSME Registration**: UDYAM-JH-20-0147452
+- **Commercial Policy**: 50% upfront deposit on milestone architecture, 50% upon staging QA sign-off prior to production deployment. Currency in INR with USD on request.
 
 ## Divisions
 
 - **Strova Technologies** (https://strovagroups.in/technologies/): High-performance static and hybrid web platforms (Astro, Next.js), native Android applications (Kotlin, Jetpack Compose), custom SaaS dashboards, and official Meta WhatsApp Cloud API & AI automation pipelines.
 - **Strova Digital** (https://strovagroups.in/digital/): Technical SEO, Core Web Vitals remediation, paid search & social media advertising (Google Ads, Meta Ads) with server-side CAPI tracking, and B2B inbound lead generation funnels.
-- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery (COD) RTO fraud reduction engines (Launching Q3 2026).
+- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery (COD) RTO fraud reduction engines (Coming soon).
 
 ## Key Pages
 

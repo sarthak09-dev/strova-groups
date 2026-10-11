@@ -44,15 +44,9 @@ const orgJsonLd = {
   email: 'info@strovagroups.in',
   telephone: '+919288077802',
   description: 'AI & automation for growing businesses. Technology, digital marketing, and commerce solutions for Indian and international clients.',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '[ADDRESS]',
-    addressCountry: 'IN',
-  },
   founder: {
     '@type': 'Person',
     name: 'Babita Kumari',
-    jobTitle: '[ROLE TITLE]',
   },
   contactPoint: {
     '@type': 'ContactPoint',
@@ -61,7 +55,6 @@ const orgJsonLd = {
     areaServed: 'IN',
     availableLanguage: ['en', 'hi'],
   },
-  sameAs: [],
 };
 
 const websiteJsonLd = {
@@ -83,7 +76,7 @@ const allJsonLd = [
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       document.documentElement.classList.add('js');
@@ -110,13 +103,6 @@ const allJsonLd = [
       jsonLd={allJsonLd}
       noindex={noindex}
     />
-
-    <!--
-      Privacy-friendly analytics: Cloudflare Web Analytics.
-      No cookies, no personal data, no consent banner needed.
-      TODO: Replace 'your-token' with your Cloudflare Web Analytics token.
-    -->
-    <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "your-token"}'></script> -->
   </head>
   <body class={bodyClass}>
     <!-- Top Fluid Scroll Progress Indicator -->
