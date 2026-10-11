@@ -1,0 +1,254 @@
+---
+/**
+ * Privacy Policy Page (src/pages/privacy.astro)
+ *
+ * Requirements:
+ * - Plain English, comprehensive coverage of DPDP Act 2023 (India) and GDPR basics
+ * - Data fiduciary identity, data collected, lawful purpose, retention, sub-processors
+ * - Data Principal rights (access, correction, erasure, grievance redressal)
+ * - Statutorily mandated Grievance Officer contact details
+ * - Prominent "Note for Legal Review"
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Privacy Policy',
+      item: 'https://strovagroups.in/privacy/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Privacy Policy — Strova Group"
+  description="Strova Group's Privacy Policy outlining data protection practices under India's Digital Personal Data Protection Act (DPDP Act 2023) and global standards."
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-kicker">Legal &amp; Compliance</span>
+        <h1 class="page-hero__title">Privacy Policy</h1>
+        <p class="page-hero__lead">
+          Effective Date: October 10, 2026 &bull; Last Updated: October 2026
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="legal-container">
+        <!-- Prominent Note for Legal Review -->
+        <div class="legal-review-callout" role="note">
+          <div class="callout-heading">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>Notice for Legal Review</span>
+          </div>
+          <p>
+            This document is drafted in clear, plain English to transparently reflect the actual technical data handling practices of Strova Group. It incorporates the statutory requirements of the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act, India)</strong> and baseline principles of the <strong>General Data Protection Regulation (GDPR)</strong>. Prior to commercial production deployment, this policy should be reviewed and customized by qualified legal counsel or a Chartered Accountant (CA) to reflect your specific corporate structure.
+          </p>
+        </div>
+
+        <article class="prose">
+          <h2>1. Introduction &amp; Data Fiduciary Identity</h2>
+          <p>
+            Strova Group ("we", "our", or "us") is an India-based technology and digital services company. Under the Digital Personal Data Protection Act, 2023 ("DPDP Act"), Strova Group acts as a <strong>Data Fiduciary</strong> with respect to the personal data collected through our website (<a href="https://strovagroups.in">strovagroups.in</a>) and our customer service communications.
+          </p>
+          <p>
+            We are committed to safeguarding the privacy and digital security of our visitors, prospective clients, and partners. We never sell, rent, or trade your personal data to data brokers or third-party advertising networks.
+          </p>
+
+          <h2>2. Personal Data We Collect</h2>
+          <p>
+            We limit our data collection strictly to what is necessary to evaluate project briefs, communicate with prospective clients, and maintain the security of our web infrastructure:
+          </p>
+          <ul>
+            <li>
+              <strong>Direct Inquiries &amp; Form Data:</strong> When you submit our project contact form or email us, we collect your name, business email address, phone/WhatsApp number (if provided), organization name, budget parameter, and project description.
+            </li>
+            <li>
+              <strong>WhatsApp Business Communications:</strong> If you initiate a conversation via our verified WhatsApp business channel, we receive your phone number and chat transcripts to respond to your technical questions.
+            </li>
+            <li>
+              <strong>Infrastructure &amp; Server Logs:</strong> Standard web server connection metadata, including anonymized IP addresses, browser user-agent strings, and request timestamps, collected automatically by our CDN provider (Cloudflare) for DDoS mitigation and firewall defense.
+            </li>
+          </ul>
+
+          <h2>3. Lawful Basis &amp; Purpose of Processing</h2>
+          <p>
+            Under Section 4 and Section 7 of the DPDP Act 2023, we process personal data under legitimate uses and explicit consent:
+          </p>
+          <ul>
+            <li>To respond to your voluntary project inquiries and schedule technical discovery consultations.</li>
+            <li>To draft customized architectural specifications, milestone proposals, and commercial contracts.</li>
+            <li>To protect our website infrastructure against automated spam, bot attacks, and cyber threats.</li>
+            <li>To comply with statutory legal, tax, and regulatory obligations applicable to registered businesses in India.</li>
+          </ul>
+
+          <h2>4. Cookies &amp; Tracking Technologies</h2>
+          <p>
+            <strong>We do not use invasive third-party tracking cookies or cross-site tracking pixels on our website.</strong>
+          </p>
+          <p>
+            Our website uses modern privacy-first analytics (Cloudflare Web Analytics) that do not collect personally identifiable information, do not track you across other websites, and do not place tracking cookies in your browser. Therefore, no invasive cookie consent banner is needed under current data privacy standards.
+          </p>
+
+          <h2>5. Sub-Processors &amp; Infrastructure Partners</h2>
+          <p>
+            To deliver our digital services, we partner with industry-standard, high-security infrastructure providers who act as Data Processors:
+          </p>
+          <ul>
+            <li>
+              <strong>Cloudflare Inc.</strong> — Edge hosting, CDN caching, SSL encryption, and DDoS security protection.
+            </li>
+            <li>
+              <strong>Meta Platforms Ireland Ltd. / Meta Cloud API</strong> — Infrastructure provider for official WhatsApp Business messaging channels.
+            </li>
+            <li>
+              <strong>Email Service Provider</strong> — Secure, encrypted email hosting for inbound and outbound correspondence.
+            </li>
+          </ul>
+
+          <h2>6. Data Retention &amp; Cross-Border Transfers</h2>
+          <p>
+            We retain your contact inquiries and project communications only for as long as necessary to fulfill the operational business purpose for which they were collected, or to satisfy applicable accounting and legal requirements. If an inquiry does not result in an active contract, your contact data is archived or securely purged within twelve (12) months upon request.
+          </p>
+          <p>
+            Data transfers across borders comply with Section 16 of the DPDP Act 2023 and applicable international data transfer frameworks.
+          </p>
+
+          <h2>7. Your Rights as a Data Principal</h2>
+          <p>
+            Under Chapter III of the DPDP Act 2023, individuals ("Data Principals") have enforceable statutory rights:
+          </p>
+          <ul>
+            <li>
+              <strong>Right to Access Summary:</strong> You may request a summary of the personal data we hold about you and the processing activities undertaken.
+            </li>
+            <li>
+              <strong>Right to Correction &amp; Erasure:</strong> You may request the correction of inaccurate data, completion of incomplete records, or erasure of personal data that is no longer necessary for the purpose it was gathered.
+            </li>
+            <li>
+              <strong>Right of Grievance Redressal:</strong> You have the right to register a grievance with our designated Grievance Officer regarding any data processing concern.
+            </li>
+            <li>
+              <strong>Right to Nominate:</strong> You have the right to nominate an individual who will exercise your data rights in the event of death or incapacity.
+            </li>
+          </ul>
+
+          <h2>8. Grievance Officer (DPDP Act Statutory Disclosure)</h2>
+          <p>
+            In compliance with Section 8(10) of the Digital Personal Data Protection Act, 2023, the details of our designated Grievance Officer are set forth below:
+          </p>
+          <div class="grievance-card">
+            <!-- TODO: Replace with real Grievance Officer details once appointed -->
+            <p><strong>Designation:</strong> Data Protection &amp; Grievance Redressal Officer</p>
+            <p><strong>Entity:</strong> Strova Group</p>
+            <p><strong>Address:</strong> [ADDRESS], India</p>
+            <p><strong>Email for Grievances:</strong> <a href="mailto:info@strovagroups.in">info@strovagroups.in</a></p>
+            <p><strong>Response Timeline:</strong> All grievances are acknowledged within 48 hours and resolved within 30 days as mandated by law.</p>
+          </div>
+
+          <h2>9. Changes to This Privacy Policy</h2>
+          <p>
+            We may periodically update this Privacy Policy to reflect technical enhancements, architectural updates, or changes in legal regulations. Material updates will be clearly reflected by updating the "Last Updated" date at the top of this page.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-12);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+  }
+
+  .legal-container {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .legal-review-callout {
+    background: color-mix(in srgb, #f59e0b 10%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-10);
+  }
+
+  .callout-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: #b45309;
+    margin-bottom: var(--space-2);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .callout-heading {
+      color: #fbbf24;
+    }
+  }
+
+  .legal-review-callout p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .grievance-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-block: var(--space-4);
+  }
+
+  .grievance-card p {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .grievance-card p:last-child {
+    margin-bottom: 0;
+  }
+</style>

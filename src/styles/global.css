@@ -1,0 +1,701 @@
+/*
+ * Strova Group — Design Tokens & Global Styles
+ * Luxury Tech Aesthetic (Linear / Stripe / Vercel caliber)
+ * Palette: Obsidian Void, Deep Slate, Indigo Luminescence, Electric Cyan, Snow
+ * Fonts: Space Grotesk Variable (headings), Inter Variable (body)
+ */
+
+/* -------------------------------------------------- */
+/* 1. Custom properties — Dark-first Luxury Tech (default) */
+/* -------------------------------------------------- */
+:root {
+  /* Brand palette */
+  --color-void:        #06070A;
+  --color-obsidian:    #08090D;
+  --color-slate-deep:  #0C0E15;
+  --color-slate:       #111520;
+  --color-surface-2:   #161B29;
+  --color-surface-3:   #1C2335;
+  --color-indigo:      #6366F1;
+  --color-indigo-glow: rgba(99, 102, 241, 0.25);
+  --color-cyan:        #22D3EE;
+  --color-cyan-glow:   rgba(34, 211, 238, 0.2);
+  --color-ice:         #F1F5F9;
+  --color-snow:        #FFFFFF;
+
+  /* Semantic tokens — Luxury Dark (WCAG 2.2 AA compliant contrast) */
+  --bg-page:           #08090D;
+  --bg-surface:        #0E121B;
+  --bg-elevated:       #131826;
+  --bg-card:           rgba(19, 24, 38, 0.72);
+  --bg-card-hover:     rgba(25, 32, 50, 0.85);
+  --bg-glass:          rgba(10, 13, 20, 0.75);
+
+  --text-primary:      #F8FAFC;
+  --text-secondary:    #94A3B8;
+  --text-muted:        #64748B;
+
+  --border-color:      rgba(255, 255, 255, 0.08);
+  --border-subtle:     rgba(255, 255, 255, 0.04);
+  --border-glow:       rgba(99, 102, 241, 0.4);
+  --border-cyan-glow:  rgba(34, 211, 238, 0.45);
+
+  --accent:            #818CF8;
+  --accent-hover:      #A5B4FC;
+  --accent-subtle:     rgba(99, 102, 241, 0.14);
+  --accent-2:          #22D3EE;
+  --accent-2-hover:    #67E8F9;
+  --accent-2-subtle:   rgba(34, 211, 238, 0.12);
+
+  /* Focus ring */
+  --focus-ring:        0 0 0 3px rgba(129, 140, 248, 0.45);
+
+  /* Typography scale (major third — 1.25) */
+  --font-heading:      'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --font-body:         'Inter Variable', 'Inter', system-ui, sans-serif;
+
+  --text-xs:           clamp(0.75rem,  0.7rem  + 0.25vw, 0.8125rem);
+  --text-sm:           clamp(0.8125rem, 0.75rem + 0.3vw,  0.875rem);
+  --text-base:         clamp(1rem,     0.95rem + 0.25vw, 1.0625rem);
+  --text-lg:           clamp(1.125rem, 1rem    + 0.5vw,  1.25rem);
+  --text-xl:           clamp(1.25rem,  1.1rem  + 0.75vw, 1.5rem);
+  --text-2xl:          clamp(1.5rem,   1.2rem  + 1.5vw,  2rem);
+  --text-3xl:          clamp(1.875rem, 1.4rem  + 2vw,    2.5rem);
+  --text-4xl:          clamp(2.25rem,  1.5rem  + 3vw,    3.5rem);
+  --text-5xl:          clamp(2.75rem,  1.8rem  + 4vw,    4.5rem);
+
+  /* Spacing scale */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Layout */
+  --max-width:   76rem;   /* 1216px */
+  --gutter:      clamp(1.25rem, 4vw, 2.5rem);
+  --radius-sm:   0.375rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.875rem;
+  --radius-xl:   1.25rem;
+
+  /* Transitions */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   600ms;
+
+  /* Elevation Shadows & Specular Glows */
+  --shadow-sm:        0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md:        0 4px 14px -2px rgba(0,0,0,0.5), 0 2px 6px -2px rgba(0,0,0,0.3);
+  --shadow-lg:        0 14px 28px -4px rgba(0,0,0,0.6), 0 4px 12px -2px rgba(0,0,0,0.4);
+  --shadow-glow:      0 0 35px -5px rgba(99, 102, 241, 0.22);
+  --shadow-cyan-glow: 0 0 35px -5px rgba(34, 211, 238, 0.2);
+}
+
+/* -------------------------------------------------- */
+/* 2. Optional light override for explicit user choice */
+/* -------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="light"] {
+    --bg-page:        #FAFAFD;
+    --bg-surface:     #F1F3F9;
+    --bg-elevated:    #FFFFFF;
+    --bg-card:        rgba(255, 255, 255, 0.9);
+    --bg-card-hover:  #FFFFFF;
+    --bg-glass:       rgba(255, 255, 255, 0.85);
+    --text-primary:   #090A10;
+    --text-secondary: #334155;
+    --text-muted:     #64748B;
+    --border-color:   rgba(0, 0, 0, 0.08);
+    --border-subtle:  rgba(0, 0, 0, 0.04);
+    --accent:         #4F46E5;
+    --accent-hover:   #4338CA;
+    --accent-subtle:  #EEF2FF;
+    --accent-2:       #0891B2;
+    --accent-2-hover: #0E7490;
+    --focus-ring:     0 0 0 3px rgba(79, 70, 229, 0.4);
+  }
+}
+
+/* -------------------------------------------------- */
+/* 3. CSS Reset (modern, minimal)                     */
+/* -------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  hanging-punctuation: first last;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+img, video {
+  height: auto;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+  max-width: 68ch;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* -------------------------------------------------- */
+/* 4. Skip link                                       */
+/* -------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--gutter);
+  z-index: 9999;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--color-snow);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top var(--duration-fast) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* -------------------------------------------------- */
+/* 5. Focus styles                                    */
+/* -------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+}
+
+/* -------------------------------------------------- */
+/* 6. Layout utilities                                */
+/* -------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--space-20);
+}
+
+.section--lg {
+  padding-block: var(--space-32);
+}
+
+/* -------------------------------------------------- */
+/* 7. Typography utilities                            */
+/* -------------------------------------------------- */
+.text-xs   { font-size: var(--text-xs); }
+.text-sm   { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg   { font-size: var(--text-lg); }
+.text-xl   { font-size: var(--text-xl); }
+.text-2xl  { font-size: var(--text-2xl); }
+.text-3xl  { font-size: var(--text-3xl); }
+.text-4xl  { font-size: var(--text-4xl); }
+.text-5xl  { font-size: var(--text-5xl); }
+
+.font-heading { font-family: var(--font-heading); }
+.font-body    { font-family: var(--font-body); }
+
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
+
+/* -------------------------------------------------- */
+/* 8. Button system                                   */
+/* -------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: var(--color-snow);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.btn--primary:hover {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--color-snow);
+  box-shadow: 0 4px 22px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn--outline {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.btn--outline:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: var(--color-snow);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn--whatsapp {
+  background: rgba(37, 211, 102, 0.12);
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.35);
+}
+
+.btn--whatsapp:hover {
+  background: #25d366;
+  color: #08090d;
+  border-color: #25d366;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn--lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--text-base);
+}
+
+/* -------------------------------------------------- */
+/* 9. Card base & Micro-interaction Spotlight         */
+/* -------------------------------------------------- */
+.card {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  transition: transform var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+/* -------------------------------------------------- */
+/* 10. Visually hidden (for screen readers)           */
+/* -------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -------------------------------------------------- */
+/* 11. Grid helpers                                   */
+/* -------------------------------------------------- */
+.grid {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); }
+.grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+
+/* -------------------------------------------------- */
+/* 12. Prose (for legal pages)                        */
+/* -------------------------------------------------- */
+.prose {
+  max-width: 65ch;
+}
+
+.prose h2 {
+  font-size: var(--text-2xl);
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-4);
+}
+
+.prose h3 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+.prose p {
+  margin-bottom: var(--space-4);
+  max-width: 65ch;
+}
+
+.prose ul, .prose ol {
+  list-style: disc;
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+.prose a {
+  text-decoration: underline;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+/* -------------------------------------------------- */
+/* 13. Smooth Scroll (Lenis) Support Rules            */
+/* -------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* -------------------------------------------------- */
+/* 14. Top Scroll Progress Bar                        */
+/* -------------------------------------------------- */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0%;
+  background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.7), 0 0 5px rgba(99, 102, 241, 0.9);
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.05s linear;
+}
+
+/* -------------------------------------------------- */
+/* 15. Ambient Glows & Gradient Accents               */
+/* -------------------------------------------------- */
+.ambient-glow-indigo {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-cyan {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 10%, #cbd5e1 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-accent {
+  background: linear-gradient(135deg, #818cf8 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* -------------------------------------------------- */
+/* 16. Executive Live IST Status Badge                */
+/* -------------------------------------------------- */
+.ist-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.status-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.status-pulse-dot.status-open {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulseGreen 2s infinite ease-in-out;
+}
+
+.status-pulse-dot.status-standby {
+  background: #f59e0b;
+  box-shadow: 0 0 6px #f59e0b;
+}
+
+@keyframes pulseGreen {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+    box-shadow: 0 0 12px #10b981;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 17. Interactive Cursor Sheen Micro-Interaction     */
+/* -------------------------------------------------- */
+[data-sheen="true"],
+.card,
+.division-card,
+.pricing-card,
+.case-study-card,
+.filter-card,
+.offering-card {
+  position: relative;
+}
+
+[data-sheen="true"]::before,
+.card::before,
+.division-card::before,
+.pricing-card::before,
+.case-study-card::before,
+.filter-card::before,
+.offering-card::before,
+.process-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, -200px) var(--mouse-y, -200px),
+    rgba(99, 102, 241, 0.45),
+    transparent 65%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 1;
+}
+
+/* Interior ambient spotlight */
+[data-sheen="true"]::after,
+.card::after,
+.division-card::after,
+.pricing-card::after,
+.case-study-card::after,
+.filter-card::after,
+.offering-card::after,
+.process-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    350px circle at var(--mouse-x, -200px) var(--mouse-y, -200px),
+    rgba(99, 102, 241, 0.07),
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+}
+
+[data-sheen="true"]:hover::before,
+.card:hover::before,
+.division-card:hover::before,
+.pricing-card:hover::before,
+.case-study-card:hover::before,
+.filter-card:hover::before,
+.offering-card:hover::before,
+.process-card:hover::before,
+[data-sheen="true"]:hover::after,
+.card:hover::after,
+.division-card:hover::after,
+.pricing-card:hover::after,
+.case-study-card:hover::after,
+.filter-card:hover::after,
+.offering-card:hover::after,
+.process-card:hover::after {
+  opacity: 1;
+}
+
+/* -------------------------------------------------- */
+/* 18. Scroll-Driven Reveal Utilities                 */
+/* -------------------------------------------------- */
+html.js .reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+html.js .reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Active process step highlight */
+.process-card.is-active-step {
+  border-color: rgba(99, 102, 241, 0.55) !important;
+  box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.25), var(--shadow-lg) !important;
+}
+
+.process-card.is-active-step .process-card__num {
+  color: var(--accent) !important;
+}
+
+
+

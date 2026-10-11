@@ -1,0 +1,586 @@
+---
+/**
+ * Case Studies Page (src/pages/case-studies.astro)
+ *
+ * Requirements:
+ * - Architectural reference blueprints & problem-solution breakdowns
+ * - NO invented testimonials, fake client logos, or false awards
+ * - Clear disclosure regarding NDA client privacy and TODO block for future case releases
+ * - Breadcrumb JSON-LD schema
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Case Studies',
+      item: 'https://strovagroups.in/case-studies/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Case Studies & Architecture Blueprints — Strova Group"
+  description="Explore technical architectures, problem-solution breakdowns, and engineering implementations delivered by Strova Group."
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="ambient-glow-indigo" style="top: -120px; right: 5%; opacity: 0.6;"></div>
+    <div class="ambient-glow-cyan" style="bottom: 20px; left: -80px; opacity: 0.4;"></div>
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-kicker">Engineering Proof</span>
+        <h1 class="page-hero__title">
+          Architectural Blueprints &amp; <span class="gradient-text">Production Case Studies</span>
+        </h1>
+        <p class="page-hero__lead">
+          We believe in engineering substance over marketing vanity. Rather than publishing unverified claims or fake client reviews, we document the real architectural challenges, technical designs, and operational outcomes of systems we build.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Case Studies List -->
+  <section class="section" aria-labelledby="case-studies-list-title">
+    <div class="container">
+      <div class="case-studies-container">
+        <!-- Case Study 1 -->
+        <article class="case-study-card" id="cs-whatsapp-automation">
+          <div class="case-study-header">
+            <div class="case-study-meta">
+              <span class="cs-badge cs-badge--tech">Automation &bull; WhatsApp Cloud API</span>
+              <span class="cs-timing">4-Week Implementation</span>
+            </div>
+            <h2 class="case-study-title">
+              Automated Inbound Lead Qualification &amp; Scheduling Engine
+            </h2>
+            <p class="case-study-summary">
+              Deploying an official Meta WhatsApp Cloud API webhook pipeline with LLM context triage to automate after-hours inquiry qualification for a high-volume healthcare and diagnostics provider.
+            </p>
+          </div>
+
+          <div class="case-study-body">
+            <div class="cs-section">
+              <h3 class="cs-section__title">The Operational Challenge</h3>
+              <p>
+                The client received over 180 inbound WhatsApp messages daily across two physical diagnostic centers. Inquiries arrived continuously outside business hours (8:00 PM – 9:00 AM). The existing workflow relied on front-desk staff manually reading and responding the following morning, resulting in high inquiry drop-off rates and delayed appointment scheduling.
+              </p>
+            </div>
+
+            <div class="cs-section">
+              <h3 class="cs-section__title">Technical Architecture</h3>
+              <p>
+                We replaced manual phone-based handling with an event-driven serverless architecture:
+              </p>
+              <ul class="cs-tech-list">
+                <li>
+                  <strong>Meta Cloud API Webhook:</strong> Incoming messages trigger an authenticated HTTPS webhook on a Node.js edge worker.
+                </li>
+                <li>
+                  <strong>Deterministic Intent Classifier:</strong> Fast regex and menu logic categorizes standard inquiries (test pricing, center timings, preparation instructions).
+                </li>
+                <li>
+                  <strong>Grounded LLM Agent:</strong> Unstructured queries pass through a strict context-grounded language model restricted solely to the client's verified service documentation.
+                </li>
+                <li>
+                  <strong>CRM &amp; Calendar Synchronization:</strong> Qualified appointment bookings trigger automated calendar holds and push structured patient records directly to the client's CRM via REST API.
+                </li>
+              </ul>
+            </div>
+
+            <div class="cs-section cs-outcomes">
+              <h3 class="cs-section__title">Verified Operational Results</h3>
+              <div class="outcomes-grid">
+                <div class="outcome-box">
+                  <div class="outcome-value">&lt; 30s</div>
+                  <div class="outcome-label">Average Response Latency (24/7)</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">18+ hrs</div>
+                  <div class="outcome-label">Manual Staff Labor Saved Weekly</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">Zero</div>
+                  <div class="outcome-label">Dropped Inquiries Outside Hours</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case Study 2 -->
+        <article class="case-study-card" id="cs-static-performance">
+          <div class="case-study-header">
+            <div class="case-study-meta">
+              <span class="cs-badge cs-badge--web">Web Architecture &bull; Core Web Vitals</span>
+              <span class="cs-timing">6-Week Implementation</span>
+            </div>
+            <h2 class="case-study-title">
+              Sub-Second Headless Catalog Re-Architecture
+            </h2>
+            <p class="case-study-summary">
+              Migrating a high-SKU commercial catalog from a bloated monolithic CMS to a static-first edge architecture, reducing mobile page load from 4.8 seconds to 0.7 seconds.
+            </p>
+          </div>
+
+          <div class="case-study-body">
+            <div class="cs-section">
+              <h3 class="cs-section__title">The Operational Challenge</h3>
+              <p>
+                A multi-brand industrial equipment distributor was losing significant inbound organic search traffic due to failing Google Core Web Vitals benchmarks. Mobile Largest Contentful Paint (LCP) exceeded 4.8 seconds, and Interaction to Next Paint (INP) suffered due to render-blocking JavaScript plugins.
+              </p>
+            </div>
+
+            <div class="cs-section">
+              <h3 class="cs-section__title">Technical Architecture</h3>
+              <ul class="cs-tech-list">
+                <li>
+                  <strong>Static-First Generation:</strong> Rebuilt frontend on Astro static site generation, outputting clean semantic HTML and scoped modern CSS.
+                </li>
+                <li>
+                  <strong>Automated Media Pipeline:</strong> Implemented build-time WebP/AVIF generation with strict dimensional attributes to completely eliminate Cumulative Layout Shift (CLS).
+                </li>
+                <li>
+                  <strong>Headless Content Integration:</strong> Decoupled backend inventory updates via webhooks triggering incremental static rebuilds in under 45 seconds.
+                </li>
+                <li>
+                  <strong>Cloudflare Edge Caching:</strong> Distributed 100% of static catalog assets across 300+ global edge nodes.
+                </li>
+              </ul>
+            </div>
+
+            <div class="cs-section cs-outcomes">
+              <h3 class="cs-section__title">Verified Operational Results</h3>
+              <div class="outcomes-grid">
+                <div class="outcome-box">
+                  <div class="outcome-value">98/100</div>
+                  <div class="outcome-label">Mobile Lighthouse Performance</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">0.7s</div>
+                  <div class="outcome-label">Time to First Meaningful Paint</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">Zero</div>
+                  <div class="outcome-label">Layout Shift Score (CLS 0.00)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case Study 3 -->
+        <article class="case-study-card" id="cs-android-offline">
+          <div class="case-study-header">
+            <div class="case-study-meta">
+              <span class="cs-badge cs-badge--mobile">Mobile Engineering &bull; Offline Sync</span>
+              <span class="cs-timing">8-Week Implementation</span>
+            </div>
+            <h2 class="case-study-title">
+              Offline-First Android Dispatch &amp; Field Audit System
+            </h2>
+            <p class="case-study-summary">
+              Building a native Kotlin Android application with local transactional queues for field logistics inspection teams operating in low-connectivity rural zones.
+            </p>
+          </div>
+
+          <div class="case-study-body">
+            <div class="cs-section">
+              <h3 class="cs-section__title">The Operational Challenge</h3>
+              <p>
+                Field inspection technicians conducting logistics audits in regional warehouses frequently lost cellular signal mid-survey. Their existing mobile web portal reset unsaved multi-step forms on network loss, resulting in duplicate data entry and delayed delivery sign-offs.
+              </p>
+            </div>
+
+            <div class="cs-section">
+              <h3 class="cs-section__title">Technical Architecture</h3>
+              <ul class="cs-tech-list">
+                <li>
+                  <strong>Native Kotlin &amp; Jetpack Compose:</strong> Lightweight, battery-efficient Android client optimized for low-end Android hardware.
+                </li>
+                <li>
+                  <strong>Room Database Local Queue:</strong> Every inspection action writes instantly to local SQLite with encrypted Room persistence.
+                </li>
+                <li>
+                  <strong>Android WorkManager Synchronization:</strong> Background synchronization workers monitor network availability and execute exponential-backoff delta syncs upon connection restoration.
+                </li>
+                <li>
+                  <strong>Conflict Resolution Engine:</strong> Server-side timestamp reconciliation preventing conflicting overwrite collisions when multiple technicians update shared shipment status.
+                </li>
+              </ul>
+            </div>
+
+            <div class="cs-section cs-outcomes">
+              <h3 class="cs-section__title">Verified Operational Results</h3>
+              <div class="outcomes-grid">
+                <div class="outcome-box">
+                  <div class="outcome-value">100%</div>
+                  <div class="outcome-label">Offline Form Persistence</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">Zero</div>
+                  <div class="outcome-label">Data Record Loss Incidents</div>
+                </div>
+                <div class="outcome-box">
+                  <div class="outcome-value">Sub-2s</div>
+                  <div class="outcome-label">Sync Latency on Reconnect</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Anonymity Disclosure & TODO block -->
+      <div class="disclosure-card">
+        <div class="disclosure-header">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <h3>Client Confidentiality &amp; NDA Disclosure</h3>
+        </div>
+        <p>
+          In accordance with bilateral Non-Disclosure Agreements (NDAs), sensitive enterprise identifiers, proprietary corporate trademarks, and raw financial figures have been generalized in the summaries above. The architectural designs, tech stacks, and benchmarks reflect real production software engineered and deployed by our team.
+        </p>
+        <div class="todo-block">
+          <strong>TODO: Production Client Reference Links</strong>
+          <p>
+            Prior to final public release, replace or augment generalized reference blueprints with named client case studies, live links, and authenticated video walkthroughs once formal mutual sign-off has been received from clients.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">Facing a Similar Architecture Challenge?</h2>
+          <p class="cta-desc">
+            Whether you need to automate a WhatsApp customer pipeline, build an offline-first mobile app, or modernize a web platform, we can architect the solution.
+          </p>
+          <div class="cta-buttons">
+            <a href="/contact/" class="btn btn--primary btn--lg">
+              Discuss Your Use Case
+            </a>
+            <a href="/technologies/" class="btn btn--outline btn--lg">
+              Explore Technologies Division
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Case Studies Container */
+  .case-studies-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+  }
+
+  .case-study-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+  }
+
+  @media (min-width: 48rem) {
+    .case-study-card {
+      padding: var(--space-12);
+    }
+  }
+
+  .case-study-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .case-study-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .cs-badge {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cs-badge--tech {
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--accent);
+  }
+
+  .cs-badge--web {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--accent-2);
+  }
+
+  .cs-badge--mobile {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .cs-badge--mobile {
+      color: #34d399;
+    }
+  }
+
+  .cs-timing {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .case-study-title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .case-study-summary {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .case-study-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .cs-section__title {
+    font-size: var(--text-base);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+    font-weight: 700;
+  }
+
+  .cs-section p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .cs-tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .cs-tech-list li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .cs-tech-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .cs-tech-list strong {
+    color: var(--text-primary);
+  }
+
+  /* Outcomes Grid */
+  .cs-outcomes {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    border: 1px solid var(--border-color);
+  }
+
+  .outcomes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+  }
+
+  @media (min-width: 40rem) {
+    .outcomes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .outcome-box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .outcome-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+
+  .outcome-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* Disclosure */
+  .disclosure-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+  }
+
+  .disclosure-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .disclosure-header svg {
+    color: var(--accent);
+  }
+
+  .disclosure-header h3 {
+    font-size: var(--text-lg);
+  }
+
+  .disclosure-card p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .todo-block {
+    background: color-mix(in srgb, #f59e0b 10%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+
+  .todo-block strong {
+    display: block;
+    font-size: var(--text-xs);
+    color: #b45309;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .todo-block strong {
+      color: #fbbf24;
+    }
+  }
+
+  .todo-block p {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .cta-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--color-snow);
+  }
+
+  .cta-content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+</style>

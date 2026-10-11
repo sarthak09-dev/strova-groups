@@ -1,0 +1,24 @@
+{
+  "name": "strova-group",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "audit": "node audit.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.0",
+    "astro": "^5.8.0",
+    "gsap": "^3.12.7",
+    "lenis": "^1.3.26",
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource-variable/space-grotesk": "^5.2.0"
+  }
+}

@@ -1,0 +1,549 @@
+---
+/**
+ * About Page (src/pages/about.astro)
+ *
+ * Requirements:
+ * - Real founder name, photo placeholder/SVG (public/images/founder.webp), location, story
+ * - Person JSON-LD schema for founder
+ * - Organization details, Udyam MSME reference, operating hours (IST)
+ * - NO invented testimonials, client logos, stats, awards, or fake team members
+ * - Clear TODO blocks for client documents and filings
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Babita Kumari',
+  jobTitle: '[ROLE TITLE]',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  image: 'https://strovagroups.in/images/founder.webp',
+  description:
+    'Founder [ROLE TITLE] at Strova Group. Specializing in high-performance web systems, Android software architecture, and enterprise AI automation workflows.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '[ADDRESS]',
+    addressCountry: 'IN',
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'About',
+      item: 'https://strovagroups.in/about/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="About Strova Group — Founder Story & Principles"
+  description="Learn about Strova Group's founder, engineering standards, and mission to deliver transparent AI and software automation for growing enterprises."
+  jsonLd={[personJsonLd, breadcrumbJsonLd]}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="ambient-glow-indigo" style="top: -120px; right: 5%; opacity: 0.6;"></div>
+    <div class="ambient-glow-cyan" style="bottom: 20px; left: -80px; opacity: 0.4;"></div>
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-kicker">About Our Practice</span>
+        <h1 class="page-hero__title">
+          Engineering Built on <span class="gradient-text">Rigor &amp; Radical Transparency</span>
+        </h1>
+        <p class="page-hero__lead">
+          Strova Group was founded with a straightforward conviction: growing businesses deserve production-grade software engineering and data-driven marketing without bloated agency overhead or proprietary vendor lock-in.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder Profile & Story -->
+  <section class="section founder-section" aria-labelledby="founder-title">
+    <div class="container">
+      <div class="founder-grid">
+        <div class="founder-visual">
+          <div class="founder-image-wrapper">
+            <img
+              src="/images/founder.webp"
+              alt="Babita Kumari — [ROLE TITLE] at Strova Group"
+              width="400"
+              height="400"
+              loading="eager"
+              decoding="async"
+              class="founder-image"
+            />
+            <div class="founder-caption">
+              <strong>Babita Kumari</strong>
+              <span>[ROLE TITLE]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="founder-narrative">
+          <span class="section-kicker">Leadership &amp; Engineering Philosophy</span>
+          <h2 id="founder-title" class="founder-name">Meet the Founder</h2>
+          <p class="lead-text">
+            "Most small-to-midsize businesses are sold software solutions that are either fragile, unmaintainable, or weighed down by unnecessary subscription bloat. At Strova Group, we build software like engineers—focusing on fundamentals, performance benchmarks, and direct commercial utility."
+          </p>
+          <p>
+            Strova Group operates out of India, delivering engineering and growth systems for businesses across Indian metro and regional commercial hubs as well as international clients in North America, Europe, and the Middle East.
+          </p>
+          <p>
+            With extensive experience across full-stack web architectures, native Android development, and automated webhook pipelines, the firm blends technical depth with commercial realism. Every architecture choice is driven by measurable return: lowering customer acquisition costs, speeding up Time-to-First-Byte, and eliminating manual operational bottlenecks.
+          </p>
+          
+          <div class="founder-credentials">
+            <div class="credential-item">
+              <span class="credential-label">Role</span>
+              <span class="credential-value">[ROLE TITLE]</span>
+            </div>
+            <div class="credential-item">
+              <span class="credential-label">Headquarters</span>
+              <span class="credential-value">India (Serving Pan-India &amp; Global Clients)</span>
+            </div>
+            <div class="credential-item">
+              <span class="credential-label">Direct Communication</span>
+              <span class="credential-value"><a href="mailto:info@strovagroups.in">info@strovagroups.in</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Operating Principles -->
+  <section class="section principles-section" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Our North Star</span>
+        <h2 id="principles-title" class="section-title">Four Principles That Guide Every Engagement</h2>
+        <p class="section-subtitle">
+          These principles govern every line of code we ship, every campaign we manage, and every client contract we execute.
+        </p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="card principle-card">
+          <div class="principle-number">01</div>
+          <h3 class="principle-heading">Client Code &amp; Data Autonomy</h3>
+          <p class="principle-text">
+            You own 100% of your software, domain configurations, and cloud accounts upon project sign-off. We never hold repositories hostage, encrypt configuration keys, or lock you into proprietary hosting platforms.
+          </p>
+        </div>
+
+        <div class="card principle-card">
+          <div class="principle-number">02</div>
+          <h3 class="principle-heading">Engineering Over Hype</h3>
+          <p class="principle-text">
+            We do not pitch buzzwords for the sake of inflated invoices. When we deploy AI, it is grounded in real webhooks, schema validation, and verified business workflows—never ungrounded parlor tricks.
+          </p>
+        </div>
+
+        <div class="card principle-card">
+          <div class="principle-number">03</div>
+          <h3 class="principle-heading">Radical Operational Candor</h3>
+          <p class="principle-text">
+            If a proposed feature will not drive business value or if an architectural approach introduces security vulnerabilities, we will tell you directly before billing a single hour.
+          </p>
+        </div>
+
+        <div class="card principle-card">
+          <div class="principle-number">04</div>
+          <h3 class="principle-heading">Zero Synthetic Social Proof</h3>
+          <p class="principle-text">
+            We strictly refuse to fabricate testimonials, generate fake customer avatars, or purchase vanity awards. Everything you see on Strova Group is authentic, verifiable, and transparently disclosed.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Corporate Registration & Trust Details -->
+  <section class="section legal-details-section" aria-labelledby="legal-title">
+    <div class="container">
+      <div class="legal-box">
+        <span class="section-kicker">Verified Identity</span>
+        <h2 id="legal-title" class="legal-box__title">Registered Corporate Information</h2>
+        <p class="legal-box__intro">
+          Strova Group operates as a registered enterprise in India under the Ministry of Micro, Small &amp; Medium Enterprises (MSME).
+        </p>
+
+        <div class="legal-grid">
+          <div class="legal-item">
+            <span class="legal-item__label">Legal Entity Name</span>
+            <span class="legal-item__value">Strova Group</span>
+          </div>
+          <div class="legal-item">
+            <span class="legal-item__label">Registered Address</span>
+            <!-- TODO: Replace with real address once confirmed -->
+            <span class="legal-item__value">[ADDRESS], India</span>
+          </div>
+          <div class="legal-item">
+            <span class="legal-item__label">MSME / Udyam Number</span>
+            <!-- TODO: Replace with official Udyam certificate registration number -->
+            <span class="legal-item__value">[UDYAM NO. when issued]</span>
+          </div>
+          <div class="legal-item">
+            <span class="legal-item__label">Jurisdiction</span>
+            <span class="legal-item__value">India (Governed under the laws of the Republic of India)</span>
+          </div>
+          <div class="legal-item">
+            <span class="legal-item__label">Registered Business Hours</span>
+            <span class="legal-item__value">Monday – Saturday, 10:00 AM – 7:00 PM IST (UTC+05:30)</span>
+          </div>
+        </div>
+
+        <!-- Documentation Checklist Notice for Client -->
+        <div class="todo-notice" role="note">
+          <div class="todo-notice__title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>TODO Documentation Block: Real Registry Filings</span>
+          </div>
+          <p class="todo-notice__text">
+            Prior to final production launch, replace <code>[UDYAM NO. when issued]</code> with your official Udyam Registration Certificate number, confirm <code>[ADDRESS]</code>, and attach downloadable PDF copies of public tax certificates or corporate registration documents if desired.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">Work Directly With an Engineering Principal</h2>
+          <p class="cta-desc">
+            No endless sales reps or handoffs. When you contact Strova Group, you speak directly with technical leads who design and execute your systems.
+          </p>
+          <div class="cta-buttons">
+            <a href="/contact/" class="btn btn--primary btn--lg">
+              Initiate Project Discussion
+            </a>
+            <a href="/case-studies/" class="btn btn--outline btn--lg">
+              Explore Reference Blueprints
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Founder Section */
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .founder-grid {
+      grid-template-columns: 360px 1fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .founder-image-wrapper {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  .founder-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  .founder-caption {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .founder-caption strong {
+    font-size: var(--text-base);
+  }
+
+  .founder-caption span {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .founder-name {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .lead-text {
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+    line-height: 1.6;
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-4);
+    font-style: italic;
+  }
+
+  .founder-narrative p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+  }
+
+  .founder-credentials {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-color);
+  }
+
+  @media (min-width: 36rem) {
+    .founder-credentials {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .credential-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .credential-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .credential-value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .credential-value a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Principles */
+  .principles-section {
+    background: var(--bg-surface);
+  }
+
+  .principle-card {
+    padding: var(--space-8);
+  }
+
+  .principle-number {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .principle-heading {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .principle-text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Legal Details */
+  .legal-box {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-10) var(--space-8);
+  }
+
+  .legal-box__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .legal-box__intro {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+  }
+
+  .legal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  @media (min-width: 44rem) {
+    .legal-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .legal-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    background: var(--bg-surface);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+  }
+
+  .legal-item__label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .legal-item__value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .todo-notice {
+    background: color-mix(in srgb, #f59e0b 10%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .todo-notice__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: #b45309;
+    margin-bottom: var(--space-2);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .todo-notice__title {
+      color: #fbbf24;
+    }
+  }
+
+  .todo-notice__text {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .todo-notice__text code {
+    background: rgba(0, 0, 0, 0.08);
+    padding: 0.15rem 0.35rem;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+  }
+
+  .cta-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--color-snow);
+  }
+
+  .cta-content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+</style>

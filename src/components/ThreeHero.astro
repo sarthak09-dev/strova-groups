@@ -1,0 +1,578 @@
+---
+/**
+ * ThreeHero.astro
+ *
+ * Ultra-Realistic Physically Based Rendered (PBR) 3D Kinetic Sculpture
+ * - Studio-grade lighting rig & procedural PMREM environment reflection map
+ * - MeshPhysicalMaterial with metalness, transmission, clearcoat, & iridescence
+ * - Multi-ring gyroscopic chronometer with faceted crystalline core & orbital satellites
+ * - Damped mouse-tracking parallax (lerp) with dynamic specular reflections
+ * - Performance guardrails: DPR capped at 2, IntersectionObserver pause, lazy idle load
+ * - Accessible SVG fallback for prefers-reduced-motion & non-WebGL environments
+ */
+---
+
+<div class="three-hero" id="three-hero-container" aria-hidden="true">
+  <!-- Atmospheric studio ambient backglow -->
+  <div class="three-hero__glow" aria-hidden="true"></div>
+
+  <!-- Accessible Fallback SVG -->
+  <img
+    id="three-hero-fallback"
+    class="three-hero__fallback"
+    src="/images/hero-fallback.svg"
+    alt="Strova Group ultra-precise kinetic 3D sculpture visual"
+    width="640"
+    height="640"
+    loading="eager"
+    decoding="async"
+  />
+
+  <!-- Three.js Canvas: initially hidden until WebGL first frame renders -->
+  <canvas id="three-hero-canvas" class="three-hero__canvas" style="display: none;"></canvas>
+</div>
+
+<style>
+  .three-hero {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .three-hero__glow {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(99, 102, 241, 0.22) 0%,
+      rgba(34, 211, 238, 0.12) 40%,
+      transparent 70%
+    );
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: 0;
+    transform: translateZ(0);
+  }
+
+  .three-hero__fallback {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 25px 50px rgba(99, 102, 241, 0.2));
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s ease;
+    z-index: 1;
+  }
+
+  .three-hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    outline: none;
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .three-hero.loaded .three-hero__fallback {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .three-hero.loaded .three-hero__canvas {
+    display: block !important;
+    animation: heroCanvasReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes heroCanvasReveal {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>
+
+<script>
+  function hasWebGLSupport(): boolean {
+    try {
+      const canvas = document.createElement('canvas');
+      return Boolean(
+        window.WebGLRenderingContext &&
+        (canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function initThreeHero() {
+    const container = document.getElementById('three-hero-container');
+    const canvas = document.getElementById('three-hero-canvas') as HTMLCanvasElement | null;
+    const fallback = document.getElementById('three-hero-fallback');
+
+    if (!container || !canvas || !fallback) return;
+
+    // Check for prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // Check for WebGL capability
+    if (!hasWebGLSupport()) return;
+
+    let cleanupActive = false;
+
+    const loadEngine = async () => {
+      try {
+        const THREE = await import('three');
+
+        let isRunning = false;
+        let animationFrameId: number | null = null;
+
+        // Scene setup
+        const scene = new THREE.Scene();
+
+        // Safe dimension resolution
+        const containerWidth = container.clientWidth || 600;
+        const containerHeight = container.clientHeight || containerWidth || 600;
+        const aspect = containerWidth / containerHeight;
+
+        // Camera setup: distance 8.4 with FOV 40 provides ample frustum space without clipping
+        const camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 100);
+        camera.position.set(0, 0, 8.4);
+
+        // Renderer with High Dynamic Range ACES Filmic tone mapping
+        const renderer = new THREE.WebGLRenderer({
+          canvas,
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+        });
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.35;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        renderer.setPixelRatio(dpr);
+        renderer.setSize(containerWidth, containerHeight);
+
+        // Procedural Studio Equirectangular Environment Map
+        const envCanvas = document.createElement('canvas');
+        envCanvas.width = 512;
+        envCanvas.height = 256;
+        const envCtx = envCanvas.getContext('2d');
+        if (envCtx) {
+          const bgGrad = envCtx.createLinearGradient(0, 0, 0, 256);
+          bgGrad.addColorStop(0, '#060810');
+          bgGrad.addColorStop(0.5, '#0b0f1a');
+          bgGrad.addColorStop(1, '#05060b');
+          envCtx.fillStyle = bgGrad;
+          envCtx.fillRect(0, 0, 512, 256);
+
+          // Top ceiling softbox
+          const topLight = envCtx.createLinearGradient(0, 0, 0, 70);
+          topLight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+          topLight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          envCtx.fillStyle = topLight;
+          envCtx.fillRect(100, 0, 312, 70);
+
+          // Cyan left rim softbox
+          const cyanGlow = envCtx.createRadialGradient(90, 130, 10, 90, 130, 110);
+          cyanGlow.addColorStop(0, 'rgba(34, 211, 238, 0.9)');
+          cyanGlow.addColorStop(0.5, 'rgba(34, 211, 238, 0.35)');
+          cyanGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          envCtx.fillStyle = cyanGlow;
+          envCtx.fillRect(0, 30, 200, 200);
+
+          // Indigo right rim softbox
+          const indigoGlow = envCtx.createRadialGradient(420, 130, 10, 420, 130, 120);
+          indigoGlow.addColorStop(0, 'rgba(99, 102, 241, 0.95)');
+          indigoGlow.addColorStop(0.5, 'rgba(99, 102, 241, 0.4)');
+          indigoGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          envCtx.fillStyle = indigoGlow;
+          envCtx.fillRect(310, 25, 202, 210);
+
+          // Specular spot key
+          const keySpot = envCtx.createRadialGradient(256, 75, 2, 256, 75, 45);
+          keySpot.addColorStop(0, 'rgba(255, 255, 255, 1)');
+          keySpot.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          envCtx.fillStyle = keySpot;
+          envCtx.fillRect(205, 30, 102, 90);
+
+          const envTexture = new THREE.CanvasTexture(envCanvas);
+          envTexture.mapping = THREE.EquirectangularReflectionMapping;
+
+          const pmremGenerator = new THREE.PMREMGenerator(renderer);
+          pmremGenerator.compileEquirectangularShader();
+          scene.environment = pmremGenerator.fromEquirectangular(envTexture).texture;
+          pmremGenerator.dispose();
+          envTexture.dispose();
+        }
+
+        // Multi-Point Studio Lighting Rig
+        const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+        keyLight.position.set(5.0, 7.0, 5.0);
+        scene.add(keyLight);
+
+        const cyanRim = new THREE.PointLight(0x22d3ee, 5.2, 35);
+        cyanRim.position.set(-6.0, -3.0, 3.5);
+        scene.add(cyanRim);
+
+        const indigoBack = new THREE.PointLight(0x6366f1, 5.8, 35);
+        indigoBack.position.set(4.0, -5.0, -5.0);
+        scene.add(indigoBack);
+
+        const specularSpot = new THREE.PointLight(0xf8fafc, 2.8, 25);
+        specularSpot.position.set(1.5, 4.5, 4.0);
+        scene.add(specularSpot);
+
+        const ambientLight = new THREE.AmbientLight(0x0e1424, 1.3);
+        scene.add(ambientLight);
+
+        // Root Sculpture Group
+        const rootGroup = new THREE.Group();
+        scene.add(rootGroup);
+
+        // 1. Central Faceted Optical Crystal Core
+        const coreGroup = new THREE.Group();
+        rootGroup.add(coreGroup);
+
+        // Inner radiant singularity (drawn first inside transmissive glass)
+        const singularityGeo = new THREE.OctahedronGeometry(0.42, 1);
+        const singularityMat = new THREE.MeshStandardMaterial({
+          color: 0x22d3ee,
+          emissive: 0x38bdf8,
+          emissiveIntensity: 2.2,
+          roughness: 0.1,
+          metalness: 0.9,
+        });
+        const singularityMesh = new THREE.Mesh(singularityGeo, singularityMat);
+        singularityMesh.renderOrder = 1;
+        coreGroup.add(singularityMesh);
+
+        // Optical crystal outer shell (MeshPhysicalMaterial with transmission)
+        const crystalGeo = new THREE.IcosahedronGeometry(1.05, 0);
+        const crystalMat = new THREE.MeshPhysicalMaterial({
+          color: 0x0a1628,
+          emissive: 0x051020,
+          roughness: 0.05,
+          metalness: 0.08,
+          transmission: 0.88,
+          thickness: 1.8,
+          ior: 1.54,
+          attenuationColor: new THREE.Color(0x22d3ee),
+          attenuationDistance: 0.85,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+          iridescence: 0.8,
+          iridescenceIOR: 1.4,
+          flatShading: true,
+          transparent: true,
+        });
+        const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
+        crystalMesh.renderOrder = 2;
+        coreGroup.add(crystalMesh);
+
+        // Micro-offset wireframe overlay (scaled slightly to avoid Z-fighting completely)
+        const facetWireMat = new THREE.MeshBasicMaterial({
+          color: 0x818cf8,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.28,
+        });
+        const facetWire = new THREE.Mesh(crystalGeo, facetWireMat);
+        facetWire.scale.setScalar(1.0025);
+        facetWire.renderOrder = 3;
+        coreGroup.add(facetWire);
+
+        // 2. Inner Gimbal Ring (Polished Liquid Mirror Chrome)
+        const innerGimbalGroup = new THREE.Group();
+        rootGroup.add(innerGimbalGroup);
+
+        const innerRingGeo = new THREE.TorusGeometry(1.48, 0.038, 32, 120);
+        const innerRingMat = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.98,
+          roughness: 0.05,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+          reflectivity: 1.0,
+        });
+        const innerRingMesh = new THREE.Mesh(innerRingGeo, innerRingMat);
+        innerGimbalGroup.add(innerRingMesh);
+
+        // Axis pivot cylinders on inner gimbal
+        const pivotGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.15, 16);
+        const pivotMat = new THREE.MeshPhysicalMaterial({
+          color: 0x818cf8,
+          metalness: 0.95,
+          roughness: 0.08,
+          clearcoat: 1.0,
+        });
+        const pivot1 = new THREE.Mesh(pivotGeo, pivotMat);
+        pivot1.position.set(0, 1.48, 0);
+        const pivot2 = new THREE.Mesh(pivotGeo, pivotMat);
+        pivot2.position.set(0, -1.48, 0);
+        innerGimbalGroup.add(pivot1, pivot2);
+
+        // 3. Middle Chronometer Ring (Dark Brushed Titanium & Satellite Nodes)
+        const middleGimbalGroup = new THREE.Group();
+        rootGroup.add(middleGimbalGroup);
+
+        const middleRingGeo = new THREE.TorusGeometry(1.98, 0.052, 32, 120);
+        const middleRingMat = new THREE.MeshPhysicalMaterial({
+          color: 0x1b2333,
+          metalness: 0.94,
+          roughness: 0.2,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.08,
+          iridescence: 0.45,
+        });
+        const middleRingMesh = new THREE.Mesh(middleRingGeo, middleRingMat);
+        middleGimbalGroup.add(middleRingMesh);
+
+        // 3 Orbiting Satellites on Middle Ring
+        const satelliteGeo = new THREE.SphereGeometry(0.078, 24, 24);
+        const satelliteMat = new THREE.MeshPhysicalMaterial({
+          color: 0x6366f1,
+          emissive: 0x312e81,
+          emissiveIntensity: 0.8,
+          metalness: 0.96,
+          roughness: 0.08,
+          clearcoat: 1.0,
+        });
+
+        for (let i = 0; i < 3; i++) {
+          const angle = (i * 2 * Math.PI) / 3;
+          const sat = new THREE.Mesh(satelliteGeo, satelliteMat);
+          sat.position.set(Math.cos(angle) * 1.98, Math.sin(angle) * 1.98, 0);
+          middleGimbalGroup.add(sat);
+        }
+
+        // 4. Outer Aerospace Kinetic Ring (Electric Indigo Alloy)
+        const outerGimbalGroup = new THREE.Group();
+        rootGroup.add(outerGimbalGroup);
+
+        const outerRingGeo = new THREE.TorusGeometry(2.45, 0.042, 32, 120);
+        const outerRingMat = new THREE.MeshPhysicalMaterial({
+          color: 0x4f46e5,
+          metalness: 0.96,
+          roughness: 0.12,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.04,
+          iridescence: 0.55,
+        });
+        const outerRingMesh = new THREE.Mesh(outerRingGeo, outerRingMat);
+        outerGimbalGroup.add(outerRingMesh);
+
+        // 5. Fine Horizon Halo (Electric Cyan Luminous Ring)
+        const haloGeo = new THREE.TorusGeometry(2.72, 0.014, 16, 120);
+        const haloMat = new THREE.MeshPhysicalMaterial({
+          color: 0x22d3ee,
+          emissive: 0x06b6d4,
+          emissiveIntensity: 0.6,
+          metalness: 0.9,
+          roughness: 0.08,
+          clearcoat: 1.0,
+        });
+        const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+        rootGroup.add(haloMesh);
+
+        // 6. Quantum Micro-Particle Field
+        const particleCanvas = document.createElement('canvas');
+        particleCanvas.width = 32;
+        particleCanvas.height = 32;
+        const pCtx = particleCanvas.getContext('2d');
+        if (pCtx) {
+          const pGrad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+          pGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+          pGrad.addColorStop(0.3, 'rgba(34, 211, 238, 0.85)');
+          pGrad.addColorStop(0.7, 'rgba(99, 102, 241, 0.3)');
+          pGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          pCtx.fillStyle = pGrad;
+          pCtx.fillRect(0, 0, 32, 32);
+        }
+        const particleTexture = new THREE.CanvasTexture(particleCanvas);
+
+        const particlesCount = 130;
+        const particleGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount; i++) {
+          const u = Math.random();
+          const v = Math.random();
+          const theta = u * 2.0 * Math.PI;
+          const phi = Math.acos(2.0 * v - 1.0);
+          const r = 2.1 + Math.random() * 0.72;
+
+          const sinPhi = Math.sin(phi);
+          positions[i * 3] = r * sinPhi * Math.cos(theta);
+          positions[i * 3 + 1] = r * sinPhi * Math.sin(theta);
+          positions[i * 3 + 2] = r * Math.cos(phi);
+        }
+
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMat = new THREE.PointsMaterial({
+          map: particleTexture,
+          size: 0.11,
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          opacity: 0.85,
+        });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        rootGroup.add(particleSystem);
+
+        // Damped Mouse Parallax Tracking (Lerp) with Normalized Viewport Space
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+
+        const onPointerMove = (e: MouseEvent) => {
+          const normX = (e.clientX / window.innerWidth - 0.5) * 2;
+          const normY = (e.clientY / window.innerHeight - 0.5) * 2;
+          targetX = Math.max(-1, Math.min(1, normX));
+          targetY = Math.max(-1, Math.min(1, normY));
+        };
+
+        window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+        // Animation Loop with Multi-axial Gyroscopic Motion
+        const clock = new THREE.Clock();
+
+        const animate = () => {
+          if (!isRunning) return;
+
+          const time = clock.getElapsedTime();
+
+          // Smooth lerp mouse parallax
+          currentX += (targetX - currentX) * 0.045;
+          currentY += (targetY - currentY) * 0.045;
+
+          // Local gyroscopic chronometer rotations
+          coreGroup.rotation.x += 0.003;
+          coreGroup.rotation.y += 0.004;
+
+          innerGimbalGroup.rotation.x += 0.0065;
+          innerGimbalGroup.rotation.z += 0.0035;
+
+          middleGimbalGroup.rotation.y -= 0.0045;
+          middleGimbalGroup.rotation.x += 0.002;
+
+          outerGimbalGroup.rotation.z += 0.003;
+          outerGimbalGroup.rotation.y -= 0.0025;
+
+          haloMesh.rotation.z -= 0.0018;
+          haloMesh.rotation.x += 0.0012;
+
+          particleSystem.rotation.y += 0.0006;
+          particleSystem.rotation.z += 0.0004;
+
+          // Harmonic floating levitation
+          rootGroup.position.y = Math.sin(time * 1.2) * 0.06;
+
+          // Root group tilts strictly with mouse parallax (bounded, no unbounded drift)
+          rootGroup.rotation.y = currentX * 0.42;
+          rootGroup.rotation.x = currentY * 0.32;
+
+          // Studio specular highlights follow cursor smoothly
+          keyLight.position.x = 5.0 + currentX * 2.5;
+          cyanRim.position.y = -3.0 + currentY * 2.0;
+          specularSpot.position.x = 1.5 - currentX * 1.8;
+
+          renderer.render(scene, camera);
+          animationFrameId = requestAnimationFrame(animate);
+        };
+
+        // Resize handling
+        const onResize = () => {
+          if (!container) return;
+          const width = container.clientWidth || 600;
+          const height = container.clientHeight || width || 600;
+          if (width === 0 || height === 0) return;
+
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          renderer.setSize(width, height);
+        };
+
+        window.addEventListener('resize', onResize, { passive: true });
+
+        // WebGL Context Lost & Restored Handling
+        canvas.addEventListener('webglcontextlost', (e) => {
+          e.preventDefault();
+          if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+          isRunning = false;
+        });
+
+        canvas.addEventListener('webglcontextrestored', () => {
+          loadEngine();
+        });
+
+        // Pre-render single initial frame before revealing canvas to prevent black flash
+        renderer.render(scene, camera);
+
+        // Pause rendering when off-screen via IntersectionObserver
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                if (!isRunning) {
+                  isRunning = true;
+                  animate();
+                }
+              } else {
+                if (isRunning) {
+                  isRunning = false;
+                  if (animationFrameId !== null) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                  }
+                }
+              }
+            }
+          },
+          { threshold: 0.05 }
+        );
+
+        observer.observe(container);
+
+        // Signal loaded state to smoothly crossfade canvas in and fallback out
+        container.classList.add('loaded');
+      } catch (err) {
+        console.warn('Three.js kinetic sculpture failed to initialize, keeping fallback SVG:', err);
+      }
+    };
+
+    // Defer initialization until page is idle after load
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => loadEngine(), { timeout: 1500 });
+    } else {
+      setTimeout(loadEngine, 200);
+    }
+  }
+
+  // Run on DOM load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThreeHero);
+  } else {
+    initThreeHero();
+  }
+</script>

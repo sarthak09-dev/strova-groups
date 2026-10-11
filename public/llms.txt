@@ -1,0 +1,33 @@
+# Strova Group
+
+> AI & automation for growing businesses.
+
+Strova Group is an India-based technology and digital services firm delivering high-performance software engineering, native mobile apps, automated WhatsApp workflows, and data-driven marketing for local businesses in India and international clients worldwide.
+
+- **Canonical Origin**: https://strovagroups.in
+- **Email**: info@strovagroups.in
+- **Phone & WhatsApp**: +91 92880 77802 (tel:+919288077802, https://wa.me/919288077802)
+- **Headquarters**: India (Operating Hours: Mon–Sat, 10:00 AM – 7:00 PM IST / UTC+5:30)
+- **Founder**: Babita Kumari, [ROLE TITLE]
+- **Udyam MSME**: [UDYAM NO. when issued]
+- **Address**: [ADDRESS]
+- **Commercial Policy**: 50% upfront deposit on milestone architecture, 50% upon staging QA sign-off prior to production deployment. Currency in INR with USD/EUR on request.
+
+## Divisions
+
+- **Strova Technologies** (https://strovagroups.in/technologies/): High-performance static and hybrid web platforms (Astro, Next.js), native Android applications (Kotlin, Jetpack Compose), custom SaaS dashboards, and official Meta WhatsApp Cloud API & AI automation pipelines.
+- **Strova Digital** (https://strovagroups.in/digital/): Technical SEO, Core Web Vitals remediation, paid search & social media advertising (Google Ads, Meta Ads) with server-side CAPI tracking, and B2B inbound lead generation funnels.
+- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery (COD) RTO fraud reduction engines (Launching Q3 2026).
+
+## Key Pages
+
+- [Home](https://strovagroups.in/): Overview of Strova Group, active divisions, four-step execution process, pricing snapshots, and FAQ.
+- [Strova Technologies](https://strovagroups.in/technologies/): Custom software, Android apps, SaaS portals, and WhatsApp automation details and pricing.
+- [Strova Digital](https://strovagroups.in/digital/): Performance marketing, technical SEO, and conversion rate optimization services.
+- [Strova Commerce (Coming Soon)](https://strovagroups.in/commerce/): Headless commerce and conversational retail architecture roadmap.
+- [About Strova Group](https://strovagroups.in/about/): Founder story (Babita Kumari), four core operating principles, and verified corporate identity.
+- [Case Studies](https://strovagroups.in/case-studies/): Technical architecture blueprints and production problem-solution breakdowns.
+- [Frequently Asked Questions (FAQ)](https://strovagroups.in/faq/): Direct answers regarding project timelines, 50% deposit policy, code ownership, and integrations.
+- [Contact](https://strovagroups.in/contact/): Inbound project inquiry form with honeypot spam protection, 24 business hours response SLA, direct phone, and WhatsApp chat.
+- [Privacy Policy](https://strovagroups.in/privacy/): Comprehensive DPDP Act 2023 (India) and GDPR data protection practices, Data Fiduciary disclosures, and Grievance Officer contacts.
+- [Terms of Service](https://strovagroups.in/terms/): Commercial engagement terms, milestone delivery framework, 100% IP handover, and 30-day post-launch bug warranty.

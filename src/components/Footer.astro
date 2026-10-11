@@ -1,0 +1,213 @@
+---
+/*
+ * Footer — business info, legal links, contact details.
+ * Shows: legal name, address, email, phone/WhatsApp, Udyam, hours.
+ */
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer__grid">
+      <!-- Brand column -->
+      <div class="footer__brand">
+        <a href="/" class="footer__logo" aria-label="Strova Group — Home">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="8" fill="var(--accent)"/>
+            <path d="M10 24L18 10L26 24H10Z" fill="var(--color-snow)" opacity="0.9"/>
+            <circle cx="18" cy="20" r="3" fill="var(--accent)"/>
+          </svg>
+          <span class="footer__wordmark">Strova Group</span>
+        </a>
+        <p class="footer__tagline text-sm text-secondary">
+          AI &amp; automation for growing businesses.
+        </p>
+      </div>
+
+      <!-- Services -->
+      <div class="footer__col">
+        <h2 class="footer__heading">Services</h2>
+        <ul class="footer__list" role="list">
+          <li><a href="/technologies/">Strova Technologies</a></li>
+          <li><a href="/digital/">Strova Digital</a></li>
+          <li><a href="/commerce/">Strova Commerce</a></li>
+          <li><a href="/case-studies/">Case Studies</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="footer__col">
+        <h2 class="footer__heading">Company</h2>
+        <ul class="footer__list" role="list">
+          <li><a href="/about/">About</a></li>
+          <li><a href="/faq/">FAQ</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy Policy</a></li>
+          <li><a href="/terms/">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact info -->
+      <div class="footer__col">
+        <h2 class="footer__heading">Get in Touch</h2>
+        <address class="footer__contact">
+          <p>
+            <strong>Strova Group</strong>
+          </p>
+          <p>
+            <!-- TODO: Replace with real registered address once confirmed -->
+            [ADDRESS]<br/>
+            India
+          </p>
+          <p>
+            <a href="mailto:info@strovagroups.in">info@strovagroups.in</a>
+          </p>
+          <p>
+            <a href="tel:+919288077802">+91 92880 77802</a>
+            <br/>
+            <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">
+              WhatsApp: +91 92880 77802
+            </a>
+          </p>
+          <p class="text-sm text-muted">
+            <!-- TODO: Replace with official Udyam number once issued -->
+            Udyam: [UDYAM NO. when issued]
+          </p>
+          <div class="footer__status-wrap" style="margin-block: var(--space-3);">
+            <div class="ist-status-badge" aria-label="Operating status">
+              <span class="status-pulse-dot status-open" aria-hidden="true"></span>
+              <span class="status-text">IST UTC+5:30 &bull; Office Open</span>
+            </div>
+          </div>
+          <p class="text-sm text-muted">
+            Mon–Sat, 10:00 AM – 7:00 PM IST (UTC+5:30)
+          </p>
+        </address>
+      </div>
+    </div>
+
+    <hr class="footer__divider" />
+
+    <div class="footer__bottom">
+      <p class="text-sm text-muted">
+        &copy; {currentYear} Strova Group. All rights reserved.
+      </p>
+      <p class="text-xs text-muted">
+        <!-- TODO: Replace with official Udyam number once issued -->
+        Registered under MSME — Udyam No. [UDYAM NO. when issued]
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    padding-block: var(--space-16) var(--space-8);
+    margin-top: auto;
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 40rem) {
+    .footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .footer__grid {
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+    }
+  }
+
+  .footer__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .footer__wordmark {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .footer__tagline {
+    margin-top: var(--space-3);
+  }
+
+  .footer__heading {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__list li {
+    margin-bottom: var(--space-2);
+  }
+
+  .footer__list a {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .footer__list a:hover {
+    color: var(--accent);
+  }
+
+  .footer__contact {
+    font-style: normal;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .footer__contact p {
+    margin-bottom: var(--space-3);
+  }
+
+  .footer__contact a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer__contact a:hover {
+    text-decoration: underline;
+  }
+
+  .footer__divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin-block: var(--space-10);
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  @media (min-width: 40rem) {
+    .footer__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+</style>
+

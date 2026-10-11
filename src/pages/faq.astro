@@ -1,0 +1,364 @@
+---
+/**
+ * FAQ Page (src/pages/faq.astro)
+ *
+ * Dedicated Frequently Asked Questions page covering all divisions,
+ * commercial terms, 50% upfront milestone model, and engineering standards.
+ * Structured with FAQPage and BreadcrumbList JSON-LD schemas.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+  category: string;
+}
+
+const faqs: FAQItem[] = [
+  // General & Process
+  {
+    category: 'Engagement & Process',
+    question: 'What is your typical project delivery timeline?',
+    answer:
+      'Standard web applications and WhatsApp automation pipelines typically launch within 3 to 6 weeks. Larger custom SaaS systems and Android applications follow milestone-based 2-week agile sprints, with MVP deliveries commonly reaching staging environments within 8 to 12 weeks.',
+  },
+  {
+    category: 'Engagement & Process',
+    question: 'How does the 50% upfront payment policy work?',
+    answer:
+      'We operate on transparent milestone commitments. Every project requires a 50% deposit upon scope and technical architecture sign-off to reserve engineering sprints. The remaining 50% is due only upon staging demonstration, quality assurance sign-off, and prior to production domain cutover.',
+  },
+  {
+    category: 'Engagement & Process',
+    question: 'Do we own the full source code and intellectual property?',
+    answer:
+      'Yes, 100%. Upon final milestone settlement, complete ownership of all custom codebase, repositories, documentation, and configuration scripts transfers entirely to your organization without proprietary platform lock-in.',
+  },
+  {
+    category: 'Engagement & Process',
+    question: 'Do you offer a post-launch warranty?',
+    answer:
+      'Yes. Every custom software project includes a complimentary 30-day post-launch warranty starting from the production deployment date. We promptly resolve any reproducible functional bugs or regressions that diverge from the agreed specification at zero extra charge.',
+  },
+
+  // Technologies
+  {
+    category: 'Strova Technologies',
+    question: 'How do you build websites for clinics and healthcare providers in India?',
+    answer:
+      'We engineer ultra-fast, mobile-first static platforms designed for patients on mobile 4G/5G networks. They feature clear doctor schedules, direct WhatsApp consultation booking, and strict DISHA and DPDP Act 2023 data hygiene with zero insecure third-party ad tracking.',
+  },
+  {
+    category: 'Strova Technologies',
+    question: 'How does WhatsApp automation work with our existing business tools?',
+    answer:
+      'We build automated workflows using the official Meta WhatsApp Cloud API. We connect webhooks directly to your CRM (Zoho, HubSpot), relational database, or Google Sheets to qualify inbound leads, send automated appointment reminders, and escalate to human staff with full conversation history.',
+  },
+  {
+    category: 'Strova Technologies',
+    question: 'What mobile application stacks do you build on Android?',
+    answer:
+      'We build native Android applications using modern Kotlin and Jetpack Compose. Our mobile architectures prioritize offline-first data caching via Room SQLite, hardware sensor integrations, and strict background battery efficiency.',
+  },
+
+  // Digital
+  {
+    category: 'Strova Digital',
+    question: 'What does a Technical SEO sprint include?',
+    answer:
+      'Our technical SEO audits address Core Web Vitals (LCP, CLS, INP), Schema.org JSON-LD microdata architecture, crawl budget optimization, server response headers, internal link topology, and indexing cleanups. We solve root technical causes rather than superficial cosmetic suggestions.',
+  },
+  {
+    category: 'Strova Digital',
+    question: 'How do you manage paid ad campaigns on Google and Meta?',
+    answer:
+      'We manage campaigns with server-side Conversion API (CAPI) tracking and clean UTM attribution. We focus strictly on bottom-line Return on Ad Spend (ROAS) and qualified customer acquisition costs (CPA), accompanied by transparent bi-weekly reports.',
+  },
+
+  // Commerce
+  {
+    category: 'Strova Commerce',
+    question: 'What is Strova Commerce and when will it launch?',
+    answer:
+      'Strova Commerce is our upcoming division dedicated to high-speed headless storefronts, native WhatsApp catalog checkouts, omnichannel stock synchronization, and Cash-on-Delivery (COD) RTO fraud reduction. General launch is targeted for Q3 2026, with private pilot onboarding currently open.',
+  },
+
+  // Commercial & International
+  {
+    category: 'Billing & International',
+    question: 'Do you work with international clients outside India?',
+    answer:
+      'Yes. While Strova Group is headquartered in India, we work with international businesses across North America, Europe, the United Kingdom, and the Middle East. Contracts and invoices can be settled in USD, EUR, GBP, or INR.',
+  },
+  {
+    category: 'Billing & International',
+    question: 'What payment methods do you accept?',
+    answer:
+      'For domestic Indian clients, we accept NEFT, RTGS, IMPS, and UPI bank transfers. For international clients, we accept SWIFT international bank wires and international card payments via Stripe.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'FAQ',
+      item: 'https://strovagroups.in/faq/',
+    },
+  ],
+};
+
+const categories = Array.from(new Set(faqs.map((f) => f.category)));
+---
+
+<BaseLayout
+  title="Frequently Asked Questions — Strova Group"
+  description="Find answers about Strova Group's software engineering, WhatsApp automation, technical SEO, pricing, and 50% upfront payment policy."
+  jsonLd={[faqJsonLd, breadcrumbJsonLd]}
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="ambient-glow-indigo" style="top: -120px; right: 5%; opacity: 0.6;"></div>
+    <div class="ambient-glow-cyan" style="bottom: 20px; left: -80px; opacity: 0.4;"></div>
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-kicker">Transparent Answers</span>
+        <h1 class="page-hero__title">
+          Frequently Asked <span class="gradient-text">Questions</span>
+        </h1>
+        <p class="page-hero__lead">
+          Direct, concrete answers to common questions regarding our technical capabilities, 50% upfront milestone policy, code handover, and working relationships.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorized FAQs -->
+  <section class="section faq-page-section" aria-labelledby="faq-page-heading">
+    <div class="container">
+      <h2 id="faq-page-heading" class="sr-only">Detailed Questions and Answers by Category</h2>
+
+      <div class="faq-categories-stack">
+        {categories.map((cat) => (
+          <div class="faq-category-block">
+            <h3 class="category-title">{cat}</h3>
+            <div class="faq-list">
+              {faqs
+                .filter((f) => f.category === cat)
+                .map((faq, idx) => (
+                  <details class="faq-item" id={`faq-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${idx}`}>
+                    <summary class="faq-question">
+                      <span>{faq.question}</span>
+                      <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer">
+                      <p>{faq.answer}</p>
+                    </div>
+                  </details>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Still have questions CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">Have a Specific Project Question?</h2>
+          <p class="cta-desc">
+            We review technical inquiries directly. Reach out via email, phone, or WhatsApp for an answer within 24 business hours.
+          </p>
+          <div class="cta-buttons">
+            <a href="/contact/" class="btn btn--primary btn--lg">
+              Send Project Brief
+            </a>
+            <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--lg">
+              Chat on WhatsApp (+91 92880 77802)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .faq-page-section {
+    padding-block: var(--space-16);
+  }
+
+  .faq-categories-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .category-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-6);
+    color: var(--accent);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .faq-item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .faq-item:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+  }
+
+  .faq-item[open] {
+    border-color: var(--accent);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-chevron {
+    color: var(--text-muted);
+    transition: transform var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+    margin-left: var(--space-4);
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  .faq-answer {
+    padding: 0 var(--space-6) var(--space-6);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+  }
+
+  .faq-answer p {
+    margin: 0;
+  }
+
+  /* Bottom CTA */
+  .cta-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--color-snow);
+  }
+
+  .cta-content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+</style>

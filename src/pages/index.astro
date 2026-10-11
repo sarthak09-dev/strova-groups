@@ -1,0 +1,1340 @@
+---
+/**
+ * Home Page (src/pages/index.astro)
+ *
+ * Requirements:
+ * - Three.js hero with lazy loading and fallback
+ * - GSAP ScrollTrigger animations: hero reveal, pinned 4-step process sequence, subtle parallax
+ * - Divisions overview (Technologies, Digital, Commerce marked "Coming soon")
+ * - Pricing "starting from" ranges
+ * - Delivery & payment policy (50% upfront)
+ * - "Who we're not right for" section
+ * - FAQ section with FAQPage JSON-LD schema
+ * - Strict trust policy: NO invented stats, testimonials, or logos
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ThreeHero from '../components/ThreeHero.astro';
+
+const faqs = [
+  {
+    question: 'What is your typical project delivery timeline?',
+    answer:
+      'Standard web applications and automation workflows typically launch within 3 to 6 weeks. Larger custom SaaS systems and Android applications follow milestone-based 2-week agile sprints, with MVP deliveries commonly reaching staging environments within 8 to 12 weeks.',
+  },
+  {
+    question: 'How does your 50% upfront payment structure work?',
+    answer:
+      'We operate on transparent milestone commitments. Every project requires a 50% deposit upon scope and technical architecture sign-off to reserve engineering sprints. The remaining 50% is due only upon staging completion, quality assurance sign-off, and prior to production domain cutover.',
+  },
+  {
+    question: 'Do we own the full source code and intellectual property?',
+    answer:
+      'Yes, 100%. Upon final milestone settlement, complete ownership of all custom codebase, repositories, documentation, and configuration scripts transfers entirely to your organization without proprietary platform lock-in.',
+  },
+  {
+    question: 'How do you implement AI and WhatsApp business automations?',
+    answer:
+      'We build production-grade workflows using the official Meta WhatsApp Cloud API and tailored LLM integrations. We connect directly to your CRM, database, or Google Sheets via webhooks to automate lead qualification, order notifications, and support triage without flaky unofficial scraper scripts.',
+  },
+  {
+    question: 'Do you work with international clients outside India?',
+    answer:
+      'Yes. While Strova Group is registered and headquartered in India, we routinely partner with businesses across the United States, Europe, the United Kingdom, and the Middle East. Contracts and invoices can be settled in USD, EUR, GBP, or INR.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Strova Group — AI & Automation for Growing Businesses"
+  description="Strova Group delivers high-performance websites, Android apps, custom SaaS, AI automations, and growth marketing for Indian and international businesses."
+  jsonLd={[faqJsonLd, breadcrumbJsonLd]}
+>
+  <!-- Hero Section -->
+  <section class="hero-section" aria-labelledby="hero-title">
+    <!-- Atmospheric ambient studio glows -->
+    <div class="ambient-glow-indigo" style="top: -120px; right: 0%; opacity: 0.7;"></div>
+    <div class="ambient-glow-cyan" style="bottom: 20px; left: -100px; opacity: 0.5;"></div>
+
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge reveal-item">
+          <span class="badge-dot"></span>
+          <span>STUDIO // INDIA &bull; IST &amp; GLOBAL</span>
+        </div>
+        <h1 id="hero-title" class="hero-title reveal-item">
+          AI &amp; automation for <span class="gradient-text">growing businesses.</span>
+        </h1>
+        <p class="hero-lead reveal-item">
+          We engineer high-speed web platforms, native Android applications, automated WhatsApp pipelines, and data-driven marketing systems built for measurable commercial return.
+        </p>
+        <div class="hero-actions reveal-item">
+          <a href="/contact/" class="btn btn--primary btn--lg">
+            Discuss Your Project
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          <a href="/technologies/" class="btn btn--outline btn--lg">
+            Explore Technologies
+          </a>
+        </div>
+        <div class="hero-trust-bar reveal-item">
+          <div class="trust-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Production-Grade Architecture</span>
+          </div>
+          <div class="trust-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>24h Inbound Response Time</span>
+          </div>
+          <div class="trust-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <span>100% Code Ownership</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual reveal-item">
+        <ThreeHero />
+      </div>
+    </div>
+  </section>
+
+  <!-- Divisions Overview -->
+  <section class="section divisions-section" id="divisions" aria-labelledby="divisions-heading">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Core Capabilities</span>
+        <h2 id="divisions-heading" class="section-title">Three Specialized Divisions. One Unified Standard.</h2>
+        <p class="section-subtitle">
+          We bring engineering discipline to code, precision to customer acquisition, and modern architecture to commerce.
+        </p>
+      </div>
+
+      <div class="divisions-grid">
+        <!-- Division 1: Technologies -->
+        <article class="division-card parallax-card" data-sheen="true">
+          <div class="division-card__badge division-card__badge--tech">DIV-01 // ENGINEERING</div>
+          <h3 class="division-card__title">Strova Technologies</h3>
+          <p class="division-card__desc">
+            Custom web systems, native Android applications, automated WhatsApp workflows, and enterprise SaaS platforms built for high performance and fault tolerance.
+          </p>
+          <ul class="division-card__list">
+            <li>
+              <span class="list-bullet"></span>
+              Ultra-fast static &amp; hybrid web applications (Astro, Next.js)
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Native Android apps &amp; offline-first mobile sync
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Official WhatsApp Cloud API &amp; LLM agent workflows
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Multi-tenant SaaS architectures &amp; internal tooling
+            </li>
+          </ul>
+          <div class="division-card__cta">
+            <a href="/technologies/" class="btn btn--outline">
+              Learn More About Technologies
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Division 2: Digital -->
+        <article class="division-card parallax-card" data-sheen="true">
+          <div class="division-card__badge division-card__badge--digital">DIV-02 // GROWTH</div>
+          <h3 class="division-card__title">Strova Digital</h3>
+          <p class="division-card__desc">
+            Data-driven performance marketing, technical SEO audits, high-intent lead generation funnels, and organic brand distribution.
+          </p>
+          <ul class="division-card__list">
+            <li>
+              <span class="list-bullet"></span>
+              Technical SEO &amp; Core Web Vitals optimization
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              High-intent Google &amp; Meta ad management with ROAS focus
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              B2B &amp; local inbound lead capture funnels
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Conversion Rate Optimization (CRO) &amp; analytics tracking
+            </li>
+          </ul>
+          <div class="division-card__cta">
+            <a href="/digital/" class="btn btn--outline">
+              Learn More About Digital
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Division 3: Commerce -->
+        <article class="division-card division-card--coming-soon parallax-card" data-sheen="true">
+          <div class="division-card__badge division-card__badge--commerce">DIV-03 // COMMERCE &bull; Q3 2026</div>
+          <h3 class="division-card__title">Strova Commerce</h3>
+          <p class="division-card__desc">
+            Next-generation headless commerce architectures, omnichannel inventory synchronization, and WhatsApp catalog checkouts tailored for high conversions.
+          </p>
+          <ul class="division-card__list">
+            <li>
+              <span class="list-bullet"></span>
+              Headless e-commerce storefronts with sub-second page loads
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Unified multi-channel stock sync &amp; ERP integrations
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Conversational checkout via WhatsApp Business
+            </li>
+            <li>
+              <span class="list-bullet"></span>
+              Automated COD verification &amp; RTO reduction engines
+            </li>
+          </ul>
+          <div class="division-card__cta">
+            <a href="/commerce/" class="btn btn--outline">
+              Preview Commerce Roadmap
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pinned "How We Work" Process Section -->
+  <section class="section process-section" id="how-we-work" aria-labelledby="process-heading">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Delivery Lifecycle</span>
+        <h2 id="process-heading" class="section-title">How We Work: From Discovery to Deployment</h2>
+        <p class="section-subtitle">
+          A disciplined four-step execution framework designed to eliminate scope ambiguity, prevent delays, and deliver production excellence.
+        </p>
+      </div>
+
+      <div class="process-pinned-container" id="process-pinned-container">
+        <!-- Visual progress bar showing sequence completion on desktop -->
+        <div class="process-progress-track" aria-hidden="true">
+          <div class="process-progress-bar" id="process-progress-bar"></div>
+        </div>
+
+        <div class="process-steps-track" id="process-steps-track">
+          <!-- Step 1 -->
+          <div class="process-card" data-step="1">
+            <div class="process-card__num">01</div>
+            <div class="process-card__content">
+              <span class="process-card__tag">Phase 1 &bull; Scope &amp; Discovery</span>
+              <h3 class="process-card__title">Technical Audit &amp; System Architecture</h3>
+              <p class="process-card__desc">
+                We analyze your business requirements, existing software bottlenecks, database schemas, and integration points. We create a transparent technical specification document with explicit milestone deliverables, fixed estimates, and architectural trade-offs.
+              </p>
+              <div class="process-card__output">
+                <strong>Deliverable:</strong> Technical Architecture Blueprint, Milestone Timeline, &amp; Fixed Scope Agreement.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="process-card" data-step="2">
+            <div class="process-card__num">02</div>
+            <div class="process-card__content">
+              <span class="process-card__tag">Phase 2 &bull; Design &amp; Foundation</span>
+              <h3 class="process-card__title">High-Fidelity UI &amp; Schema Foundations</h3>
+              <p class="process-card__desc">
+                We establish semantic component design systems, relational schema diagrams, and API contracts. Every user flow is mapped out for speed, accessibility (WCAG 2.2 AA), and mobile-first ergonomics before writing production code.
+              </p>
+              <div class="process-card__output">
+                <strong>Deliverable:</strong> Interactive Wireframes, API Specifications, &amp; Data Schema Models.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="process-card" data-step="3">
+            <div class="process-card__num">03</div>
+            <div class="process-card__content">
+              <span class="process-card__tag">Phase 3 &bull; Execution &amp; QA</span>
+              <h3 class="process-card__title">Agile Sprints &amp; Automated Testing</h3>
+              <p class="process-card__desc">
+                Engineered in fortnightly agile sprints with continuous integration. We run automated unit tests, strict lighthouse performance benchmarks, and cross-browser validations. You receive private staging environment links to review progress after every sprint.
+              </p>
+              <div class="process-card__output">
+                <strong>Deliverable:</strong> Live Staging Deployments, Test Coverage Reports, &amp; Bi-Weekly Demos.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="process-card" data-step="4">
+            <div class="process-card__num">04</div>
+            <div class="process-card__content">
+              <span class="process-card__tag">Phase 4 &bull; Launch &amp; Evolution</span>
+              <h3 class="process-card__title">Production Cutover &amp; Managed Handover</h3>
+              <p class="process-card__desc">
+                Zero-downtime deployment to Cloudflare or enterprise cloud infrastructure. We configure SSL, security headers, CDN caching, analytics event instrumentation, and conduct post-launch sanity audits. Complete repository handover and SLA support packages.
+              </p>
+              <div class="process-card__output">
+                <strong>Deliverable:</strong> Production Deployment, Full Code Repository Handover, &amp; 30-Day Launch Warranty.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transparent Pricing Snapshot -->
+  <section class="section pricing-section" id="pricing" aria-labelledby="pricing-heading">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Honest Engagements</span>
+        <h2 id="pricing-heading" class="section-title">Transparent Pricing &amp; Milestone Model</h2>
+        <p class="section-subtitle">
+          No vague retainers. No unexpected change-order surprises. Clear "starting from" baselines with 50% upfront milestone commitments.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Tier 1 -->
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3 class="pricing-card__title">AI &amp; WhatsApp Automations</h3>
+            <p class="pricing-card__desc">For companies seeking automated lead capture, CRM synchronization, and customer triage.</p>
+            <div class="pricing-card__price">
+              <span class="price-prefix">Starting from</span>
+              <span class="price-value">₹35,000</span>
+              <span class="price-currency">/ $500 USD</span>
+            </div>
+          </div>
+          <ul class="pricing-card__features">
+            <li>Official Meta WhatsApp Cloud API setup</li>
+            <li>Custom webhook &amp; CRM pipeline wiring</li>
+            <li>Automated lead qualification rules / LLM triage</li>
+            <li>Error logging &amp; fall-back alert triggers</li>
+            <li>14-day post-launch warranty &amp; monitoring</li>
+          </ul>
+          <div class="pricing-card__footer">
+            <a href="/contact/?service=technologies" class="btn btn--outline w-full">Inquire for Automation</a>
+          </div>
+        </div>
+
+        <!-- Tier 2 -->
+        <div class="pricing-card pricing-card--featured">
+          <div class="featured-badge">Most Requested</div>
+          <div class="pricing-card__header">
+            <h3 class="pricing-card__title">Custom Web &amp; SaaS Systems</h3>
+            <p class="pricing-card__desc">For businesses requiring high-performance web applications, customer portals, or Android solutions.</p>
+            <div class="pricing-card__price">
+              <span class="price-prefix">Starting from</span>
+              <span class="price-value">₹75,000</span>
+              <span class="price-currency">/ $1,200 USD</span>
+            </div>
+          </div>
+          <ul class="pricing-card__features">
+            <li>Static-first &amp; hybrid architecture (sub-second TTFB)</li>
+            <li>Full responsive layout (360px to 4K displays)</li>
+            <li>Custom relational database &amp; authentication setup</li>
+            <li>Role-based access &amp; operational dashboard</li>
+            <li>100% complete source code &amp; IP handover</li>
+          </ul>
+          <div class="pricing-card__footer">
+            <a href="/contact/?service=technologies" class="btn btn--primary w-full">Inquire for Web &amp; SaaS</a>
+          </div>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3 class="pricing-card__title">Performance Growth &amp; SEO</h3>
+            <p class="pricing-card__desc">For businesses seeking sustainable inbound customer acquisition through search and paid media.</p>
+            <div class="pricing-card__price">
+              <span class="price-prefix">Starting from</span>
+              <span class="price-value">₹40,000</span>
+              <span class="price-currency">/ month / $600 USD</span>
+            </div>
+          </div>
+          <ul class="pricing-card__features">
+            <li>Technical SEO architecture &amp; Core Web Vitals audit</li>
+            <li>Google Search &amp; Meta performance ad execution</li>
+            <li>Conversion-optimized landing page design</li>
+            <li>Full UTM parameter &amp; revenue attribution wiring</li>
+            <li>Transparent bi-weekly commercial reporting</li>
+          </ul>
+          <div class="pricing-card__footer">
+            <a href="/contact/?service=digital" class="btn btn--outline w-full">Inquire for Digital Growth</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment & Delivery Terms Callout -->
+      <div class="policy-banner">
+        <div class="policy-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+        </div>
+        <div class="policy-text">
+          <h4 class="policy-title">Our Standard Delivery &amp; Payment Commitment</h4>
+          <p class="policy-desc">
+            All fixed-scope engagements adhere to a clear <strong>50% upfront deposit</strong> upon architectural milestone agreement, with the remaining <strong>50% settled upon staging demonstration and sign-off</strong> prior to production cutover. Invoices can be processed via Indian domestic bank transfer (IMPS/NEFT/RTGS/UPI) or international SWIFT wire / Stripe.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- "Who We Are NOT Right For" Section -->
+  <section class="section filter-section" aria-labelledby="filter-heading">
+    <div class="container">
+      <div class="filter-box">
+        <div class="filter-header">
+          <span class="section-kicker">Radical Candor</span>
+          <h2 id="filter-heading" class="filter-title">Who Strova Group Is Not Right For</h2>
+          <p class="filter-subtitle">
+            We value long-term partnerships and exceptional output. We believe in being honest about where our engineering capabilities are and are not a fit.
+          </p>
+        </div>
+
+        <div class="filter-grid">
+          <div class="filter-card">
+            <div class="filter-card__symbol" aria-hidden="true">&times;</div>
+            <h3 class="filter-card__title">Generic $50 Template Buyers</h3>
+            <p class="filter-card__text">
+              If you are looking for a pre-made WordPress theme stuffed with 40 bloated plugins for ₹5,000, we are not the right fit. We engineer bespoke, secure, clean architectures.
+            </p>
+          </div>
+          <div class="filter-card">
+            <div class="filter-card__symbol" aria-hidden="true">&times;</div>
+            <h3 class="filter-card__title">Unrealistic "Overnight Hype" Projects</h3>
+            <p class="filter-card__text">
+              We do not purchase fake followers, use unverified scraping bots, or promise overnight viral million-dollar outcomes. We build sustainable systems backed by real metrics.
+            </p>
+          </div>
+          <div class="filter-card">
+            <div class="filter-card__symbol" aria-hidden="true">&times;</div>
+            <h3 class="filter-card__title">Disengaged Stakeholders</h3>
+            <p class="filter-card__text">
+              Great software requires active domain insight. We work closely with founders and teams who participate in sprint reviews, clarify workflows, and respect timely feedback loops.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section faq-section" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Questions &amp; Answers</span>
+        <h2 id="faq-heading" class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">
+          Everything you need to know about our engineering approach, commercial policies, and working arrangements.
+        </p>
+      </div>
+
+      <div class="faq-list">
+        {faqs.map((faq, index) => (
+          <details class="faq-item" id={`faq-${index}`}>
+            <summary class="faq-question">
+              <span>{faq.question}</span>
+              <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-answer">
+              <p>{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="section cta-section" aria-labelledby="cta-heading">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <span class="section-kicker text-cyan">Start a Conversation</span>
+          <h2 id="cta-heading" class="cta-title">Ready to Automate Workflows and Scale Your Engineering?</h2>
+          <p class="cta-desc">
+            Schedule a technical consultation. We review your requirements, identify bottlenecks, and return a concrete architectural estimate within 24 business hours.
+          </p>
+          <div class="cta-buttons">
+            <a href="/contact/" class="btn btn--primary btn--lg">
+              Start Your Project Inbound
+            </a>
+            <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--lg">
+              Chat on WhatsApp (+91 92880 77802)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------------- Hero Section ---------------- */
+  .hero-section {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-20);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .hero-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: var(--space-8);
+    }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-4);
+    background: var(--accent-subtle);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 9999px;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: var(--space-6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--accent-2);
+    border-radius: 50%;
+    animation: pulseDot 2s infinite ease-in-out;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  .hero-title {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: var(--space-6);
+    letter-spacing: -0.03em;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+  }
+
+  .hero-trust-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .trust-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .trust-pill svg {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ---------------- Common Section Headers ---------------- */
+  .section-header {
+    max-width: 48rem;
+    margin-inline: auto;
+    margin-bottom: var(--space-16);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .section-kicker {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .text-cyan {
+    color: var(--accent-2) !important;
+  }
+
+  .section-title {
+    font-size: var(--text-3xl);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+
+  .section-subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-inline: auto;
+  }
+
+  /* ---------------- Divisions Section ---------------- */
+  .divisions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 56rem) {
+    .divisions-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .division-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .division-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .division-card--coming-soon {
+    border-style: dashed;
+    background: color-mix(in srgb, var(--bg-elevated) 70%, var(--bg-surface));
+  }
+
+  .division-card__badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .division-card__badge--tech {
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--accent);
+  }
+
+  .division-card__badge--digital {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--accent-2);
+  }
+
+  .division-card__badge--commerce {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-secondary);
+  }
+
+  .division-card__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .division-card__desc {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .division-card__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+    flex-grow: 1;
+  }
+
+  .division-card__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+  }
+
+  .list-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .division-card__cta {
+    margin-top: auto;
+  }
+
+  /* ---------------- Process Section ---------------- */
+  .process-section {
+    background: var(--bg-surface);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .process-pinned-container {
+    max-width: 100%;
+    margin-inline: auto;
+    position: relative;
+  }
+
+  .process-progress-track {
+    display: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    margin-bottom: var(--space-8);
+    overflow: hidden;
+  }
+
+  .process-progress-bar {
+    width: 25%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+
+  .process-steps-track {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    width: 100%;
+  }
+
+  .process-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: flex-start;
+    transition: border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  @media (min-width: 44rem) {
+    .process-card {
+      grid-template-columns: auto 1fr;
+      gap: var(--space-8);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .process-progress-track {
+      display: block;
+    }
+
+    .process-steps-track {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: var(--space-8);
+      width: max-content;
+      padding-block: var(--space-2);
+    }
+
+    .process-card {
+      width: clamp(28rem, 46vw, 36rem);
+      flex-shrink: 0;
+    }
+  }
+
+  .process-card__num {
+    font-family: var(--font-heading);
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    color: color-mix(in srgb, var(--accent) 30%, transparent);
+    line-height: 1;
+  }
+
+  .process-card__tag {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .process-card__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .process-card__desc {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+  }
+
+  .process-card__output {
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+  }
+
+  .process-card__output strong {
+    color: var(--text-primary);
+  }
+
+  /* ---------------- Pricing Section ---------------- */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-12);
+  }
+
+  @media (min-width: 60rem) {
+    .pricing-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pricing-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .pricing-card--featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-lg);
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--color-snow);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    padding: var(--space-1) var(--space-4);
+    border-radius: 9999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pricing-card__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .pricing-card__desc {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+    min-height: 2.5rem;
+  }
+
+  .pricing-card__price {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .price-prefix {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .price-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .price-currency {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+  }
+
+  .pricing-card__features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+    flex-grow: 1;
+  }
+
+  .pricing-card__features li {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 1.25rem;
+  }
+
+  .pricing-card__features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .w-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .policy-banner {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-6);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+  }
+
+  .policy-icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .policy-title {
+    font-size: var(--text-base);
+    font-weight: 700;
+    margin-bottom: var(--space-1);
+  }
+
+  .policy-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ---------------- Filter ("Not Right For") Section ---------------- */
+  .filter-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-12) var(--space-8);
+  }
+
+  .filter-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: var(--space-10);
+  }
+
+  .filter-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .filter-subtitle {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 52rem) {
+    .filter-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .filter-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .filter-card__symbol {
+    font-size: var(--text-2xl);
+    color: #ef4444;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .filter-card__title {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .filter-card__text {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ---------------- FAQ Section ---------------- */
+  .faq-list {
+    max-width: 50rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .faq-item {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .faq-item[open] {
+    border-color: var(--accent);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-chevron {
+    transition: transform var(--duration-fast) var(--ease-out);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 var(--space-6) var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ---------------- CTA Section ---------------- */
+  .cta-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--color-snow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-content {
+    max-width: 44rem;
+    margin-inline: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+</style>
+
+<script>
+  // Orchestrated GSAP & ScrollTrigger Animations synchronized with Lenis Smooth Scroll
+  async function initGsapAnimations() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    try {
+      const { gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      gsap.registerPlugin(ScrollTrigger);
+
+      // 1. Synchronize Lenis Smooth Scroll with GSAP ScrollTrigger
+      let retries = 0;
+      const connectLenisWithGsap = () => {
+        const lenis = (window as any).__lenis;
+        if (lenis) {
+          (window as any).__lenisDrivenByGsap = true;
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add((time: number) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+          ScrollTrigger.refresh();
+        } else if (retries < 25) {
+          retries++;
+          setTimeout(connectLenisWithGsap, 40);
+        }
+      };
+      connectLenisWithGsap();
+
+      // 2. Orchestrated Hero Entrance Reveal
+      const revealItems = document.querySelectorAll('.reveal-item');
+      if (revealItems.length > 0) {
+        gsap.fromTo(
+          revealItems,
+          { y: 32, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.9,
+            stagger: 0.12,
+            ease: 'power3.out',
+            clearProps: 'transform,opacity',
+          }
+        );
+      }
+
+      // 3. Scroll-Driven Section Header & Card Reveals
+      const scrollEntranceElements = document.querySelectorAll(
+        '.section-header, .division-card, .pricing-card, .filter-card, .faq-item, .cta-banner'
+      );
+      scrollEntranceElements.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+
+      // Responsive GSAP animations via gsap.matchMedia()
+      const mm = gsap.matchMedia();
+
+      // Desktop only animations (min-width: 56rem)
+      mm.add('(min-width: 56rem)', () => {
+        // 4. Subtle Parallax on Division Cards (staggered across 3 columns)
+        const parallaxCards = document.querySelectorAll('.parallax-card');
+        parallaxCards.forEach((card, i) => {
+          gsap.fromTo(
+            card,
+            { y: i % 2 === 0 ? 20 : -20 },
+            {
+              y: i % 2 === 0 ? -20 : 20,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.4,
+              },
+            }
+          );
+        });
+
+        // 5. Pinned "How We Work" Process Sequence on Desktop
+        const track = document.getElementById('process-steps-track');
+        const container = document.getElementById('process-pinned-container');
+        const progressBar = document.getElementById('process-progress-bar');
+
+        if (track && container) {
+          const cards = track.querySelectorAll('.process-card');
+          const calculateDistance = () => Math.max(0, track.scrollWidth - container.clientWidth);
+
+          const tween = gsap.to(track, {
+            x: () => -calculateDistance(),
+            ease: 'none',
+            scrollTrigger: {
+              trigger: container,
+              start: 'top 18%',
+              end: () => `+=${calculateDistance() + 450}`,
+              pin: true,
+              scrub: 1.2,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                if (progressBar) {
+                  progressBar.style.width = `${Math.min(100, Math.max(25, self.progress * 100))}%`;
+                }
+                const activeIndex = Math.min(cards.length - 1, Math.floor(self.progress * cards.length));
+                cards.forEach((card, idx) => {
+                  if (idx === activeIndex) {
+                    card.classList.add('is-active-step');
+                  } else {
+                    card.classList.remove('is-active-step');
+                  }
+                });
+              },
+            },
+          });
+
+          return () => {
+            tween.kill();
+          };
+        }
+      });
+
+      // Refresh ScrollTrigger after initial paint and fonts settling
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 200);
+    } catch (err) {
+      console.warn('GSAP scroll animations failed to initialize:', err);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGsapAnimations);
+  } else {
+    initGsapAnimations();
+  }
+</script>

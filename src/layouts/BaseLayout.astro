@@ -1,0 +1,115 @@
+---
+/*
+ * Base layout — wraps every page.
+ * Loads fonts, global CSS, Header, Footer, skip link, and analytics.
+ */
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEOHead from '../components/SEOHead.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage,
+  ogType,
+  jsonLd,
+  noindex,
+  bodyClass = '',
+} = Astro.props;
+
+/* Organization JSON-LD — present on every page */
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Strova Group',
+  url: 'https://strovagroups.in',
+  logo: 'https://strovagroups.in/images/logo.svg',
+  email: 'info@strovagroups.in',
+  telephone: '+91 92880 77802',
+  description: 'AI & automation for growing businesses. Technology, digital marketing, and commerce solutions for Indian and international clients.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '[ADDRESS]',
+    addressCountry: 'IN',
+  },
+  sameAs: [
+    // TODO: Add real social media profile URLs
+  ],
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Strova Group',
+  url: 'https://strovagroups.in',
+};
+
+/* Merge page-specific JSON-LD with global ones */
+const allJsonLd = [
+  orgJsonLd,
+  websiteJsonLd,
+  ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []),
+];
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#08090D" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <SEOHead
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogImage={ogImage}
+      ogType={ogType}
+      jsonLd={allJsonLd}
+      noindex={noindex}
+    />
+
+    <!--
+      Privacy-friendly analytics: Cloudflare Web Analytics.
+      No cookies, no personal data, no consent banner needed.
+      TODO: Replace 'your-token' with your Cloudflare Web Analytics token.
+    -->
+    <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "your-token"}'></script> -->
+  </head>
+  <body class={bodyClass}>
+    <!-- Top Fluid Scroll Progress Indicator -->
+    <div id="scroll-progress-bar" class="scroll-progress-bar" aria-hidden="true"></div>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <Header />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Global Client Interactions (Lenis, live IST ticker, cursor sheen) -->
+    <script src="../scripts/globalInteractions.ts"></script>
+  </body>
+</html>
+

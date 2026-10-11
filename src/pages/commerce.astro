@@ -1,0 +1,389 @@
+---
+/**
+ * Commerce Division Page (src/pages/commerce.astro)
+ *
+ * Division: Strova Commerce (Marked "Coming Soon")
+ * Launch Target: Q3 2026
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Strova Commerce — Headless Retail & Conversational Commerce',
+  provider: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  serviceType: 'Headless E-commerce & WhatsApp Conversational Checkout',
+  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  description:
+    'Next-generation headless commerce storefronts, native WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery RTO fraud protection (Target Launch: Q3 2026).',
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Commerce',
+      item: 'https://strovagroups.in/commerce/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Strova Commerce (Coming Soon) — Strova Group"
+  description="Strova Commerce is building high-speed headless storefronts, WhatsApp conversational checkouts, and omnichannel inventory engines. Launching Q3 2026."
+  jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
+>
+  <section class="commerce-hero">
+    <div class="ambient-glow-indigo" style="top: -120px; left: 50%; transform: translateX(-50%); opacity: 0.6;"></div>
+    <div class="container text-center">
+      <div class="coming-soon-badge">
+        <span class="badge-dot"></span>
+        <span>DIV-03 // STROVA COMMERCE &bull; TARGET Q3 2026</span>
+      </div>
+      <h1 class="commerce-title">
+        The Future of <span class="gradient-text">Conversational &amp; Headless Commerce</span>
+      </h1>
+      <p class="commerce-lead">
+        We are engineering a unified retail engine that bridges lightning-fast static storefronts with native WhatsApp catalog checkout and intelligent COD fraud prevention for Indian and global merchants.
+      </p>
+
+      <div class="commerce-actions">
+        <a href="/contact/?service=commerce" class="btn btn--primary btn--lg">
+          Join Early Access Partner Waitlist
+        </a>
+        <a href="/technologies/" class="btn btn--outline btn--lg">
+          View Active Tech Capabilities
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Specification Overview (What it is, Who it is for, Price & Timeline) -->
+  <section class="section service-overview-section" aria-label="Division Overview">
+    <div class="container">
+      <div class="card service-overview-card">
+        <div class="service-overview-grid">
+          <div class="overview-item">
+            <span class="overview-item__label">What It Is</span>
+            <p class="overview-item__val">Headless high-speed storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and automated COD Return-to-Origin (RTO) fraud protection.</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">Who It Is For</span>
+            <p class="overview-item__val">Direct-to-Consumer (D2C) brands, omnichannel retail merchants in India, and global e-commerce sellers requiring sub-100ms checkout experiences.</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">Starting Price Range</span>
+            <p class="overview-item__val">Currently in private engineering development. Early pilot partner deployments starting from ₹1,20,000 / $1,800 USD upon acceptance.</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">Typical Timeline</span>
+            <p class="overview-item__val">Target general release Q3 2026. Private beta onboarding currently open for select retail brands.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architectural Pillars of Commerce -->
+  <section class="section" aria-labelledby="roadmap-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-kicker">Architecture Blueprint</span>
+        <h2 id="roadmap-title" class="section-title">What Strova Commerce is Engineering</h2>
+        <p class="section-subtitle">
+          Solving the core pain points of modern e-commerce: slow load times, high checkout drop-offs, and Return-to-Origin (RTO) cash-on-delivery losses.
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        <div class="card pillar-card">
+          <div class="pillar-number">01</div>
+          <h3 class="pillar-title">Headless Edge Storefronts</h3>
+          <p class="pillar-desc">
+            Decoupled frontend catalog experiences built on Astro and modern edge CDNs. Page transitions take under 100ms, completely eliminating user drop-off on mobile networks.
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">02</div>
+          <h3 class="pillar-title">WhatsApp Catalog &amp; Conversational Checkout</h3>
+          <p class="pillar-desc">
+            Allow customers to browse product catalogs, select sizes, and complete transactions entirely within WhatsApp without ever navigating away from their chat interface.
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">03</div>
+          <h3 class="pillar-title">Intelligent COD &amp; RTO Shield</h3>
+          <p class="pillar-desc">
+            Automated WhatsApp OTP verification and AI-driven buyer risk scoring before Cash-on-Delivery dispatches, reducing non-delivery returns by an anticipated 30-45%.
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">04</div>
+          <h3 class="pillar-title">Omnichannel Real-Time Sync</h3>
+          <p class="pillar-desc">
+            Synchronize stock levels between retail POS systems, your web storefront, Amazon India, and quick-commerce channels using fault-tolerant message queues.
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">05</div>
+          <h3 class="pillar-title">Localized Indian Payment Routing</h3>
+          <p class="pillar-desc">
+            Native 1-click UPI intent flows, automated refund webhooks, and multi-gateway fallbacks across Razorpay, Cashfree, and PayU.
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">06</div>
+          <h3 class="pillar-title">Global Currency &amp; Tax Compliance</h3>
+          <p class="pillar-desc">
+            Built-in multi-currency pricing, automated GST electronic invoicing for Indian domestic transactions, and Stripe tax calculations for cross-border exports.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Early Partner Callout -->
+  <section class="section early-access-section">
+    <div class="container">
+      <div class="early-access-box">
+        <div class="early-access-content">
+          <span class="section-kicker text-cyan">Design Partner Program</span>
+          <h2 class="early-access-title">Seeking 5 Direct-to-Consumer Brands for Beta Deployment</h2>
+          <p class="early-access-desc">
+            We are collaborating with a select group of established D2C brands in India and Southeast Asia to pilot our WhatsApp conversational checkout and headless speed architecture prior to public launch.
+          </p>
+          <div class="early-access-perks">
+            <div class="perk-item">
+              <strong>Zero Platform Licensing Fees</strong> during the beta cycle.
+            </div>
+            <div class="perk-item">
+              <strong>Dedicated Engineering Support</strong> directly from Strova Group's core technical team.
+            </div>
+            <div class="perk-item">
+              <strong>Custom Integration Work</strong> for your existing ERP or warehouse inventory system.
+            </div>
+          </div>
+          <a href="/contact/?service=commerce" class="btn btn--primary btn--lg">
+            Apply as a Design Partner
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .commerce-hero {
+    padding-top: var(--space-20);
+    padding-bottom: var(--space-20);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .commerce-hero .container {
+    max-width: 52rem;
+  }
+
+  .coming-soon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-4);
+    background: rgba(148, 163, 184, 0.15);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 9999px;
+    margin-bottom: var(--space-6);
+  }
+
+  .badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .commerce-title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .commerce-lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+
+  .commerce-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  /* Pillars */
+  .pillar-card {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pillar-number {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: color-mix(in srgb, var(--accent) 35%, transparent);
+    margin-bottom: var(--space-4);
+  }
+
+  .pillar-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .pillar-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Early Access */
+  .early-access-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .early-access-box {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    color: var(--color-snow);
+    text-align: center;
+  }
+
+  .early-access-content {
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .early-access-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .early-access-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .early-access-perks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    text-align: left;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .perk-item {
+    font-size: var(--text-sm);
+    color: #cbd5e1;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .perk-item::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-2);
+    font-weight: 700;
+  }
+
+  .perk-item strong {
+    color: var(--color-snow);
+  }
+
+  /* Service Overview */
+  .service-overview-section {
+    padding-top: 0;
+    padding-bottom: var(--space-8);
+  }
+
+  .service-overview-card {
+    padding: var(--space-8);
+    background: var(--bg-surface);
+  }
+
+  .service-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .overview-item__label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .overview-item__val {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

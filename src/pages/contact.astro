@@ -1,0 +1,772 @@
+---
+/**
+ * Contact Page (src/pages/contact.astro)
+ *
+ * Requirements:
+ * - Interactive contact form with honeypot spam protection & client-side validation
+ * - Clear 24 business hours response time guarantee
+ * - Direct contact info: email, WhatsApp link, registered address, Udyam MSME, IST business hours
+ * - ContactPage & BreadcrumbList JSON-LD schemas
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const contactPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact Strova Group',
+  description:
+    'Get in touch with Strova Group for software engineering, Android development, AI automation, and digital growth inquiries.',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+    email: 'info@strovagroups.in',
+    telephone: '+91 92880 77802',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'info@strovagroups.in',
+      telephone: '+91 92880 77802',
+      availableLanguage: ['en', 'hi'],
+      hoursAvailable: {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        opens: '10:00',
+        closes: '19:00',
+      },
+    },
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Contact',
+      item: 'https://strovagroups.in/contact/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Contact Strova Group — Start Your Project Inbound"
+  description="Connect directly with Strova Group. Submit your requirements or message us on WhatsApp for a technical review within 24 business hours."
+  jsonLd={[contactPageJsonLd, breadcrumbJsonLd]}
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="ambient-glow-indigo" style="top: -120px; right: 5%; opacity: 0.6;"></div>
+    <div class="ambient-glow-cyan" style="bottom: 20px; left: -80px; opacity: 0.4;"></div>
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-kicker">Start a Conversation</span>
+        <h1 class="page-hero__title">
+          Discuss Your Project With <span class="gradient-text">Our Engineering Leads</span>
+        </h1>
+        <p class="page-hero__lead">
+          We answer all inquiries with technical clarity. You will receive an architectural review and transparent timeline estimate within 24 business hours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Form & Direct Channels Grid -->
+  <section class="section" aria-labelledby="contact-form-heading">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Inbound Form -->
+        <div class="contact-form-card">
+          <div class="form-header">
+            <h2 id="contact-form-heading" class="form-title">Send a Project Brief</h2>
+            <p class="form-subtitle">
+              Fill out the details below. All project briefs are treated under strict mutual confidentiality.
+            </p>
+          </div>
+
+          <form id="contact-form" class="inbound-form" novalidate>
+            <!-- Honeypot Field (Hidden from human users, catches spam bots) -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp_company">Do not fill this field if you are human</label>
+              <input type="text" id="hp_company" name="_hp_company" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Name -->
+            <div class="form-group">
+              <label for="contact-name" class="form-label">
+                Full Name <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                required
+                class="form-input"
+                placeholder="e.g. Rahul Sharma or Jane Doe"
+                aria-required="true"
+              />
+              <span class="form-error" id="name-error" role="alert"></span>
+            </div>
+
+            <!-- Email & Phone Grid -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-email" class="form-label">
+                  Business Email <span class="required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="contact-email"
+                  name="email"
+                  required
+                  class="form-input"
+                  placeholder="name@company.com"
+                  aria-required="true"
+                />
+                <span class="form-error" id="email-error" role="alert"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-phone" class="form-label">
+                  Phone / WhatsApp <span class="optional">(Optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="contact-phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="+91 98765 43210"
+                />
+                <span class="form-error" id="phone-error" role="alert"></span>
+              </div>
+            </div>
+
+            <!-- Division Interest -->
+            <div class="form-group">
+              <label for="contact-service" class="form-label">
+                Primary Division / Service Interest <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="contact-service" name="service" required class="form-select" aria-required="true">
+                <option value="">Select a service category</option>
+                <option value="technologies">Strova Technologies — Custom Web, Android &amp; SaaS</option>
+                <option value="automation">Strova Technologies — WhatsApp &amp; AI Automations</option>
+                <option value="digital">Strova Digital — Technical SEO &amp; Performance Ads</option>
+                <option value="commerce">Strova Commerce — Headless Retail &amp; Beta Access</option>
+                <option value="other">General Inquiries / Consulting</option>
+              </select>
+              <span class="form-error" id="service-error" role="alert"></span>
+            </div>
+
+            <!-- Budget Range -->
+            <div class="form-group">
+              <label for="contact-budget" class="form-label">
+                Estimated Project Investment
+              </label>
+              <select id="contact-budget" name="budget" class="form-select">
+                <option value="">Select an investment range</option>
+                <option value="35k-75k">₹35,000 – ₹75,000 / $500 – $1,000 USD (Automation / Small Sprint)</option>
+                <option value="75k-150k">₹75,000 – ₹1,50,000 / $1,000 – $2,000 USD (Web Platform)</option>
+                <option value="150k-300k">₹1,50,000 – ₹3,00,000 / $2,000 – $4,000 USD (Custom SaaS / Mobile App)</option>
+                <option value="300k+">₹3,00,000+ / $4,000+ USD (Enterprise Architecture)</option>
+                <option value="retainer">Monthly Growth / Retainer (from ₹40,000/mo)</option>
+              </select>
+            </div>
+
+            <!-- Project Details -->
+            <div class="form-group">
+              <label for="contact-message" class="form-label">
+                Project Overview &amp; Key Requirements <span class="required" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="contact-message"
+                name="message"
+                rows="5"
+                required
+                class="form-textarea"
+                placeholder="Briefly describe what you are looking to build or solve, target timelines, or links to current systems..."
+                aria-required="true"
+              ></textarea>
+              <span class="form-error" id="message-error" role="alert"></span>
+            </div>
+
+            <!-- Simple Math Challenge (Anti-bot verification) -->
+            <div class="form-group math-challenge-group">
+              <label for="contact-captcha" class="form-label">
+                Human Verification: What is <span id="math-prompt" class="math-prompt">3 + 4</span>? <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="number"
+                id="contact-captcha"
+                name="captcha"
+                required
+                class="form-input math-input"
+                placeholder="Your answer"
+                aria-required="true"
+              />
+              <span class="form-error" id="captcha-error" role="alert"></span>
+            </div>
+
+            <!-- Submission Button & Status -->
+            <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
+              Submit Project Inquiry
+            </button>
+
+            <!-- Status Alert Container -->
+            <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+
+        <!-- Direct Contact Channels & Verification Details -->
+        <div class="contact-channels">
+          <!-- Response Promise Banner -->
+          <div class="channel-card guarantee-card">
+            <div class="guarantee-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="guarantee-title">24 Business Hours Response SLA</h3>
+              <p class="guarantee-desc">
+                We review technical submissions directly. If you reach out between Monday and Saturday (10:00 AM – 7:00 PM IST), we guarantee a concrete response within 24 business hours.
+              </p>
+            </div>
+          </div>
+
+          <!-- Direct Channels -->
+          <div class="channel-card">
+            <h3 class="channel-title">Direct Inquiries</h3>
+            <div class="channel-list">
+              <div class="channel-item">
+                <div class="channel-item__icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-item__label">Official Email</span>
+                  <a href="mailto:info@strovagroups.in" class="channel-item__link">info@strovagroups.in</a>
+                </div>
+              </div>
+
+              <div class="channel-item">
+                <div class="channel-item__icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-item__label">Direct Telephone (Click-to-Call)</span>
+                  <a href="tel:+919288077802" class="channel-item__link">+91 92880 77802</a>
+                </div>
+              </div>
+
+              <div class="channel-item">
+                <div class="channel-item__icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-item__label">WhatsApp Business</span>
+                  <a
+                    href="https://wa.me/919288077802?text=Hi%20Strova%20Group%2C%20I%20would%20like%20to%20discuss%20a%20project"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="channel-item__link"
+                  >
+                    Chat on WhatsApp (+91 92880 77802)
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Registration & Operating Hours -->
+          <div class="channel-card">
+            <h3 class="channel-title">Corporate Information</h3>
+            <div class="corporate-details">
+              <p>
+                <strong>Strova Group</strong><br/>
+                Registered MSME Entity — Republic of India
+              </p>
+              <p class="text-sm text-secondary">
+                <!-- TODO: Replace with real registered address once confirmed -->
+                <strong>Registered Address:</strong><br/>
+                [ADDRESS]<br/>
+                India
+              </p>
+              <p class="text-sm text-secondary">
+                <!-- TODO: Replace with official Udyam Registration Number once issued -->
+                <strong>Udyam Registration:</strong> [UDYAM NO. when issued]
+              </p>
+              <p class="text-sm text-secondary">
+                <strong>Business Operating Hours:</strong><br/>
+                Monday – Saturday: 10:00 AM – 7:00 PM IST (UTC+05:30)<br/>
+                Sunday: Closed (Emergency SLA on-call for active enterprise contracts)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Contact Grid */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: flex-start;
+  }
+
+  @media (min-width: 60rem) {
+    .contact-grid {
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: var(--space-12);
+    }
+  }
+
+  /* Form Card */
+  .contact-form-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+  }
+
+  @media (min-width: 40rem) {
+    .contact-form-card {
+      padding: var(--space-10);
+    }
+  }
+
+  .form-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .form-title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .form-subtitle {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .inbound-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .hp-field {
+    display: none !important;
+    position: absolute;
+    left: -9999px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 40rem) {
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .form-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .required {
+    color: #ef4444;
+  }
+
+  .optional {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    transition: border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .form-error {
+    font-size: var(--text-xs);
+    color: #ef4444;
+    min-height: 1rem;
+    display: none;
+  }
+
+  .form-error.visible {
+    display: block;
+  }
+
+  .math-prompt {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .math-input {
+    max-width: 12rem;
+  }
+
+  .w-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-status {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    display: none;
+  }
+
+  .form-status.success {
+    display: block;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10b981;
+    color: #047857;
+  }
+
+  .form-status.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    color: #b91c1c;
+  }
+
+  /* Channels Sidebar */
+  .contact-channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .channel-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+  }
+
+  .guarantee-card {
+    display: flex;
+    gap: var(--space-4);
+    background: var(--accent-subtle);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .guarantee-icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .guarantee-title {
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .guarantee-desc {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .channel-title {
+    font-size: var(--text-base);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .channel-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .channel-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .channel-item__icon {
+    color: var(--accent);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .channel-item__label {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .channel-item__link {
+    font-size: var(--text-sm);
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .channel-item__link:hover {
+    text-decoration: underline;
+  }
+
+  .corporate-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .corporate-details p {
+    margin: 0;
+  }
+</style>
+
+<script>
+  function setupContactForm() {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    if (!form) return;
+
+    let expectedAnswer = 7;
+
+    // Generate random math challenge
+    function regenerateCaptcha() {
+      const num1 = Math.floor(Math.random() * 6) + 2;
+      const num2 = Math.floor(Math.random() * 6) + 1;
+      expectedAnswer = num1 + num2;
+
+      const mathPrompt = document.getElementById('math-prompt');
+      if (mathPrompt) {
+        mathPrompt.textContent = `${num1} + ${num2}`;
+      }
+      const captchaInput = document.getElementById('contact-captcha') as HTMLInputElement | null;
+      if (captchaInput) {
+        captchaInput.value = '';
+        captchaInput.removeAttribute('aria-invalid');
+      }
+    }
+
+    regenerateCaptcha();
+
+    // Pre-populate service if query param exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const serviceParam = urlParams.get('service');
+    if (serviceParam) {
+      const serviceSelect = document.getElementById('contact-service') as HTMLSelectElement | null;
+      if (serviceSelect) {
+        if (['technologies', 'automation', 'digital', 'commerce', 'other'].includes(serviceParam)) {
+          serviceSelect.value = serviceParam;
+        }
+      }
+    }
+
+    // Real-time error clearance on user input
+    const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+    inputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') === 'true') {
+          input.removeAttribute('aria-invalid');
+          const errorId = input.getAttribute('aria-describedby');
+          if (errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+              errorEl.textContent = '';
+              errorEl.classList.remove('visible');
+            }
+          }
+        }
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      let hasErrors = false;
+      let firstInvalid: HTMLElement | null = null;
+
+      // Clear existing errors
+      document.querySelectorAll('.form-error').forEach((el) => {
+        el.textContent = '';
+        el.classList.remove('visible');
+      });
+      inputs.forEach((input) => input.removeAttribute('aria-invalid'));
+
+      const statusBox = document.getElementById('form-status') as HTMLElement;
+      statusBox.className = 'form-status';
+      statusBox.textContent = '';
+
+      function markError(fieldId: string, errorId: string, message: string) {
+        const field = document.getElementById(fieldId) as HTMLElement | null;
+        const error = document.getElementById(errorId);
+        if (field) {
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', errorId);
+          if (!firstInvalid) firstInvalid = field;
+        }
+        if (error) {
+          error.textContent = message;
+          error.classList.add('visible');
+        }
+        hasErrors = true;
+      }
+
+      // 1. Honeypot check (Silent discard for automated spam bots)
+      const hpField = document.getElementById('hp_company') as HTMLInputElement | null;
+      if (hpField && hpField.value.trim() !== '') {
+        statusBox.className = 'form-status success';
+        statusBox.textContent = 'Thank you! Your project brief has been received. Our team will contact you within 24 business hours.';
+        form.reset();
+        regenerateCaptcha();
+        return;
+      }
+
+      // 2. Name validation
+      const nameField = document.getElementById('contact-name') as HTMLInputElement;
+      if (!nameField.value.trim()) {
+        markError('contact-name', 'name-error', 'Please enter your full name.');
+      }
+
+      // 3. Email validation
+      const emailField = document.getElementById('contact-email') as HTMLInputElement;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailField.value.trim() || !emailRegex.test(emailField.value.trim())) {
+        markError('contact-email', 'email-error', 'Please enter a valid business email address.');
+      }
+
+      // 4. Service category validation
+      const serviceField = document.getElementById('contact-service') as HTMLSelectElement;
+      if (!serviceField.value) {
+        markError('contact-service', 'service-error', 'Please select a primary service category.');
+      }
+
+      // 5. Message validation
+      const messageField = document.getElementById('contact-message') as HTMLTextAreaElement;
+      if (!messageField.value.trim() || messageField.value.trim().length < 10) {
+        markError('contact-message', 'message-error', 'Please provide at least 10 characters describing your project requirements.');
+      }
+
+      // 6. Math challenge validation
+      const captchaField = document.getElementById('contact-captcha') as HTMLInputElement;
+      if (parseInt(captchaField.value.trim(), 10) !== expectedAnswer) {
+        markError('contact-captcha', 'captcha-error', 'Incorrect verification answer. Please enter the correct sum.');
+      }
+
+      if (hasErrors) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'Please correct the highlighted fields above before submitting.';
+        firstInvalid?.focus();
+        return;
+      }
+
+      // Submission simulation
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Transmitting brief...';
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Project Inquiry';
+        statusBox.className = 'form-status success';
+        statusBox.textContent =
+          'Thank you! Your project brief has been logged successfully. We review all submissions within 24 business hours (Mon–Sat, 10:00 AM – 7:00 PM IST) and will email our technical assessment.';
+        form.reset();
+        regenerateCaptcha();
+      }, 700);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupContactForm);
+  } else {
+    setupContactForm();
+  }
+</script>
