@@ -22,6 +22,11 @@ const contactPageJsonLd = {
     url: 'https://strovagroups.in',
     email: 'info@strovagroups.in',
     telephone: '+91 92880 77802',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '[ADDRESS]',
+      addressCountry: 'IN',
+    },
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -69,7 +74,6 @@ const breadcrumbJsonLd = {
     <div class="ambient-glow-cyan" style="bottom: 20px; left: -80px; opacity: 0.4;"></div>
     <div class="container">
       <div class="page-hero__content">
-        <span class="section-kicker">Start a Conversation</span>
         <h1 class="page-hero__title">
           Discuss Your Project With <span class="gradient-text">Our Engineering Leads</span>
         </h1>

@@ -138,6 +138,7 @@ To add or modify questions on the homepage FAQ:
    ];
    ```
 3. Updating this array automatically updates **both** the interactive UI accordion and the Google `FAQPage` JSON-LD structured data.
+4. For comprehensive multi-category FAQs, edit `src/pages/faq.astro` which organizes questions into five service and commercial categories.
 
 ---
 

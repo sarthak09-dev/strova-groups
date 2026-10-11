@@ -27,6 +27,48 @@ function isActive(href: string): boolean {
 ---
 
 <header class="site-header" role="banner">
+  <!-- Top Trust & Utility Bar -->
+  <div class="header__topbar">
+    <div class="container header__topbar-inner">
+      <div class="header__topbar-left">
+        <span class="topbar-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>[ADDRESS], India</span>
+        </span>
+        <span class="topbar-divider" aria-hidden="true">&bull;</span>
+        <span class="topbar-item">
+          <span>Udyam: [UDYAM NO. when issued]</span>
+        </span>
+        <span class="topbar-divider" aria-hidden="true">&bull;</span>
+        <span class="topbar-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Mon–Sat: 10:00 AM – 7:00 PM IST (UTC+05:30)</span>
+        </span>
+      </div>
+      <div class="header__topbar-right">
+        <a href="mailto:info@strovagroups.in" class="topbar-link" aria-label="Official email info@strovagroups.in">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>info@strovagroups.in</span>
+        </a>
+        <span class="topbar-divider" aria-hidden="true">&bull;</span>
+        <a href="tel:+919288077802" class="topbar-link" aria-label="Direct phone +91 92880 77802">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          <span>+91 92880 77802</span>
+        </a>
+      </div>
+    </div>
+  </div>
   <div class="container header__inner">
     <a href="/" class="header__logo" aria-label="Strova Group — Home">
       <!-- Inline SVG logo mark -->
@@ -75,6 +117,23 @@ function isActive(href: string): boolean {
         </svg>
         <span>WhatsApp</span>
       </a>
+
+      <button type="button" class="btn--theme-toggle" id="theme-toggle" aria-label="Toggle color theme" title="Toggle color theme">
+        <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
 
       <a href="/contact/" class="btn btn--primary header__cta-btn">
         <span>Inquire</span>
@@ -139,6 +198,25 @@ function isActive(href: string): boolean {
           </svg>
           <span>Chat on WhatsApp</span>
         </a>
+        <a href="mailto:info@strovagroups.in" class="header__mobile-contact-btn btn btn--outline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>Email: info@strovagroups.in</span>
+        </a>
+      </div>
+
+      <div class="header__mobile-trust-details text-xs text-muted" style="line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
+        <p><strong>Operating Hours:</strong> Mon–Sat, 10:00 AM – 7:00 PM IST (UTC+05:30)</p>
+        <p><strong>MSME Registration:</strong> [UDYAM NO. when issued]</p>
+        <p><strong>Registered Address:</strong> [ADDRESS], India</p>
+      </div>
+
+      <div class="header__mobile-theme-row">
+        <button type="button" class="btn btn--outline btn--sm w-full header__mobile-theme-btn" id="mobile-theme-toggle" aria-label="Toggle color theme">
+          <span>Toggle Light / Dark Theme</span>
+        </button>
       </div>
 
       <a href="/contact/" class="btn btn--primary header__mobile-cta">

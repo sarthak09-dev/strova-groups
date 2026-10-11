@@ -167,37 +167,40 @@ export function initGlobalInteractions() {
     });
   }
 
-  // 5. Universal Scroll-Triggered Reveal Animations for all pages
-  if (!prefersReducedMotion) {
-    // Only run generic observer on pages without bespoke GSAP hero/trigger orchestration
-    const isGsapPage = Boolean(document.getElementById('three-hero-container'));
-    if (!isGsapPage) {
-      const revealTargets = document.querySelectorAll(
-        '.section-header, .card, .capability-card, .pillar-card, .case-study-card, .value-card, .principle-card, .contact-card, .contact-form-card, .reveal-on-scroll'
-      );
-      if (revealTargets.length > 0) {
-        const revealObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-revealed');
-                revealObserver.unobserve(entry.target);
-              }
-            });
-          },
-          {
-            rootMargin: '0px 0px -50px 0px',
-            threshold: 0.08,
-          }
-        );
+  // 5. Interactive Light & Dark Theme Controller
+  function setupThemeToggle() {
+    const toggleButtons = document.querySelectorAll<HTMLButtonElement>('#theme-toggle, #mobile-theme-toggle, .btn--theme-toggle');
+    if (toggleButtons.length === 0) return;
 
-        revealTargets.forEach((el) => {
-          el.classList.add('reveal-on-scroll');
-          revealObserver.observe(el);
-        });
-      }
-    }
+    const getCurrentTheme = (): 'light' | 'dark' => {
+      const activeAttr = document.documentElement.getAttribute('data-theme');
+      if (activeAttr === 'light' || activeAttr === 'dark') return activeAttr;
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    };
+
+    const updateButtonsAria = (currentTheme: 'light' | 'dark') => {
+      toggleButtons.forEach((btn) => {
+        btn.setAttribute('aria-pressed', currentTheme === 'light' ? 'true' : 'false');
+        btn.setAttribute('title', `Current theme: ${currentTheme}. Click to switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme.`);
+      });
+    };
+
+    updateButtonsAria(getCurrentTheme());
+
+    toggleButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const currentTheme = getCurrentTheme();
+        const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        try {
+          localStorage.setItem('strova-theme', nextTheme);
+        } catch (e) {}
+        updateButtonsAria(nextTheme);
+      });
+    });
   }
+
+  setupThemeToggle();
 }
 
 // Auto-run on DOM ready

@@ -38,19 +38,30 @@ const orgJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Strova Group',
+  legalName: 'Strova Group',
   url: 'https://strovagroups.in',
   logo: 'https://strovagroups.in/images/logo.svg',
   email: 'info@strovagroups.in',
-  telephone: '+91 92880 77802',
+  telephone: '+919288077802',
   description: 'AI & automation for growing businesses. Technology, digital marketing, and commerce solutions for Indian and international clients.',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '[ADDRESS]',
     addressCountry: 'IN',
   },
-  sameAs: [
-    // TODO: Add real social media profile URLs
-  ],
+  founder: {
+    '@type': 'Person',
+    name: 'Babita Kumari',
+    jobTitle: '[ROLE TITLE]',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+919288077802',
+    contactType: 'customer service',
+    areaServed: 'IN',
+    availableLanguage: ['en', 'hi'],
+  },
+  sameAs: [],
 };
 
 const websiteJsonLd = {
@@ -74,8 +85,18 @@ const allJsonLd = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#08090D" />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        const storedTheme = localStorage.getItem('strova-theme');
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        if (storedTheme === 'light' || (!storedTheme && prefersLight)) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

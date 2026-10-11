@@ -137,7 +137,6 @@ const breadcrumbJsonLd = {
   <section class="section divisions-section" id="divisions" aria-labelledby="divisions-heading">
     <div class="container">
       <div class="section-header text-center">
-        <span class="section-kicker">Core Capabilities</span>
         <h2 id="divisions-heading" class="section-title">Three Specialized Divisions. One Unified Standard.</h2>
         <p class="section-subtitle">
           We bring engineering discipline to code, precision to customer acquisition, and modern architecture to commerce.
@@ -251,7 +250,6 @@ const breadcrumbJsonLd = {
   <section class="section process-section" id="how-we-work" aria-labelledby="process-heading">
     <div class="container">
       <div class="section-header text-center">
-        <span class="section-kicker">Delivery Lifecycle</span>
         <h2 id="process-heading" class="section-title">How We Work: From Discovery to Deployment</h2>
         <p class="section-subtitle">
           A disciplined four-step execution framework designed to eliminate scope ambiguity, prevent delays, and deliver production excellence.
@@ -333,7 +331,6 @@ const breadcrumbJsonLd = {
   <section class="section pricing-section" id="pricing" aria-labelledby="pricing-heading">
     <div class="container">
       <div class="section-header text-center">
-        <span class="section-kicker">Honest Engagements</span>
         <h2 id="pricing-heading" class="section-title">Transparent Pricing &amp; Milestone Model</h2>
         <p class="section-subtitle">
           No vague retainers. No unexpected change-order surprises. Clear "starting from" baselines with 50% upfront milestone commitments.
@@ -435,7 +432,6 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="filter-box">
         <div class="filter-header">
-          <span class="section-kicker">Radical Candor</span>
           <h2 id="filter-heading" class="filter-title">Who Strova Group Is Not Right For</h2>
           <p class="filter-subtitle">
             We value long-term partnerships and exceptional output. We believe in being honest about where our engineering capabilities are and are not a fit.
@@ -473,7 +469,6 @@ const breadcrumbJsonLd = {
   <section class="section faq-section" id="faq" aria-labelledby="faq-heading">
     <div class="container">
       <div class="section-header text-center">
-        <span class="section-kicker">Questions &amp; Answers</span>
         <h2 id="faq-heading" class="section-title">Frequently Asked Questions</h2>
         <p class="section-subtitle">
           Everything you need to know about our engineering approach, commercial policies, and working arrangements.
@@ -503,7 +498,6 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="cta-banner">
         <div class="cta-content">
-          <span class="section-kicker text-cyan">Start a Conversation</span>
           <h2 id="cta-heading" class="cta-title">Ready to Automate Workflows and Scale Your Engineering?</h2>
           <p class="cta-desc">
             Schedule a technical consultation. We review your requirements, identify bottlenecks, and return a concrete architectural estimate within 24 business hours.
@@ -633,16 +627,6 @@ const breadcrumbJsonLd = {
 
   .text-center {
     text-align: center;
-  }
-
-  .section-kicker {
-    display: inline-block;
-    font-size: var(--text-xs);
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: var(--space-3);
   }
 
   .text-cyan {
@@ -1234,28 +1218,6 @@ const breadcrumbJsonLd = {
           }
         );
       }
-
-      // 3. Scroll-Driven Section Header & Card Reveals
-      const scrollEntranceElements = document.querySelectorAll(
-        '.section-header, .division-card, .pricing-card, .filter-card, .faq-item, .cta-banner'
-      );
-      scrollEntranceElements.forEach((el) => {
-        gsap.fromTo(
-          el,
-          { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 88%',
-              toggleActions: 'play none none none',
-            },
-          }
-        );
-      });
 
       // Responsive GSAP animations via gsap.matchMedia()
       const mm = gsap.matchMedia();
