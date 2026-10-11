@@ -39,7 +39,7 @@ const faqs = [
   {
     question: 'Do you work with international clients outside India?',
     answer:
-      'Yes. While Strova Group is registered and headquartered in India, we routinely partner with businesses across the United States, Europe, the United Kingdom, and the Middle East. Contracts and invoices can be settled in USD, EUR, GBP, or INR.',
+      'Yes. While Strova Group is based in India, we work with both Indian commercial enterprises and international clients. Invoices can be settled in INR or in USD upon request.',
   },
 ];
 
@@ -55,25 +55,12 @@ const faqJsonLd = {
     },
   })),
 };
-
-const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'Home',
-      item: 'https://strovagroups.in/',
-    },
-  ],
-};
 ---
 
 <BaseLayout
   title="Strova Group — AI & Automation for Growing Businesses"
   description="Strova Group delivers high-performance websites, Android apps, custom SaaS, AI automations, and growth marketing for Indian and international businesses."
-  jsonLd={[faqJsonLd, breadcrumbJsonLd]}
+  jsonLd={[faqJsonLd]}
 >
   <!-- Hero Section -->
   <section class="hero-section" aria-labelledby="hero-title">
@@ -212,7 +199,7 @@ const breadcrumbJsonLd = {
 
         <!-- Division 3: Commerce -->
         <article class="division-card division-card--coming-soon parallax-card" data-sheen="true">
-          <div class="division-card__badge division-card__badge--commerce">DIV-03 // COMMERCE &bull; Q3 2026</div>
+          <div class="division-card__badge division-card__badge--commerce">DIV-03 // COMMERCE &bull; COMING SOON</div>
           <h3 class="division-card__title">Strova Commerce</h3>
           <p class="division-card__desc">
             Next-generation headless commerce architectures, omnichannel inventory synchronization, and WhatsApp catalog checkouts tailored for high conversions.
@@ -418,7 +405,7 @@ const breadcrumbJsonLd = {
           </svg>
         </div>
         <div class="policy-text">
-          <h4 class="policy-title">Our Standard Delivery &amp; Payment Commitment</h4>
+          <h3 class="policy-title">Our Standard Delivery &amp; Payment Commitment</h3>
           <p class="policy-desc">
             All fixed-scope engagements adhere to a clear <strong>50% upfront deposit</strong> upon architectural milestone agreement, with the remaining <strong>50% settled upon staging demonstration and sign-off</strong> prior to production cutover. Invoices can be processed via Indian domestic bank transfer (IMPS/NEFT/RTGS/UPI) or international SWIFT wire / Stripe.
           </p>

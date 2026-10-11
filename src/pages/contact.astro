@@ -321,6 +321,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
                 Technology and digital services firm operating from India.
               </p>
               <p class="text-sm text-secondary">
+                <strong>MSME Registration:</strong><br/>
+                Udyam Registration: UDYAM-JH-20-0147452
+              </p>
+              <p class="text-sm text-secondary">
                 <strong>Business Operating Hours:</strong><br/>
                 Monday – Saturday: 10:00 AM – 7:00 PM IST (UTC+05:30)<br/>
                 Sunday: Closed
@@ -485,6 +489,18 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
     display: none;
   }
 
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .required,
+    :root:not([data-theme="light"]) .form-error {
+      color: #f87171;
+    }
+  }
+
+  :root[data-theme="dark"] .required,
+  :root[data-theme="dark"] .form-error {
+    color: #f87171;
+  }
+
   .form-error.visible {
     display: block;
   }
@@ -514,13 +530,18 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
     color: #065f46;
   }
 
-  :root[data-theme="dark"] .form-status.success,
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .form-status.success {
       background: rgba(16, 185, 129, 0.18);
       border-color: #10b981;
       color: #34d399;
     }
+  }
+
+  :root[data-theme="dark"] .form-status.success {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+    color: #34d399;
   }
 
   .form-status.error {
@@ -530,13 +551,18 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
     color: #991b1b;
   }
 
-  :root[data-theme="dark"] .form-status.error,
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .form-status.error {
       background: rgba(239, 68, 68, 0.2);
       border-color: #ef4444;
       color: #f87171;
     }
+  }
+
+  :root[data-theme="dark"] .form-status.error {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #f87171;
   }
 
   .form-status a {
