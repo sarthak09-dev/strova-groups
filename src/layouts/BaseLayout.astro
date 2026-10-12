@@ -33,8 +33,17 @@ const {
   bodyClass = '',
 } = Astro.props;
 
+const sameAsProfiles = [
+  import.meta.env.PUBLIC_LINKEDIN_URL,
+  import.meta.env.PUBLIC_GITHUB_URL,
+  import.meta.env.PUBLIC_INSTAGRAM_URL,
+  import.meta.env.PUBLIC_YOUTUBE_URL,
+  import.meta.env.PUBLIC_GOOGLE_BUSINESS_URL,
+  import.meta.env.PUBLIC_CLUTCH_URL,
+].filter((url): url is string => typeof url === 'string' && url.trim().length > 0);
+
 /* Organization JSON-LD — present on every page */
-const orgJsonLd = {
+const orgJsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Strova Group',
@@ -49,6 +58,11 @@ const orgJsonLd = {
     name: 'Sarthak Shresht',
     jobTitle: 'Founder',
   },
+  identifier: {
+    '@type': 'PropertyValue',
+    propertyID: 'Udyam Registration Number',
+    value: 'UDYAM-JH-20-0147452',
+  },
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+919288077802',
@@ -56,6 +70,7 @@ const orgJsonLd = {
     areaServed: 'IN',
     availableLanguage: ['en', 'hi'],
   },
+  ...(sameAsProfiles.length > 0 ? { sameAs: sameAsProfiles } : {}),
 };
 
 const websiteJsonLd = {

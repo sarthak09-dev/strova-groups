@@ -1,32 +1,33 @@
 # Strova Group
 
-> AI & automation for growing businesses.
+> Technology, commerce, and digital growth for growing businesses.
 
-Strova Group is an India-based technology and digital services firm delivering high-performance software engineering, native mobile apps, automated WhatsApp workflows, and data-driven marketing for local businesses in India and international clients worldwide.
+Strova Group is an India-based engineering and digital growth firm delivering high-performance web systems, native Android applications, automated WhatsApp pipelines, and data-driven customer acquisition for Indian and international businesses.
 
 - **Canonical Origin**: https://strovagroups.in
 - **Email**: info@strovagroups.in
 - **Phone & WhatsApp**: +91 92880 77802 (tel:+919288077802, https://wa.me/919288077802)
 - **Headquarters**: Operating from India (Hours: Mon–Sat, 10:00 AM – 7:00 PM IST / UTC+05:30)
-- **Founder**: Babita Kumari, Founder
+- **Leadership & Ownership**: Sarthak Shresht (Founder). Legal owner per Udyam: Babita Kumari, proprietor. Strova Group is a proprietorship of Babita Kumari.
 - **MSME Registration**: UDYAM-JH-20-0147452
-- **Commercial Policy**: 50% upfront deposit on milestone architecture, 50% upon staging QA sign-off prior to production deployment. Currency in INR with USD on request.
+- **Commercial Model**: Fixed-scope written quotes delivered within 1 business day; 50% advance upon scope agreement and 50% upon staging demonstration prior to final handover. Invoices in INR or USD upon request.
 
 ## Divisions
 
-- **Strova Technologies** (https://strovagroups.in/technologies/): High-performance static and hybrid web platforms (Astro, Next.js), native Android applications (Kotlin, Jetpack Compose), custom SaaS dashboards, and official Meta WhatsApp Cloud API & AI automation pipelines.
-- **Strova Digital** (https://strovagroups.in/digital/): Technical SEO, Core Web Vitals remediation, paid search & social media advertising (Google Ads, Meta Ads) with server-side CAPI tracking, and B2B inbound lead generation funnels.
-- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery (COD) RTO fraud reduction engines (Coming soon).
+- **Strova Technologies** (https://strovagroups.in/technologies/): High-performance static and hybrid web platforms, native Android applications, custom SaaS dashboards, and official Meta WhatsApp Cloud API automation workflows.
+- **Strova Digital** (https://strovagroups.in/digital/): Technical SEO, Core Web Vitals remediation, paid performance advertising (Google Ads, Meta Ads) with server-side CAPI tracking, and B2B inbound lead generation funnels.
+- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, and multi-channel inventory synchronization (Coming soon).
 
 ## Key Pages
 
-- [Home](https://strovagroups.in/): Overview of Strova Group, active divisions, four-step execution process, pricing snapshots, and FAQ.
-- [Strova Technologies](https://strovagroups.in/technologies/): Custom software, Android apps, SaaS portals, and WhatsApp automation details and pricing.
-- [Strova Digital](https://strovagroups.in/digital/): Performance marketing, technical SEO, and conversion rate optimization services.
-- [Strova Commerce (Coming Soon)](https://strovagroups.in/commerce/): Headless commerce and conversational retail architecture roadmap.
-- [About Strova Group](https://strovagroups.in/about/): Founder story (Babita Kumari), four core operating principles, and verified corporate identity.
-- [Case Studies](https://strovagroups.in/case-studies/): Technical architecture blueprints and production problem-solution breakdowns.
-- [Frequently Asked Questions (FAQ)](https://strovagroups.in/faq/): Direct answers regarding project timelines, 50% deposit policy, code ownership, and integrations.
-- [Contact](https://strovagroups.in/contact/): Inbound project inquiry form with honeypot spam protection, 24 business hours response SLA, direct phone, and WhatsApp chat.
-- [Privacy Policy](https://strovagroups.in/privacy/): Comprehensive DPDP Act 2023 (India) and GDPR data protection practices, Data Fiduciary disclosures, and Grievance Officer contacts.
-- [Terms of Service](https://strovagroups.in/terms/): Commercial engagement terms, milestone delivery framework, 100% IP handover, and 30-day post-launch bug warranty.
+- [Home](https://strovagroups.in/): Overview of Strova Group, active divisions, four-step execution process, and fixed-scope quotation framework.
+- [Strova Technologies](https://strovagroups.in/technologies/): Technical specifications for custom web platforms, native Android apps, SaaS portals, and WhatsApp automations.
+- [Strova Digital](https://strovagroups.in/digital/): Performance marketing methodology, technical SEO architecture, and conversion rate optimization.
+- [Strova Commerce](https://strovagroups.in/commerce/): Architectural roadmap for headless commerce and conversational catalog checkout.
+- [About](https://strovagroups.in/about/): Founder background (Sarthak Shresht), proprietorship details (Babita Kumari), and engineering standards.
+- [Request a Quote / Contact](https://strovagroups.in/contact/): Quick quote request form with 1-business-day response promise, direct phone, and WhatsApp contact.
+- [Frequently Asked Questions](https://strovagroups.in/faq/): Direct answers regarding project quotation, 50% milestone payments, full code ownership, and international billing.
+- [Privacy Policy](https://strovagroups.in/privacy/): Comprehensive DPDP Act 2023 aligned data protection disclosures, data subject rights, and grievance officer contact.
+- [Terms of Service](https://strovagroups.in/terms/): Commercial engagement rules, 100% intellectual property ownership transfer, and anti-scraping copyright terms.
+- [Cookie Policy](https://strovagroups.in/cookies/): Transparent disclosure confirming zero tracking cookies on the marketing website.
+- [Accessibility](https://strovagroups.in/accessibility/): WCAG 2.2 AA accessibility commitments, keyboard navigational standards, and accessibility support contact.

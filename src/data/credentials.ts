@@ -37,3 +37,4 @@ export const credentialsConfig: CredentialItem[] = [
     verifiableUrl: '', // Omitted until live organization URL is supplied
   },
 ];
+

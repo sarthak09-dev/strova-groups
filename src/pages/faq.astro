@@ -18,6 +18,12 @@ const faqs: FAQItem[] = [
   // General & Process
   {
     category: 'Engagement & Process',
+    question: 'How do project quotes work?',
+    answer:
+      'You describe your project via our 60-second quote form or by emailing info@strovagroups.in. Within one business day, we review your specifications and return a written, itemized fixed-scope quote outlining exact deliverables, milestones, and timelines. We do not charge hidden fees or surprise change orders.',
+  },
+  {
+    category: 'Engagement & Process',
     question: 'What is your typical project delivery timeline?',
     answer:
       'Standard web applications and WhatsApp automation pipelines typically launch within 3 to 6 weeks. Larger custom SaaS systems and Android applications follow milestone-based 2-week agile sprints, with MVP deliveries commonly reaching staging environments within 8 to 12 weeks.',
@@ -135,7 +141,7 @@ const categories = Array.from(new Set(faqs.map((f) => f.category)));
 
 <BaseLayout
   title="Frequently Asked Questions — Strova Group"
-  description="Find answers about Strova Group's software engineering, WhatsApp automation, technical SEO, pricing, and 50% upfront payment policy."
+  description="Find answers about Strova Group's software engineering, WhatsApp automation, technical SEO, fixed-scope quotes, and 50% upfront payment policy."
   jsonLd={[faqJsonLd, breadcrumbJsonLd]}
 >
   <!-- Page Hero -->

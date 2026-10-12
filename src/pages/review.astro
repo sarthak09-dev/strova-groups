@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const googleReviewUrl = import.meta.env.PUBLIC_GOOGLE_REVIEW_URL || 'https://search.google.com/local/writereview?placeid=strova-group';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Client Review',
+      item: 'https://strovagroups.in/review/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Client Review & Feedback — Strova Group"
+  description="Leave an honest review for Strova Group on Google Business. We value transparent client feedback with zero incentives or review gating."
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <section class="section">
+    <div class="container prose-container">
+      <div class="review-card card">
+        <span class="section-eyebrow">Client Feedback</span>
+        <h1 class="review-title">Share your experience with Strova Group</h1>
+        
+        <p class="review-lead text-secondary">
+          Thank you for working with Strova Group. Independent, honest feedback from clients helps other business owners evaluate our engineering rigor and commercial transparency.
+        </p>
+
+        <div class="review-guidelines card card--quiet">
+          <h2 class="text-base" style="margin-bottom: var(--space-2);">Our Review Policy:</h2>
+          <ul class="text-sm text-secondary" style="list-style: disc; padding-left: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>Zero Incentives:</strong> We never offer discounts, gifts, or financial incentives in exchange for reviews.</li>
+            <li><strong>Zero Gating:</strong> We do not filter or pre-screen feedback. All clients are directed directly to Google's public review platform.</li>
+            <li><strong>Direct Communication:</strong> If you encountered an issue on your project, you can always reach our founder directly at <a href="mailto:info@strovagroups.in">info@strovagroups.in</a>.</li>
+          </ul>
+        </div>
+
+        <div class="review-action" style="margin-top: var(--space-8); display: flex; flex-wrap: wrap; gap: var(--space-4);">
+          <a
+            href={googleReviewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--primary btn--lg"
+          >
+            Leave a review on Google &rarr;
+          </a>
+          <a href="mailto:info@strovagroups.in?subject=Direct%20Client%20Feedback" class="btn btn--outline btn--lg">
+            Send private feedback to founder
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose-container {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .review-card {
+    padding: var(--space-10);
+  }
+
+  .review-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .review-lead {
+    font-size: var(--text-base);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .review-guidelines {
+    padding: var(--space-6);
+  }
+</style>

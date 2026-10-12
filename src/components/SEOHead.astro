@@ -41,9 +41,17 @@ const defaultImageAlt = 'Strova Group — Technology & Digital Services in India
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
+<!-- Search Engine Verification Slots -->
+{import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+  <meta name="google-site-verification" content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION} />
+)}
+{import.meta.env.PUBLIC_BING_SITE_VERIFICATION && (
+  <meta name="msvalidate.01" content={import.meta.env.PUBLIC_BING_SITE_VERIFICATION} />
+)}
+
 <!-- Theme Color for Browser Chrome -->
-<meta name="theme-color" content="#08090D" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#090D16" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
 
 <!-- Icons & PWA Manifest -->
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

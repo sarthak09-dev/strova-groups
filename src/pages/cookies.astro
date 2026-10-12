@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Cookie Policy',
+      item: 'https://strovagroups.in/cookies/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Cookie Policy — Strova Group"
+  description="Transparent cookie policy for Strova Group. Zero tracking cookies on the marketing site; essential auth cookies only on the client portal."
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <section class="section">
+    <div class="container prose">
+      <span class="section-eyebrow">Privacy &amp; Data</span>
+      <h1>Cookie Policy</h1>
+      <p class="text-sm text-muted">Last updated: October 12, 2026</p>
+
+      <p>
+        <strong>Strova Group</strong> believes in privacy by design and radical transparency. This Cookie Policy explains how cookies and browser storage technologies are used on our marketing website (<a href="https://strovagroups.in">https://strovagroups.in</a>) and client portal (<a href="https://portal.strovagroups.in">https://portal.strovagroups.in</a>).
+      </p>
+
+      <h2>1. Marketing Website (Zero Tracking Cookies)</h2>
+      <p>
+        On our public marketing website (<code>strovagroups.in</code>), we <strong>do not set any tracking cookies, third-party advertising cookies, or behavioral profiling cookies</strong>.
+      </p>
+      <p>
+        We use privacy-friendly, cookieless analytics that do not store persistent identifiers on your device and do not track you across different websites. We also respect the browser's <code>Do Not Track</code> (DNT) header.
+      </p>
+
+      <h2>2. Client Portal (Strictly Essential Cookies)</h2>
+      <p>
+        On our invite-only client portal (<code>portal.strovagroups.in</code>), cookies are used exclusively for authentication and session security:
+      </p>
+      <ul>
+        <li><strong>Session Authentication Cookie:</strong> An encrypted authentication token set upon one-time passcode (OTP) verification. Attributes: <code>HttpOnly</code> (inaccessible to browser JavaScript), <code>Secure</code> (transmitted over HTTPS only), and <code>SameSite=Lax</code> (cross-site request forgery protection).</li>
+        <li><strong>Security / Bot Verification:</strong> Cloudflare Turnstile security tokens during authentication to protect against automated credential attacks.</li>
+      </ul>
+      <p>
+        These cookies are classified as strictly necessary for the technical operation of the authenticated portal and do not require marketing consent under applicable data protection laws.
+      </p>
+
+      <h2>3. Local Storage</h2>
+      <p>
+        Our website uses the browser's <code>localStorage</code> solely for saving your light or dark theme interface preference (<code>strova-theme</code>). This setting never leaves your browser and contains zero personal data.
+      </p>
+
+      <h2>4. Managing Your Privacy Choices</h2>
+      <p id="privacy-choices">
+        You can control or delete cookies and local storage directly through your browser settings:
+      </p>
+      <ul>
+        <li>You may clear your browser cache and local storage at any time to reset your theme preferences.</li>
+        <li>You can configure your browser to block third-party cookies or alert you when cookies are being sent.</li>
+        <li>Logging out of the client portal immediately terminates the active authentication session and removes the session cookie.</li>
+      </ul>
+
+      <h2>5. Inquiries &amp; Data Rights</h2>
+      <p>
+        If you have questions about our cookie policy or wish to exercise your data subject rights under India's Digital Personal Data Protection (DPDP) Act 2023, please contact our data grievance desk:
+      </p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:info@strovagroups.in">info@strovagroups.in</a></li>
+        <li><strong>Phone:</strong> <a href="tel:+919288077802">+91 92880 77802</a></li>
+      </ul>
+
+      <p class="text-sm text-muted" style="margin-top: var(--space-8);">
+        Strova Group is a proprietorship of Babita Kumari. Registered MSME: UDYAM-JH-20-0147452.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

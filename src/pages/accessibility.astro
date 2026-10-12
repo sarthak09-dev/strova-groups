@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Accessibility',
+      item: 'https://strovagroups.in/accessibility/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Accessibility Statement — Strova Group"
+  description="Strova Group's commitment to web accessibility and WCAG 2.2 Level AA standards across all digital platforms."
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <section class="section">
+    <div class="container prose">
+      <span class="section-eyebrow">Accessibility</span>
+      <h1>Accessibility Statement</h1>
+      <p class="text-sm text-muted">Last updated: October 12, 2026</p>
+
+      <p>
+        <strong>Strova Group</strong> is committed to ensuring digital accessibility for individuals with disabilities. We continually improve the user experience for everyone and apply relevant accessibility standards to our websites, client applications, and portals.
+      </p>
+
+      <h2>Conformance Status</h2>
+      <p>
+        The Web Content Accessibility Guidelines (WCAG) defines requirements for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA.
+      </p>
+      <p>
+        The Strova Group website is designed and tested to conform with <strong>WCAG 2.2 Level AA</strong> standards.
+      </p>
+
+      <h2>Accessibility Measures</h2>
+      <p>
+        To ensure barrier-free access, Strova Group integrates the following technical standards across the codebase:
+      </p>
+      <ul>
+        <li><strong>Semantic HTML5:</strong> Structured markup using native landmarks (<code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>, <code>section</code>) to support screen readers.</li>
+        <li><strong>Keyboard Navigation:</strong> All interactive elements, including navigation dropdowns, modal menus, and forms, are fully operable using a keyboard alone.</li>
+        <li><strong>Visible Focus Indicators:</strong> High-contrast focus rings ensure that keyboard users can easily identify the active element.</li>
+        <li><strong>Skip to Content Link:</strong> A dedicated skip navigation link at the top of every page allows keyboard users to bypass repetitive header navigation.</li>
+        <li><strong>Contrast Ratios:</strong> Text colors meet or exceed the minimum 4.5:1 contrast ratio against their respective background colors across both light and dark themes.</li>
+        <li><strong>Responsive Ergonomics:</strong> Layouts adapt gracefully down to 360px viewport widths with no horizontal clipping or truncated text.</li>
+        <li><strong>Motion Preferences:</strong> The website respects the <code>prefers-reduced-motion</code> operating system setting, disabling animations for users sensitive to motion.</li>
+      </ul>
+
+      <h2>Feedback &amp; Contact Information</h2>
+      <p>
+        We welcome your feedback on the accessibility of the Strova Group website. If you encounter accessibility barriers or have difficulty accessing any portion of our platform, please reach out to us:
+      </p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:info@strovagroups.in">info@strovagroups.in</a></li>
+        <li><strong>Phone &amp; WhatsApp:</strong> <a href="tel:+919288077802">+91 92880 77802</a></li>
+        <li><strong>Response SLA:</strong> We aim to acknowledge and address accessibility reports within 2 business days.</li>
+      </ul>
+
+      <p class="text-sm text-muted" style="margin-top: var(--space-8);">
+        Strova Group is a proprietorship of Babita Kumari. Registered MSME: UDYAM-JH-20-0147452.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

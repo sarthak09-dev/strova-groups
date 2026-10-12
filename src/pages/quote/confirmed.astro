@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Request a Quote',
+      item: 'https://strovagroups.in/contact/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'Quote Request Confirmed',
+      item: 'https://strovagroups.in/quote/confirmed/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Quote Request Confirmed — Strova Group"
+  description="Your project quote request has been received. We review all specifications and reply with a written fixed-scope quote within 1 business day."
+  noindex={true}
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <section class="section">
+    <div class="container confirmed-container">
+      <div class="card confirmed-card">
+        <div class="confirmed-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+
+        <span class="section-eyebrow">Submission Confirmed</span>
+        <h1 class="confirmed-title">We received your quote request</h1>
+        <p class="confirmed-lead text-secondary">
+          Thank you for reaching out to Strova Group. A confirmation copy has been queued for your records.
+        </p>
+
+        <div class="next-steps-card card card--quiet">
+          <h2 class="text-base" style="margin-bottom: var(--space-4);">What happens next:</h2>
+          <ol class="next-steps-list">
+            <li>
+              <strong>1. Founder Review:</strong> Our engineering leadership reviews your functional goals and technical requirements.
+            </li>
+            <li>
+              <strong>2. Written Fixed Quote (Within 1 Business Day):</strong> You receive an itemized proposal detailing scope, milestone deliverables, timeline, and fixed terms. No hidden costs.
+            </li>
+            <li>
+              <strong>3. Written Agreement &amp; 50% Advance:</strong> Development sprints begin immediately upon mutual sign-off and initial deposit.
+            </li>
+          </ol>
+        </div>
+
+        <div class="confirmed-footer text-sm text-secondary">
+          <p>
+            Need to add urgent details or share architecture diagrams? Email us directly at <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> or message us on WhatsApp at <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a>.
+          </p>
+          <div style="margin-top: var(--space-6);">
+            <a href="/" class="btn btn--outline">Return to Homepage &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .confirmed-container {
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+
+  .confirmed-card {
+    padding: var(--space-10);
+    text-align: center;
+  }
+
+  .confirmed-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    color: var(--accent);
+    border: 1px solid var(--border-color);
+  }
+
+  .confirmed-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .confirmed-lead {
+    font-size: var(--text-base);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+  }
+
+  .next-steps-card {
+    text-align: left;
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .next-steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .next-steps-list li strong {
+    color: var(--text-primary);
+  }
+
+  .confirmed-footer {
+    line-height: 1.6;
+  }
+</style>

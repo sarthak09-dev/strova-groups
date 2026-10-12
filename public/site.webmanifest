@@ -1,17 +1,12 @@
 {
   "name": "Strova Group",
-  "short_name": "Strova",
-  "description": "AI & automation for growing businesses. High-performance web platforms, Android apps, and WhatsApp automation.",
+  "short_name": "Strova Group",
+  "description": "Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#08090D",
-  "theme_color": "#08090D",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0F172A",
   "icons": [
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
     {
       "src": "/favicon.svg",
       "sizes": "any",
@@ -19,4 +14,3 @@
     }
   ]
 }
-

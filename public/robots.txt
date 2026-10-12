@@ -1,22 +1,46 @@
-# Allow all search engines and AI crawlers
+# robots.txt for Strova Group (https://strovagroups.in)
+# Aligned with ethical search engine and AI crawler indexing standards
+
 User-agent: *
 Allow: /
+# Disallow client portal and private administrative endpoints
+Disallow: /portal/
+Disallow: /api/
 
-# Explicit AI and LLM crawler directives
+# -----------------------------------------------------------------------------
+# Search & Retrieval Agents (Allowed for citation and AI answer discovery)
+# -----------------------------------------------------------------------------
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# -----------------------------------------------------------------------------
+# Foundation Model Training Crawlers
+# Policy: Defaulting to Allowed.
+# Note: To disallow foundation model training while keeping search discovery,
+# change 'Allow: /' to 'Disallow: /' below. See README for trade-offs.
+# -----------------------------------------------------------------------------
 User-agent: GPTBot
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /
 
-User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 User-agent: Applebot-Extended
 Allow: /
 
-User-agent: Google-Extended
-Allow: /
-
-# Sitemap
+# -----------------------------------------------------------------------------
+# XML Sitemap Index
+# -----------------------------------------------------------------------------
 Sitemap: https://strovagroups.in/sitemap-index.xml

@@ -1,0 +1,8 @@
+# Security Contact Information for Strova Group
+Contact: mailto:info@strovagroups.in
+Expires: 2027-10-12T00:00:00.000Z
+Preferred-Languages: en, hi
+Canonical: https://strovagroups.in/.well-known/security.txt
+Policy: https://strovagroups.in/terms/
+Hiring: https://strovagroups.in/about/
+Acknowledgments: https://strovagroups.in/about/

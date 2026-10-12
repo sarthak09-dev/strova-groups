@@ -20,36 +20,6 @@ const serviceJsonLd = {
   areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
   description:
     'Technical SEO, high-intent Google and Meta performance advertising, server-side conversion tracking, and automated lead generation funnels.',
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: 'Digital Growth Services',
-    itemListElement: [
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Technical & Programmatic SEO',
-          description: 'Core Web Vitals remediation, schema markup architecture, and programmatic search rank optimization.',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Paid Media & ROAS Optimization',
-          description: 'Google Ads and Meta Ads management with server-side CAPI attribution.',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Inbound Lead Generation Funnels',
-          description: 'High-converting landing pages wired to automated CRM qualification flows.',
-        },
-      },
-    ],
-  },
 };
 
 const breadcrumbJsonLd = {
@@ -102,7 +72,7 @@ const breadcrumbJsonLd = {
     </div>
   </section>
 
-  <!-- Service Specification Overview (What it is, Who it is for, Price & Timeline) -->
+  <!-- Service Specification Overview (What it is, Who it is for, Quotes & Timeline) -->
   <section class="section service-overview-section" aria-label="Division Overview">
     <div class="container">
       <div class="card service-overview-card">
@@ -116,8 +86,8 @@ const breadcrumbJsonLd = {
             <p class="overview-item__val">Commercial enterprises, professional clinics and practices in India, and international brands looking for predictable ROAS and verifiable customer acquisition.</p>
           </div>
           <div class="overview-item">
-            <span class="overview-item__label">Starting Price Range</span>
-            <p class="overview-item__val">Starting at ₹35,000 for technical SEO sprints &bull; ₹40,000/month for performance ads management &bull; ₹75,000/month for complete growth engine (USD on request).</p>
+            <span class="overview-item__label">How Quotes Work</span>
+            <p class="overview-item__val">Itemized written proposal delivered within 1 business day. Work starts upon written scope sign-off and 50% advance.</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">Typical Timeline</span>
@@ -245,7 +215,7 @@ const breadcrumbJsonLd = {
           <div class="methodology-step__num">02</div>
           <h3 class="methodology-step__title">Rapid Angle &amp; Creative Validation</h3>
           <p class="methodology-step__text">
-            We launch targeted paid media tests across micro-budgets and deploy foundational technical SEO fixes. We establish concrete Cost-per-Acquisition (CPA) benchmarks.
+            We launch targeted ad experiments with controlled spend parameters and deploy foundational technical SEO fixes. We establish concrete Cost-per-Acquisition (CPA) benchmarks.
           </p>
         </div>
         <div class="methodology-step">
@@ -259,37 +229,31 @@ const breadcrumbJsonLd = {
     </div>
   </section>
 
-  <!-- Pricing Overview for Digital -->
+  <!-- How Quotes Work for Digital Growth -->
   <section class="section" aria-labelledby="digital-pricing-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="digital-pricing-title" class="section-title">Transparent Growth Engagements</h2>
+        <h2 id="digital-pricing-title" class="section-title">How Quotes Work for Digital Growth</h2>
         <p class="section-subtitle">
-          Month-to-month contracts with no lock-in. Transparent monthly reporting on verifiable KPIs.
+          Transparent proposals based on your channels, market competition, and target metrics. No hidden lock-in.
         </p>
       </div>
 
       <div class="grid grid--3">
-        <div class="card pricing-compact">
-          <span class="pricing-compact__tag">One-Time Project</span>
-          <h3 class="pricing-compact__name">Technical SEO Sprint</h3>
-          <div class="pricing-compact__price">Starting at ₹35,000 / $500</div>
-          <p class="pricing-compact__desc">Comprehensive Core Web Vitals remediation, Schema.org graph deployment, sitemap repair, and keyword cluster blueprint.</p>
-          <a href="/contact/?service=digital" class="btn btn--outline w-full">Request SEO Sprint</a>
+        <div class="card card--quiet">
+          <span class="section-eyebrow">Sprint 01 &bull; Audit</span>
+          <h3 class="pillar-title">Technical Audit &amp; CAPI</h3>
+          <p class="text-secondary text-sm">Comprehensive Core Web Vitals remediation, Schema.org graph deployment, and server-side tracking.</p>
         </div>
-        <div class="card pricing-compact pricing-compact--highlight">
-          <span class="pricing-compact__tag">Monthly Retainer</span>
-          <h3 class="pricing-compact__name">Performance Ads Management</h3>
-          <div class="pricing-compact__price">₹40,000/mo / $600 USD</div>
-          <p class="pricing-compact__desc">Management of Google Search and Meta Ads campaigns. Includes server-side CAPI tracking, creative testing, and weekly reporting.</p>
-          <a href="/contact/?service=digital" class="btn btn--primary w-full">Request Ad Retainer</a>
+        <div class="card card--quiet">
+          <span class="section-eyebrow">Sprint 02 &bull; Proposal</span>
+          <h3 class="pillar-title">Written Growth Scope</h3>
+          <p class="text-secondary text-sm">Itemized quote delivered within 1 business day detailing campaigns, landing page assets, and attribution.</p>
         </div>
-        <div class="card pricing-compact">
-          <span class="pricing-compact__tag">Full Pipeline</span>
-          <h3 class="pricing-compact__name">Growth &amp; SEO Engine</h3>
-          <div class="pricing-compact__price">₹75,000/mo / $1,100 USD</div>
-          <p class="pricing-compact__desc">Integrated SEO, ad campaign management, dedicated conversion landing pages, and automated WhatsApp lead notifications.</p>
-          <a href="/contact/?service=digital" class="btn btn--outline w-full">Request Full Engine</a>
+        <div class="card card--quiet">
+          <span class="section-eyebrow">Sprint 03 &bull; Execution</span>
+          <h3 class="pillar-title">Milestone Reporting</h3>
+          <p class="text-secondary text-sm">Transparent bi-weekly commercial reporting on qualified leads, cost-per-acquisition, and revenue return.</p>
         </div>
       </div>
     </div>
@@ -458,47 +422,7 @@ const breadcrumbJsonLd = {
   }
 
   /* Compact Pricing */
-  .pricing-compact {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-8);
-  }
 
-  .pricing-compact--highlight {
-    border-color: var(--accent-2);
-  }
-
-  .pricing-compact__tag {
-    font-size: var(--text-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--accent-2);
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-2);
-  }
-
-  .pricing-compact__name {
-    font-size: var(--text-xl);
-    margin-bottom: var(--space-3);
-  }
-
-  .pricing-compact__price {
-    font-size: var(--text-lg);
-    font-weight: 800;
-    font-family: var(--font-heading);
-    color: var(--text-primary);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .pricing-compact__desc {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-6);
-    flex-grow: 1;
-  }
 
   .w-full {
     width: 100%;
