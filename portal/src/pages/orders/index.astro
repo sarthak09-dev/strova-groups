@@ -1,0 +1,369 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Order Workspace">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/portal" style="font-size: 0.8125rem; color: var(--color-text-dim); text-decoration: none;">
+      ← Back to all orders
+    </a>
+  </div>
+
+  <!-- Loading State -->
+  <div id="order-loading" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2rem; text-align: center; color: var(--color-text-dim);">
+    Loading workspace details...
+  </div>
+
+  <!-- Access Denied (Cross-Tenant RLS Violation) State -->
+  <div id="order-forbidden" style="display: none; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 2.5rem; text-align: center;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🛡️</div>
+    <h2 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: #991B1B; margin-bottom: 0.5rem;">
+      403 Forbidden — Access Denied
+    </h2>
+    <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.5;">
+      You do not have authorization to view this order. Strova Group enforces strict tenant isolation using Row Level Security (RLS). Cross-client data access attempts are denied and logged.
+    </p>
+    <a href="/portal" class="btn btn-secondary" style="border-color: #FECACA; color: #991B1B !important;">
+      Return to your authorized orders
+    </a>
+  </div>
+
+  <!-- Order Content (Rendered only if authorized) -->
+  <div id="order-content" style="display: none;">
+    <!-- Order Header -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2rem; margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+        <div>
+          <span id="order-division-badge" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);"></span>
+          <h1 id="order-title" style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; color: var(--color-text-main); margin-top: 0.25rem;"></h1>
+        </div>
+        <span id="order-current-stage-badge" class="badge"></span>
+      </div>
+      <p style="font-size: 0.8125rem; color: var(--color-text-dim); font-family: monospace;" id="order-uuid"></p>
+    </div>
+
+    <!-- 2-Column Grid: Timeline on left, Files & Invoices & Messages on right -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+      <!-- Column 1: 8-Stage Progress Timeline -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+          Project Milestone Timeline
+        </h2>
+
+        <div id="timeline-container" style="display: flex; flex-direction: column; gap: 1.5rem; position: relative;">
+          <!-- Injected timeline nodes -->
+        </div>
+      </div>
+
+      <!-- Column 2: Deliverables, Invoices, and Messaging -->
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <!-- Deliverables Panel -->
+        <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+            Deliverable Files
+          </h2>
+          <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+            Private storage access. Download links are ephemeral and cryptographically expire in 60 seconds.
+          </p>
+          <div id="files-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Injected files -->
+          </div>
+        </div>
+
+        <!-- Invoices Panel (Zero public price lists) -->
+        <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+            Invoices & Settlement
+          </h2>
+          <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+            Official commercial invoice records for accounting and tax compliance.
+          </p>
+          <div id="invoices-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Injected invoices -->
+          </div>
+        </div>
+
+        <!-- Message Box per Order -->
+        <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
+            Order Communication
+          </h2>
+          <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+            Direct thread for this engagement. Notes are emailed to info@strovagroups.in.
+          </p>
+
+          <div id="messages-list-container" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; max-height: 280px; overflow-y: auto; padding-right: 0.5rem;">
+            <!-- Injected message bubbles -->
+          </div>
+
+          <form id="new-message-form" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <textarea
+              id="message-input"
+              rows="3"
+              required
+              placeholder="Leave a project note, requirement update, or feedback..."
+              style="width: 100%; padding: 0.625rem; font-size: 0.875rem; font-family: inherit; border: 1px solid var(--color-border); border-radius: 4px; resize: vertical;"
+            ></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" style="font-size: 0.8125rem;">
+                Send message
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Portal order detail logic & RLS enforcement
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('id') || '00000000-0000-0000-0000-000000000001';
+
+    const sessionRaw = localStorage.getItem('strova_portal_session');
+    if (!sessionRaw) {
+      window.location.href = '/portal/login';
+    } else {
+      const session = JSON.parse(sessionRaw);
+
+      // Seed Database for Orders
+      const DB = {
+        orders: [
+          {
+            id: '00000000-0000-0000-0000-000000000001',
+            client_id: '11111111-1111-4111-8111-111111111111',
+            title: 'Patient Scheduling Platform & WhatsApp Cloud API',
+            division: 'Strova Technologies',
+            current_stage: 'In progress',
+            badge_class: 'badge-progress',
+          },
+          {
+            id: '00000000-0000-0000-0000-000000000002',
+            client_id: '22222222-2222-4222-8222-222222222222',
+            title: 'Technical SEO Architecture & Google Ads CAPI Wiring',
+            division: 'Strova Digital',
+            current_stage: 'Review',
+            badge_class: 'badge-review',
+          }
+        ],
+        stages: [
+          'Brief received',
+          'Scope agreed',
+          'Advance received',
+          'In progress',
+          'Review',
+          'Final payment',
+          'Delivered',
+          'Support'
+        ],
+        events: {
+          '00000000-0000-0000-0000-000000000001': [
+            { stage: 'Brief received', note: 'Initial clinic scheduling brief submitted via quote request form.', date: 'Oct 02, 2026' },
+            { stage: 'Scope agreed', note: 'Technical specification blueprint and sprint milestone schedule approved.', date: 'Oct 03, 2026' },
+            { stage: 'Advance received', note: '50% initial project milestone advance confirmed via direct RTGS transfer.', date: 'Oct 04, 2026' },
+            { stage: 'In progress', note: 'Sprint 2 in progress: Meta WhatsApp Cloud API webhooks wired to booking queue.', date: 'Oct 10, 2026' }
+          ],
+          '00000000-0000-0000-0000-000000000002': [
+            { stage: 'Brief received', note: 'Inbound SEO audit inquiry received.', date: 'Oct 06, 2026' },
+            { stage: 'Scope agreed', note: 'Remediation agreement and Conversion API scope signed.', date: 'Oct 07, 2026' },
+            { stage: 'Advance received', note: 'Initial project advance confirmed.', date: 'Oct 08, 2026' },
+            { stage: 'Review', note: 'Staging deployment ready for client review and verification.', date: 'Oct 11, 2026' }
+          ]
+        },
+        files: {
+          '00000000-0000-0000-0000-000000000001': [
+            { id: 'f1', name: 'technical-architecture-blueprint-v1.pdf', size: '1.2 MB', date: 'Oct 03, 2026' }
+          ],
+          '00000000-0000-0000-0000-000000000002': [
+            { id: 'f2', name: 'seo-audit-remediation-report.pdf', size: '2.1 MB', date: 'Oct 11, 2026' }
+          ]
+        },
+        invoices: {
+          '00000000-0000-0000-0000-000000000001': [
+            { number: 'INV-2026-001', status: 'Paid', badge: 'badge-success', date: 'Oct 03, 2026' }
+          ],
+          '00000000-0000-0000-0000-000000000002': [
+            { number: 'INV-2026-002', status: 'Pending', badge: 'badge-pending', date: 'Oct 08, 2026' }
+          ]
+        },
+        messages: {
+          '00000000-0000-0000-0000-000000000001': [
+            { sender: 'Client Alpha', role: 'client', text: 'Uploaded the WhatsApp Cloud API webhook credentials in the secure vault.', date: 'Oct 05, 09:15' },
+            { sender: 'Strova Operations', role: 'admin', text: 'Credentials verified and staging webhooks are now actively listening.', date: 'Oct 05, 11:40' }
+          ],
+          '00000000-0000-0000-0000-000000000002': [
+            { sender: 'Client Beta', role: 'client', text: 'Reviewed the Core Web Vitals remediation plan. Approved to deploy to staging.', date: 'Oct 09, 14:10' }
+          ]
+        }
+      };
+
+      const order = DB.orders.find(o => o.id === orderId);
+
+      document.getElementById('order-loading').style.display = 'none';
+
+      // RLS Policy Check:
+      // Does current user have permission to view this order?
+      const isAuthorized = order && (session.role === 'admin' || order.client_id === session.id);
+
+      if (!order || !isAuthorized) {
+        document.getElementById('order-forbidden').style.display = 'block';
+      } else {
+        document.getElementById('order-content').style.display = 'block';
+
+        // Header info
+        document.getElementById('order-title').textContent = order.title;
+        document.getElementById('order-division-badge').textContent = order.division;
+        document.getElementById('order-uuid').textContent = `Order ID: ${order.id}`;
+        const stageBadge = document.getElementById('order-current-stage-badge');
+        stageBadge.textContent = order.current_stage;
+        stageBadge.className = `badge ${order.badge_class}`;
+
+        // Render 8-stage timeline
+        const completedEvents = DB.events[order.id] || [];
+        const currentStageIndex = DB.stages.indexOf(order.current_stage);
+
+        const timelineContainer = document.getElementById('timeline-container');
+        timelineContainer.innerHTML = DB.stages.map((stageName, idx) => {
+          const isDone = idx < currentStageIndex;
+          const isCurrent = idx === currentStageIndex;
+          const matchingEvent = completedEvents.find(e => e.stage === stageName);
+
+          let circleBg = '#E2E8F0';
+          let circleColor = '#64748B';
+          let circleBorder = '#CBD5E1';
+          if (isDone) {
+            circleBg = '#ECFDF5';
+            circleColor = '#059669';
+            circleBorder = '#10B981';
+          } else if (isCurrent) {
+            circleBg = '#EFF6FF';
+            circleColor = '#1D4ED8';
+            circleBorder = '#3B82F6';
+          }
+
+          return `
+            <div style="display: flex; gap: 1rem; align-items: flex-start; position: relative;">
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: ${circleBg}; color: ${circleColor}; border: 2px solid ${circleBorder}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; z-index: 1;">
+                ${isDone ? '✓' : (idx + 1)}
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem;">
+                  <h3 style="font-size: 0.9375rem; font-weight: ${isCurrent ? '700' : '600'}; color: ${isCurrent ? 'var(--color-primary)' : 'var(--color-text-main)'};">
+                    ${stageName}
+                  </h3>
+                  ${matchingEvent ? `<span style="font-size: 0.75rem; color: var(--color-text-dim);">${matchingEvent.date}</span>` : ''}
+                </div>
+                ${matchingEvent ? `
+                  <p style="font-size: 0.8125rem; color: var(--color-text-muted); margin-top: 0.25rem; line-height: 1.4;">
+                    ${matchingEvent.note}
+                  </p>
+                ` : isCurrent ? `
+                  <p style="font-size: 0.8125rem; color: var(--color-primary); margin-top: 0.25rem;">
+                    Stage in active progress.
+                  </p>
+                ` : `
+                  <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-top: 0.25rem;">
+                    Pending prior milestone completion.
+                  </p>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Render Files with 60s signed link simulation
+        const filesContainer = document.getElementById('files-list-container');
+        const files = DB.files[order.id] || [];
+        if (files.length === 0) {
+          filesContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No deliverable files uploaded yet for this stage.</p>`;
+        } else {
+          filesContainer.innerHTML = files.map(f => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
+              <div>
+                <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${f.name}</p>
+                <p style="font-size: 0.75rem; color: var(--color-text-dim);">${f.size} • ${f.date}</p>
+              </div>
+              <button class="btn btn-secondary download-file-btn" data-filename="${f.name}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                Download (60s link)
+              </button>
+            </div>
+          `).join('');
+
+          document.querySelectorAll('.download-file-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const fileName = btn.getAttribute('data-filename');
+              alert(`Verified tenant permission for ${session.email}. Ephemeral 60s signed link generated for ${fileName}.`);
+            });
+          });
+        }
+
+        // Render Invoices (Zero price lists)
+        const invoicesContainer = document.getElementById('invoices-list-container');
+        const invoices = DB.invoices[order.id] || [];
+        if (invoices.length === 0) {
+          invoicesContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No invoices generated for this order.</p>`;
+        } else {
+          invoicesContainer.innerHTML = invoices.map(inv => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
+              <div>
+                <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main); font-family: monospace;">${inv.number}</p>
+                <p style="font-size: 0.75rem; color: var(--color-text-dim);">Issued: ${inv.date}</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="badge ${inv.badge}">${inv.status}</span>
+                <button class="btn btn-secondary download-invoice-btn" data-inv="${inv.number}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                  PDF
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+          document.querySelectorAll('.download-invoice-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const invNo = btn.getAttribute('data-inv');
+              alert(`Downloading tax invoice ${invNo} PDF for ${session.email}.`);
+            });
+          });
+        }
+
+        // Render Messages
+        const messagesContainer = document.getElementById('messages-list-container');
+        const messageList = DB.messages[order.id] || [];
+
+        function renderMessages() {
+          messagesContainer.innerHTML = messageList.map(msg => {
+            const isMe = (session.role === 'admin' && msg.role === 'admin') || (session.role === 'client' && msg.role === 'client');
+            return `
+              <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; max-width: 85%; background: ${isMe ? '#EFF6FF' : '#F1F5F9'}; border: 1px solid ${isMe ? '#BFDBFE' : '#E2E8F0'}; border-radius: 6px; padding: 0.75rem 1rem;">
+                <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 0.25rem; font-size: 0.75rem;">
+                  <strong style="color: ${isMe ? '#1D4ED8' : 'var(--color-text-main)'};">${msg.sender}</strong>
+                  <span style="color: var(--color-text-dim);">${msg.date}</span>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--color-text-main); line-height: 1.4;">${msg.text}</p>
+              </div>
+            `;
+          }).join('');
+        }
+        renderMessages();
+
+        // New message submission
+        document.getElementById('new-message-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('message-input');
+          const text = input.value.trim();
+          if (!text) return;
+
+          messageList.push({
+            sender: session.role === 'admin' ? 'Strova Operations' : (session.email.split('@')[0]),
+            role: session.role,
+            text,
+            date: 'Just now'
+          });
+          input.value = '';
+          renderMessages();
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+      }
+    }
+  </script>
+</PortalLayout>

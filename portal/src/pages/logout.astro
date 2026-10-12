@@ -1,0 +1,21 @@
+---
+import PortalLayout from '../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Signing Out">
+  <div style="max-width: 400px; margin: 4rem auto; text-align: center; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2.5rem;">
+    <h1 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem;">
+      Signing out...
+    </h1>
+    <p style="font-size: 0.875rem; color: var(--color-text-dim);">
+      Terminating authenticated session and clearing local tokens.
+    </p>
+  </div>
+
+  <script is:inline>
+    localStorage.removeItem('strova_portal_session');
+    setTimeout(() => {
+      window.location.href = '/portal/login';
+    }, 400);
+  </script>
+</PortalLayout>

@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:portal": "astro build --root portal",
+    "build:all": "astro build && astro build --root portal",
     "preview": "astro preview",
     "audit": "node audit.mjs",
+    "test": "node tests/isolation.test.mjs",
     "astro": "astro"
   },
   "dependencies": {
