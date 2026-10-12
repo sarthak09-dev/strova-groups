@@ -135,6 +135,9 @@ Configure these in Cloudflare Pages dashboard (`Settings > Environment variables
 | `SUPABASE_ANON_KEY` | Portal | Required for live portal | Supabase anonymous/public key (respects RLS). |
 | `SUPABASE_SERVICE_ROLE_KEY` | Portal Server | Required for admin portal | Supabase service role key (never expose to browser). |
 | `PORTAL_SIGNING_SECRET` | Portal Server | Required | Secret string for HMAC-SHA256 60-second signed file download URLs. |
+| `PUBLIC_RAZORPAY_KEY_ID` | Portal Client | Optional (Test mode default) | Razorpay public key ID (`rzp_test_...` or `rzp_live_...`). |
+| `RAZORPAY_KEY_SECRET` | Edge Function Server | Required for live payments | Razorpay secret key for server-side order generation and signature verification. |
+| `RAZORPAY_WEBHOOK_SECRET` | Edge Function Server | Required for live webhooks | Razorpay webhook secret for verifying captured payment webhooks. |
 
 ---
 

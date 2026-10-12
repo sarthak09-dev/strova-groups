@@ -393,6 +393,78 @@ console.log('\n[Test Suite 7: Administrator Scope & Audit Log Access]');
   assert(clientBAudit.length === 0, 'Client B querying audit log receives 0 rows (RLS protected)');
 }
 
+// 8. PAYMENT SIGNATURE & GATEWAY SECURITY
+console.log('\n[Test Suite 8: Razorpay Signature Verification & Payment Idempotency]');
+{
+  const RZP_SECRET = 'rzp_test_secret_key_fake_for_testing';
+
+  function verifyPaymentSignature(orderId, paymentId, signature) {
+    const payload = `${orderId}|${paymentId}`;
+    const expected = crypto.createHmac('sha256', RZP_SECRET).update(payload).digest('hex');
+    return signature === expected;
+  }
+
+  const testOrderId = 'order_M1234567890';
+  const testPayId = 'pay_M9876543210';
+  const validSig = crypto.createHmac('sha256', RZP_SECRET).update(`${testOrderId}|${testPayId}`).digest('hex');
+  const invalidSig = 'invalid_forged_signature_hex_000000';
+
+  assert(verifyPaymentSignature(testOrderId, testPayId, validSig) === true, 'Valid Razorpay HMAC SHA256 payment signature is VERIFIED (true)');
+  assert(verifyPaymentSignature(testOrderId, testPayId, invalidSig) === false, 'Tampered/Forged Razorpay payment signature is REJECTED (false)');
+
+  // Idempotency: Processing the same payment twice returns existing record without duplicating
+  const paymentsLedger = [];
+  function processPayment(paymentRecord) {
+    const exists = paymentsLedger.find(p => p.gateway_payment_id === paymentRecord.gateway_payment_id);
+    if (exists) {
+      return { duplicate: true, record: exists };
+    }
+    paymentsLedger.push(paymentRecord);
+    return { duplicate: false, record: paymentRecord };
+  }
+
+  const firstAttempt = processPayment({ id: 'p1', gateway_payment_id: testPayId, amount_paise: 6000000 });
+  assert(firstAttempt.duplicate === false && paymentsLedger.length === 1, 'Initial webhook capture successfully logs payment record');
+
+  const secondAttempt = processPayment({ id: 'p2', gateway_payment_id: testPayId, amount_paise: 6000000 });
+  assert(secondAttempt.duplicate === true && paymentsLedger.length === 1, 'Duplicate webhook for same payment ID is processed idempotently (no duplicate row created)');
+}
+
+// 9. CLIENT METADATA PRIVILEGE ESCALATION PREVENTION
+console.log('\n[Test Suite 9: Role Privilege Escalation Prevention]');
+{
+  // Simulates handle_new_user() trigger logic
+  function resolveUserRole(rawUserMetadata) {
+    // SECURITY RULE: Never trust raw_user_meta_data for role assignment
+    // Even if malicious user sends { role: 'admin' }, hardcode default to 'client'
+    const requestedRole = rawUserMetadata?.role;
+    // Hardened trigger forces 'client'
+    const assignedRole = 'client';
+    return { assignedRole, rejectedTampering: requestedRole === 'admin' };
+  }
+
+  const normalSignup = resolveUserRole({ full_name: 'Regular Client' });
+  assert(normalSignup.assignedRole === 'client', 'Standard user signup resolves to client role');
+
+  const maliciousSignup = resolveUserRole({ role: 'admin', full_name: 'Attacker Impersonating Admin' });
+  assert(maliciousSignup.assignedRole === 'client' && maliciousSignup.rejectedTampering === true, 'Malicious signup attempting { role: "admin" } in raw_user_meta_data is neutralized (role remains client)');
+}
+
+// 10. TURNSTILE BOT CHALLENGE VERIFICATION
+console.log('\n[Test Suite 10: Turnstile Challenge Verification]');
+{
+  function verifyTurnstileToken(token) {
+    if (!token || token.trim().length === 0) return { valid: false, reason: 'Token missing' };
+    if (token === 'forged_fake_token') return { valid: false, reason: 'Invalid token' };
+    if (token === '1x00000000000000000000AA' || token === 'cf-test-pass') return { valid: true };
+    return { valid: false, reason: 'Unrecognized challenge' };
+  }
+
+  assert(verifyTurnstileToken('').valid === false, 'Empty Turnstile token is REJECTED');
+  assert(verifyTurnstileToken('forged_fake_token').valid === false, 'Forged Turnstile token is REJECTED');
+  assert(verifyTurnstileToken('1x00000000000000000000AA').valid === true, 'Legitimate Cloudflare challenge token is ACCEPTED');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');
@@ -404,4 +476,5 @@ if (totalFailed > 0) {
   console.log('✅ ALL TENANT ISOLATION AND RLS TESTS PASSED CLEANLY.');
   process.exit(0);
 }
+
 

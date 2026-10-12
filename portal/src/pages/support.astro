@@ -1,0 +1,161 @@
+---
+import PortalLayout from '../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Support" currentNav="support">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Client Support & Assistance
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Submit technical queries, bug reports, or change requests directly to our core engineering desk.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.8125rem;">
+      <span style="color: var(--color-text-dim);">Guaranteed SLA:</span>
+      <span class="badge badge-success">Within 1 Business Day</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+    <!-- Create Ticket Form -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; height: fit-content;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem;">
+        Open New Support Ticket
+      </h3>
+
+      <form id="new-ticket-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Subject / Brief Title</label>
+          <input type="text" id="ticket-subject" required placeholder="e.g., Meta WhatsApp Webhook payload format clarification" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Associated Project (Optional)</label>
+          <select id="ticket-order" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+            <option value="">General inquiry / Non-project specific</option>
+            <option value="00000000-0000-0000-0000-000000000001">Patient Scheduling Platform & WhatsApp Cloud API</option>
+            <option value="00000000-0000-0000-0000-000000000002">Technical SEO Architecture & Google Ads CAPI Wiring</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
+          <select id="ticket-priority" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+            <option value="normal">Normal (Standard operational response)</option>
+            <option value="high">High (Production or staging blocker)</option>
+            <option value="urgent">Urgent (Service downtime)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Detailed Description</label>
+          <textarea id="ticket-description" rows="4" required placeholder="Describe the behavior observed, expected outcome, or question..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Submit Support Ticket
+        </button>
+      </form>
+    </div>
+
+    <!-- Ticket History & Status -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem;">
+        Your Ticket History
+      </h3>
+
+      <div id="tickets-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Injected tickets -->
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const sessionRaw = localStorage.getItem('strova_portal_session');
+    if (!sessionRaw) {
+      window.location.href = '/portal/login';
+    } else {
+      const session = JSON.parse(sessionRaw);
+
+      const DB_TICKETS = [
+        {
+          id: 't-1',
+          client_id: '11111111-1111-4111-8111-111111111111',
+          subject: 'Meta Cloud API WhatsApp Business Verification assistance',
+          priority: 'normal',
+          status: 'in_progress',
+          created_at: 'Oct 07, 2026',
+          responses: [
+            { sender: 'Client Alpha', text: 'We need guidance on submitting clinic registration documents for green tick badge verification.', date: 'Oct 07, 11:00 AM' },
+            { sender: 'Strova Operations', text: 'Official MSME and clinic certification requirements sent to your email. We will guide the Meta dashboard review directly.', date: 'Oct 08, 09:30 AM' }
+          ]
+        }
+      ];
+
+      const myTickets = DB_TICKETS.filter(t => session.role === 'admin' || t.client_id === session.id);
+      const ticketsContainer = document.getElementById('tickets-list-container');
+
+      function renderTickets() {
+        if (myTickets.length === 0) {
+          ticketsContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No open or past support tickets found.</p>`;
+          return;
+        }
+
+        ticketsContainer.innerHTML = myTickets.map(ticket => `
+          <div style="border: 1px solid var(--color-border); border-radius: 6px; padding: 1.25rem; background: #FAFAFA;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
+              <div>
+                <span class="badge ${ticket.priority === 'urgent' ? 'badge-danger' : 'badge-progress'}" style="font-size: 0.65rem; margin-bottom: 4px;">${ticket.priority} priority</span>
+                <h4 style="font-size: 0.9375rem; font-weight: 600; color: var(--color-text-main);">${ticket.subject}</h4>
+              </div>
+              <span class="badge ${ticket.status === 'resolved' ? 'badge-success' : 'badge-review'}">${ticket.status.replace('_', ' ')}</span>
+            </div>
+
+            <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 1rem;">Created: ${ticket.created_at}</p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--color-border); padding-top: 0.75rem;">
+              ${ticket.responses.map(r => `
+                <div style="font-size: 0.8125rem;">
+                  <strong style="color: var(--color-primary);">${r.sender}</strong> <span style="font-size: 0.7rem; color: var(--color-text-dim);">${r.date}</span>
+                  <p style="color: var(--color-text-muted); margin-top: 2px;">${r.text}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      renderTickets();
+
+      document.getElementById('new-ticket-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const subject = document.getElementById('ticket-subject').value.trim();
+        const priority = document.getElementById('ticket-priority').value;
+        const description = document.getElementById('ticket-description').value.trim();
+
+        if (!subject || !description) return;
+
+        myTickets.unshift({
+          id: `t-${Date.now()}`,
+          client_id: session.id,
+          subject,
+          priority,
+          status: 'open',
+          created_at: 'Just now',
+          responses: [
+            { sender: session.full_name || session.email, text: description, date: 'Just now' }
+          ]
+        });
+
+        document.getElementById('ticket-subject').value = '';
+        document.getElementById('ticket-description').value = '';
+        renderTickets();
+        alert('Support request submitted. Assigned to Strova technical desk. SLA reply: within 1 business day.');
+      });
+    }
+  </script>
+</PortalLayout>
+

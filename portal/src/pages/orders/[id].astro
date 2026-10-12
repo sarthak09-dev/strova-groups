@@ -12,10 +12,10 @@ export function getStaticPaths() {
 const { id } = Astro.params;
 ---
 
-<PortalLayout title="Order Workspace">
+<PortalLayout title="Project Workspace" currentNav="orders">
   <div style="margin-bottom: 1.5rem;">
-    <a href="/portal" style="font-size: 0.8125rem; color: var(--color-text-dim); text-decoration: none;">
-      ← Back to all orders
+    <a href="/portal/orders" style="font-size: 0.8125rem; color: var(--color-text-dim); text-decoration: none;">
+      ← Back to all projects
     </a>
   </div>
 
@@ -31,10 +31,10 @@ const { id } = Astro.params;
       403 Forbidden — Access Denied
     </h2>
     <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.5;">
-      You do not have authorization to view this order. Strova Group enforces strict tenant isolation using Row Level Security (RLS). Cross-client data access attempts are denied and logged.
+      You do not have authorization to view this project. Strova Group enforces strict tenant isolation using Row Level Security (RLS). Cross-client data access attempts are denied and logged.
     </p>
-    <a href="/portal" class="btn btn-secondary" style="border-color: #FECACA; color: #991B1B !important;">
-      Return to your authorized orders
+    <a href="/portal/orders" class="btn btn-secondary" style="border-color: #FECACA; color: #991B1B !important;">
+      Return to your authorized projects
     </a>
   </div>
 
@@ -44,21 +44,46 @@ const { id } = Astro.params;
     <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2rem; margin-bottom: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
         <div>
-          <span id="order-division-badge" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);"></span>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span id="order-division-badge" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);"></span>
+            <span style="color: var(--color-border);">•</span>
+            <span id="order-ref" style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);"></span>
+          </div>
           <h1 id="order-title" style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; color: var(--color-text-main); margin-top: 0.25rem;"></h1>
         </div>
         <span id="order-current-stage-badge" class="badge"></span>
       </div>
-      <p style="font-size: 0.8125rem; color: var(--color-text-dim); font-family: monospace;" id="order-uuid"></p>
+
+      <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--color-border-subtle); font-size: 0.8125rem;">
+        <div>
+          <span style="color: var(--color-text-dim);">Agreed Scope:</span>
+          <strong id="order-scope-ref" style="display: block; color: var(--color-text-main);"></strong>
+        </div>
+        <div>
+          <span style="color: var(--color-text-dim);">Target Date:</span>
+          <strong id="order-target-date" style="display: block; color: var(--color-text-main);"></strong>
+        </div>
+        <div>
+          <span style="color: var(--color-text-dim);">Total Budget:</span>
+          <strong id="order-total-amount" style="display: block; color: var(--color-text-main);"></strong>
+        </div>
+        <div>
+          <span style="color: var(--color-text-dim);">Outstanding:</span>
+          <strong id="order-balance-amount" style="display: block; color: var(--color-text-main);"></strong>
+        </div>
+      </div>
     </div>
 
     <!-- 2-Column Grid: Timeline on left, Files & Invoices & Messages on right -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
-      <!-- Column 1: 8-Stage Progress Timeline -->
+      <!-- Column 1: Progress Timeline -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
-        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
-          Project Milestone Timeline
-        </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">
+            Milestone Timeline
+          </h2>
+          <span id="timeline-progress-pill" class="badge badge-progress"></span>
+        </div>
 
         <div id="timeline-container" style="display: flex; flex-direction: column; gap: 1.5rem; position: relative;">
           <!-- Injected timeline nodes -->
@@ -69,11 +94,11 @@ const { id } = Astro.params;
       <div style="display: flex; flex-direction: column; gap: 2rem;">
         <!-- Deliverables Panel -->
         <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
-          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-            Deliverable Files
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
+            Private Deliverables
           </h2>
           <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
-            Private storage access. Download links are ephemeral and cryptographically expire in 60 seconds.
+            Cryptographically signed download links with 60-second expiration.
           </p>
           <div id="files-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <!-- Injected files -->
@@ -82,11 +107,11 @@ const { id } = Astro.params;
 
         <!-- Invoices Panel (Zero public price lists) -->
         <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
-          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
             Invoices & Settlement
           </h2>
           <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
-            Official commercial invoice records for accounting and tax compliance.
+            Online milestone payment via Razorpay. Zero hidden fees.
           </p>
           <div id="invoices-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <!-- Injected invoices -->
@@ -96,7 +121,7 @@ const { id } = Astro.params;
         <!-- Message Box per Order -->
         <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
           <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
-            Order Communication
+            Project Message Channel
           </h2>
           <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
             Direct thread for this engagement. Notes are emailed to info@strovagroups.in.
@@ -137,28 +162,41 @@ const { id } = Astro.params;
         orders: [
           {
             id: '00000000-0000-0000-0000-000000000001',
+            order_ref: 'ORD-2026-001',
             client_id: '11111111-1111-4111-8111-111111111111',
             title: 'Patient Scheduling Platform & WhatsApp Cloud API',
             division: 'Strova Technologies',
             current_stage: 'In progress',
             badge_class: 'badge-progress',
+            scope_reference: 'SOW-TECH-2026-01',
+            target_completion_date: 'Nov 15, 2026',
+            total_amount_paise: 25000000,
+            balance_amount_paise: 12500000,
+            progress_percent: 50
           },
           {
             id: '00000000-0000-0000-0000-000000000002',
+            order_ref: 'ORD-2026-002',
             client_id: '22222222-2222-4222-8222-222222222222',
             title: 'Technical SEO Architecture & Google Ads CAPI Wiring',
             division: 'Strova Digital',
             current_stage: 'Review',
             badge_class: 'badge-review',
+            scope_reference: 'SOW-DIG-2026-04',
+            target_completion_date: 'Oct 25, 2026',
+            total_amount_paise: 12000000,
+            balance_amount_paise: 6000000,
+            progress_percent: 75
           }
         ],
         stages: [
           'Brief received',
           'Scope agreed',
-          'Advance received',
+          'Advance pending',
           'In progress',
           'Review',
-          'Final payment',
+          'Revisions',
+          'Final payment pending',
           'Delivered',
           'Support'
         ],
@@ -166,13 +204,13 @@ const { id } = Astro.params;
           '00000000-0000-0000-0000-000000000001': [
             { stage: 'Brief received', note: 'Initial clinic scheduling brief submitted via quote request form.', date: 'Oct 02, 2026' },
             { stage: 'Scope agreed', note: 'Technical specification blueprint and sprint milestone schedule approved.', date: 'Oct 03, 2026' },
-            { stage: 'Advance received', note: '50% initial project milestone advance confirmed via direct RTGS transfer.', date: 'Oct 04, 2026' },
-            { stage: 'In progress', note: 'Sprint 2 in progress: Meta WhatsApp Cloud API webhooks wired to booking queue.', date: 'Oct 10, 2026' }
+            { stage: 'Advance pending', note: 'Invoice INV-2026-001 issued for 50% project advance.', date: 'Oct 03, 2026' },
+            { stage: 'In progress', note: 'Advance settled (Receipt RCP-INV-2026-001-0421). Sprint 2 in progress: Meta WhatsApp Cloud API webhooks wired to booking queue.', date: 'Oct 10, 2026' }
           ],
           '00000000-0000-0000-0000-000000000002': [
             { stage: 'Brief received', note: 'Inbound SEO audit inquiry received.', date: 'Oct 06, 2026' },
             { stage: 'Scope agreed', note: 'Remediation agreement and Conversion API scope signed.', date: 'Oct 07, 2026' },
-            { stage: 'Advance received', note: 'Project advance confirmed.', date: 'Oct 08, 2026' },
+            { stage: 'In progress', note: 'Core Web Vitals remediation completed on staging.', date: 'Oct 08, 2026' },
             { stage: 'Review', note: 'Staging deployment ready for client review and verification.', date: 'Oct 11, 2026' }
           ]
         },
@@ -186,10 +224,10 @@ const { id } = Astro.params;
         },
         invoices: {
           '00000000-0000-0000-0000-000000000001': [
-            { number: 'INV-2026-001', status: 'Paid', badge: 'badge-success', date: 'Oct 03, 2026' }
+            { id: 'inv-1', number: 'INV-2026-001', amount_paise: 12500000, status: 'Paid', badge: 'badge-success', date: 'Oct 03, 2026', receipt: 'RCP-INV-2026-001-0421' }
           ],
           '00000000-0000-0000-0000-000000000002': [
-            { number: 'INV-2026-002', status: 'Pending', badge: 'badge-pending', date: 'Oct 08, 2026' }
+            { id: 'inv-2', number: 'INV-2026-002', amount_paise: 6000000, status: 'Pending', badge: 'badge-pending', date: 'Oct 08, 2026', receipt: null }
           ]
         },
         messages: {
@@ -206,7 +244,7 @@ const { id } = Astro.params;
       const order = DB.orders.find(o => o.id === orderId);
       document.getElementById('order-loading').style.display = 'none';
 
-      // RLS Isolation Check:
+      // RLS Isolation Check
       const isAuthorized = order && (session.role === 'admin' || order.client_id === session.id);
 
       if (!order || !isAuthorized) {
@@ -216,10 +254,17 @@ const { id } = Astro.params;
 
         document.getElementById('order-title').textContent = order.title;
         document.getElementById('order-division-badge').textContent = order.division;
-        document.getElementById('order-uuid').textContent = `Order ID: ${order.id}`;
+        document.getElementById('order-ref').textContent = order.order_ref;
+        document.getElementById('order-scope-ref').textContent = order.scope_reference;
+        document.getElementById('order-target-date').textContent = order.target_completion_date;
+        document.getElementById('order-total-amount').textContent = `₹${(order.total_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('order-balance-amount').textContent = `₹${(order.balance_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
         const stageBadge = document.getElementById('order-current-stage-badge');
         stageBadge.textContent = order.current_stage;
         stageBadge.className = `badge ${order.badge_class}`;
+
+        document.getElementById('timeline-progress-pill').textContent = `${order.progress_percent}% Complete`;
 
         const completedEvents = DB.events[order.id] || [];
         const currentStageIndex = DB.stages.indexOf(order.current_stage);
@@ -261,7 +306,7 @@ const { id } = Astro.params;
                   </p>
                 ` : isCurrent ? `
                   <p style="font-size: 0.8125rem; color: var(--color-primary); margin-top: 0.25rem;">
-                    Stage in active progress.
+                    Active milestone stage in progress.
                   </p>
                 ` : `
                   <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-top: 0.25rem;">
@@ -273,7 +318,7 @@ const { id } = Astro.params;
           `;
         }).join('');
 
-        // Deliverables
+        // Deliverables with 60s Ephemeral Link
         const filesContainer = document.getElementById('files-list-container');
         const files = DB.files[order.id] || [];
         if (files.length === 0) {
@@ -283,7 +328,7 @@ const { id } = Astro.params;
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
               <div>
                 <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${f.name}</p>
-                <p style="font-size: 0.75rem; color: var(--color-text-dim);">${f.size} • ${f.date}</p>
+                <p style="font-size: 0.75rem; color: var(--color-text-dim);">${f.size} • Uploaded ${f.date}</p>
               </div>
               <button class="btn btn-secondary download-file-btn" data-filename="${f.name}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
                 Download (60s link)
@@ -299,23 +344,30 @@ const { id } = Astro.params;
           });
         }
 
-        // Invoices
+        // Invoices & Pay Now
         const invoicesContainer = document.getElementById('invoices-list-container');
         const invoices = DB.invoices[order.id] || [];
         if (invoices.length === 0) {
           invoicesContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No invoices generated for this order.</p>`;
         } else {
           invoicesContainer.innerHTML = invoices.map(inv => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA; flex-wrap: wrap; gap: 0.5rem;">
               <div>
                 <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main); font-family: monospace;">${inv.number}</p>
-                <p style="font-size: 0.75rem; color: var(--color-text-dim);">Issued: ${inv.date}</p>
+                <p style="font-size: 0.75rem; color: var(--color-text-dim);">₹${(inv.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })} • Issued: ${inv.date}</p>
+                ${inv.receipt ? `<p style="font-size: 0.7rem; color: var(--color-success);">Receipt: ${inv.receipt}</p>` : ''}
               </div>
-              <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="badge ${inv.badge}">${inv.status}</span>
-                <button class="btn btn-secondary download-invoice-btn" data-inv="${inv.number}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
-                  PDF
-                </button>
+                ${inv.status === 'Pending' ? `
+                  <a href="/portal/invoices" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                    Pay Now
+                  </a>
+                ` : `
+                  <button class="btn btn-secondary download-invoice-btn" data-inv="${inv.number}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                    PDF
+                  </button>
+                `}
               </div>
             </div>
           `).join('');
@@ -368,4 +420,3 @@ const { id } = Astro.params;
     }
   </script>
 </PortalLayout>
-

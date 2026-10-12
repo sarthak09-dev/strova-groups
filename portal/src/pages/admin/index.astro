@@ -3,32 +3,32 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
 ---
 
-<PortalLayout title="Operations Administration">
+<PortalLayout title="Operations Administration" currentNav="admin">
   <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
     <div>
       <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-        <span class="badge" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA;">Admin Console</span>
-        <span class="badge badge-success">TOTP Two-Step Verified</span>
+        <span class="badge badge-danger">Administrator Scope</span>
+        <span class="badge badge-success">Backend RLS Enforced</span>
       </div>
-      <h1 style="font-family: var(--font-serif); font-size: 2rem; font-weight: 600; color: var(--color-text-main);">
-        Client Engagements & Portal Operations
-      </h1>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main);">
+        Operations & Engagement Management
+      </h2>
       <p style="font-size: 0.875rem; color: var(--color-text-muted);">
-        Server-side execution with Supabase service role. Client provisioning, milestones, deliverables, and audit trails.
+        Provision client profiles, schedule sprint milestones, issue invoices, review audit trails, and manage support.
       </p>
     </div>
     <a href="/portal" class="btn btn-secondary" style="font-size: 0.8125rem;">
-      Client view preview
+      ← Client view preview
     </a>
   </div>
 
   <!-- Role Verification Error State (Hidden for admins) -->
   <div id="admin-forbidden" style="display: none; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 2.5rem; text-align: center; margin-bottom: 2rem;">
-    <h2 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: #991B1B; margin-bottom: 0.5rem;">
+    <h3 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: #991B1B; margin-bottom: 0.5rem;">
       403 Forbidden — Administrator Role Required
-    </h2>
+    </h3>
     <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 480px; margin: 0 auto 1.5rem;">
-      Your active session does not possess administrative privileges. Client sessions cannot access management tools or audit logs.
+      Your active session does not possess administrative privileges. Ordinary client sessions cannot access management tools or audit logs.
     </p>
     <a href="/portal" class="btn btn-secondary">Return to client portal</a>
   </div>
@@ -39,29 +39,29 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
       <!-- Create Client -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
-        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
           1. Invite / Provision Client
-        </h2>
+        </h3>
         <form id="create-client-form" style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Client Email</label>
-            <input type="email" required placeholder="client@company.com" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            <input type="email" required placeholder="founder@company.com" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
           </div>
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Full Name / Organization</label>
-            <input type="text" required placeholder="Acme Corporation" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            <input type="text" required placeholder="Acme Health PVT LTD" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
           </div>
           <button type="submit" class="btn btn-primary" style="font-size: 0.8125rem;">
-            Provision Client Profile
+            Provision Profile & Send Invite
           </button>
         </form>
       </div>
 
       <!-- Create Order -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
-        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-          2. Create New Engagement Order
-        </h2>
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          2. Create Project Engagement
+        </h3>
         <form id="create-order-form" style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Select Client</label>
@@ -70,38 +70,44 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
               <option value="22222222-2222-4222-8222-222222222222">Client Beta (Retail Brands)</option>
             </select>
           </div>
-          <div>
-            <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Division</label>
-            <select required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
-              <option value="technologies">Strova Technologies</option>
-              <option value="digital">Strova Digital</option>
-              <option value="commerce">Strova Commerce</option>
-            </select>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Division</label>
+              <select required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+                <option value="technologies">Strova Technologies</option>
+                <option value="digital">Strova Digital</option>
+                <option value="commerce">Strova Commerce</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Order Ref</label>
+              <input type="text" required placeholder="ORD-2026-003" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
           </div>
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Project Title</label>
-            <input type="text" required placeholder="Web & WhatsApp Integration" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            <input type="text" required placeholder="Headless Commerce Sync Engine" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
           </div>
           <button type="submit" class="btn btn-primary" style="font-size: 0.8125rem;">
-            Create Order
+            Create Project
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Section 2: Timeline Events & Deliverable Uploads -->
+    <!-- Section 2: Milestone Updates & Invoice Creation -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-      <!-- Add Timeline Event -->
+      <!-- Add Milestone Event -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
-        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-          3. Advance Milestone / Add Timeline Event
-        </h2>
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          3. Advance Milestone / Record Event
+        </h3>
         <form id="add-event-form" style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Target Order</label>
             <select required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
-              <option value="00000000-0000-0000-0000-000000000001">Order #0001: Patient Scheduling Platform (Client Alpha)</option>
-              <option value="00000000-0000-0000-0000-000000000002">Order #0002: Technical SEO Architecture (Client Beta)</option>
+              <option value="00000000-0000-0000-0000-000000000001">ORD-001: Patient Scheduling Platform (Client Alpha)</option>
+              <option value="00000000-0000-0000-0000-000000000002">ORD-002: Technical SEO Architecture (Client Beta)</option>
             </select>
           </div>
           <div>
@@ -114,7 +120,7 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
           </div>
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Client-Visible Milestone Note</label>
-            <textarea rows="3" required placeholder="Milestone achieved: Staging environment verified..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
+            <textarea rows="3" required placeholder="Milestone achieved: Webhook queue deployed on staging..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
           </div>
           <button type="submit" class="btn btn-primary" style="font-size: 0.8125rem;">
             Record Milestone & Notify Client
@@ -122,29 +128,35 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
         </form>
       </div>
 
-      <!-- Upload Deliverable File -->
+      <!-- Create Invoice -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
-        <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-          4. Upload Deliverable File
-        </h2>
-        <form id="upload-file-form" style="display: flex; flex-direction: column; gap: 1rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          4. Issue Commercial Invoice
+        </h3>
+        <form id="create-invoice-form" style="display: flex; flex-direction: column; gap: 1rem;">
           <div>
             <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Target Order</label>
             <select required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
-              <option value="00000000-0000-0000-0000-000000000001">Order #0001: Patient Scheduling Platform (Client Alpha)</option>
-              <option value="00000000-0000-0000-0000-000000000002">Order #0002: Technical SEO Architecture (Client Beta)</option>
+              <option value="00000000-0000-0000-0000-000000000001">ORD-001: Patient Scheduling Platform (Client Alpha)</option>
+              <option value="00000000-0000-0000-0000-000000000002">ORD-002: Technical SEO Architecture (Client Beta)</option>
             </select>
           </div>
-          <div>
-            <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Deliverable File Name</label>
-            <input type="text" required placeholder="final-source-archive-v1.zip" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Invoice No.</label>
+              <input type="text" required placeholder="INV-2026-003" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Amount (INR)</label>
+              <input type="number" step="0.01" required placeholder="50000.00" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
           </div>
           <div>
-            <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Storage Bucket Path</label>
-            <input type="text" required placeholder="client_1111/orders/0001/deliverable.zip" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Due Date</label>
+            <input type="date" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;" />
           </div>
           <button type="submit" class="btn btn-primary" style="font-size: 0.8125rem;">
-            Save to Private Storage & Record File
+            Issue Invoice & Enable Razorpay Checkout
           </button>
         </form>
       </div>
@@ -154,11 +166,11 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
     <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
-          <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">
+          <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">
             Administrative Audit Log
-          </h2>
+          </h3>
           <p style="font-size: 0.8125rem; color: var(--color-text-dim);">
-            Immutable log of server-side operations and administrative modifications.
+            Immutable record of all server-side operations, financial modifications, and permissions.
           </p>
         </div>
         <span class="badge" style="background: #F1F5F9; color: #475569;">RLS Protected: Admin Only</span>
@@ -178,7 +190,7 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
             {SEED_AUDIT_LOG.map((log) => (
               <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                 <td style="padding: 0.65rem 0.75rem; color: var(--color-text-dim);">{log.created_at}</td>
-                <td style="padding: 0.65rem 0.75rem;"><span class="badge" style="background: #EFF6FF; color: #1D4ED8;">{log.action}</span></td>
+                <td style="padding: 0.65rem 0.75rem;"><span class="badge badge-progress">{log.action}</span></td>
                 <td style="padding: 0.65rem 0.75rem; font-family: monospace;">{log.target_table}</td>
                 <td style="padding: 0.65rem 0.75rem; font-family: monospace; color: var(--color-text-dim);">{log.target_id}</td>
               </tr>
@@ -203,28 +215,26 @@ import { PORTAL_STAGES, SEED_AUDIT_LOG } from '../../lib/supabase';
         document.getElementById('admin-forbidden').style.display = 'none';
         document.getElementById('admin-content').style.display = 'flex';
 
-        // Form handlers with audit feedback
         document.getElementById('create-client-form').addEventListener('submit', (e) => {
           e.preventDefault();
-          alert('Client profile provisioned. Magic link invite email dispatched via info@strovagroups.in.');
+          alert('Client profile provisioned with client role default. Magic link OTP email dispatched.');
         });
 
         document.getElementById('create-order-form').addEventListener('submit', (e) => {
           e.preventDefault();
-          alert('New order engagement created and linked to client account.');
+          alert('New order engagement created and bound to client account.');
         });
 
         document.getElementById('add-event-form').addEventListener('submit', (e) => {
           e.preventDefault();
-          alert('Milestone event recorded on order timeline. Audit log updated.');
+          alert('Milestone event recorded on project timeline. Audit log updated.');
         });
 
-        document.getElementById('upload-file-form').addEventListener('submit', (e) => {
+        document.getElementById('create-invoice-form').addEventListener('submit', (e) => {
           e.preventDefault();
-          alert('Deliverable file recorded in storage and client notified.');
+          alert('Commercial tax invoice generated with Razorpay order pairing.');
         });
       }
     }
   </script>
 </PortalLayout>
-

@@ -1,0 +1,165 @@
+---
+import PortalLayout from '../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Messages" currentNav="messages">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Direct Engineering Messages
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Encrypted asynchronous communication channel linked to your active project milestones.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.75rem;">
+    <!-- Project Thread List -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem; height: fit-content;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">Active Project Channels</h3>
+      <div id="project-channels-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <!-- Injected project channel buttons -->
+      </div>
+    </div>
+
+    <!-- Active Chat Box -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; display: flex; flex-direction: column; height: 580px;">
+      <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); margin-bottom: 1rem;">
+        <h4 id="active-thread-title" style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">Select a project</h4>
+        <p id="active-thread-ref" style="font-size: 0.75rem; color: var(--color-text-dim); font-family: monospace;"></p>
+      </div>
+
+      <div id="thread-messages-body" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.5rem; margin-bottom: 1rem;">
+        <!-- Injected chat bubbles -->
+      </div>
+
+      <form id="thread-send-form" style="display: flex; gap: 0.75rem; align-items: flex-end;">
+        <textarea
+          id="thread-input"
+          rows="2"
+          required
+          placeholder="Type an architectural question, update or sprint feedback..."
+          style="flex: 1; padding: 0.625rem; font-size: 0.875rem; font-family: inherit; border: 1px solid var(--color-border); border-radius: 4px; resize: none;"
+        ></textarea>
+        <button type="submit" class="btn btn-primary" style="padding: 0.625rem 1.25rem;">
+          Send
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script is:inline>
+    const sessionRaw = localStorage.getItem('strova_portal_session');
+    if (!sessionRaw) {
+      window.location.href = '/portal/login';
+    } else {
+      const session = JSON.parse(sessionRaw);
+
+      const DB_THREADS = [
+        {
+          order_id: '00000000-0000-0000-0000-000000000001',
+          client_id: '11111111-1111-4111-8111-111111111111',
+          order_ref: 'ORD-2026-001',
+          title: 'Patient Scheduling Platform',
+          messages: [
+            { sender: 'Client Alpha', role: 'client', text: 'Uploaded the WhatsApp Cloud API webhook credentials in the secure vault.', date: 'Oct 05, 09:15 AM' },
+            { sender: 'Strova Operations', role: 'admin', text: 'Credentials verified and staging webhooks are now actively listening.', date: 'Oct 05, 11:40 AM' },
+            { sender: 'Strova Operations', role: 'admin', text: 'Sprint 2 staging link is deployed for clinic staff review.', date: 'Oct 10, 02:30 PM' }
+          ]
+        },
+        {
+          order_id: '00000000-0000-0000-0000-000000000002',
+          client_id: '22222222-2222-4222-8222-222222222222',
+          order_ref: 'ORD-2026-002',
+          title: 'Technical SEO Architecture',
+          messages: [
+            { sender: 'Client Beta', role: 'client', text: 'Reviewed the Core Web Vitals remediation plan. Approved to deploy to staging.', date: 'Oct 09, 02:10 PM' },
+            { sender: 'Strova Operations', role: 'admin', text: 'Staging audit remediation complete. Lighthouse scores verified at 98 Performance.', date: 'Oct 11, 04:00 PM' }
+          ]
+        }
+      ];
+
+      const myThreads = DB_THREADS.filter(t => session.role === 'admin' || t.client_id === session.id);
+      let activeThread = myThreads[0] || null;
+
+      const channelsList = document.getElementById('project-channels-list');
+      const threadTitle = document.getElementById('active-thread-title');
+      const threadRef = document.getElementById('active-thread-ref');
+      const messagesBody = document.getElementById('thread-messages-body');
+
+      function renderChannels() {
+        if (myThreads.length === 0) {
+          channelsList.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No active project threads.</p>`;
+          return;
+        }
+
+        channelsList.innerHTML = myThreads.map(t => `
+          <button type="button" class="channel-btn btn btn-secondary" data-id="${t.order_id}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${t === activeThread ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${t === activeThread ? '#EFF6FF' : '#fff'};">
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${t.title}</p>
+              <p style="font-size: 0.75rem; color: var(--color-text-dim); font-family: monospace;">${t.order_ref}</p>
+            </div>
+          </button>
+        `).join('');
+
+        document.querySelectorAll('.channel-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            activeThread = myThreads.find(t => t.order_id === id);
+            renderChannels();
+            renderActiveThread();
+          });
+        });
+      }
+
+      function renderActiveThread() {
+        if (!activeThread) {
+          threadTitle.textContent = 'No thread selected';
+          threadRef.textContent = '';
+          messagesBody.innerHTML = '';
+          return;
+        }
+
+        threadTitle.textContent = activeThread.title;
+        threadRef.textContent = activeThread.order_ref;
+
+        messagesBody.innerHTML = activeThread.messages.map(msg => {
+          const isMe = (session.role === 'admin' && msg.role === 'admin') || (session.role === 'client' && msg.role === 'client');
+          return `
+            <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; max-width: 80%; background: ${isMe ? '#EFF6FF' : '#F1F5F9'}; border: 1px solid ${isMe ? '#BFDBFE' : '#E2E8F0'}; border-radius: 6px; padding: 0.75rem 1rem;">
+              <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 0.25rem; font-size: 0.75rem;">
+                <strong style="color: ${isMe ? '#1D4ED8' : 'var(--color-text-main)'};">${msg.sender}</strong>
+                <span style="color: var(--color-text-dim);">${msg.date}</span>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--color-text-main); line-height: 1.4;">${msg.text}</p>
+            </div>
+          `;
+        }).join('');
+
+        messagesBody.scrollTop = messagesBody.scrollHeight;
+      }
+
+      renderChannels();
+      renderActiveThread();
+
+      document.getElementById('thread-send-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('thread-input');
+        const text = input.value.trim();
+        if (!text || !activeThread) return;
+
+        activeThread.messages.push({
+          sender: session.role === 'admin' ? 'Strova Operations' : (session.full_name || session.email.split('@')[0]),
+          role: session.role,
+          text,
+          date: 'Just now'
+        });
+
+        input.value = '';
+        renderActiveThread();
+      });
+    }
+  </script>
+</PortalLayout>
+

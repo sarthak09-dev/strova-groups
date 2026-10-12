@@ -29,7 +29,7 @@
   --color-cobalt-tint: rgba(29, 78, 216, 0.08);
 
   /* Semantic tokens — Default Light Theme (WCAG 2.2 AA compliant contrast) */
-  --bg-page:           #F8FAFC;
+  --bg-page:           #FAFAF8;
   --bg-surface:        #F1F5F9;
   --bg-elevated:       #FFFFFF;
   --bg-card:           #FFFFFF;
