@@ -404,3 +404,4 @@ if (totalFailed > 0) {
   console.log('✅ ALL TENANT ISOLATION AND RLS TESTS PASSED CLEANLY.');
   process.exit(0);
 }
+

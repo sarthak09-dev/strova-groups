@@ -360,3 +360,4 @@ export function verifySignedDownloadToken(params: {
 
   return { valid: true };
 }
+

@@ -320,3 +320,4 @@ VALUES
   ('00000000-0000-0000-0000-000000000001', 'INV-2026-001', 'Paid', 'client_1111/invoices/INV-2026-001.pdf', timezone('utc'::text, now())),
   ('00000000-0000-0000-0000-000000000002', 'INV-2026-002', 'Pending', 'client_2222/invoices/INV-2026-002.pdf', NULL)
 ON CONFLICT DO NOTHING;
+

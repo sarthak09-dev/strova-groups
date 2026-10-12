@@ -112,8 +112,8 @@ for (const filePath of htmlFiles) {
           if (item.url !== 'https://strovagroups.in') {
             errors.push(`[${relPath}] Organization schema invalid url: ${item.url}`);
           }
-          if (!item.founder || !JSON.stringify(item.founder).includes('Babita Kumari')) {
-            errors.push(`[${relPath}] Organization schema missing founder Babita Kumari`);
+          if (!item.founder || (!JSON.stringify(item.founder).includes('Sarthak Shresht') && !JSON.stringify(item.founder).includes('Babita Kumari'))) {
+            errors.push(`[${relPath}] Organization schema missing founder Sarthak Shresht / Babita Kumari`);
           }
           if (item.telephone !== '+919288077802') {
             errors.push(`[${relPath}] Organization schema missing telephone +919288077802`);
@@ -126,6 +126,18 @@ for (const filePath of htmlFiles) {
     } catch (e) {
       errors.push(`[${relPath}] Malformed JSON-LD: ${e.message}`);
     }
+  }
+
+  // 6b. Brand Name Check: Brand must be "Strova Group", never bare "Strova"
+  if (title && /^Strova\s*—/i.test(title)) {
+    errors.push(`[${relPath}] Page title uses bare 'Strova' instead of 'Strova Group': "${title}"`);
+  }
+
+  // 6c. Zero Public Pricing & Zero Dark Pattern Check
+  // Extract text outside script and style tags to check for price numbers and forbidden currency symbols
+  const bodyText = content.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+  if (bodyText.includes('₹') || bodyText.includes('starting from') || bodyText.includes('Starting from')) {
+    errors.push(`[${relPath}] Prohibited price text or rupee symbol found on rendered page`);
   }
 
   // 7. Check for old strings & anti-patterns

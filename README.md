@@ -1,234 +1,311 @@
-# Strova Group — Production Static Website
+# Strova Group — Production Static Website & Client Portal
 
-> **AI & automation for growing businesses.**  
-> Official static corporate website for **Strova Group**, an India-based technology and digital services company delivering high-performance software engineering, native mobile apps, automated WhatsApp workflows, and data-driven marketing.
-
----
-
-## 1. Architecture & Tech Stack
-
-This website is engineered for speed, security, and zero vendor lock-in.
-
-- **Framework**: [Astro v5](https://astro.build/) (Static Site Generation / SSG).
-- **Styling**: Modern vanilla CSS with CSS custom properties (design tokens), container queries, and `@media (prefers-color-scheme)` dark/light theming.
-- **Typography**: 100% self-hosted variable fonts via npm (`@fontsource-variable/inter` and `@fontsource-variable/space-grotesk`). Zero external CDN requests.
-- **Animations & 3D**:
-  - **Three.js**: Lazy-loaded abstract geometric visual on the homepage hero with WebGL detection, pixel ratio cap at 2, and `IntersectionObserver` pause/resume.
-  - **GSAP & ScrollTrigger**: Orchestrated hero element reveals, subtle parallax on capability cards, and a pinned 4-step "How We Work" sequence on desktop with unpinned fallback for mobile.
-- **Forms & Interactivity**: Vanilla JavaScript with client-side regex validation, invisible honeypot spam protection (`_hp_company`), and a human math challenge.
-- **Security & Headers**: Cloudflare Pages `_headers` configuring Content Security Policy (CSP), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Referrer-Policy`.
-- **SEO & Structured Data**: Native JSON-LD schemas (Organization, WebSite, Service, Person, FAQPage, BreadcrumbList), automated XML sitemaps via `@astrojs/sitemap`, and multi-locale hreflang tags (`en`, `en-IN`, `x-default`).
+> **Technology, commerce, and digital growth for growing businesses.**  
+> Official web platform for **Strova Group** (`https://strovagroups.in`) and the invite-only client portal (`https://portal.strovagroups.in`).
 
 ---
 
-## 2. Directory Structure
+## 1. Executive Summary & Brand Identity
+
+- **Brand Name**: **Strova Group** (Never bare "Strova" alone).
+- **Group Tagline**: *"Technology, commerce, and digital growth for growing businesses."* (Note: *"AI and automation"* belongs exclusively to the Technologies division).
+- **Operating Divisions**:
+  1. **Strova Technologies**: Websites, Android apps, custom software, WhatsApp and AI automation.
+  2. **Strova Digital**: SEO, ads, social media, lead generation.
+  3. **Strova Commerce**: High-speed storefronts and WhatsApp catalog checkouts (Marked *"Coming soon"*).
+- **Ownership & Legal Structure**:
+  - **Founder**: Sarthak Shresht (flagged for spelling confirmation).
+  - **Legal Owner per Udyam**: Babita Kumari, proprietor.
+  - **Udyam MSME Registration**: `UDYAM-JH-20-0147452`.
+  - **Legal Declaration** (rendered on Footer, Terms, Privacy, About, and Organization schema):  
+    *"Strova Group is a proprietorship of Babita Kumari"*.
+  - **Flag for Legal/CA Review**: Needs formal Chartered Accountant confirmation prior to filing.
+- **Official Contact**:
+  - Email: `info@strovagroups.in`
+  - Telephone & WhatsApp: `+91 92880 77802` (`tel:+919288077802`, `https://wa.me/919288077802`)
+  - Hours: Monday–Saturday, 10:00 AM – 7:00 PM IST (UTC+5:30)
+
+---
+
+## 2. Architecture & Tech Stack
+
+The platform is architected into two decoupled systems:
+1. **Marketing Site (`https://strovagroups.in`)**: 100% static Astro site (`output: "static"`). Zero server vulnerabilities, zero database dependencies, zero tracking cookies. Instant static edge delivery via Cloudflare Pages.
+2. **Client Portal (`https://portal.strovagroups.in`)**: Invite-only authenticated client workspace built with Supabase (Auth, Postgres, Storage, Row Level Security) and `@supabase/ssr`.
+
+- **Framework**: [Astro v5](https://astro.build/)
+- **Design System**: Editorial light-first design tokens with Newsreader Variable (serif) and Plus Jakarta Sans Variable (sans). Dark theme supported via CSS variables and pre-hydration theme toggle.
+- **3D Graphics & Motion**:
+  - Three.js physical kinetic sculpture on homepage hero with WebGL detection, pixel ratio capped at 2, IntersectionObserver pause/resume, and accessible SVG fallback.
+  - Lightweight GSAP interactions and CSS scroll-driven progress animations.
+- **Analytics**: Cookieless, privacy-preserving event tracking (`quote_form_started`, `quote_form_submitted`, `email_click`, `whatsapp_click`). Zero third-party trackers on marketing pages; zero trackers on the portal.
+- **Forms & Security**:
+  - Quote form with Cloudflare Turnstile bot verification and fail-closed `/api/contact` Cloudflare Pages Function.
+  - Returns HTTP 503 if the backend relay key is unconfigured, displaying direct contact information (`info@strovagroups.in` and WhatsApp). Never fakes success.
+
+---
+
+## 3. Directory Structure
 
 ```
 strova-group/
-├── astro.config.mjs         # Astro configuration & sitemap integration
-├── package.json             # Dependencies and build scripts
-├── tsconfig.json            # TypeScript configuration
+├── astro.config.mjs               # Root Astro config for marketing site
+├── audit.mjs                      # Automated site audit script (100% pass score)
+├── package.json                   # Build scripts & dependencies
+├── tsconfig.json                  # TypeScript configuration
+├── functions/
+│   └── api/
+│       └── contact.ts             # Fail-closed Cloudflare Pages Function for quote submissions
 ├── public/
-│   ├── _headers             # Cloudflare Pages security & caching headers
-│   ├── favicon.svg          # Vector favicon
-│   ├── llms.txt             # LLM agent context & company index
-│   ├── robots.txt           # Crawler instructions & sitemap link
-│   └── images/
-│       ├── hero-fallback.svg # Static geometric SVG fallback for Three.js
-│       ├── logo.svg          # 512x512 brand mark vector asset
-│       ├── og-default.webp   # 1200x630 social share OpenGraph card
-│       └── founder.webp      # 400x400 founder portrait placeholder
-└── src/
-    ├── styles/
-    │   └── global.css       # Design tokens, reset, typography scale, buttons
-    ├── layouts/
-    │   └── BaseLayout.astro # Base HTML wrapper, skip link, Header & Footer
-    ├── components/
-    │   ├── Header.astro     # Sticky responsive navigation with phone & WhatsApp CTA
-    │   ├── Footer.astro     # Business information, Udyam MSME, hours & links
-    │   ├── SEOHead.astro    # Metadata, OpenGraph, Twitter, and JSON-LD
-    │   └── ThreeHero.astro  # Lazy-loaded Three.js 3D canvas with fallback
-    └── pages/
-        ├── index.astro      # Home page (Hero, Divisions, Process, Pricing, FAQ)
-        ├── technologies.astro # Strova Technologies (Web, Android, SaaS, AI)
-        ├── digital.astro    # Strova Digital (SEO, Performance Ads, Funnels)
-        ├── commerce.astro   # Strova Commerce ("Coming Soon" Q3 2026 Roadmap)
-        ├── about.astro      # Founder story (Babita Kumari), principles, corporate identity
-        ├── case-studies.astro # Production architecture reference blueprints
-        ├── faq.astro        # Categorized Frequently Asked Questions
-        ├── contact.astro    # Interactive brief form with spam protection & click-to-call
-        ├── privacy.astro    # DPDP Act 2023 & GDPR compliant Privacy Policy
-        ├── terms.astro      # Commercial Terms, 50% milestone policy, IP terms
-        └── 404.astro        # Branded, accessible 404 error page
+│   ├── .well-known/
+│   │   └── security.txt           # RFC 9116 security vulnerability disclosure policy
+│   ├── _headers                   # Cloudflare Pages CSP, HSTS, and security headers
+│   ├── favicon.svg                # Vector brand favicon
+│   ├── llms.txt                   # One-sentence summaries of all main pages for LLM crawlers
+│   ├── robots.txt                 # Search & AI crawler policies (disallows /portal and /api/)
+│   ├── site.webmanifest           # Web app manifest for Strova Group
+│   └── fonts/                     # 100% self-hosted variable font files (Newsreader & Plus Jakarta Sans)
+├── src/
+│   ├── content/                   # Content collections (journal & work with draft templates)
+│   ├── components/                # Header, Footer, SEOHead, ThreeHero, CredentialsStrip
+│   ├── layouts/
+│   │   └── BaseLayout.astro       # Root layout with schemas, theme script, skip link, sticky quote bar
+│   ├── pages/
+│   │   ├── index.astro            # Homepage (9-stage conversion narrative, "How quotes work", FAQ)
+│   │   ├── technologies.astro     # Strova Technologies (AI & automation housed here)
+│   │   ├── digital.astro          # Strova Digital (SEO, Ads, Funnels, CAPI)
+│   │   ├── commerce.astro         # Strova Commerce ("Coming soon")
+│   │   ├── about.astro            # Corporate identity, leadership, Udyam MSME credentials
+│   │   ├── contact.astro          # 3-field quote form with Turnstile & fail-closed fallback
+│   │   ├── review.astro           # Ungated, zero-incentive Google review request page
+│   │   ├── privacy.astro          # DPDP Act 2023 & GDPR aligned Privacy Policy
+│   │   ├── terms.astro            # Anti-copying / anti-scraping terms & 30-day warranty
+│   │   ├── cookies.astro          # Cookie policy (zero marketing cookies)
+│   │   ├── accessibility.astro    # WCAG 2.2 AA accessibility statement
+│   │   └── 404.astro              # Branded 404 recovery page
+│   └── scripts/
+│       ├── analytics.ts           # Privacy-preserving cookieless event dispatcher
+│       └── globalInteractions.ts  # Theme toggle, IST clock ticker, card sheen effects
+├── portal/                        # Client Portal application (portal.strovagroups.in)
+│   ├── astro.config.mjs           # Portal Astro config
+│   ├── public/
+│   │   └── robots.txt             # Disallow: / on portal domain
+│   └── src/
+│       ├── lib/
+│       │   └── supabase.ts        # Supabase client, models, and 60s signed link generator
+│       ├── layouts/
+│       │   └── PortalLayout.astro # Portal layout with noindex, no trackers, DPDP link
+│       └── pages/
+│           ├── index.astro        # Client orders dashboard with 8-stage badges
+│           ├── login.astro        # 6-digit OTP login, 10-min expiry, 60s resend, demo switch
+│           ├── logout.astro       # Session termination
+│           ├── orders/
+│           │   ├── index.astro    # Order detail with 8-stage timeline, deliverables, invoices
+│           │   └── [id].astro     # Dynamic route slug
+│           └── admin/
+│               └── index.astro    # Admin console (orders, milestones, deliverables, audit log)
+├── supabase/
+│   └── migrations/
+│       └── 20261012000000_client_portal_schema.sql # PostgreSQL schema & RLS policies
+└── tests/
+    └── isolation.test.mjs         # Automated tenant isolation & RLS test suite (39 assertions)
 ```
 
 ---
 
-## 3. Local Development & Build
+## 4. Environment Variables Reference
 
-### Prerequisites
-- Node.js `v20+` or `v24+` installed (Node `v24.21.0` verified).
+Configure these in Cloudflare Pages dashboard (`Settings > Environment variables`) and `.env`:
 
-### Installation
+| Variable | Environment | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | Client | Optional | Google Search Console verification code for `<meta name="google-site-verification">`. |
+| `PUBLIC_BING_SITE_VERIFICATION` | Client | Optional | Bing Webmaster Tools verification code for `<meta name="msvalidate.01">`. |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Client | Optional | Cloudflare Turnstile site key for interactive bot challenge. |
+| `TURNSTILE_SECRET_KEY` | Server | Optional | Cloudflare Turnstile secret key for server-side response verification. |
+| `WEB3FORMS_ACCESS_KEY` | Server | Required for email relay | Web3Forms access key. If omitted, `/api/contact` fails closed with HTTP 503. |
+| `PUBLIC_GOOGLE_REVIEW_URL` | Client | Optional | Direct Google Business Profile review link for `/review`. Defaults to email request. |
+| `PUBLIC_LINKEDIN_URL` | Client | Optional | Verified company LinkedIn URL for Organization schema `sameAs`. |
+| `PUBLIC_GITHUB_URL` | Client | Optional | Verified company GitHub URL for Organization schema `sameAs`. |
+| `PUBLIC_INSTAGRAM_URL` | Client | Optional | Verified company Instagram URL for Organization schema `sameAs`. |
+| `PUBLIC_YOUTUBE_URL` | Client | Optional | Verified company YouTube URL for Organization schema `sameAs`. |
+| `PUBLIC_GOOGLE_BUSINESS_URL` | Client | Optional | Google Maps / GBP link for Organization schema `sameAs`. |
+| `PUBLIC_CLUTCH_URL` | Client | Optional | Clutch company profile link for Organization schema `sameAs`. |
+| `SUPABASE_URL` | Portal | Required for live portal | Supabase project URL (`https://<project>.supabase.co`). |
+| `SUPABASE_ANON_KEY` | Portal | Required for live portal | Supabase anonymous/public key (respects RLS). |
+| `SUPABASE_SERVICE_ROLE_KEY` | Portal Server | Required for admin portal | Supabase service role key (never expose to browser). |
+| `PORTAL_SIGNING_SECRET` | Portal Server | Required | Secret string for HMAC-SHA256 60-second signed file download URLs. |
+
+---
+
+## 5. Local Setup & Build Commands
+
 ```bash
+# Install dependencies
 npm install
-```
 
-### Development Server
-```bash
+# Run marketing site in development
 npm run dev
-```
-Starts the local development server at `http://localhost:4321`.
 
-### Production Build
-```bash
+# Run automated tenant isolation test suite
+npm test
+
+# Run comprehensive static build audit
+npm run audit
+
+# Build static marketing site
 npm run build
-```
-Generates production-optimized static files in the `dist/` directory.
 
-### Preview Production Build
-```bash
+# Build client portal app
+npm run build:portal
+
+# Build both applications
+npm run build:all
+
+# Preview production build locally
 npm run preview
 ```
-Serves the `dist/` directory locally for pre-flight testing.
 
 ---
 
-## 4. Brand Palette & Design Tokens
+## 6. Supabase & Client Portal Setup Guide
 
-Defined in `src/styles/global.css`:
+### Applying Database Schema & Row Level Security
+1. Navigate to your Supabase project dashboard > **SQL Editor**.
+2. Open and run `supabase/migrations/20261012000000_client_portal_schema.sql`.
+3. This creates:
+   - `profiles`: Tied to `auth.users`, role-based (`client` or `admin`).
+   - `orders`: Project engagements linked to client profiles.
+   - `order_events`: 8-stage progress timeline events (`Brief received` through `Support`).
+   - `files`: Deliverable metadata with private storage paths.
+   - `invoices`: Invoices with `Pending` or `Paid` status (zero public price lists).
+   - `messages`: Per-order client communication thread.
+   - `audit_log`: Administrative operation audit trail.
+   - Strict **Row Level Security (RLS)** on all tables preventing cross-client visibility.
 
-| Token | Name | Hex / Value | Usage |
-| :--- | :--- | :--- | :--- |
-| `--color-void` | Void | `#08090D` | Dark page background, text primary in light theme |
-| `--color-slate` | Slate | `#1A1D27` | Surface background, dark card background |
-| `--color-indigo` | Indigo | `#6366F1` | Primary brand accent, primary CTA buttons |
-| `--color-cyan` | Cyan | `#22D3EE` | Secondary brand accent, glowing highlights |
-| `--color-ice` | Ice | `#F1F5F9` | Elevated surfaces, light theme body background |
-| `--color-snow` | Snow | `#FFFFFF` | Light background, crisp text in dark theme |
+### Configuring Custom SMTP Sender
+By default, Supabase's built-in email service is rate-limited (3 emails/hour). For production:
+1. In Supabase Dashboard, go to **Project Settings > Authentication > SMTP Settings**.
+2. Enable **Custom SMTP**.
+3. Sender Email: `info@strovagroups.in`.
+4. Sender Name: `Strova Group`.
+5. Enter host, port (587/465), user, and SMTP password provided by your mail provider (e.g., Zoho, Google Workspace, AWS SES).
 
-- **Headings Font**: `Space Grotesk Variable`
-- **Body Font**: `Inter Variable`
-
----
-
-## 5. Content Editing Guide
-
-### Updating Company Contact Details
-To change the business address, phone number, or email across the entire website:
-- **Global Footer & Microdata**: Edit `src/components/Footer.astro` and `src/layouts/BaseLayout.astro`.
-- **Contact Page**: Edit `src/pages/contact.astro`.
-- **Privacy Grievance Officer**: Edit `src/pages/privacy.astro`.
-
-### Updating Service Pricing
-- **Home Page Snapshot**: Edit `.pricing-card` elements in `src/pages/index.astro`.
-- **Technologies Pricing**: Edit `.pricing-compact` elements in `src/pages/technologies.astro`.
-- **Digital Retainer Pricing**: Edit `.pricing-compact` elements in `src/pages/digital.astro`.
-
-### Adding or Modifying FAQs
-To add or modify questions on the homepage FAQ:
-1. Open `src/pages/index.astro`.
-2. Locate the `faqs` array at the top of the frontmatter:
-   ```ts
-   const faqs = [
-     {
-       question: 'Your question here?',
-       answer: 'Your detailed answer here.',
-     },
-   ];
-   ```
-3. Updating this array automatically updates **both** the interactive UI accordion and the Google `FAQPage` JSON-LD structured data.
-4. For comprehensive multi-category FAQs, edit `src/pages/faq.astro` which organizes questions into five service and commercial categories.
+### Inviting a Client & Creating an Order
+1. Sign in to the portal as admin at `https://portal.strovagroups.in/admin`.
+2. **Invite / Provision Client**: Enter the client's business email and company name. Supabase provisions the auth user and sends an invite email.
+3. **Create Order**: Select the client profile, assign division (`technologies`, `digital`, `commerce`), and title.
+4. **Advance Milestone**: Select order, pick stage from the 8 stages, and enter a client-visible progress note.
+5. **Upload Deliverable**: Store files in private Supabase Storage bucket `deliverables` under `client_<id>/orders/<order_id>/` and link the path in the admin form.
 
 ---
 
-## 6. Environment Variables Configuration
+## 7. Publishing Content in Journal and Work
 
-Zero secrets are stored in this repository. Configure the following environment variables in your deployment dashboard (Cloudflare Pages or Vercel):
+The platform utilizes Astro Content Collections with automatic navigation visibility:
+- When a collection has **0 published entries**, the navigation links (`Work`, `Journal`) in the Header and Footer **automatically stay hidden**.
+- No empty pages or placeholder text are ever rendered.
 
-| Variable Name | Required | Default / Example | Purpose |
-| :--- | :--- | :--- | :--- |
-| `PUBLIC_TURNSTILE_SITE_KEY` | Optional | `1x00000000000000000000AA` (Always passes) | Cloudflare Turnstile public client-side widget key. |
-| `TURNSTILE_SECRET_KEY` | Recommended | `1x0000000000000000000000000000000AA` | Server-side Turnstile secret key for cryptographic verification in `/api/contact`. |
-| `WEB3FORMS_ACCESS_KEY` | Optional | `your-web3forms-uuid` | Forwards inbound inquiries to your inbox via Web3Forms API. |
-| `FORMSPREE_ENDPOINT` | Optional | `https://formspree.io/f/xyz` | Alternative email forwarding endpoint. |
-| `CONTACT_RECEIVER_EMAIL` | Optional | `info@strovagroups.in` | Target email address where customer notifications are directed. |
+### To publish a Journal article:
+1. Copy `src/content/journal/draft-template.md` to `src/content/journal/your-article-slug.md`.
+2. Fill in title, description, publishDate, and markdown content.
+3. Set `draft: false`.
+4. Run `npm run build`. The Journal page and navigation link will automatically become active.
 
----
-
-## 7. Business Facts & Missing Information Report
-
-In accordance with strict brand integrity and anti-fabrication standards:
-- **No synthetic testimonials, fake logos, fictitious awards, or fake team members have been added.**
-- **All unsupplied business facts have been safely omitted from public UI rather than shipping broken bracket placeholders.**
-
-### Confirmed & Implemented Facts:
-- **Brand**: Strova Group
-- **Divisions**: Strova Technologies, Strova Digital, Strova Commerce (Marked "Coming Soon")
-- **Tagline**: "AI & automation for growing businesses."
-- **Founder**: Babita Kumari
-- **MSME Udyam Registration**: `UDYAM-JH-20-0147452` (Rendered across Header, Footer, About, Contact, and `llms.txt`)
-- **Canonical Origin**: `https://strovagroups.in`
-- **Email**: `info@strovagroups.in`
-- **Phone & WhatsApp**: `+91 92880 77802` (`tel:+919288077802`, `https://wa.me/919288077802`)
-- **Operating Hours**: Monday – Saturday, 10:00 AM – 7:00 PM IST (UTC+05:30)
-- **Commercial Model**: 50% upfront deposit upon technical architecture, 50% upon staging demonstration & sign-off prior to production domain cutover.
-
-### Missing Information List (Safely Omitted From Public UI):
-The following items were unsupplied and have been omitted from public UI to prevent publishing false data or bracket placeholders:
-1. **Registered Office Street Address**: Left unsupplied. The site displays "Operating from India". To add a full street address later, update `src/components/Footer.astro`, `src/pages/about.astro`, `src/pages/contact.astro`, and `src/layouts/BaseLayout.astro`.
-2. **Founder Role Title**: Left unsupplied. Displayed cleanly as "Founder" without bracket placeholders.
-3. **Founder Real Photograph**: Displayed via clean SVG/WebP initial badge.
-4. **Social Media Profile URLs**: Left unsupplied. `sameAs` array in JSON-LD is populated only when official verified profile URLs are provided.
-5. **Cloudflare Web Analytics Token**: Left unsupplied. Commented analytics script removed; zero invasive tracking scripts run.
-
-> [!IMPORTANT]
-> **Statutory Legal Notice**: Prior to commercial production deployment, a qualified lawyer or Chartered Accountant (CA) should review both the **Privacy Policy** (`src/pages/privacy.astro`) and **Terms of Service** (`src/pages/terms.astro`) to ensure customized alignment with your specific corporate entity structure.
+### To publish a Work case study:
+1. Ensure you have documented written client permission, real facts, and verifiable metrics.
+2. Copy `src/content/work/draft-template.md` to `src/content/work/client-case-slug.md`.
+3. Fill in title, client (real only), division, deliverable summary, and results.
+4. Set `draft: false`.
+5. Run `npm run build`. The Work page and navigation link will automatically become active.
 
 ---
 
-## 8. Post-Deployment Quality & Lighthouse Checklist
+## 8. Intellectual Property Protection & Canary Phrases
 
-Run Google Lighthouse on the production build to verify the following thresholds:
+To protect site copy and architecture from unauthorized automated scraping and plagiarism, 4 unique, domain-specific canary phrases are embedded across key pages:
 
-### 1. Performance (Target: 95–100)
-- [x] **Largest Contentful Paint (LCP)**: Under 1.5 seconds.
-- [x] **First Contentful Paint (FCP)**: Under 0.9 seconds.
-- [x] **Cumulative Layout Shift (CLS)**: Zero (0.00). All images, icons, and canvas containers specify fixed `width`, `height`, or CSS `aspect-ratio`.
-- [x] **Interaction to Next Paint (INP)**: Under 100ms. Heavy Three.js execution is deferred via `requestIdleCallback` after main thread idle.
-- [x] **Three.js Off-Screen Suspension**: Verified `IntersectionObserver` halts `requestAnimationFrame` when the hero visual leaves viewport.
+| Location | Canary Phrase | Detection Purpose |
+| :--- | :--- | :--- |
+| `src/pages/about.astro` | *"Strova Group maintains an uncompromising standard of deterministic execution, pairing senior architectural oversight with rigorous verification across every deliverable."* | About page scrapers |
+| `src/pages/terms.astro` | *"Strova Group enforces strict provenance tracking across proprietary codebase structures and analytical methodologies, prohibiting unauthorized automated scraping or model ingestion."* | Legal terms re-use |
+| `src/pages/technologies.astro` | *"Strova Technologies builds resilient digital foundations with verifiable latency thresholds, ensuring zero single-point failures in custom software infrastructure."* | Service page copying |
+| `src/pages/digital.astro` | *"Strova Digital executes performance growth architectures that unify server-side event tracking with transparent, first-party data attribution."* | Agency copy cloning |
 
-### 2. Accessibility (Target: 100)
-- [x] **WCAG 2.2 AA Color Contrast**: All text satisfies minimum 4.5:1 contrast against page backgrounds in both light and dark modes.
-- [x] **Skip Link**: Top-level `<a href="#main-content" class="skip-link">Skip to main content</a>` functional via Tab key.
-- [x] **Visible Focus Rings**: Dedicated 2px/3px focus ring outline on all interactive inputs, buttons, and links.
-- [x] **Screen Reader Labels**: `aria-expanded`, `aria-controls`, `aria-label`, and `role="alert"` implemented on all dynamic controls.
-- [x] **Reduced Motion**: Fallback SVG replaces Three.js 3D animation when `prefers-reduced-motion: reduce` is active.
-
-### 3. Best Practices & Security (Target: 100)
-- [x] **No Vulnerabilities / CDNs**: Fonts and scripts are completely self-hosted.
-- [x] **Security Headers**: `public/_headers` deployed to Cloudflare Pages (CSP, `nosniff`, `frame-ancestors 'none'`, `Referrer-Policy`).
-- [x] **HTML5 Doctype & Encodings**: `<!doctype html>`, `<html lang="en" dir="ltr">`, `<meta charset="utf-8">`.
-
-### 4. SEO & Structured Data (Target: 100)
-- [x] **Schema.org Rich Snippets**: Validate pages on [Google Rich Results Test](https://search.google.com/test/rich-results) for Organization, WebSite, Service, Person, and FAQPage.
-- [x] **Canonical & Hreflang**: Canonical links and hreflang tags (`en`, `en-IN`, `x-default`) present on every view.
-- [x] **Robots & Sitemap**: `robots.txt` points to `sitemap-index.xml`. Verified 10 routes generated without 404 indexing.
+### Recommended Cloudflare Protection:
+1. **Bot Fight Mode**: Enable in Cloudflare Dashboard under **Security > Bots**. Challenges known malicious scrapers.
+2. **Rate Limiting Rule**: Limit requests to `/api/*` to a maximum of 5 requests per 10-minute window per IP.
+3. **Private Repository**: Keep the git repository private to safeguard internal code and portal structures.
+4. **Misuse Reporting**: The Terms page includes a direct reporting link: `mailto:info@strovagroups.in?subject=Report%20misuse%20or%20unauthorized%20copying`.
 
 ---
 
-## 9. Deployment to Cloudflare Pages
+## 9. Technical SEO & Search Engine Indexing Checklist
 
-This site is optimized for zero-cost edge hosting on **Cloudflare Pages**:
+1. **Verify Ownership**:
+   - Google Search Console: Set `PUBLIC_GOOGLE_SITE_VERIFICATION` in Cloudflare Pages environment variables.
+   - Bing Webmaster Tools: Set `PUBLIC_BING_SITE_VERIFICATION` in Cloudflare Pages environment variables.
+2. **Submit Sitemap**:
+   - Submit `https://strovagroups.in/sitemap-index.xml` in both Search Console and Bing.
+3. **Request Indexing**:
+   - In Search Console, inspect `https://strovagroups.in/` and click **Request Indexing**.
+4. **AI Crawlers & robots.txt Policy**:
+   - Search & retrieval bots (`OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`) are explicitly **allowed** to ensure Strova Group answers show in AI search.
+   - Training crawlers (`GPTBot`, `ClaudeBot`, `Google-Extended`, `CCBot`) default to **allowed** in `public/robots.txt` with clear comments explaining how to disallow them if training opt-out is preferred.
+   - `/portal/` and `/api/` are strictly **disallowed** for all robots.
+5. **Weekly Brand Search Check**:
+   - Perform a weekly search in a private/incognito window for the exact query `"Strova Group"` to verify snippet rendering, Knowledge Panel, and sitelinks.
 
-1. Push this repository to GitHub (`main` or production branch).
-2. In the Cloudflare Dashboard, navigate to **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**.
-3. Select the repository and configure the build settings:
-   - **Framework Preset**: `Astro`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-   - **Environment Variables**:
-     - `NODE_VERSION`: `20` or higher (e.g. `24.21.0`)
-     - `PUBLIC_TURNSTILE_SITE_KEY`: Your Cloudflare Turnstile site key
-     - `TURNSTILE_SECRET_KEY`: Your Cloudflare Turnstile secret key
-4. Click **Save and Deploy**. Cloudflare automatically applies the caching rules and security headers defined in `public/_headers` and binds the `/functions/api/contact.ts` serverless handler.
+---
+
+## 10. Automated Verification & Isolation Test Suite
+
+The repository includes two automated test and audit suites:
+
+### 1. Tenant Isolation Suite (`npm test` / `tests/isolation.test.mjs`)
+Executes 39 automated assertions verifying:
+- Client Alpha (`client-a@example.com`) receives strictly Client Alpha orders, events, files, invoices, and messages. Zero rows returned for Client Beta.
+- Client Beta (`client-b@example.com`) receives strictly Client Beta records. Zero rows returned for Client Alpha.
+- Cross-tenant ID enumeration queries return 0 rows.
+- Cross-tenant message insertion is rejected with HTTP 403.
+- Private deliverable signed download links reject unauthorized clients (403 Forbidden).
+- Expired download links (> 60s) reject downloads (410 Expired).
+- Tampered link signatures are rejected (403 Invalid signature).
+- Administrator session can view cross-client orders and audit log entries.
+- Non-admin client sessions querying audit log receive 0 rows.
+
+### 2. Static Build Audit (`npm run audit` / `audit.mjs`)
+Audits all 15 rendered HTML pages in `dist/`:
+- Exactly one `<h1>` per page.
+- Title strictly under 60 characters and description strictly under 160 characters.
+- Valid canonical URL on `https://strovagroups.in`.
+- Multi-locale hreflang (`en`, `en-IN`, `x-default`).
+- Organization schema validation (legalName, name, founder, telephone, email, Udyam identifier).
+- Zero instances of bare "Strova" alone as the brand name.
+- Zero public prices, rupee symbols (`₹`), or "starting from" figures.
+- Zero bracket placeholders (`[ADDRESS]`, `[ROLE TITLE]`, `TODO`, `Lorem`).
+- Self-hosted variable fonts verified (zero CDN font requests).
+- Non-Three.js JS bundle size verified within 150 KB raw budget.
+
+---
+
+## 11. Missing Information Report
+
+The following items were not supplied in the initial brief and have been omitted from public pages according to the Absolute Rules (never invent facts):
+
+1. **Physical Office Street Address**: Omitted from Header, Footer, and Contact page. Email (`info@strovagroups.in`), phone (`+91 92880 77802`), and Udyam MSME number (`UDYAM-JH-20-0147452`) are displayed instead.
+2. **Founder Photograph**: A clean geometric vector icon / monogram is rendered instead of a stock or placeholder photo.
+3. **Case Study Metrics & Client Logos**: Case Studies page displays production architecture blueprints with zero invented client names or metrics. The `work` content collection remains hidden until real client-approved entries are added.
+4. **Social Profile URLs**: Organization schema `sameAs` only includes profiles when set via environment variables.
+
+---
+
+## 12. Needs Human Confirmation Report
+
+Prior to formal commercial deployment, confirm the following items:
+
+1. **Founder Name Spelling**: Confirm exact spelling of *"Sarthak Shresht"*.
+2. **Chartered Accountant (CA) Review**: Confirm the proprietorship legal structure disclosure (*"Strova Group is a proprietorship of Babita Kumari"*) and invoice numbering format with your CA.
+3. **Legal Counsel Review**: Have legal counsel review `src/pages/terms.astro` and `src/pages/privacy.astro` for specific compliance with India's Digital Personal Data Protection (DPDP) Act 2023.
+4. **Google Review Link**: Verify the exact Google Business Profile review destination URL for `PUBLIC_GOOGLE_REVIEW_URL`.
+5. **Mailgun / Web3Forms Key**: Obtain access key for `WEB3FORMS_ACCESS_KEY` to enable production email dispatch from the quote form.
