@@ -42,124 +42,124 @@ import PortalLayout from '../layouts/PortalLayout.astro';
           placeholder="Type an architectural question, update or sprint feedback..."
           style="flex: 1; padding: 0.625rem; font-size: 0.875rem; font-family: inherit; border: 1px solid var(--color-border); border-radius: 4px; resize: none;"
         ></textarea>
-        <button type="submit" class="btn btn-primary" style="padding: 0.625rem 1.25rem;">
+        <button type="submit" id="thread-submit-btn" class="btn btn-primary" style="padding: 0.625rem 1.25rem;">
           Send
         </button>
       </form>
     </div>
   </div>
 
-  <script is:inline>
-    const sessionRaw = localStorage.getItem('strova_portal_session');
-    if (!sessionRaw) {
-      window.location.href = '/portal/login';
-    } else {
-      const session = JSON.parse(sessionRaw);
+  <script>
+    import {
+      getSession,
+      getUserProfile,
+      fetchMyOrders,
+      fetchOrderMessages,
+      sendOrderMessage,
+      type ClientOrder,
+      type OrderMessage,
+    } from '../lib/supabaseClient';
 
-      const DB_THREADS = [
-        {
-          order_id: '00000000-0000-0000-0000-000000000001',
-          client_id: '11111111-1111-4111-8111-111111111111',
-          order_ref: 'ORD-2026-001',
-          title: 'Patient Scheduling Platform',
-          messages: [
-            { sender: 'Client Alpha', role: 'client', text: 'Uploaded the WhatsApp Cloud API webhook credentials in the secure vault.', date: 'Oct 05, 09:15 AM' },
-            { sender: 'Strova Operations', role: 'admin', text: 'Credentials verified and staging webhooks are now actively listening.', date: 'Oct 05, 11:40 AM' },
-            { sender: 'Strova Operations', role: 'admin', text: 'Sprint 2 staging link is deployed for clinic staff review.', date: 'Oct 10, 02:30 PM' }
-          ]
-        },
-        {
-          order_id: '00000000-0000-0000-0000-000000000002',
-          client_id: '22222222-2222-4222-8222-222222222222',
-          order_ref: 'ORD-2026-002',
-          title: 'Technical SEO Architecture',
-          messages: [
-            { sender: 'Client Beta', role: 'client', text: 'Reviewed the Core Web Vitals remediation plan. Approved to deploy to staging.', date: 'Oct 09, 02:10 PM' },
-            { sender: 'Strova Operations', role: 'admin', text: 'Staging audit remediation complete. Lighthouse scores verified at 98 Performance.', date: 'Oct 11, 04:00 PM' }
-          ]
-        }
-      ];
+    async function initMessages() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login';
+        return;
+      }
 
-      const myThreads = DB_THREADS.filter(t => session.role === 'admin' || t.client_id === session.id);
-      let activeThread = myThreads[0] || null;
+      const profile = await getUserProfile(session.user.id);
+      const orders = await fetchMyOrders();
 
       const channelsList = document.getElementById('project-channels-list');
       const threadTitle = document.getElementById('active-thread-title');
       const threadRef = document.getElementById('active-thread-ref');
       const messagesBody = document.getElementById('thread-messages-body');
+      const sendForm = document.getElementById('thread-send-form') as HTMLFormElement;
+      const sendInput = document.getElementById('thread-input') as HTMLTextAreaElement;
+      const submitBtn = document.getElementById('thread-submit-btn') as HTMLButtonElement;
 
-      function renderChannels() {
-        if (myThreads.length === 0) {
-          channelsList.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No active project threads.</p>`;
-          return;
+      if (!channelsList || !threadTitle || !threadRef || !messagesBody) return;
+
+      if (orders.length === 0) {
+        channelsList.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No active projects found. Messaging is enabled on scoped engagements.</p>`;
+        threadTitle.textContent = 'No active channels';
+        messagesBody.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">Engagements will appear here when scope is initiated.</p>`;
+        if (sendInput) sendInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
+        return;
+      }
+
+      let activeOrder: ClientOrder = orders[0];
+
+      async function renderMessages(order: ClientOrder) {
+        activeOrder = order;
+        threadTitle.textContent = order.title;
+        threadRef.textContent = `${order.division} • ${order.order_ref}`;
+
+        const msgs = await fetchOrderMessages(order.id);
+        if (msgs.length === 0) {
+          messagesBody.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No previous messages in this channel. Send your requirement or query below.</p>`;
+        } else {
+          messagesBody.innerHTML = msgs.map((m) => {
+            const isClient = m.sender_role === 'client';
+            const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return `
+              <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
+                <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
+                <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+                  ${m.message_text}
+                </div>
+              </div>
+            `;
+          }).join('');
+          messagesBody.scrollTop = messagesBody.scrollHeight;
         }
 
-        channelsList.innerHTML = myThreads.map(t => `
-          <button type="button" class="channel-btn btn btn-secondary" data-id="${t.order_id}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${t === activeThread ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${t === activeThread ? '#EFF6FF' : '#fff'};">
+        renderChannels();
+      }
+
+      function renderChannels() {
+        channelsList.innerHTML = orders.map((o) => `
+          <button type="button" class="channel-btn btn btn-secondary" data-id="${o.id}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${o.id === activeOrder.id ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${o.id === activeOrder.id ? '#EFF6FF' : '#fff'};">
             <div>
-              <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${t.title}</p>
-              <p style="font-size: 0.75rem; color: var(--color-text-dim); font-family: monospace;">${t.order_ref}</p>
+              <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${o.title}</p>
+              <p style="font-size: 0.75rem; color: var(--color-text-dim);">${o.order_ref} • ${o.current_stage}</p>
             </div>
           </button>
         `).join('');
 
-        document.querySelectorAll('.channel-btn').forEach(btn => {
+        channelsList.querySelectorAll('.channel-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
-            activeThread = myThreads.find(t => t.order_id === id);
-            renderChannels();
-            renderActiveThread();
+            const found = orders.find((ord) => ord.id === id);
+            if (found) renderMessages(found);
           });
         });
       }
 
-      function renderActiveThread() {
-        if (!activeThread) {
-          threadTitle.textContent = 'No thread selected';
-          threadRef.textContent = '';
-          messagesBody.innerHTML = '';
-          return;
-        }
+      await renderMessages(activeOrder);
 
-        threadTitle.textContent = activeThread.title;
-        threadRef.textContent = activeThread.order_ref;
+      if (sendForm) {
+        sendForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const text = sendInput ? sendInput.value.trim() : '';
+          if (!text || !activeOrder) return;
 
-        messagesBody.innerHTML = activeThread.messages.map(msg => {
-          const isMe = (session.role === 'admin' && msg.role === 'admin') || (session.role === 'client' && msg.role === 'client');
-          return `
-            <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; max-width: 80%; background: ${isMe ? '#EFF6FF' : '#F1F5F9'}; border: 1px solid ${isMe ? '#BFDBFE' : '#E2E8F0'}; border-radius: 6px; padding: 0.75rem 1rem;">
-              <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 0.25rem; font-size: 0.75rem;">
-                <strong style="color: ${isMe ? '#1D4ED8' : 'var(--color-text-main)'};">${msg.sender}</strong>
-                <span style="color: var(--color-text-dim);">${msg.date}</span>
-              </div>
-              <p style="font-size: 0.8125rem; color: var(--color-text-main); line-height: 1.4;">${msg.text}</p>
-            </div>
-          `;
-        }).join('');
+          if (submitBtn) submitBtn.disabled = true;
 
-        messagesBody.scrollTop = messagesBody.scrollHeight;
-      }
-
-      renderChannels();
-      renderActiveThread();
-
-      document.getElementById('thread-send-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('thread-input');
-        const text = input.value.trim();
-        if (!text || !activeThread) return;
-
-        activeThread.messages.push({
-          sender: session.role === 'admin' ? 'Strova Operations' : (session.full_name || session.email.split('@')[0]),
-          role: session.role,
-          text,
-          date: 'Just now'
+          try {
+            await sendOrderMessage(activeOrder.id, text, profile?.role || 'client');
+            if (sendInput) sendInput.value = '';
+            await renderMessages(activeOrder);
+          } catch (err: any) {
+            alert(err?.message || 'Error posting message to thread.');
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
         });
-
-        input.value = '';
-        renderActiveThread();
-      });
+      }
     }
+
+    initMessages();
   </script>
 </PortalLayout>
-

@@ -312,3 +312,52 @@ Prior to formal commercial deployment, confirm the following items:
 3. **Legal Counsel Review**: Have legal counsel review `src/pages/terms.astro` and `src/pages/privacy.astro` for specific compliance with India's Digital Personal Data Protection (DPDP) Act 2023.
 4. **Google Review Link**: Verify the exact Google Business Profile review destination URL for `PUBLIC_GOOGLE_REVIEW_URL`.
 5. **Mailgun / Web3Forms Key**: Obtain access key for `WEB3FORMS_ACCESS_KEY` to enable production email dispatch from the quote form.
+
+---
+
+## 13. Production Operations & Deployment Guide
+
+### A. Deployment Target & Architecture
+- **Marketing Site (`https://strovagroups.in`)**: Deployed via Cloudflare Pages using `npm run build` with output in `dist/`.
+- **Client Portal (`https://portal.strovagroups.in`)**: Deployed via Cloudflare Pages using `npm run build:portal` with output in `portal/dist/`.
+- **Database & Auth (`Supabase`)**: Managed PostgreSQL with Row Level Security (RLS) and email OTP passwordless authentication.
+- **Serverless Payment Endpoints**: Hosted as Supabase Edge Functions (`supabase/functions/create-razorpay-order` and `supabase/functions/verify-razorpay-payment`).
+
+### B. Database Migration Execution
+Apply the consolidated portal schema migration to your Supabase project:
+```bash
+# Link your Supabase CLI to your project
+supabase link --project-ref your-project-ref
+
+# Push the migration
+supabase db push
+```
+Or execute `supabase/migrations/20261012000001_harden_and_extend_portal.sql` directly in the Supabase SQL Editor.
+
+### C. Supabase Authentication Setup
+1. In Supabase Dashboard -> **Authentication** -> **Providers** -> **Email**:
+   - Enable Email provider.
+   - Disable password-based signup if invite-only.
+   - Enable "Confirm email" and set OTP expiration to 10 minutes (600 seconds).
+2. In Supabase Dashboard -> **Authentication** -> **Bot Protection**:
+   - Enable Cloudflare Turnstile bot protection.
+   - Enter your `TURNSTILE_SECRET_KEY`.
+3. In Supabase Dashboard -> **URL Configuration**:
+   - Site URL: `https://portal.strovagroups.in`
+   - Additional Redirect URLs: `https://portal.strovagroups.in/**`, `https://strovagroups.in/**`
+
+### D. Razorpay Live Configuration
+1. Obtain Live Key ID and Key Secret from Razorpay Dashboard -> **Settings** -> **API Keys**.
+2. Set `PUBLIC_RAZORPAY_KEY_ID=rzp_live_...` in your portal environment variables.
+3. Configure `RAZORPAY_KEY_SECRET` and `RAZORPAY_WEBHOOK_SECRET` as Supabase Edge Function secrets:
+```bash
+supabase secrets set RAZORPAY_KEY_SECRET="your_live_secret" RAZORPAY_WEBHOOK_SECRET="your_webhook_secret"
+```
+4. In Razorpay Dashboard -> **Settings** -> **Webhooks**:
+   - Add Webhook URL: `https://your-project-id.supabase.co/functions/v1/verify-razorpay-payment`
+   - Active Events: `payment.captured`, `order.paid`
+   - Secret: Matches `RAZORPAY_WEBHOOK_SECRET`
+
+### E. Backup & Recovery Considerations
+- **Database Snapshots**: Supabase provides automated daily backups with Point-in-Time Recovery (PITR) on Pro tier.
+- **Rollback Procedure**: In case of deployment rollback, Cloudflare Pages supports instant 1-click rollbacks to previous immutable deployments.

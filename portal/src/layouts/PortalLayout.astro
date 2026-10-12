@@ -491,23 +491,28 @@ const { title, currentNav = 'overview' } = Astro.props;
       </div>
     </div>
 
-    <script is:inline>
-      // Populate sidebar session information and unhide admin tab if admin
-      try {
-        const sessionRaw = localStorage.getItem('strova_portal_session');
-        if (sessionRaw) {
-          const session = JSON.parse(sessionRaw);
-          const nameEl = document.getElementById('sidebar-user-name');
-          const emailEl = document.getElementById('sidebar-user-email');
-          const adminLink = document.getElementById('sidebar-admin-link');
+    <script>
+      import { getSession, getUserProfile } from '../lib/supabaseClient';
 
-          if (nameEl) nameEl.textContent = session.full_name || session.email.split('@')[0];
-          if (emailEl) emailEl.textContent = session.email;
-          if (adminLink && session.role === 'admin') {
-            adminLink.style.display = 'flex';
+      async function populateUserInfo() {
+        try {
+          const session = await getSession();
+          if (session) {
+            const emailEl = document.getElementById('sidebar-user-email');
+            const nameEl = document.getElementById('sidebar-user-name');
+            const adminLink = document.getElementById('sidebar-admin-link');
+
+            if (emailEl) emailEl.textContent = session.user.email || '';
+            const profile = await getUserProfile(session.user.id);
+            if (nameEl) nameEl.textContent = profile?.full_name || session.user.email?.split('@')[0] || 'Client';
+            if (adminLink && profile?.role === 'admin') {
+              adminLink.style.display = 'flex';
+            }
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
+
+      populateUserInfo();
     </script>
   </body>
 </html>

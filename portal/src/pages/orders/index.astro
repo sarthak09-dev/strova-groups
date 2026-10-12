@@ -2,175 +2,457 @@
 import PortalLayout from '../../layouts/PortalLayout.astro';
 ---
 
-<PortalLayout title="My Projects & Orders" currentNav="orders">
-  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
-        Projects & Orders
+<PortalLayout title="Projects & Delivery" currentNav="orders">
+  <!-- View 1: Single Order Workspace (Rendered if ?id=... is present in URL) -->
+  <div id="single-order-view" style="display: none;">
+    <div style="margin-bottom: 1.5rem;">
+      <a href="/portal/orders" style="font-size: 0.8125rem; color: var(--color-text-dim); text-decoration: none;">
+        ← Back to all projects
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="order-loading" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2rem; text-align: center; color: var(--color-text-dim);">
+      Loading project workspace details...
+    </div>
+
+    <!-- 403 Forbidden / Not Found State -->
+    <div id="order-forbidden" style="display: none; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 2.5rem; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🛡️</div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: #991B1B; margin-bottom: 0.5rem;">
+        Access Denied or Not Found
       </h2>
-      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
-        Amazon/Flipkart-style live sprint milestone tracking, deliverables, and direct engineering channel.
+      <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.5;">
+        You do not have authorization to view this project record, or the project does not exist. Strova Group enforces strict tenant isolation using Row Level Security (RLS).
       </p>
+      <a href="/portal/orders" class="btn btn-secondary" style="border-color: #FECACA; color: #991B1B !important;">
+        Return to your authorized projects
+      </a>
     </div>
 
-    <!-- Search & Filter Controls -->
-    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-      <input
-        type="search"
-        id="project-search"
-        placeholder="Search projects or ref..."
-        style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
-      />
-      <select
-        id="stage-filter"
-        style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
-      >
-        <option value="ALL">All Stages</option>
-        <option value="In progress">In progress</option>
-        <option value="Review">Review</option>
-        <option value="Delivered">Delivered</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Orders Grid -->
-  <div id="orders-list-container" style="display: flex; flex-direction: column; gap: 1.5rem;">
-    <!-- Injected via client session check -->
-  </div>
-
-  <!-- Empty State -->
-  <div id="orders-empty-state" style="display: none; background: var(--color-surface); border: 1px dashed var(--color-border); border-radius: 6px; padding: 3.5rem 2rem; text-align: center;">
-    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📦</div>
-    <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">No projects matching criteria</h3>
-    <p style="font-size: 0.875rem; color: var(--color-text-muted); max-width: 440px; margin: 0 auto 1.5rem;">
-      When an engagement scope or quotation is finalized, your dedicated project tracking timeline appears here automatically.
-    </p>
-    <a href="mailto:info@strovagroups.in" class="btn btn-secondary">Contact project coordinator</a>
-  </div>
-
-  <script is:inline>
-    const sessionRaw = localStorage.getItem('strova_portal_session');
-    if (!sessionRaw) {
-      window.location.href = '/portal/login';
-    } else {
-      const session = JSON.parse(sessionRaw);
-
-      const DB_ORDERS = [
-        {
-          id: '00000000-0000-0000-0000-000000000001',
-          order_ref: 'ORD-2026-001',
-          client_id: '11111111-1111-4111-8111-111111111111',
-          title: 'Patient Scheduling Platform & WhatsApp Cloud API',
-          division: 'Strova Technologies',
-          current_stage: 'In progress',
-          progress_percent: 50,
-          scope_reference: 'SOW-TECH-2026-01',
-          target_completion_date: 'Nov 15, 2026',
-          total_amount_paise: 25000000,
-          balance_amount_paise: 12500000,
-          summary: 'Milestone 2 active: Meta WhatsApp webhook integration and patient booking calendar sync with zero scraping brittle bots.',
-          action_required: 'Please test staging webhook flow with your test WhatsApp phone number.'
-        },
-        {
-          id: '00000000-0000-0000-0000-000000000002',
-          order_ref: 'ORD-2026-002',
-          client_id: '22222222-2222-4222-8222-222222222222',
-          title: 'Technical SEO Architecture & Google Ads CAPI Wiring',
-          division: 'Strova Digital',
-          current_stage: 'Review',
-          progress_percent: 75,
-          scope_reference: 'SOW-DIG-2026-04',
-          target_completion_date: 'Oct 25, 2026',
-          total_amount_paise: 12000000,
-          balance_amount_paise: 6000000,
-          summary: 'Remediation completed on staging environment; awaiting client audit review before live DNS deployment.',
-          action_required: 'Awaiting client audit sign-off on staging environment.'
-        }
-      ];
-
-      // RLS Policy Filter
-      const myOrders = DB_ORDERS.filter(o => session.role === 'admin' || o.client_id === session.id);
-
-      function renderOrders(filterText = '', stageFilter = 'ALL') {
-        const container = document.getElementById('orders-list-container');
-        const emptyState = document.getElementById('orders-empty-state');
-
-        const filtered = myOrders.filter(o => {
-          const matchesText = !filterText || o.title.toLowerCase().includes(filterText) || o.order_ref.toLowerCase().includes(filterText);
-          const matchesStage = stageFilter === 'ALL' || o.current_stage === stageFilter;
-          return matchesText && matchesStage;
-        });
-
-        if (filtered.length === 0) {
-          emptyState.style.display = 'block';
-          container.style.display = 'none';
-        } else {
-          emptyState.style.display = 'none';
-          container.style.display = 'flex';
-          container.innerHTML = filtered.map(order => `
-            <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${order.division}</span>
-                    <span style="color: var(--color-border);">•</span>
-                    <span style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);">${order.order_ref}</span>
-                    <span style="color: var(--color-border);">•</span>
-                    <span style="font-size: 0.75rem; color: var(--color-text-dim);">Target: ${order.target_completion_date}</span>
-                  </div>
-                  <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: var(--color-text-main);">
-                    <a href="/portal/orders?id=${order.id}" style="color: inherit; text-decoration: none;">${order.title}</a>
-                  </h3>
-                </div>
-                <span class="badge ${order.current_stage === 'Review' ? 'badge-review' : 'badge-progress'}">
-                  ${order.current_stage}
-                </span>
-              </div>
-
-              <div style="margin: 1.25rem 0;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 0.35rem;">
-                  <span>Stage: <strong>${order.current_stage}</strong></span>
-                  <span style="font-weight: 600;">${order.progress_percent}% complete</span>
-                </div>
-                <div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 9999px; overflow: hidden;">
-                  <div style="width: ${order.progress_percent}%; height: 100%; background: var(--color-primary); border-radius: 9999px;"></div>
-                </div>
-              </div>
-
-              <p style="font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
-                ${order.summary}
-              </p>
-
-              ${order.action_required ? `
-                <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.8125rem; color: #92400E; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <span>⚠️</span>
-                  <span><strong>Client Action Required:</strong> ${order.action_required}</span>
-                </div>
-              ` : ''}
-
-              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-subtle); padding-top: 1rem; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8125rem;">
-                <div style="display: flex; gap: 1.5rem; color: var(--color-text-dim);">
-                  <span>Scope: <strong style="color: var(--color-text-main);">${order.scope_reference}</strong></span>
-                  <span>Balance: <strong style="color: var(--color-text-main);">₹${(order.balance_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></span>
-                </div>
-                <a href="/portal/orders?id=${order.id}" class="btn btn-primary" style="font-size: 0.8125rem;">
-                  Open project workspace →
-                </a>
-              </div>
+    <!-- Single Order Workspace Content -->
+    <div id="order-workspace" style="display: none;">
+      <!-- Order Header Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 2rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+              <span id="order-division-badge" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);"></span>
+              <span style="color: var(--color-border);">•</span>
+              <span id="order-ref" style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);"></span>
             </div>
-          `).join('');
-        }
+            <h1 id="order-title" style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; color: var(--color-text-main); margin-top: 0.25rem;"></h1>
+          </div>
+          <span id="order-current-stage-badge" class="badge"></span>
+        </div>
+
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--color-border-subtle); font-size: 0.8125rem;">
+          <div>
+            <span style="color: var(--color-text-dim);">Agreed Scope:</span>
+            <strong id="order-scope-ref" style="display: block; color: var(--color-text-main);">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-dim);">Target Date:</span>
+            <strong id="order-target-date" style="display: block; color: var(--color-text-main);">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-dim);">Total Budget:</span>
+            <strong id="order-total-amount" style="display: block; color: var(--color-text-main);">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-dim);">Outstanding Balance:</span>
+            <strong id="order-balance-amount" style="display: block; color: var(--color-text-main);">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-Column Split: Milestone Timeline on Left, Deliverables & Messages on Right -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <!-- Column 1: Progress Timeline -->
+        <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">
+              Milestone Timeline
+            </h2>
+            <span id="timeline-progress-pill" class="badge badge-progress">0%</span>
+          </div>
+
+          <div id="timeline-container" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Injected timeline nodes -->
+          </div>
+        </div>
+
+        <!-- Column 2: Deliverables & Messages -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+          <!-- Private Deliverables -->
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+            <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
+              Private Deliverables
+            </h2>
+            <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+              Authorized deliverable files with ephemeral download links.
+            </p>
+            <div id="files-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <!-- Injected files -->
+            </div>
+          </div>
+
+          <!-- Project Message Channel -->
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+            <h2 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
+              Project Channel
+            </h2>
+            <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+              Direct encrypted communications with the engineering lead.
+            </p>
+
+            <div id="messages-list-container" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; max-height: 280px; overflow-y: auto; padding-right: 0.5rem;">
+              <!-- Injected message bubbles -->
+            </div>
+
+            <form id="new-message-form" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <textarea
+                id="message-input"
+                rows="3"
+                required
+                placeholder="Leave a project note, requirement update, or question..."
+                style="width: 100%; padding: 0.625rem; font-size: 0.875rem; font-family: inherit; border: 1px solid var(--color-border); border-radius: 4px; resize: vertical;"
+              ></textarea>
+              <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" id="send-msg-btn" class="btn btn-primary">
+                  Send message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View 2: Orders List View (Rendered when no ?id= is given) -->
+  <div id="orders-list-view">
+    <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+          Projects & Orders
+        </h2>
+        <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+          Real-time sprint milestone tracking, deliverable verification, and direct engineering channel.
+        </p>
+      </div>
+
+      <!-- Search & Filter Controls -->
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <input
+          type="search"
+          id="project-search"
+          placeholder="Search projects or ref..."
+          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
+        />
+        <select
+          id="stage-filter"
+          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
+        >
+          <option value="ALL">All Stages</option>
+          <option value="In progress">In progress</option>
+          <option value="Review">Review</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Orders Grid -->
+    <div id="orders-list-container" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <!-- Injected via client session check -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="orders-empty-state" style="display: none; background: var(--color-surface); border: 1px dashed var(--color-border); border-radius: 6px; padding: 3.5rem 2rem; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">📦</div>
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">No projects found</h3>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted); max-width: 440px; margin: 0 auto 1.5rem;">
+        When an engagement scope or quotation is finalized, your dedicated project tracking timeline appears here automatically.
+      </p>
+      <a href="mailto:info@strovagroups.in" class="btn btn-secondary">Contact project coordinator</a>
+    </div>
+  </div>
+
+  <script>
+    import {
+      getSession,
+      getUserProfile,
+      fetchMyOrders,
+      fetchOrderById,
+      fetchOrderEvents,
+      fetchMyFiles,
+      fetchOrderMessages,
+      sendOrderMessage,
+      createDownloadSignedUrl,
+      type ClientOrder,
+    } from '../../lib/supabaseClient';
+    import { getStageProgressPercent } from '../../lib/supabase';
+
+    async function initOrdersPage() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login';
+        return;
       }
 
-      renderOrders();
+      const urlParams = new URLSearchParams(window.location.search);
+      const activeOrderId = urlParams.get('id');
 
-      document.getElementById('project-search').addEventListener('input', (e) => {
-        renderOrders(e.target.value.toLowerCase().trim(), document.getElementById('stage-filter').value);
-      });
+      if (activeOrderId) {
+        // Render Single Order Workspace
+        const singleView = document.getElementById('single-order-view');
+        const listView = document.getElementById('orders-list-view');
+        if (singleView) singleView.style.display = 'block';
+        if (listView) listView.style.display = 'none';
 
-      document.getElementById('stage-filter').addEventListener('change', (e) => {
-        renderOrders(document.getElementById('project-search').value.toLowerCase().trim(), e.target.value);
-      });
+        const order = await fetchOrderById(activeOrderId);
+        const loadingEl = document.getElementById('order-loading');
+        const forbiddenEl = document.getElementById('order-forbidden');
+        const workspaceEl = document.getElementById('order-workspace');
+
+        if (loadingEl) loadingEl.style.display = 'none';
+
+        if (!order) {
+          if (forbiddenEl) forbiddenEl.style.display = 'block';
+          return;
+        }
+
+        if (workspaceEl) workspaceEl.style.display = 'block';
+
+        // Populate Order Header
+        const divBadge = document.getElementById('order-division-badge');
+        const refEl = document.getElementById('order-ref');
+        const titleEl = document.getElementById('order-title');
+        const stageBadge = document.getElementById('order-current-stage-badge');
+        const scopeEl = document.getElementById('order-scope-ref');
+        const targetDateEl = document.getElementById('order-target-date');
+        const totalAmountEl = document.getElementById('order-total-amount');
+        const balanceAmountEl = document.getElementById('order-balance-amount');
+
+        if (divBadge) divBadge.textContent = order.division;
+        if (refEl) refEl.textContent = order.order_ref;
+        if (titleEl) titleEl.textContent = order.title;
+        if (stageBadge) {
+          stageBadge.textContent = order.current_stage;
+          stageBadge.className = `badge ${order.current_stage === 'Review' ? 'badge-review' : 'badge-progress'}`;
+        }
+        if (scopeEl) scopeEl.textContent = order.scope_reference || 'Agreed SOW Blueprint';
+        if (targetDateEl) targetDateEl.textContent = order.target_completion_date || 'In delivery';
+        if (totalAmountEl) {
+          totalAmountEl.textContent = order.total_amount_paise ? `₹${(order.total_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : 'TBD';
+        }
+        if (balanceAmountEl) {
+          balanceAmountEl.textContent = order.balance_amount_paise ? `₹${(order.balance_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : '₹0.00';
+        }
+
+        const progressPercent = getStageProgressPercent(order.current_stage as any);
+        const pill = document.getElementById('timeline-progress-pill');
+        if (pill) pill.textContent = `${progressPercent}% complete`;
+
+        // Populate Timeline Events
+        const events = await fetchOrderEvents(order.id);
+        const timelineContainer = document.getElementById('timeline-container');
+        if (timelineContainer) {
+          if (events.length === 0) {
+            timelineContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">Project initiated. Initial milestones pending engineering review.</p>`;
+          } else {
+            timelineContainer.innerHTML = events.map((ev, idx) => {
+              const d = new Date(ev.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+              return `
+                <div style="display: flex; gap: 1rem; position: relative;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--color-primary); flex-shrink: 0; margin-top: 4px;"></div>
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                      <strong style="font-size: 0.875rem; color: var(--color-text-main);">${ev.stage}</strong>
+                      <span style="font-size: 0.75rem; color: var(--color-text-dim);">${d}</span>
+                    </div>
+                    <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45;">${ev.note}</p>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+        // Populate Deliverables for this order
+        const allFiles = await fetchMyFiles();
+        const orderFiles = allFiles.filter((f) => f.order_id === order.id);
+        const filesContainer = document.getElementById('files-list-container');
+        if (filesContainer) {
+          if (orderFiles.length === 0) {
+            filesContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No deliverable files attached to this sprint yet.</p>`;
+          } else {
+            filesContainer.innerHTML = orderFiles.map((f) => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
+                <div>
+                  <p style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-main);">${f.file_name}</p>
+                  <p style="font-size: 0.7rem; color: var(--color-text-dim);">${(f.file_size_bytes / 1024).toFixed(0)} KB</p>
+                </div>
+                <button type="button" class="btn btn-secondary download-file-btn" data-path="${f.storage_path}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                  Download ↗
+                </button>
+              </div>
+            `).join('');
+
+            filesContainer.querySelectorAll('.download-file-btn').forEach((btn) => {
+              btn.addEventListener('click', async () => {
+                const path = btn.getAttribute('data-path');
+                if (path) {
+                  const url = await createDownloadSignedUrl(path);
+                  if (url) {
+                    window.open(url, '_blank');
+                  } else {
+                    alert('Download link could not be generated.');
+                  }
+                }
+              });
+            });
+          }
+        }
+
+        // Populate Messages for this order
+        async function loadMessages() {
+          const messages = await fetchOrderMessages(order.id);
+          const messagesContainer = document.getElementById('messages-list-container');
+          if (messagesContainer) {
+            if (messages.length === 0) {
+              messagesContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No messages in this thread yet. Send a note below.</p>`;
+            } else {
+              messagesContainer.innerHTML = messages.map((m) => {
+                const isClient = m.sender_role === 'client';
+                const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                  <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
+                    <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
+                    <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+                      ${m.message_text}
+                    </div>
+                  </div>
+                `;
+              }).join('');
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+          }
+        }
+        await loadMessages();
+
+        // Handle sending a new message
+        const msgForm = document.getElementById('new-message-form') as HTMLFormElement;
+        if (msgForm) {
+          msgForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('message-input') as HTMLTextAreaElement;
+            const text = input ? input.value.trim() : '';
+            if (!text) return;
+
+            const sendBtn = document.getElementById('send-msg-btn') as HTMLButtonElement;
+            if (sendBtn) sendBtn.disabled = true;
+
+            try {
+              const profile = await getUserProfile(session.user.id);
+              await sendOrderMessage(order.id, text, profile?.role || 'client');
+              if (input) input.value = '';
+              await loadMessages();
+            } catch (err: any) {
+              alert(err?.message || 'Error sending message.');
+            } finally {
+              if (sendBtn) sendBtn.disabled = false;
+            }
+          });
+        }
+      } else {
+        // Render Orders List
+        const orders = await fetchMyOrders();
+        const container = document.getElementById('orders-list-container');
+        const emptyState = document.getElementById('orders-empty-state');
+        const searchInput = document.getElementById('project-search') as HTMLInputElement;
+        const stageSelect = document.getElementById('stage-filter') as HTMLSelectElement;
+
+        function renderList() {
+          const filterText = (searchInput?.value || '').toLowerCase().trim();
+          const filterStage = stageSelect?.value || 'ALL';
+
+          const filtered = orders.filter((o) => {
+            const matchesText = !filterText || o.title.toLowerCase().includes(filterText) || o.order_ref.toLowerCase().includes(filterText);
+            const matchesStage = filterStage === 'ALL' || o.current_stage === filterStage;
+            return matchesText && matchesStage;
+          });
+
+          if (!container || !emptyState) return;
+
+          if (filtered.length === 0) {
+            emptyState.style.display = 'block';
+            container.style.display = 'none';
+          } else {
+            emptyState.style.display = 'none';
+            container.style.display = 'flex';
+            container.innerHTML = filtered.map((order) => {
+              const progress = getStageProgressPercent(order.current_stage as any);
+              const isReview = order.current_stage === 'Review' || order.current_stage === 'Revisions';
+
+              return `
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+                    <div>
+                      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${order.division}</span>
+                        <span style="color: var(--color-border);">•</span>
+                        <span style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);">${order.order_ref}</span>
+                        <span style="color: var(--color-border);">•</span>
+                        <span style="font-size: 0.75rem; color: var(--color-text-dim);">Target: ${order.target_completion_date || 'In delivery'}</span>
+                      </div>
+                      <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: var(--color-text-main);">
+                        <a href="/portal/orders?id=${order.id}" style="color: inherit; text-decoration: none;">${order.title}</a>
+                      </h3>
+                    </div>
+                    <span class="badge ${isReview ? 'badge-review' : 'badge-progress'}">
+                      ${order.current_stage}
+                    </span>
+                  </div>
+
+                  <div style="margin: 1.25rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 0.35rem;">
+                      <span>Stage: <strong>${order.current_stage}</strong></span>
+                      <span style="font-weight: 600;">${progress}% complete</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 9999px; overflow: hidden;">
+                      <div style="width: ${progress}%; height: 100%; background: var(--color-primary); border-radius: 9999px;"></div>
+                    </div>
+                  </div>
+
+                  ${order.action_required_note ? `
+                    <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.8125rem; color: #92400E; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                      <span>⚠️</span>
+                      <span><strong>Client Action Required:</strong> ${order.action_required_note}</span>
+                    </div>
+                  ` : ''}
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-subtle); padding-top: 1rem; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8125rem;">
+                    <div style="display: flex; gap: 1.5rem; color: var(--color-text-dim);">
+                      <span>Scope: <strong style="color: var(--color-text-main);">${order.scope_reference || 'SOW Specification'}</strong></span>
+                      <span>Balance: <strong style="color: var(--color-text-main);">₹${(order.balance_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></span>
+                    </div>
+                    <a href="/portal/orders?id=${order.id}" class="btn btn-primary" style="font-size: 0.8125rem;">
+                      Open project workspace →
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+        renderList();
+        if (searchInput) searchInput.addEventListener('input', renderList);
+        if (stageSelect) stageSelect.addEventListener('change', renderList);
+      }
     }
+
+    initOrdersPage();
   </script>
 </PortalLayout>

@@ -14,7 +14,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
     </div>
 
     <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.8125rem;">
-      <span style="color: var(--color-text-dim);">Guaranteed SLA:</span>
+      <span style="color: var(--color-text-dim);">Response Target:</span>
       <span class="badge badge-success">Within 1 Business Day</span>
     </div>
   </div>
@@ -28,21 +28,20 @@ import PortalLayout from '../layouts/PortalLayout.astro';
 
       <form id="new-ticket-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
         <div>
-          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Subject / Brief Title</label>
-          <input type="text" id="ticket-subject" required placeholder="e.g., Meta WhatsApp Webhook payload format clarification" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+          <label for="ticket-subject" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Subject / Brief Title</label>
+          <input type="text" id="ticket-subject" required placeholder="e.g., DNS verification or staging issue" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
         </div>
 
         <div>
-          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Associated Project (Optional)</label>
+          <label for="ticket-order" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Associated Project (Optional)</label>
           <select id="ticket-order" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
             <option value="">General inquiry / Non-project specific</option>
-            <option value="00000000-0000-0000-0000-000000000001">Patient Scheduling Platform & WhatsApp Cloud API</option>
-            <option value="00000000-0000-0000-0000-000000000002">Technical SEO Architecture & Google Ads CAPI Wiring</option>
+            <!-- Injected dynamically from authorized orders -->
           </select>
         </div>
 
         <div>
-          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
+          <label for="ticket-priority" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
           <select id="ticket-priority" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
             <option value="normal">Normal (Standard operational response)</option>
             <option value="high">High (Production or staging blocker)</option>
@@ -51,11 +50,11 @@ import PortalLayout from '../layouts/PortalLayout.astro';
         </div>
 
         <div>
-          <label style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Detailed Description</label>
+          <label for="ticket-description" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Detailed Description</label>
           <textarea id="ticket-description" rows="4" required placeholder="Describe the behavior observed, expected outcome, or question..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
+        <button type="submit" id="submit-ticket-btn" class="btn btn-primary" style="width: 100%;">
           Submit Support Ticket
         </button>
       </form>
@@ -70,92 +69,121 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       <div id="tickets-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
         <!-- Injected tickets -->
       </div>
+
+      <div id="tickets-empty" style="display: none; padding: 3rem 1rem; text-align: center; color: var(--color-text-dim);">
+        No support requests recorded for your account.
+      </div>
     </div>
   </div>
 
-  <script is:inline>
-    const sessionRaw = localStorage.getItem('strova_portal_session');
-    if (!sessionRaw) {
-      window.location.href = '/portal/login';
-    } else {
-      const session = JSON.parse(sessionRaw);
+  <script>
+    import {
+      getSession,
+      fetchMyOrders,
+      fetchSupportTickets,
+      createSupportTicket,
+      type SupportTicket,
+    } from '../lib/supabaseClient';
 
-      const DB_TICKETS = [
-        {
-          id: 't-1',
-          client_id: '11111111-1111-4111-8111-111111111111',
-          subject: 'Meta Cloud API WhatsApp Business Verification assistance',
-          priority: 'normal',
-          status: 'in_progress',
-          created_at: 'Oct 07, 2026',
-          responses: [
-            { sender: 'Client Alpha', text: 'We need guidance on submitting clinic registration documents for green tick badge verification.', date: 'Oct 07, 11:00 AM' },
-            { sender: 'Strova Operations', text: 'Official MSME and clinic certification requirements sent to your email. We will guide the Meta dashboard review directly.', date: 'Oct 08, 09:30 AM' }
-          ]
-        }
-      ];
-
-      const myTickets = DB_TICKETS.filter(t => session.role === 'admin' || t.client_id === session.id);
-      const ticketsContainer = document.getElementById('tickets-list-container');
-
-      function renderTickets() {
-        if (myTickets.length === 0) {
-          ticketsContainer.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No open or past support tickets found.</p>`;
-          return;
-        }
-
-        ticketsContainer.innerHTML = myTickets.map(ticket => `
-          <div style="border: 1px solid var(--color-border); border-radius: 6px; padding: 1.25rem; background: #FAFAFA;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
-              <div>
-                <span class="badge ${ticket.priority === 'urgent' ? 'badge-danger' : 'badge-progress'}" style="font-size: 0.65rem; margin-bottom: 4px;">${ticket.priority} priority</span>
-                <h4 style="font-size: 0.9375rem; font-weight: 600; color: var(--color-text-main);">${ticket.subject}</h4>
-              </div>
-              <span class="badge ${ticket.status === 'resolved' ? 'badge-success' : 'badge-review'}">${ticket.status.replace('_', ' ')}</span>
-            </div>
-
-            <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 1rem;">Created: ${ticket.created_at}</p>
-
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--color-border); padding-top: 0.75rem;">
-              ${ticket.responses.map(r => `
-                <div style="font-size: 0.8125rem;">
-                  <strong style="color: var(--color-primary);">${r.sender}</strong> <span style="font-size: 0.7rem; color: var(--color-text-dim);">${r.date}</span>
-                  <p style="color: var(--color-text-muted); margin-top: 2px;">${r.text}</p>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `).join('');
+    async function initSupport() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login';
+        return;
       }
 
-      renderTickets();
-
-      document.getElementById('new-ticket-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const subject = document.getElementById('ticket-subject').value.trim();
-        const priority = document.getElementById('ticket-priority').value;
-        const description = document.getElementById('ticket-description').value.trim();
-
-        if (!subject || !description) return;
-
-        myTickets.unshift({
-          id: `t-${Date.now()}`,
-          client_id: session.id,
-          subject,
-          priority,
-          status: 'open',
-          created_at: 'Just now',
-          responses: [
-            { sender: session.full_name || session.email, text: description, date: 'Just now' }
-          ]
+      // Populate project dropdown from real orders
+      const orders = await fetchMyOrders();
+      const orderSelect = document.getElementById('ticket-order') as HTMLSelectElement;
+      if (orderSelect && orders.length > 0) {
+        orders.forEach((o) => {
+          const opt = document.createElement('option');
+          opt.value = o.id;
+          opt.textContent = `${o.order_ref} — ${o.title}`;
+          orderSelect.appendChild(opt);
         });
+      }
 
-        document.getElementById('ticket-subject').value = '';
-        document.getElementById('ticket-description').value = '';
-        renderTickets();
-        alert('Support request submitted. Assigned to Strova technical desk. SLA reply: within 1 business day.');
-      });
+      // Populate tickets history
+      async function loadTickets() {
+        const tickets = await fetchSupportTickets();
+        const container = document.getElementById('tickets-list-container');
+        const emptyEl = document.getElementById('tickets-empty');
+
+        if (!container || !emptyEl) return;
+
+        if (tickets.length === 0) {
+          emptyEl.style.display = 'block';
+          container.innerHTML = '';
+        } else {
+          emptyEl.style.display = 'none';
+          container.innerHTML = tickets.map((t) => {
+            const dateStr = t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently';
+            const statusClass = t.status === 'resolved' || t.status === 'closed' ? 'badge-success' : 'badge-progress';
+
+            return `
+              <div style="border: 1px solid var(--color-border); border-radius: 6px; padding: 1.25rem; background: #FAFAFA;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem;">
+                  <div>
+                    <span class="badge ${t.priority === 'urgent' ? 'badge-danger' : 'badge-pending'}" style="margin-bottom: 0.25rem;">
+                      ${t.priority}
+                    </span>
+                    <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--color-text-main);">
+                      ${t.subject}
+                    </h4>
+                  </div>
+                  <span class="badge ${statusClass}">
+                    ${t.status}
+                  </span>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45; margin-bottom: 0.75rem;">
+                  ${t.description}
+                </p>
+                <div style="font-size: 0.75rem; color: var(--color-text-dim); border-top: 1px solid var(--color-border-subtle); padding-top: 0.5rem;">
+                  Opened on ${dateStr}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      await loadTickets();
+
+      // Form submission
+      const form = document.getElementById('new-ticket-form') as HTMLFormElement;
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const subjectEl = document.getElementById('ticket-subject') as HTMLInputElement;
+          const orderEl = document.getElementById('ticket-order') as HTMLSelectElement;
+          const priorityEl = document.getElementById('ticket-priority') as HTMLSelectElement;
+          const descEl = document.getElementById('ticket-description') as HTMLTextAreaElement;
+          const submitBtn = document.getElementById('submit-ticket-btn') as HTMLButtonElement;
+
+          const subject = subjectEl?.value.trim();
+          const description = descEl?.value.trim();
+          const priority = (priorityEl?.value || 'normal') as any;
+          const order_id = orderEl?.value || undefined;
+
+          if (!subject || !description) return;
+
+          if (submitBtn) submitBtn.disabled = true;
+
+          try {
+            await createSupportTicket({ subject, description, priority, order_id });
+            form.reset();
+            await loadTickets();
+            alert('Support ticket submitted successfully. Our engineering team has been notified.');
+          } catch (err: any) {
+            alert(err?.message || 'Error creating support ticket.');
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        });
+      }
     }
+
+    initSupport();
   </script>
 </PortalLayout>
-

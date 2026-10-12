@@ -9,7 +9,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
         Files & Deliverables
       </h2>
       <p style="font-size: 0.875rem; color: var(--color-text-muted);">
-        Secure repository for architecture specifications, reports, source code bundles, and staging assets.
+        Secure repository for architecture blueprints, audit reports, source code bundles, and staging deliverables.
       </p>
     </div>
 
@@ -41,7 +41,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
           </tr>
         </thead>
         <tbody id="files-table-body">
-          <!-- Injected via client session query -->
+          <!-- Injected via real Supabase PostgREST query -->
         </tbody>
       </table>
     </div>
@@ -51,77 +51,80 @@ import PortalLayout from '../layouts/PortalLayout.astro';
     </div>
   </div>
 
-  <script is:inline>
-    const sessionRaw = localStorage.getItem('strova_portal_session');
-    if (!sessionRaw) {
-      window.location.href = '/portal/login';
-    } else {
-      const session = JSON.parse(sessionRaw);
+  <script>
+    import { getSession, fetchMyFiles, createDownloadSignedUrl, type DeliverableFile } from '../lib/supabaseClient';
 
-      const DB_FILES = [
-        {
-          id: 'f1',
-          client_id: '11111111-1111-4111-8111-111111111111',
-          project: 'Patient Scheduling Platform & WhatsApp Cloud API',
-          name: 'technical-architecture-blueprint-v1.pdf',
-          size: '1.2 MB',
-          date: 'Oct 03, 2026'
-        },
-        {
-          id: 'f2',
-          client_id: '22222222-2222-4222-8222-222222222222',
-          project: 'Technical SEO Architecture & Google Ads CAPI Wiring',
-          name: 'seo-audit-remediation-report.pdf',
-          size: '2.1 MB',
-          date: 'Oct 11, 2026'
-        }
-      ];
+    async function initFiles() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login';
+        return;
+      }
 
-      const myFiles = DB_FILES.filter(f => session.role === 'admin' || f.client_id === session.id);
+      const files = await fetchMyFiles();
       const tableBody = document.getElementById('files-table-body');
       const emptyDiv = document.getElementById('files-empty');
+      const searchInput = document.getElementById('file-search') as HTMLInputElement;
 
       function render(filter = '') {
-        const filtered = myFiles.filter(f => !filter || f.name.toLowerCase().includes(filter));
+        const filtered = files.filter((f) => !filter || f.file_name.toLowerCase().includes(filter));
+
+        if (!tableBody || !emptyDiv) return;
+
         if (filtered.length === 0) {
           emptyDiv.style.display = 'block';
           tableBody.innerHTML = '';
         } else {
           emptyDiv.style.display = 'none';
-          tableBody.innerHTML = filtered.map(f => `
-            <tr style="border-bottom: 1px solid var(--color-border-subtle);">
-              <td style="padding: 0.85rem 0.75rem; font-weight: 600;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                  <span>📄</span>
-                  <span>${f.name}</span>
-                </div>
-              </td>
-              <td style="padding: 0.85rem 0.75rem; color: var(--color-text-muted);">${f.project}</td>
-              <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${f.size}</td>
-              <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${f.date}</td>
-              <td style="padding: 0.85rem 0.75rem; text-align: right;">
-                <button type="button" class="btn btn-secondary download-btn" data-name="${f.name}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
-                  Generate Signed Link (60s)
-                </button>
-              </td>
-            </tr>
-          `).join('');
+          tableBody.innerHTML = filtered.map((f) => {
+            const projectTitle = f.orders?.title || 'Project Engagement';
+            const sizeStr = f.file_size_bytes ? `${(f.file_size_bytes / 1024).toFixed(0)} KB` : 'Direct download';
+            const dateStr = f.created_at ? new Date(f.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently';
 
-          document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const fileName = btn.getAttribute('data-name');
-              alert(`Verified tenant permission for ${session.email}. Generated ephemeral 60-second signed download URL for ${fileName}. Link expires in 60s.`);
+            return `
+              <tr style="border-bottom: 1px solid var(--color-border-subtle); transition: background 150ms ease;">
+                <td style="padding: 0.85rem 0.75rem; font-weight: 600;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📄</span>
+                    <span>${f.file_name}</span>
+                  </div>
+                </td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-muted);">${projectTitle}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${sizeStr}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${dateStr}</td>
+                <td style="padding: 0.85rem 0.75rem; text-align: right;">
+                  <button type="button" class="btn btn-secondary download-file-btn" data-path="${f.storage_path}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                    Download ↗
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          tableBody.querySelectorAll('.download-file-btn').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+              const path = btn.getAttribute('data-path');
+              if (path) {
+                const url = await createDownloadSignedUrl(path);
+                if (url) {
+                  window.open(url, '_blank');
+                } else {
+                  alert('Signed download link could not be generated.');
+                }
+              }
             });
           });
         }
       }
 
       render();
-
-      document.getElementById('file-search').addEventListener('input', (e) => {
-        render(e.target.value.toLowerCase().trim());
-      });
+      if (searchInput) {
+        searchInput.addEventListener('input', (e: any) => {
+          render(e.target.value.toLowerCase().trim());
+        });
+      }
     }
+
+    initFiles();
   </script>
 </PortalLayout>
-

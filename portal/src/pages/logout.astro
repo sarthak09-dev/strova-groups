@@ -12,11 +12,21 @@ import PortalLayout from '../layouts/PortalLayout.astro';
     </p>
   </div>
 
-  <script is:inline>
-    localStorage.removeItem('strova_portal_session');
-    setTimeout(() => {
-      window.location.href = '/portal/login';
-    }, 400);
+  <script>
+    import { signOut } from '../lib/supabaseClient';
+
+    async function handleLogout() {
+      try {
+        await signOut();
+      } catch (e) {}
+      try {
+        localStorage.removeItem('strova_portal_session');
+      } catch (e) {}
+      setTimeout(() => {
+        window.location.href = '/portal/login';
+      }, 300);
+    }
+
+    handleLogout();
   </script>
 </PortalLayout>
-
