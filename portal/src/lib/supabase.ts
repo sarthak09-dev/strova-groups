@@ -11,6 +11,7 @@
  * - Sandbox fallback for isolated CI and local developer preview
  */
 
+import { createClient } from '@supabase/supabase-js';
 
 // In browser context (Vite/Astro), import.meta.env is used. In Node context, process.env is checked.
 const getEnv = (key: string): string => {
@@ -155,7 +156,7 @@ export interface PortalPayment {
   client_id: string;
   amount_paise: number;
   currency: string;
-  gateway: 'razorpay' | 'bank_transfer' | 'test_sandbox';
+  gateway: 'razorpay' | 'bank_transfer';
   gateway_order_id?: string;
   gateway_payment_id: string;
   status: 'captured' | 'failed' | 'refunded';
