@@ -1,73 +1,31 @@
 /**
  * Global Client Interactions:
- * - Lenis Buttery Smooth Scrolling
- * - Smooth Anchor Link Interceptor
+ * - Native Smooth Scrolling for In-Page Anchor Links
  * - Scroll Progress Hairline Indicator
  * - Live IST Time & Office Open/Standby Status Ticker
  * - Interactive Cursor Sheen Micro-Interactions on Cards
- * - Universal Scroll-Triggered Reveal Animations
+ * - Interactive Light & Dark Theme Controller
  */
-import Lenis from 'lenis';
-
-declare global {
-  interface Window {
-    __lenis?: Lenis;
-    __lenisDrivenByGsap?: boolean;
-  }
-}
 
 export function initGlobalInteractions() {
   if (typeof window === 'undefined') return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 1. Lenis Smooth Scrolling
-  let lenis: Lenis | null = null;
+  // 1. Smooth scroll for anchor links
   if (!prefersReducedMotion) {
-    try {
-      lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: 'vertical',
-        gestureOrientation: 'vertical',
-        smoothWheel: true,
-        wheelMultiplier: 1.0,
-        touchMultiplier: 1.5,
-      });
-
-      window.__lenis = lenis;
-
-      // Centralized RAF loop: suppressed when GSAP ticker takes control on index page
-      let rafId: number;
-      const raf = (time: number) => {
-        if (!window.__lenisDrivenByGsap) {
-          lenis?.raf(time);
-        }
-        rafId = requestAnimationFrame(raf);
-      };
-      rafId = requestAnimationFrame(raf);
-
-      // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', (e) => {
-          const href = anchor.getAttribute('href');
-          if (href && href.length > 1) {
-            const target = document.querySelector(href);
-            if (target && lenis) {
-              e.preventDefault();
-              lenis.scrollTo(target as HTMLElement, { offset: -80, duration: 1.2 });
-            }
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const href = anchor.getAttribute('href');
+        if (href && href.length > 1) {
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        });
+        }
       });
-
-      window.addEventListener('pagehide', () => {
-        cancelAnimationFrame(rafId);
-        lenis?.destroy();
-      });
-    } catch (err) {
-      console.warn('Lenis smooth scrolling fallback to native:', err);
-    }
+    });
   }
 
   // 2. Top Scroll Progress Indicator
@@ -81,19 +39,14 @@ export function initGlobalInteractions() {
     }
   };
 
-  if (lenis) {
-    lenis.on('scroll', (e: { scroll: number }) => {
-      updateScrollProgress(e.scroll);
-    });
-  } else {
-    window.addEventListener(
-      'scroll',
-      () => {
-        updateScrollProgress(window.scrollY);
-      },
-      { passive: true }
-    );
-  }
+  window.addEventListener(
+    'scroll',
+    () => {
+      updateScrollProgress(window.scrollY);
+    },
+    { passive: true }
+  );
+  updateScrollProgress(window.scrollY);
 
   // 3. Live IST Time & Operating Hours Status Ticker
   function updateISTBadges() {

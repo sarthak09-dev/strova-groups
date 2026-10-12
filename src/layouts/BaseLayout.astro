@@ -3,8 +3,8 @@
  * Base layout — wraps every page.
  * Loads fonts, global CSS, Header, Footer, skip link, and analytics.
  */
-import '@fontsource-variable/inter';
-import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/plus-jakarta-sans';
 import '../styles/global.css';
 
 import Header from '../components/Header.astro';
@@ -43,10 +43,11 @@ const orgJsonLd = {
   logo: 'https://strovagroups.in/images/logo.svg',
   email: 'info@strovagroups.in',
   telephone: '+919288077802',
-  description: 'AI & automation for growing businesses. Technology, digital marketing, and commerce solutions for Indian and international clients.',
+  description: 'Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.',
   founder: {
     '@type': 'Person',
-    name: 'Babita Kumari',
+    name: 'Sarthak Shresht',
+    jobTitle: 'Founder',
   },
   contactPoint: {
     '@type': 'ContactPoint',
@@ -82,11 +83,11 @@ const allJsonLd = [
       document.documentElement.classList.add('js');
       try {
         const storedTheme = localStorage.getItem('strova-theme');
-        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-        if (storedTheme === 'light' || (!storedTheme && prefersLight)) {
-          document.documentElement.setAttribute('data-theme', 'light');
-        } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
           document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
         }
       } catch (e) {}
     </script>
@@ -115,8 +116,17 @@ const allJsonLd = [
     </main>
     <Footer />
 
-    <!-- Global Client Interactions (Lenis, live IST ticker, cursor sheen) -->
+    <!-- Calm Sticky Mobile Quote Action Bar -->
+    <div class="mobile-quote-bar" aria-label="Mobile quote request">
+      <div class="mobile-quote-bar__inner">
+        <span class="mobile-quote-bar__text">Planning a project?</span>
+        <a href="/contact/" class="btn btn--primary btn--sm" data-track="quote_click">Request a quote</a>
+      </div>
+    </div>
+
+    <!-- Global Client Interactions -->
     <script src="../scripts/globalInteractions.ts"></script>
+    <script src="../scripts/analytics.ts"></script>
   </body>
 </html>
 
