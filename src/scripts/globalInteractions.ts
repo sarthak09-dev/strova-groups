@@ -128,7 +128,7 @@ export function initGlobalInteractions() {
     const getCurrentTheme = (): 'light' | 'dark' => {
       const activeAttr = document.documentElement.getAttribute('data-theme');
       if (activeAttr === 'light' || activeAttr === 'dark') return activeAttr;
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      return 'light';
     };
 
     const updateButtonsAria = (currentTheme: 'light' | 'dark') => {

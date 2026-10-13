@@ -499,7 +499,11 @@ const { title, currentNav = 'overview' } = Astro.props;
       {currentNav !== 'login' && (
         <aside class="app-sidebar" id="app-sidebar">
           <a href="/portal" class="sidebar-brand">
-            <div class="brand-icon">S</div>
+            <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+              <rect width="36" height="36" rx="8" fill="#1D4ED8"/>
+              <path d="M23 12C23 10.3431 21.6569 9 20 9H14C11.7909 9 10 10.7909 10 13C10 15.2091 11.7909 17 14 17H22C24.2091 17 26 18.7909 26 21C26 23.2091 24.2091 25 22 25H16C14.3431 25 13 23.6569 13 22" stroke="#FFFFFF" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="21" cy="21" r="1.75" fill="#93C5FD"/>
+            </svg>
             <div>
               <span class="brand-title">Strova Group</span>
               <span class="brand-tag">Hub</span>

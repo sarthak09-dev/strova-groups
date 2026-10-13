@@ -28,20 +28,20 @@
   --color-cobalt-light:#3B82F6;
   --color-cobalt-tint: rgba(29, 78, 216, 0.08);
 
-  /* Semantic tokens — Default Light Theme (WCAG 2.2 AA compliant contrast) */
-  --bg-page:           #FAFAF8;
-  --bg-surface:        #F1F5F9;
+  /* Semantic tokens — Predictable Light-First Default (Tesla & Microsoft clarity) */
+  --bg-page:           #FFFFFF;
+  --bg-surface:        #F8FAFC;
   --bg-elevated:       #FFFFFF;
   --bg-card:           #FFFFFF;
   --bg-card-hover:     #FFFFFF;
-  --bg-glass:          rgba(248, 250, 252, 0.92);
+  --bg-glass:          rgba(255, 255, 255, 0.94);
 
   --text-primary:      #0F172A;
   --text-secondary:    #334155;
   --text-muted:        #64748B;
 
-  --border-color:      rgba(15, 23, 42, 0.1);
-  --border-subtle:     rgba(15, 23, 42, 0.06);
+  --border-color:      #E2E8F0;
+  --border-subtle:     #F1F5F9;
   --border-focus:      #1D4ED8;
 
   --accent:            #1D4ED8;
@@ -60,9 +60,9 @@
   --text-lg:           clamp(1.125rem, 1rem    + 0.5vw,  1.25rem);
   --text-xl:           clamp(1.25rem,  1.1rem  + 0.75vw, 1.5rem);
   --text-2xl:          clamp(1.5rem,   1.2rem  + 1.5vw,  2rem);
-  --text-3xl:          clamp(1.875rem, 1.4rem  + 2vw,    2.5rem);
-  --text-4xl:          clamp(2.25rem,  1.5rem  + 3vw,    3.25rem);
-  --text-5xl:          clamp(2.75rem,  1.8rem  + 4vw,    4.25rem);
+  --text-3xl:          clamp(1.75rem, 1.35rem + 1.8vw,   2.25rem);
+  --text-4xl:          clamp(2rem,    1.5rem  + 2.2vw,   2.85rem);
+  --text-5xl:          clamp(2.25rem, 1.65rem + 2.8vw,   3.5rem);
 
   /* Spacing scale */
   --space-1:  0.25rem;
@@ -129,35 +129,6 @@
   --shadow-lg:      0 12px 24px -4px rgba(0, 0, 0, 0.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-page:        #090D16;
-    --bg-surface:     #0F1523;
-    --bg-elevated:    #161E31;
-    --bg-card:        #111726;
-    --bg-card-hover:  #161E31;
-    --bg-glass:       rgba(9, 13, 22, 0.92);
-
-    --text-primary:   #F8FAFC;
-    --text-secondary: #94A3B8;
-    --text-muted:     #64748B;
-
-    --border-color:   rgba(255, 255, 255, 0.1);
-    --border-subtle:  rgba(255, 255, 255, 0.06);
-    --border-focus:   #3B82F6;
-
-    --accent:         #3B82F6;
-    --accent-hover:   #60A5FA;
-    --accent-subtle:  rgba(59, 130, 246, 0.12);
-
-    --focus-ring:     0 0 0 3px rgba(59, 130, 246, 0.4);
-
-    --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md:      0 4px 12px -2px rgba(0, 0, 0, 0.5);
-    --shadow-lg:      0 12px 24px -4px rgba(0, 0, 0, 0.6);
-  }
-}
-
 /* -------------------------------------------------- */
 /* 3. CSS Reset & Base Typography                     */
 /* -------------------------------------------------- */
@@ -195,6 +166,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 img, picture, video, canvas, svg {
@@ -563,6 +535,12 @@ select:focus-visible {
   font-size: var(--text-xs);
   color: var(--text-muted);
   padding-block: var(--space-2);
+}
+
+@media (max-width: 47.99rem) {
+  .header__topbar {
+    display: none;
+  }
 }
 
 .header__topbar-inner {
