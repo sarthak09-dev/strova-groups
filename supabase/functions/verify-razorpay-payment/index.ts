@@ -25,6 +25,13 @@ serve(async (req) => {
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(JSON.stringify({ error: 'Database service configuration missing' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -37,26 +44,39 @@ serve(async (req) => {
       });
     }
 
+    const body = await req.json().catch(() => ({}));
+    const invoiceId = body.invoice_id || body.invoiceId;
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      invoiceId,
-    } = await req.json();
+    } = body;
 
-    if (!razorpay_order_id || !razorpay_payment_id || !invoiceId) {
-      return new Response(JSON.stringify({ error: 'Missing payment verification parameters' }), {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !invoiceId) {
+      return new Response(JSON.stringify({ error: 'Missing required payment verification parameters (order_id, payment_id, signature, invoice_id)' }), {
         status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Fail closed: Never verify payments if gateway secrets are missing
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
+    if (!razorpayKeySecret) {
+      return new Response(JSON.stringify({
+        error: 'Payment verification service is unconfigured. RAZORPAY_KEY_SECRET must be configured in environment secrets.',
+      }), {
+        status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch the invoice
+    // Fetch authoritative invoice record
     const { data: invoice, error: invoiceError } = await supabaseAdmin
       .from('invoices')
-      .select('id, invoice_number, status, amount_paise, currency, order_id, razorpay_order_id, orders!inner(client_id)')
+      .select('id, invoice_number, status, amount_paise, currency, order_id, razorpay_order_id, orders!inner(client_id, id)')
       .eq('id', invoiceId)
       .single();
 
@@ -67,54 +87,101 @@ serve(async (req) => {
       });
     }
 
-    // Verify order ID matches what was stored on the server
-    if (invoice.razorpay_order_id && invoice.razorpay_order_id !== razorpay_order_id) {
-      return new Response(JSON.stringify({ error: 'Mismatched Razorpay order ID' }), {
+    // Authoritative Tenant Ownership Check:
+    // Only the invoice owner or an administrator can verify payments
+    const isOwner = invoice.orders.client_id === user.id;
+    if (!isOwner) {
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.role !== 'admin') {
+        return new Response(JSON.stringify({ error: 'Forbidden: You do not have authorization to settle this invoice' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    // Check if invoice is already settled
+    if (invoice.status === 'Paid') {
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Invoice has already been verified and paid.',
+        invoiceId: invoice.id,
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verify stored Razorpay Order ID matches exactly
+    if (!invoice.razorpay_order_id || invoice.razorpay_order_id !== razorpay_order_id) {
+      return new Response(JSON.stringify({
+        error: 'Mismatched Razorpay order ID. Provided order does not match authoritative invoice order record.',
+      }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    // Cryptographic HMAC-SHA256 signature verification
+    const expectedSignature = hmac('sha256', razorpayKeySecret, `${razorpay_order_id}|${razorpay_payment_id}`, 'utf8', 'hex');
+    if (expectedSignature !== razorpay_signature) {
+      return new Response(JSON.stringify({ error: 'Cryptographic signature verification failed. Forged or corrupted payment payload.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    // Cryptographic signature check
-    if (razorpayKeySecret) {
-      if (!razorpay_signature) {
-        return new Response(JSON.stringify({ error: 'Signature required when gateway is configured' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    // Direct gateway API verification for defense-in-depth
+    if (razorpayKeyId) {
+      try {
+        const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
+        const rzpPayRes = await fetch(`https://api.razorpay.com/v1/payments/${razorpay_payment_id}`, {
+          headers: { 'Authorization': `Basic ${auth}` },
         });
-      }
 
-      const generatedSignature = hmac('sha256', razorpayKeySecret, `${razorpay_order_id}|${razorpay_payment_id}`, 'utf8', 'hex');
-      if (generatedSignature !== razorpay_signature) {
-        return new Response(JSON.stringify({ error: 'Invalid payment signature. Verification failed.' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-    } else {
-      // In sandbox mode without keys, ensure payment ID starts with test prefix
-      if (!razorpay_payment_id.startsWith('pay_test_')) {
-        return new Response(JSON.stringify({ error: 'Test mode requires pay_test_ prefix' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        if (rzpPayRes.ok) {
+          const rzpPayData = await rzpPayRes.json();
+          if (rzpPayData.order_id !== razorpay_order_id) {
+            return new Response(JSON.stringify({ error: 'Gateway payment is bound to a different order' }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+          if (rzpPayData.amount !== invoice.amount_paise) {
+            return new Response(JSON.stringify({ error: 'Captured payment amount does not match invoice amount' }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+          if (rzpPayData.status !== 'captured' && rzpPayData.status !== 'authorized') {
+            return new Response(JSON.stringify({ error: `Payment not completed. Gateway status: ${rzpPayData.status}` }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+        }
+      } catch (gwErr) {
+        console.warn('Razorpay API verification warning (HMAC signature already passed):', gwErr);
       }
     }
 
     // Idempotency check: Ensure payment is not recorded twice
     const { data: existingPayment } = await supabaseAdmin
       .from('payments')
-      .select('id')
+      .select('id, receipt_number')
       .eq('gateway_payment_id', razorpay_payment_id)
       .maybeSingle();
 
     if (existingPayment) {
       return new Response(JSON.stringify({
         success: true,
-        message: 'Payment already processed and reconciled',
-        paymentId: existingPayment.id,
+        message: 'Payment already recorded idempotently',
+        payment_id: existingPayment.id,
+        receipt_number: existingPayment.receipt_number,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -129,19 +196,22 @@ serve(async (req) => {
         order_id: invoice.order_id,
         client_id: invoice.orders.client_id,
         amount_paise: invoice.amount_paise,
-        currency: invoice.currency,
-        gateway: razorpayKeySecret ? 'razorpay' : 'test_sandbox',
+        currency: invoice.currency || 'INR',
+        gateway: 'razorpay',
         gateway_order_id: razorpay_order_id,
         gateway_payment_id: razorpay_payment_id,
         status: 'captured',
         receipt_number: receiptNumber,
-        metadata: { verified_by: 'edge_function_verify' },
+        metadata: {
+          verified_by: 'edge_function_verify',
+          verified_user_id: user.id,
+        },
       })
       .select()
       .single();
 
     if (paymentError) {
-      return new Response(JSON.stringify({ error: 'Failed to record payment', details: paymentError }), {
+      return new Response(JSON.stringify({ error: 'Failed to record payment in ledger', details: paymentError }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -153,55 +223,40 @@ serve(async (req) => {
       .update({
         status: 'Paid',
         paid_at: new Date().toISOString(),
-        razorpay_payment_id,
+        razorpay_payment_id: razorpay_payment_id,
       })
       .eq('id', invoice.id);
 
-    // Update order balance
-    const { data: order } = await supabaseAdmin
-      .from('orders')
-      .select('balance_amount_paise')
-      .eq('id', invoice.order_id)
-      .single();
+    // Reconcile order balance
+    const { data: remainingInvoices } = await supabaseAdmin
+      .from('invoices')
+      .select('amount_paise')
+      .eq('order_id', invoice.order_id)
+      .eq('status', 'Pending');
 
-    if (order) {
-      const newBalance = Math.max(0, (order.balance_amount_paise || 0) - invoice.amount_paise);
-      await supabaseAdmin
-        .from('orders')
-        .update({ balance_amount_paise: newBalance })
-        .eq('id', invoice.order_id);
-    }
-
-    // Record audit event
+    const newBalance = (remainingInvoices || []).reduce((sum, inv) => sum + (inv.amount_paise || 0), 0);
     await supabaseAdmin
-      .from('audit_log')
-      .insert({
-        actor_id: user.id,
-        action: 'PAYMENT_VERIFIED_AND_INVOICE_PAID',
-        target_table: 'invoices',
-        target_id: invoice.id,
-        details: {
-          invoice_number: invoice.invoice_number,
-          amount_paise: invoice.amount_paise,
-          gateway_payment_id: razorpay_payment_id,
-          receipt_number: receiptNumber,
-        },
-      });
+      .from('orders')
+      .update({ balance_amount_paise: newBalance })
+      .eq('id', invoice.order_id);
 
     return new Response(JSON.stringify({
       success: true,
-      receiptNumber,
-      invoiceNumber: invoice.invoice_number,
-      amountPaise: invoice.amount_paise,
-      status: 'Paid',
+      message: 'Payment verified and invoice marked Paid.',
+      payment_id: newPayment.id,
+      receipt_number: receiptNumber,
+      invoice_id: invoice.id,
+      // CamelCase aliases
+      paymentId: newPayment.id,
+      receiptNumber: receiptNumber,
+      invoiceId: invoice.id,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message || 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
-

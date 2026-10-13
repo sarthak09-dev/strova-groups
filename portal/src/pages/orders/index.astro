@@ -192,6 +192,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
       type ClientOrder,
     } from '../../lib/supabaseClient';
     import { getStageProgressPercent } from '../../lib/supabase';
+    import { escapeHtml } from '../../lib/sanitize';
 
     async function initOrdersPage() {
       const session = await getSession();
@@ -268,10 +269,10 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
                   <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--color-primary); flex-shrink: 0; margin-top: 4px;"></div>
                   <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                      <strong style="font-size: 0.875rem; color: var(--color-text-main);">${ev.stage}</strong>
-                      <span style="font-size: 0.75rem; color: var(--color-text-dim);">${d}</span>
+                      <strong style="font-size: 0.875rem; color: var(--color-text-main);">${escapeHtml(ev.stage)}</strong>
+                      <span style="font-size: 0.75rem; color: var(--color-text-dim);">${escapeHtml(d)}</span>
                     </div>
-                    <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45;">${ev.note}</p>
+                    <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45;">${escapeHtml(ev.note)}</p>
                   </div>
                 </div>
               `;
@@ -290,10 +291,10 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
             filesContainer.innerHTML = orderFiles.map((f) => `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
                 <div>
-                  <p style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-main);">${f.file_name}</p>
+                  <p style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text-main);">${escapeHtml(f.file_name)}</p>
                   <p style="font-size: 0.7rem; color: var(--color-text-dim);">${(f.file_size_bytes / 1024).toFixed(0)} KB</p>
                 </div>
-                <button type="button" class="btn btn-secondary download-file-btn" data-path="${f.storage_path}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                <button type="button" class="btn btn-secondary download-file-btn" data-path="${escapeHtml(f.storage_path)}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
                   Download ↗
                 </button>
               </div>
@@ -330,7 +331,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
                   <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
                     <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
                     <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
-                      ${m.message_text}
+                      ${escapeHtml(m.message_text)}
                     </div>
                   </div>
                 `;
@@ -400,24 +401,24 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
                     <div>
                       <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${order.division}</span>
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${escapeHtml(order.division)}</span>
                         <span style="color: var(--color-border);">•</span>
-                        <span style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);">${order.order_ref}</span>
+                        <span style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);">${escapeHtml(order.order_ref)}</span>
                         <span style="color: var(--color-border);">•</span>
-                        <span style="font-size: 0.75rem; color: var(--color-text-dim);">Target: ${order.target_completion_date || 'In delivery'}</span>
+                        <span style="font-size: 0.75rem; color: var(--color-text-dim);">Target: ${escapeHtml(order.target_completion_date || 'In delivery')}</span>
                       </div>
                       <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: var(--color-text-main);">
-                        <a href="/portal/orders?id=${order.id}" style="color: inherit; text-decoration: none;">${order.title}</a>
+                        <a href="/portal/orders?id=${escapeHtml(order.id)}" style="color: inherit; text-decoration: none;">${escapeHtml(order.title)}</a>
                       </h3>
                     </div>
                     <span class="badge ${isReview ? 'badge-review' : 'badge-progress'}">
-                      ${order.current_stage}
+                      ${escapeHtml(order.current_stage)}
                     </span>
                   </div>
 
                   <div style="margin: 1.25rem 0;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 0.35rem;">
-                      <span>Stage: <strong>${order.current_stage}</strong></span>
+                      <span>Stage: <strong>${escapeHtml(order.current_stage)}</strong></span>
                       <span style="font-weight: 600;">${progress}% complete</span>
                     </div>
                     <div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 9999px; overflow: hidden;">
@@ -428,16 +429,16 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
                   ${order.action_required_note ? `
                     <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.8125rem; color: #92400E; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
                       <span>⚠️</span>
-                      <span><strong>Client Action Required:</strong> ${order.action_required_note}</span>
+                      <span><strong>Client Action Required:</strong> ${escapeHtml(order.action_required_note)}</span>
                     </div>
                   ` : ''}
 
                   <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-subtle); padding-top: 1rem; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8125rem;">
                     <div style="display: flex; gap: 1.5rem; color: var(--color-text-dim);">
-                      <span>Scope: <strong style="color: var(--color-text-main);">${order.scope_reference || 'SOW Specification'}</strong></span>
+                      <span>Scope: <strong style="color: var(--color-text-main);">${escapeHtml(order.scope_reference || 'SOW Specification')}</strong></span>
                       <span>Balance: <strong style="color: var(--color-text-main);">₹${(order.balance_amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></span>
                     </div>
-                    <a href="/portal/orders?id=${order.id}" class="btn btn-primary" style="font-size: 0.8125rem;">
+                    <a href="/portal/orders?id=${escapeHtml(order.id)}" class="btn btn-primary" style="font-size: 0.8125rem;">
                       Open project workspace →
                     </a>
                   </div>

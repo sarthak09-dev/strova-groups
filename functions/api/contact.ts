@@ -22,16 +22,34 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const request = context.request;
 
-    // 1. Origin & Referer Verification
-    const origin = request.headers.get('origin') || '';
-    const referer = request.headers.get('referer') || '';
-    const allowedHosts = ['strovagroups.in', 'www.strovagroups.in', 'localhost', '127.0.0.1'];
-    
-    const isValidOrigin = allowedHosts.some(
-      (h) => origin.includes(h) || referer.includes(h) || (!origin && !referer)
-    );
+    // 1. Strict Origin & Referer Verification
+    const originHeader = request.headers.get('origin');
+    const refererHeader = request.headers.get('referer');
+    const allowedHostnames = new Set(['strovagroups.in', 'www.strovagroups.in', 'localhost', '127.0.0.1']);
 
-    if (!isValidOrigin) {
+    let requestHostname: string | null = null;
+
+    if (originHeader) {
+      try {
+        requestHostname = new URL(originHeader).hostname.toLowerCase();
+      } catch {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Malformed Origin header.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    } else if (refererHeader) {
+      try {
+        requestHostname = new URL(refererHeader).hostname.toLowerCase();
+      } catch {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Malformed Referer header.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    if (!requestHostname || !allowedHostnames.has(requestHostname)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Unauthorized request origin.' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }

@@ -239,6 +239,7 @@ CREATE POLICY "Clients insert messages on their own orders"
   ON public.messages FOR INSERT
   WITH CHECK (
     sender_id = auth.uid()
+    AND sender_role = 'client'
     AND EXISTS (
       SELECT 1 FROM public.orders
       WHERE orders.id = messages.order_id
@@ -257,67 +258,4 @@ CREATE POLICY "Admins can view and create audit logs"
   ON public.audit_log FOR ALL
   USING (public.is_admin());
 
--- ============================================================================
--- Seed Data: 2 Test Clients & 1 Administrator
--- ============================================================================
-
--- Insert Test Profiles
-INSERT INTO public.profiles (id, email, full_name, role)
-VALUES
-  ('11111111-1111-4111-8111-111111111111', 'client-a@example.com', 'Client Alpha (Acme Health)', 'client'),
-  ('22222222-2222-4222-8222-222222222222', 'client-b@example.com', 'Client Beta (Retail Brands)', 'client'),
-  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'admin@strovagroups.in', 'Strova Operations Admin', 'admin')
-ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email;
-
--- Seed Orders
-INSERT INTO public.orders (id, client_id, title, division, current_stage)
-VALUES
-  (
-    '00000000-0000-0000-0000-000000000001',
-    '11111111-1111-4111-8111-111111111111',
-    'Patient Scheduling Platform & WhatsApp Cloud API',
-    'technologies',
-    'In progress'
-  ),
-  (
-    '00000000-0000-0000-0000-000000000002',
-    '22222222-2222-4222-8222-222222222222',
-    'Technical SEO Architecture & Google Ads CAPI Wiring',
-    'digital',
-    'Review'
-  )
-ON CONFLICT (id) DO NOTHING;
-
--- Seed Order Events for Client A
-INSERT INTO public.order_events (order_id, stage, note)
-VALUES
-  ('00000000-0000-0000-0000-000000000001', 'Brief received', 'Initial clinic scheduling requirements brief submitted via quote form.'),
-  ('00000000-0000-0000-0000-000000000001', 'Scope agreed', 'Technical specification blueprint and sprint milestone schedule approved.'),
-  ('00000000-0000-0000-0000-000000000001', 'Advance received', '50% initial milestone deposit received via bank transfer.'),
-  ('00000000-0000-0000-0000-000000000001', 'In progress', 'Sprint 2 in progress: Meta WhatsApp Cloud API webhooks wired to booking queue.')
-ON CONFLICT DO NOTHING;
-
--- Seed Order Events for Client B
-INSERT INTO public.order_events (order_id, stage, note)
-VALUES
-  ('00000000-0000-0000-0000-000000000002', 'Brief received', 'Inbound SEO audit inquiry received.'),
-  ('00000000-0000-0000-0000-000000000002', 'Scope agreed', 'Technical SEO remediation and CAPI implementation agreement finalized.'),
-  ('00000000-0000-0000-0000-000000000002', 'Advance received', 'Initial project advance confirmed.'),
-  ('00000000-0000-0000-0000-000000000002', 'In progress', 'Core Web Vitals remediation completed on staging.'),
-  ('00000000-0000-0000-0000-000000000002', 'Review', 'Staging deployment ready for client review and verification.')
-ON CONFLICT DO NOTHING;
-
--- Seed Deliverable Files
-INSERT INTO public.files (order_id, file_name, storage_path, file_size_bytes, mime_type)
-VALUES
-  ('00000000-0000-0000-0000-000000000001', 'technical-architecture-blueprint-v1.pdf', 'client_1111/orders/0001/technical-architecture-blueprint-v1.pdf', 1245000, 'application/pdf'),
-  ('00000000-0000-0000-0000-000000000002', 'seo-audit-remediation-report.pdf', 'client_2222/orders/0002/seo-audit-remediation-report.pdf', 2150000, 'application/pdf')
-ON CONFLICT DO NOTHING;
-
--- Seed Invoices
-INSERT INTO public.invoices (order_id, invoice_number, status, pdf_storage_path, paid_at)
-VALUES
-  ('00000000-0000-0000-0000-000000000001', 'INV-2026-001', 'Paid', 'client_1111/invoices/INV-2026-001.pdf', timezone('utc'::text, now())),
-  ('00000000-0000-0000-0000-000000000002', 'INV-2026-002', 'Pending', 'client_2222/invoices/INV-2026-002.pdf', NULL)
-ON CONFLICT DO NOTHING;
 

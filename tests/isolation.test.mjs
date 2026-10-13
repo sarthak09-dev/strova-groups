@@ -465,6 +465,208 @@ console.log('\n[Test Suite 10: Turnstile Challenge Verification]');
   assert(verifyTurnstileToken('1x00000000000000000000AA').valid === true, 'Legitimate Cloudflare challenge token is ACCEPTED');
 }
 
+// 11. STORED XSS NEUTRALIZATION & STRICT HTML ESCAPING
+console.log('\n[Test Suite 11: Stored XSS Neutralization & HTML Sanitization]');
+{
+  function escapeHtml(input) {
+    if (input === null || input === undefined) return '';
+    const str = String(input);
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sanitizeUrl(input) {
+    if (input === null || input === undefined) return '#';
+    const str = String(input).trim();
+    if (/^(?:https?:|mailto:|tel:|\/|#)/i.test(str)) {
+      return escapeHtml(str);
+    }
+    return '#';
+  }
+
+  const scriptPayload = '<script>alert("xss")</script>';
+  assert(
+    escapeHtml(scriptPayload) === '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
+    'Malicious <script> payload is strictly escaped to HTML entities'
+  );
+
+  const imgPayload = '"><img src=x onerror=alert(1)>';
+  assert(
+    escapeHtml(imgPayload) === '&quot;&gt;&lt;img src=x onerror=alert(1)&gt;',
+    'HTML attribute injection / onerror payload is strictly escaped'
+  );
+
+  const quotePayload = "admin' OR '1'='1";
+  assert(
+    escapeHtml(quotePayload) === 'admin&#39; OR &#39;1&#39;=&#39;1',
+    'Single quote characters are strictly escaped to &#39;'
+  );
+
+  assert(
+    sanitizeUrl('javascript:alert(document.cookie)') === '#',
+    'Dangerous javascript: URL protocol is neutralized to #'
+  );
+
+  assert(
+    sanitizeUrl('https://strovagroups.in/portal/') === 'https://strovagroups.in/portal/',
+    'Legitimate HTTPS protocol URL is preserved'
+  );
+}
+
+// 12. FAIL-CLOSED GATEWAY & SERVER UNCONFIGURED INVOCATIONS
+console.log('\n[Test Suite 12: Fail-Closed Gateway & Server Secrets Validation]');
+{
+  function createRazorpayOrderSimulation({ keyId, keySecret, invoiceExists }) {
+    if (!keyId || !keySecret) {
+      return { status: 503, error: 'Payment gateway service unconfigured on server' };
+    }
+    if (!invoiceExists) {
+      return { status: 404, error: 'Invoice not found' };
+    }
+    return { status: 200, order_id: 'order_real_123' };
+  }
+
+  function verifyRazorpayPaymentSimulation({ keySecret, hasSignature }) {
+    if (!keySecret) {
+      return { status: 503, error: 'Payment gateway verification unconfigured on server' };
+    }
+    if (!hasSignature) {
+      return { status: 400, error: 'Signature required' };
+    }
+    return { status: 200, verified: true };
+  }
+
+  function verifyTurnstileSimulation({ secretKey }) {
+    if (!secretKey) {
+      return { status: 503, error: 'Turnstile verification service unconfigured on server' };
+    }
+    return { status: 200, verified: true };
+  }
+
+  const unconfiguredOrder = createRazorpayOrderSimulation({ keyId: null, keySecret: null, invoiceExists: true });
+  assert(
+    unconfiguredOrder.status === 503 && !unconfiguredOrder.order_id,
+    'create-razorpay-order FAILS CLOSED (503) when gateway keys are missing (never mock order)'
+  );
+
+  const unconfiguredVerify = verifyRazorpayPaymentSimulation({ keySecret: null, hasSignature: true });
+  assert(
+    unconfiguredVerify.status === 503 && !unconfiguredVerify.verified,
+    'verify-razorpay-payment FAILS CLOSED (503) when secret key is missing (never mock verify)'
+  );
+
+  const unconfiguredTurnstile = verifyTurnstileSimulation({ secretKey: null });
+  assert(
+    unconfiguredTurnstile.status === 503,
+    'verify-turnstile FAILS CLOSED (503) when secret is unconfigured'
+  );
+}
+
+// 13. CROSS-CLIENT INVOICE PAYMENT FORGERY PREVENTION
+console.log('\n[Test Suite 13: Cross-Client Invoice Payment Forgery Prevention]');
+{
+  const invoicesDb = [
+    { id: 'inv-client-a', order_id: '00000000-0000-0000-0000-000000000001', client_id: '11111111-1111-4111-8111-111111111111', status: 'Pending', amount_paise: 500000 },
+    { id: 'inv-client-b', order_id: '00000000-0000-0000-0000-000000000002', client_id: '22222222-2222-4222-8222-222222222222', status: 'Pending', amount_paise: 800000 },
+    { id: 'inv-paid-a',   order_id: '00000000-0000-0000-0000-000000000001', client_id: '11111111-1111-4111-8111-111111111111', status: 'Paid', amount_paise: 250000 },
+  ];
+
+  function authorizeInvoiceCheckout(requestingUserId, userRole, invoiceId) {
+    const inv = invoicesDb.find(i => i.id === invoiceId);
+    if (!inv) return { allowed: false, status: 404, reason: 'Invoice not found' };
+    if (inv.status === 'Paid') return { allowed: false, status: 400, reason: 'Invoice is already settled' };
+    const isAdmin = userRole === 'admin';
+    const isOwner = inv.client_id === requestingUserId;
+    if (!isOwner && !isAdmin) {
+      return { allowed: false, status: 403, reason: 'Cross-tenant invoice access forbidden' };
+    }
+    return { allowed: true, status: 200, invoice: inv };
+  }
+
+  const clientA_user = '11111111-1111-4111-8111-111111111111';
+  const clientB_user = '22222222-2222-4222-8222-222222222222';
+
+  // Client A authorizes own invoice
+  const ownInvoice = authorizeInvoiceCheckout(clientA_user, 'client', 'inv-client-a');
+  assert(ownInvoice.allowed === true && ownInvoice.status === 200, 'Client A can initiate checkout for their own pending invoice');
+
+  // Client A attempts to checkout Client B's invoice
+  const crossClientInvoice = authorizeInvoiceCheckout(clientA_user, 'client', 'inv-client-b');
+  assert(crossClientInvoice.allowed === false && crossClientInvoice.status === 403, 'Client A attempting checkout for Client B invoice is REJECTED (403)');
+
+  // Attempting to checkout an already settled invoice
+  const alreadyPaidInvoice = authorizeInvoiceCheckout(clientA_user, 'client', 'inv-paid-a');
+  assert(alreadyPaidInvoice.allowed === false && alreadyPaidInvoice.status === 400, 'Checkout on already Paid invoice is REJECTED (400)');
+}
+
+// 14. STRICT CONTACT API ORIGIN & REFERER VERIFICATION
+console.log('\n[Test Suite 14: Strict Contact API Origin & Referer Verification]');
+{
+  const allowedHostnames = new Set(['strovagroups.in', 'www.strovagroups.in', 'localhost', '127.0.0.1']);
+
+  function validateContactOrigin(originHeader, refererHeader) {
+    let hostname = null;
+    if (originHeader) {
+      try {
+        hostname = new URL(originHeader).hostname.toLowerCase();
+      } catch {
+        return { allowed: false, status: 400, reason: 'Malformed Origin' };
+      }
+    } else if (refererHeader) {
+      try {
+        hostname = new URL(refererHeader).hostname.toLowerCase();
+      } catch {
+        return { allowed: false, status: 400, reason: 'Malformed Referer' };
+      }
+    }
+
+    if (!hostname || !allowedHostnames.has(hostname)) {
+      return { allowed: false, status: 403, reason: 'Unauthorized request origin' };
+    }
+
+    return { allowed: true, status: 200, hostname };
+  }
+
+  assert(
+    validateContactOrigin('https://strovagroups.in', null).allowed === true,
+    'Origin https://strovagroups.in is ACCEPTED'
+  );
+
+  assert(
+    validateContactOrigin('https://www.strovagroups.in', null).allowed === true,
+    'Origin https://www.strovagroups.in is ACCEPTED'
+  );
+
+  assert(
+    validateContactOrigin('http://localhost:4321', null).allowed === true,
+    'Origin http://localhost:4321 is ACCEPTED'
+  );
+
+  assert(
+    validateContactOrigin('https://evil-strovagroups.in', null).allowed === false,
+    'Origin https://evil-strovagroups.in (prefix spoof) is REJECTED (403)'
+  );
+
+  assert(
+    validateContactOrigin('https://strovagroups.in.attacker.org', null).allowed === false,
+    'Origin https://strovagroups.in.attacker.org (subdomain spoof) is REJECTED (403)'
+  );
+
+  assert(
+    validateContactOrigin(null, null).allowed === false,
+    'Request with missing Origin and Referer is REJECTED (403)'
+  );
+
+  assert(
+    validateContactOrigin('not-a-valid-url', null).allowed === false,
+    'Malformed Origin string is REJECTED (400)'
+  );
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');

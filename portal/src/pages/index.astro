@@ -97,6 +97,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       type ClientInvoice,
     } from '../lib/supabaseClient';
     import { getStageProgressPercent } from '../lib/supabase';
+    import { escapeHtml } from '../lib/sanitize';
 
     async function initOverview() {
       const session = await getSession();
@@ -162,12 +163,12 @@ import PortalLayout from '../layouts/PortalLayout.astro';
               <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem; transition: border-color 150ms ease;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
                   <div>
-                    <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--color-primary);">${o.division} • ${o.order_ref}</span>
+                    <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--color-primary);">${escapeHtml(o.division)} • ${escapeHtml(o.order_ref)}</span>
                     <h4 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-top: 2px;">
-                      <a href="/portal/orders?id=${o.id}" style="color: inherit; text-decoration: none;">${o.title}</a>
+                      <a href="/portal/orders?id=${escapeHtml(o.id)}" style="color: inherit; text-decoration: none;">${escapeHtml(o.title)}</a>
                     </h4>
                   </div>
-                  <span class="badge ${isReview ? 'badge-review' : 'badge-progress'}">${o.current_stage}</span>
+                  <span class="badge ${isReview ? 'badge-review' : 'badge-progress'}">${escapeHtml(o.current_stage)}</span>
                 </div>
 
                 <div style="margin: 1rem 0;">
@@ -183,13 +184,13 @@ import PortalLayout from '../layouts/PortalLayout.astro';
                 ${o.action_required_note ? `
                   <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 4px; padding: 0.65rem 0.85rem; font-size: 0.8125rem; color: #92400E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span>⚠️</span>
-                    <span><strong>Action needed:</strong> ${o.action_required_note}</span>
+                    <span><strong>Action needed:</strong> ${escapeHtml(o.action_required_note)}</span>
                   </div>
                 ` : ''}
 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-subtle); padding-top: 0.75rem; font-size: 0.75rem; color: var(--color-text-dim);">
-                  <span>Updated: ${updatedDate}</span>
-                  <a href="/portal/orders?id=${o.id}" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Open workspace →</a>
+                  <span>Updated: ${escapeHtml(updatedDate)}</span>
+                  <a href="/portal/orders?id=${escapeHtml(o.id)}" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Open workspace →</a>
                 </div>
               </div>
             `;
@@ -206,12 +207,12 @@ import PortalLayout from '../layouts/PortalLayout.astro';
           invoicesContainer.innerHTML = invoices.slice(0, 5).map((inv) => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA;">
               <div>
-                <p style="font-size: 0.875rem; font-weight: 600; font-family: monospace;">${inv.invoice_number}</p>
-                <p style="font-size: 0.75rem; color: var(--color-text-dim);">Due: ${inv.due_date || 'On delivery'}</p>
+                <p style="font-size: 0.875rem; font-weight: 600; font-family: monospace;">${escapeHtml(inv.invoice_number)}</p>
+                <p style="font-size: 0.75rem; color: var(--color-text-dim);">Due: ${escapeHtml(inv.due_date || 'On delivery')}</p>
               </div>
               <div style="text-align: right; display: flex; align-items: center; gap: 0.75rem;">
                 <span style="font-size: 0.875rem; font-weight: 600;">₹${(inv.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                <span class="badge ${inv.status === 'Paid' ? 'badge-success' : 'badge-pending'}">${inv.status}</span>
+                <span class="badge ${inv.status === 'Paid' ? 'badge-success' : 'badge-pending'}">${escapeHtml(inv.status)}</span>
               </div>
             </div>
           `).join('');
@@ -239,8 +240,8 @@ import PortalLayout from '../layouts/PortalLayout.astro';
               const d = new Date(ev.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
               return `
                 <div style="border-left: 2px solid var(--color-primary); padding-left: 0.75rem;">
-                  <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 2px;">${d} • <strong style="color: var(--color-primary);">${ev.stage}</strong></p>
-                  <p style="font-size: 0.8125rem; color: var(--color-text-main); line-height: 1.4;">${ev.note}</p>
+                  <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-bottom: 2px;">${escapeHtml(d)} • <strong style="color: var(--color-primary);">${escapeHtml(ev.stage)}</strong></p>
+                  <p style="font-size: 0.8125rem; color: var(--color-text-main); line-height: 1.4;">${escapeHtml(ev.note)}</p>
                 </div>
               `;
             }).join('');

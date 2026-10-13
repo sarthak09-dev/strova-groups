@@ -24,7 +24,14 @@ serve(async (req) => {
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-    // Verify user JWT with Anon client
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(JSON.stringify({ error: 'Database service configuration missing' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verify user token
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -37,9 +44,11 @@ serve(async (req) => {
       });
     }
 
-    const { invoiceId } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const invoiceId = body.invoice_id || body.invoiceId;
+
     if (!invoiceId) {
-      return new Response(JSON.stringify({ error: 'invoiceId is required' }), {
+      return new Response(JSON.stringify({ error: 'invoice_id parameter is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -66,7 +75,6 @@ serve(async (req) => {
     // Only the order's client or an admin can create a payment order
     const isOwner = invoice.orders.client_id === user.id;
     if (!isOwner) {
-      // Check if user is admin
       const { data: profile } = await supabaseAdmin
         .from('profiles')
         .select('role')
@@ -88,79 +96,78 @@ serve(async (req) => {
       });
     }
 
-    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
-
-    // If Razorpay live/test credentials are configured, create real Razorpay Order
-    if (razorpayKeyId && razorpayKeySecret) {
-      const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
-      const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: invoice.amount_paise,
-          currency: invoice.currency || 'INR',
-          receipt: invoice.invoice_number,
-          notes: {
-            invoice_id: invoice.id,
-            client_id: invoice.orders.client_id,
-            order_id: invoice.order_id,
-          },
-        }),
-      });
-
-      const rzpOrder = await rzpResponse.json();
-      if (!rzpResponse.ok) {
-        return new Response(JSON.stringify({ error: 'Razorpay order creation failed', details: rzpOrder }), {
-          status: 502,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      // Update invoice with razorpay_order_id
-      await supabaseAdmin
-        .from('invoices')
-        .update({ razorpay_order_id: rzpOrder.id })
-        .eq('id', invoice.id);
-
-      return new Response(JSON.stringify({
-        keyId: razorpayKeyId,
-        orderId: rzpOrder.id,
-        amount: invoice.amount_paise,
-        currency: invoice.currency || 'INR',
-        invoiceNumber: invoice.invoice_number,
-        isTestMode: razorpayKeyId.startsWith('rzp_test_'),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } else {
-      // Test mode / gateway setup pending mode
-      const mockOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-      await supabaseAdmin
-        .from('invoices')
-        .update({ razorpay_order_id: mockOrderId })
-        .eq('id', invoice.id);
-
-      return new Response(JSON.stringify({
-        keyId: 'rzp_test_placeholder_unconfigured',
-        orderId: mockOrderId,
-        amount: invoice.amount_paise,
-        currency: invoice.currency || 'INR',
-        invoiceNumber: invoice.invoice_number,
-        isTestMode: true,
-        notice: 'Razorpay test mode active (credentials pending in environment). Real money will not be charged.',
-      }), {
+    if (!invoice.amount_paise || invoice.amount_paise <= 0) {
+      return new Response(JSON.stringify({ error: 'Invoice has zero or invalid balance amount' }), {
+        status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+
+    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+
+    // Strict fail-closed: Never generate fake orders if gateway keys are missing
+    if (!razorpayKeyId || !razorpayKeySecret) {
+      return new Response(JSON.stringify({
+        error: 'Payment gateway is unconfigured. RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be configured in environment secrets.',
+      }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
+    const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: invoice.amount_paise,
+        currency: invoice.currency || 'INR',
+        receipt: invoice.invoice_number,
+        notes: {
+          invoice_id: invoice.id,
+          client_id: invoice.orders.client_id,
+          order_id: invoice.order_id,
+        },
+      }),
+    });
+
+    const rzpOrder = await rzpResponse.json();
+    if (!rzpResponse.ok) {
+      return new Response(JSON.stringify({ error: 'Razorpay order creation rejected by gateway', details: rzpOrder }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Persist razorpay_order_id on invoice
+    await supabaseAdmin
+      .from('invoices')
+      .update({ razorpay_order_id: rzpOrder.id })
+      .eq('id', invoice.id);
+
+    // Standardized contract with snake_case and camelCase aliases for interoperability
+    return new Response(JSON.stringify({
+      key_id: razorpayKeyId,
+      order_id: rzpOrder.id,
+      amount_paise: invoice.amount_paise,
+      currency: invoice.currency || 'INR',
+      invoice_number: invoice.invoice_number,
+      // Backwards-compatible aliases
+      keyId: razorpayKeyId,
+      orderId: rzpOrder.id,
+      amount: invoice.amount_paise,
+      invoiceNumber: invoice.invoice_number,
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message || 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
-

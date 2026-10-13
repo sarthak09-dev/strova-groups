@@ -206,6 +206,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
       type UserProfile,
       type ClientOrder,
     } from '../../lib/supabaseClient';
+    import { escapeHtml } from '../../lib/sanitize';
 
     async function initAdmin() {
       const session = await getSession();
@@ -274,10 +275,10 @@ import { PORTAL_STAGES } from '../../lib/supabase';
             const dateStr = log.created_at ? new Date(log.created_at).toLocaleString('en-IN') : 'Recent';
             return `
               <tr style="border-bottom: 1px solid var(--color-border-subtle);">
-                <td style="padding: 0.65rem 0.75rem; color: var(--color-text-dim);">${dateStr}</td>
-                <td style="padding: 0.65rem 0.75rem;"><span class="badge badge-progress">${log.action}</span></td>
-                <td style="padding: 0.65rem 0.75rem; font-family: monospace;">${log.target_table}</td>
-                <td style="padding: 0.65rem 0.75rem; font-family: monospace; color: var(--color-text-dim);">${log.target_id}</td>
+                <td style="padding: 0.65rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(dateStr)}</td>
+                <td style="padding: 0.65rem 0.75rem;"><span class="badge badge-progress">${escapeHtml(log.action)}</span></td>
+                <td style="padding: 0.65rem 0.75rem; font-family: monospace;">${escapeHtml(log.target_table)}</td>
+                <td style="padding: 0.65rem 0.75rem; font-family: monospace; color: var(--color-text-dim);">${escapeHtml(log.target_id)}</td>
               </tr>
             `;
           }).join('');

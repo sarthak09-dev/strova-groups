@@ -53,6 +53,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
 
   <script>
     import { getSession, fetchMyFiles, createDownloadSignedUrl, type DeliverableFile } from '../lib/supabaseClient';
+    import { escapeHtml } from '../lib/sanitize';
 
     async function initFiles() {
       const session = await getSession();
@@ -86,14 +87,14 @@ import PortalLayout from '../layouts/PortalLayout.astro';
                 <td style="padding: 0.85rem 0.75rem; font-weight: 600;">
                   <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span>📄</span>
-                    <span>${f.file_name}</span>
+                    <span>${escapeHtml(f.file_name)}</span>
                   </div>
                 </td>
-                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-muted);">${projectTitle}</td>
-                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${sizeStr}</td>
-                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${dateStr}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-muted);">${escapeHtml(projectTitle)}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(sizeStr)}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(dateStr)}</td>
                 <td style="padding: 0.85rem 0.75rem; text-align: right;">
-                  <button type="button" class="btn btn-secondary download-file-btn" data-path="${f.storage_path}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                  <button type="button" class="btn btn-secondary download-file-btn" data-path="${escapeHtml(f.storage_path)}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
                     Download ↗
                   </button>
                 </td>

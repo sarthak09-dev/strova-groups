@@ -28,6 +28,12 @@ BEGIN
 END;
 $$;
 
+-- Attach trigger to auth.users for automated profile provisioning
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 -- 2. EXTEND ORDERS TABLE WITH FINANCIAL AND SCOPE FIELDS
 ALTER TABLE public.orders 
   ADD COLUMN IF NOT EXISTS order_ref TEXT UNIQUE,
@@ -37,10 +43,6 @@ ALTER TABLE public.orders
   ADD COLUMN IF NOT EXISTS balance_amount_paise BIGINT DEFAULT 0 CHECK (balance_amount_paise >= 0),
   ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'INR' CHECK (currency IN ('INR', 'USD')),
   ADD COLUMN IF NOT EXISTS action_required_note TEXT;
-
--- Update existing orders with order_ref if missing
-UPDATE public.orders SET order_ref = 'ORD-2026-001' WHERE id = '00000000-0000-0000-0000-000000000001' AND order_ref IS NULL;
-UPDATE public.orders SET order_ref = 'ORD-2026-002' WHERE id = '00000000-0000-0000-0000-000000000002' AND order_ref IS NULL;
 
 -- 3. EXTEND INVOICES TABLE WITH FINANCIAL AMOUNT AND PAYMENT METADATA
 ALTER TABLE public.invoices
@@ -136,6 +138,7 @@ CREATE POLICY "Users insert responses to accessible tickets"
   ON public.support_responses FOR INSERT
   WITH CHECK (
     sender_id = auth.uid()
+    AND sender_role = (SELECT role FROM public.profiles WHERE id = auth.uid())
     AND EXISTS (
       SELECT 1 FROM public.support_tickets
       WHERE support_tickets.id = support_responses.ticket_id
@@ -146,4 +149,35 @@ CREATE POLICY "Users insert responses to accessible tickets"
 CREATE POLICY "Admins manage support responses"
   ON public.support_responses FOR ALL
   USING (public.is_admin());
+
+-- ----------------------------------------------------------------------------
+-- 11. PROVISION PRIVATE STORAGE BUCKET FOR DELIVERABLES
+-- ----------------------------------------------------------------------------
+INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types)
+VALUES ('deliverables', 'deliverables', false, false, 52428800, NULL)
+ON CONFLICT (id) DO UPDATE SET public = false;
+
+-- Storage RLS: Deliverables are strictly private.
+-- Downloads require signed URLs or authenticated ownership check via public.files table.
+DROP POLICY IF EXISTS "Admins have full access to deliverables" ON storage.objects;
+CREATE POLICY "Admins have full access to deliverables"
+  ON storage.objects FOR ALL
+  USING (bucket_id = 'deliverables' AND public.is_admin());
+
+DROP POLICY IF EXISTS "Clients read deliverables for their orders" ON storage.objects;
+CREATE POLICY "Clients read deliverables for their orders"
+  ON storage.objects FOR SELECT
+  USING (
+    bucket_id = 'deliverables'
+    AND (
+      public.is_admin()
+      OR EXISTS (
+        SELECT 1 FROM public.files f
+        JOIN public.orders o ON o.id = f.order_id
+        WHERE f.storage_path = storage.objects.name
+          AND o.client_id = auth.uid()
+      )
+    )
+  );
+
 

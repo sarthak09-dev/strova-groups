@@ -92,9 +92,11 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
       fetchMyPayments,
       createDownloadSignedUrl,
       RAZORPAY_KEY_ID,
+      SUPABASE_URL,
       supabase,
       type ClientInvoice,
     } from '../lib/supabaseClient';
+    import { escapeHtml } from '../lib/sanitize';
 
     async function initInvoices() {
       const session = await getSession();
@@ -120,23 +122,23 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
 
             return `
               <tr style="border-bottom: 1px solid var(--color-border); transition: background 150ms ease;">
-                <td style="padding: 1rem 0.75rem; font-family: monospace; font-weight: 600;">${inv.invoice_number}</td>
+                <td style="padding: 1rem 0.75rem; font-family: monospace; font-weight: 600;">${escapeHtml(inv.invoice_number)}</td>
                 <td style="padding: 1rem 0.75rem;">
-                  <strong style="color: var(--color-text-main);">${projectTitle}</strong>
+                  <strong style="color: var(--color-text-main);">${escapeHtml(projectTitle)}</strong>
                 </td>
-                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${inv.issued_at || 'Recent'}</td>
-                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${inv.due_date || 'On delivery'}</td>
+                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(inv.issued_at || 'Recent')}</td>
+                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(inv.due_date || 'On delivery')}</td>
                 <td style="padding: 1rem 0.75rem; font-weight: 600; color: var(--color-text-main);">${amountFormatted}</td>
                 <td style="padding: 1rem 0.75rem;">
-                  <span class="badge ${isPaid ? 'badge-success' : 'badge-pending'}">${inv.status}</span>
+                  <span class="badge ${isPaid ? 'badge-success' : 'badge-pending'}">${escapeHtml(inv.status)}</span>
                 </td>
                 <td style="padding: 1rem 0.75rem; text-align: right;">
                   ${isPaid ? `
-                    <button type="button" class="btn btn-secondary btn-download-pdf" data-path="${inv.pdf_storage_path || ''}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                    <button type="button" class="btn btn-secondary btn-download-pdf" data-path="${escapeHtml(inv.pdf_storage_path || '')}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
                       Receipt PDF ↗
                     </button>
                   ` : `
-                    <button type="button" class="btn btn-primary btn-pay-razorpay" data-invoice-id="${inv.id}" data-amount="${inv.amount_paise}" data-inv="${inv.invoice_number}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                    <button type="button" class="btn btn-primary btn-pay-razorpay" data-invoice-id="${escapeHtml(inv.id)}" data-amount="${inv.amount_paise}" data-inv="${escapeHtml(inv.invoice_number)}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
                       Pay ${amountFormatted}
                     </button>
                   `}
@@ -200,7 +202,8 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
 
               try {
                 // Request authoritative order ID from server Edge function
-                const res = await fetch('/functions/v1/create-razorpay-order', {
+                const orderEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-razorpay-order` : '/functions/v1/create-razorpay-order';
+                const res = await fetch(orderEndpoint, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -237,7 +240,8 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
                     if (modalDesc) modalDesc.textContent = 'Verifying cryptographic HMAC signature on the server...';
 
                     try {
-                      const verifyRes = await fetch('/functions/v1/verify-razorpay-payment', {
+                      const verifyEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/verify-razorpay-payment` : '/functions/v1/verify-razorpay-payment';
+                      const verifyRes = await fetch(verifyEndpoint, {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -251,11 +255,14 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
                         }),
                       });
 
-                      if (!verifyRes.ok) throw new Error('Signature verification failed.');
+                      if (!verifyRes.ok) {
+                        const errJson = await verifyRes.json().catch(() => ({}));
+                        throw new Error(errJson.error || 'Signature verification failed.');
+                      }
 
                       if (modalSpinner) modalSpinner.textContent = '✅';
                       if (modalTitle) modalTitle.textContent = 'Payment Confirmed';
-                      if (modalDesc) modalDesc.textContent = `Receipt has been recorded. Payment ID: ${response.razorpay_payment_id}`;
+                      if (modalDesc) modalDesc.textContent = `Receipt has been recorded. Payment ID: ${escapeHtml(response.razorpay_payment_id)}`;
                       if (modalClose) {
                         modalClose.style.display = 'inline-block';
                         modalClose.onclick = () => window.location.reload();
@@ -303,8 +310,8 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
             return `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA; font-size: 0.8125rem;">
                 <div>
-                  <strong style="color: var(--color-text-main); font-family: monospace;">Receipt #${p.receipt_number || p.gateway_payment_id}</strong>
-                  <p style="color: var(--color-text-dim); font-size: 0.75rem; margin-top: 2px;">Settled on ${date} via ${p.gateway}</p>
+                  <strong style="color: var(--color-text-main); font-family: monospace;">Receipt #${escapeHtml(p.receipt_number || p.gateway_payment_id)}</strong>
+                  <p style="color: var(--color-text-dim); font-size: 0.75rem; margin-top: 2px;">Settled on ${escapeHtml(date)} via ${escapeHtml(p.gateway)}</p>
                 </div>
                 <div style="text-align: right;">
                   <span style="font-weight: 600; color: var(--color-success);">₹${(p.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>

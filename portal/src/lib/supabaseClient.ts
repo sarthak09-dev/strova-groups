@@ -10,12 +10,27 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 // Environment variables exposed by Astro/Vite via PUBLIC_ prefix
-const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SUPABASE_URL) || '';
+export const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SUPABASE_URL) || '';
 const SUPABASE_ANON_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SUPABASE_ANON_KEY) || '';
 export const TURNSTILE_SITE_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY) || '1x00000000000000000000AA';
 export const RAZORPAY_KEY_ID = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_RAZORPAY_KEY_ID) || '';
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+
+// Re-export common domain types from pure type module
+export type {
+  UserProfile,
+  ClientOrder,
+  OrderEvent,
+  ClientInvoice,
+  ClientPayment,
+  DeliverableFile,
+  OrderMessage,
+  SupportTicket,
+  AuditLogEntry,
+  PortalStage,
+} from './portalTypes';
+export { PORTAL_STAGES, getStageProgressPercent } from './portalTypes';
 
 // Browser Supabase client instance (persists JWT tokens in browser storage)
 export const supabase: SupabaseClient | null = isSupabaseConfigured

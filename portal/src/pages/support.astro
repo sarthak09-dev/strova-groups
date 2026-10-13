@@ -84,6 +84,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       createSupportTicket,
       type SupportTicket,
     } from '../lib/supabaseClient';
+    import { escapeHtml } from '../lib/sanitize';
 
     async function initSupport() {
       const session = await getSession();
@@ -126,21 +127,21 @@ import PortalLayout from '../layouts/PortalLayout.astro';
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem;">
                   <div>
                     <span class="badge ${t.priority === 'urgent' ? 'badge-danger' : 'badge-pending'}" style="margin-bottom: 0.25rem;">
-                      ${t.priority}
+                      ${escapeHtml(t.priority)}
                     </span>
                     <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--color-text-main);">
-                      ${t.subject}
+                      ${escapeHtml(t.subject)}
                     </h4>
                   </div>
                   <span class="badge ${statusClass}">
-                    ${t.status}
+                    ${escapeHtml(t.status)}
                   </span>
                 </div>
                 <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45; margin-bottom: 0.75rem;">
-                  ${t.description}
+                  ${escapeHtml(t.description)}
                 </p>
                 <div style="font-size: 0.75rem; color: var(--color-text-dim); border-top: 1px solid var(--color-border-subtle); padding-top: 0.5rem;">
-                  Opened on ${dateStr}
+                  Opened on ${escapeHtml(dateStr)}
                 </div>
               </div>
             `;
