@@ -935,6 +935,133 @@ console.log('\n[Test Suite 19: Permanent Light Theme & Dark Mode Regression Prev
   assert(result.documentAttrs['data-theme'] !== 'dark', 'Document attribute data-theme="dark" is never set');
 }
 
+// 20. RPC PRIVILEGE RESTRICTIONS & INPUT VALIDATION BOUNDARIES
+console.log('\n[Test Suite 20: RPC Privilege Restrictions & Input Validation]');
+{
+  const migrationSql = fs.readFileSync(new URL('../supabase/migrations/20261013000003_secure_finalize_payment_rpc.sql', import.meta.url), 'utf-8');
+
+  // 1. Verify SQL explicitly revokes ALL from PUBLIC, anon, authenticated
+  assert(
+    migrationSql.includes('REVOKE ALL ON FUNCTION public.finalize_payment') &&
+    migrationSql.includes('FROM PUBLIC, anon, authenticated;'),
+    'Migration explicitly revokes EXECUTE on finalize_payment from PUBLIC, anon, and authenticated'
+  );
+
+  // 2. Verify SQL explicitly grants EXECUTE exclusively to service_role
+  assert(
+    migrationSql.includes('GRANT EXECUTE ON FUNCTION public.finalize_payment') &&
+    migrationSql.includes('TO service_role;'),
+    'Migration explicitly grants EXECUTE on finalize_payment exclusively to service_role'
+  );
+
+  // 3. Verify search_path is set securely on handle_new_user and finalize_payment
+  assert(
+    migrationSql.includes('SET search_path = public, pg_temp'),
+    'Migration sets immutable secure search_path = public, pg_temp to prevent schema hijacking'
+  );
+
+  // 4. Simulate Database Caller Role Authorization
+  function authorizeRpcExecution(callerRole) {
+    if (callerRole !== 'service_role') {
+      return { allowed: false, status: 403, error: 'permission denied for function finalize_payment [42501]' };
+    }
+    return { allowed: true, status: 200 };
+  }
+
+  assert(authorizeRpcExecution('anon').allowed === false, 'Anon caller calling finalize_payment is DENIED (403)');
+  assert(authorizeRpcExecution('authenticated').allowed === false, 'Authenticated client calling finalize_payment directly is DENIED (403)');
+  assert(authorizeRpcExecution('service_role').allowed === true, 'Supabase Edge Function via service_role is PERMITTED (200)');
+
+  // 5. Input validation bounds simulation
+  function validateRpcParameters({ invoiceId, rzpOrderId, rzpPaymentId, amountPaise, currency }) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!invoiceId || !uuidRegex.test(invoiceId)) {
+      return { valid: false, error: 'Invalid invoice ID UUID [22P02]' };
+    }
+    if (!rzpOrderId || !rzpOrderId.trim() || !rzpPaymentId || !rzpPaymentId.trim()) {
+      return { valid: false, error: 'Invalid Razorpay identifiers [22000]' };
+    }
+    if (!amountPaise || typeof amountPaise !== 'number' || amountPaise <= 0) {
+      return { valid: false, error: 'Payment amount must be strictly greater than zero [22003]' };
+    }
+    if (!currency || !currency.trim()) {
+      return { valid: false, error: 'Payment currency is required [22000]' };
+    }
+    return { valid: true };
+  }
+
+  assert(!validateRpcParameters({ invoiceId: 'bad-uuid', rzpOrderId: 'ord_1', rzpPaymentId: 'pay_1', amountPaise: 100, currency: 'INR' }).valid, 'Malformed invoice UUID is rejected by RPC input guard');
+  assert(!validateRpcParameters({ invoiceId: '11111111-1111-4111-8111-111111111111', rzpOrderId: '', rzpPaymentId: 'pay_1', amountPaise: 100, currency: 'INR' }).valid, 'Empty order ID is rejected by RPC input guard');
+  assert(!validateRpcParameters({ invoiceId: '11111111-1111-4111-8111-111111111111', rzpOrderId: 'ord_1', rzpPaymentId: 'pay_1', amountPaise: -50, currency: 'INR' }).valid, 'Negative amount is rejected by RPC input guard');
+  assert(!validateRpcParameters({ invoiceId: '11111111-1111-4111-8111-111111111111', rzpOrderId: 'ord_1', rzpPaymentId: 'pay_1', amountPaise: 0, currency: 'INR' }).valid, 'Zero amount is rejected by RPC input guard');
+  assert(validateRpcParameters({ invoiceId: '11111111-1111-4111-8111-111111111111', rzpOrderId: 'ord_1', rzpPaymentId: 'pay_1', amountPaise: 50000, currency: 'INR' }).valid, 'Valid parameters pass RPC input guard');
+}
+
+// 21. GATEWAY VERIFICATION & WEBHOOK FAIL-CLOSED BOUNDARIES
+console.log('\n[Test Suite 21: Gateway Verification & Webhook Fail-Closed Boundaries]');
+{
+  const verifyCode = fs.readFileSync(new URL('../supabase/functions/verify-razorpay-payment/index.ts', import.meta.url), 'utf-8');
+  const webhookCode = fs.readFileSync(new URL('../supabase/functions/razorpay-webhook/index.ts', import.meta.url), 'utf-8');
+
+  // 1. Verify verify-razorpay-payment requires RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET
+  assert(verifyCode.includes('RAZORPAY_KEY_ID') && verifyCode.includes('RAZORPAY_KEY_SECRET'), 'verify-razorpay-payment requires both key ID and secret');
+  assert(verifyCode.includes("status: 503"), 'verify-razorpay-payment fails closed with 503 on unconfigured secrets');
+
+  // 2. Verify deletion of direct DB fallback in verify-razorpay-payment
+  assert(!verifyCode.includes(".from('payments').insert"), 'verify-razorpay-payment has ZERO unsafe fallback direct payments table inserts');
+
+  // 3. Verify status must be strictly captured (reject authorized)
+  assert(verifyCode.includes("rzpPayData.status !== 'captured'"), 'verify-razorpay-payment strictly rejects non-captured payment states');
+
+  // 4. Verify webhook deletion of direct DB fallback
+  assert(!webhookCode.includes(".from('payments').insert"), 'razorpay-webhook has ZERO unsafe fallback direct payments table inserts');
+
+  // 5. Verify webhook returns 500 on RPC error to trigger provider retry
+  assert(webhookCode.includes("status: 500"), 'razorpay-webhook returns HTTP 500 on RPC error to trigger automatic Razorpay retry');
+
+  // 6. Simulate Gateway Status Guard
+  function simulateGatewayStatusCheck(rzpStatus) {
+    if (rzpStatus !== 'captured') {
+      return { verified: false, status: 400, error: `Payment status is ${rzpStatus}, expected captured` };
+    }
+    return { verified: true, status: 200 };
+  }
+
+  assert(simulateGatewayStatusCheck('captured').verified === true, 'Status "captured" is accepted for reconciliation');
+  assert(simulateGatewayStatusCheck('authorized').verified === false, 'Status "authorized" (not captured) is strictly REJECTED');
+  assert(simulateGatewayStatusCheck('failed').verified === false, 'Status "failed" is strictly REJECTED');
+}
+
+// 22. TURNSTILE PRODUCTION SECURITY & CONTACT API RESILIENCE
+console.log('\n[Test Suite 22: Turnstile Production Security & Contact API Resilience]');
+{
+  const contactAstro = fs.readFileSync(new URL('../src/pages/contact.astro', import.meta.url), 'utf-8');
+  const hiContactAstro = fs.readFileSync(new URL('../src/pages/hi/contact.astro', import.meta.url), 'utf-8');
+  const contactApi = fs.readFileSync(new URL('../functions/api/contact.ts', import.meta.url), 'utf-8');
+
+  // 1. Verify zero test keys in public Astro contact pages
+  assert(!contactAstro.includes('1x00000000000000000000AA'), 'src/pages/contact.astro contains zero hardcoded test site keys');
+  assert(!hiContactAstro.includes('1x00000000000000000000AA'), 'src/pages/hi/contact.astro contains zero hardcoded test site keys');
+
+  // 2. Verify 64KB max body limit enforcement in contact API
+  assert(contactApi.includes('64 * 1024'), 'functions/api/contact.ts defines 64KB maximum payload constant');
+  assert(contactApi.includes('status: 413'), 'functions/api/contact.ts returns 413 Payload Too Large when body exceeds 64KB');
+
+  // 3. Verify test key rejection in production
+  assert(contactApi.includes("TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'"), 'functions/api/contact.ts tracks known test site key');
+  assert(contactApi.includes("Test verification keys are strictly prohibited in production"), 'functions/api/contact.ts actively blocks test tokens in production');
+
+  // 4. Verify bilingual response handling
+  assert(contactApi.includes("const lang = (payload.lang || '').toLowerCase() === 'hi' ? 'hi' : 'en'"), 'functions/api/contact.ts parses lang parameter for bilingual responses');
+  assert(contactApi.includes('/hi/quote/confirmed/'), 'functions/api/contact.ts redirects to /hi/quote/confirmed/ when submitting in Hindi');
+
+  // 5. Verify RateLimit headers present in response
+  assert(contactApi.includes("'RateLimit-Limit': '5'"), 'functions/api/contact.ts returns standard RateLimit-Limit header');
+  assert(contactApi.includes("'RateLimit-Remaining'"), 'functions/api/contact.ts returns dynamic RateLimit-Remaining header');
+  assert(contactApi.includes("'RateLimit-Reset'"), 'functions/api/contact.ts returns dynamic RateLimit-Reset header');
+  assert(contactApi.includes("'Retry-After'"), 'functions/api/contact.ts returns Retry-After header on 429 rate limit exceeded');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');

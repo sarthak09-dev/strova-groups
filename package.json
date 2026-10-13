@@ -11,6 +11,8 @@
     "preview": "astro preview",
     "audit": "node audit.mjs",
     "test": "node tests/isolation.test.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "preflight:prod": "node scripts/preflight.mjs --mode=production",
     "astro": "astro"
   },
   "dependencies": {

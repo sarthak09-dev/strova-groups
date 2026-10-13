@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.117.3';
 
 /**
- * Computes HMAC-SHA256 hex digest using standard Web Crypto API.
+ * Computes HMAC-SHA256 hex digest using Web Crypto API.
  */
 async function computeHmacSha256(secret: string, payload: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -20,7 +20,7 @@ async function computeHmacSha256(secret: string, payload: string): Promise<strin
 }
 
 /**
- * Constant-time string equality to prevent timing side-channel attacks on webhook signatures.
+ * Constant-time string equality to prevent timing attacks on webhook signatures.
  */
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -32,7 +32,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 serve(async (req) => {
-  // Only accept POST requests
+  // 1. Only accept POST requests
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
@@ -41,6 +41,7 @@ serve(async (req) => {
   }
 
   try {
+    // 2. Strict Webhook & Database Configuration Check (Fail closed)
     const webhookSecret = Deno.env.get('RAZORPAY_WEBHOOK_SECRET');
     if (!webhookSecret) {
       console.error('RAZORPAY_WEBHOOK_SECRET is unconfigured in server environment secrets');
@@ -50,6 +51,18 @@ serve(async (req) => {
       });
     }
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Supabase service role credentials missing for webhook processing');
+      return new Response(JSON.stringify({ error: 'Database service unconfigured' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 3. Cryptographic Signature Verification
     const signature = req.headers.get('x-razorpay-signature');
     if (!signature) {
       return new Response(JSON.stringify({ error: 'Missing webhook signature' }), {
@@ -69,6 +82,7 @@ serve(async (req) => {
       });
     }
 
+    // 4. Safe JSON Payload Parsing
     let payload: any;
     try {
       payload = JSON.parse(rawBody);
@@ -80,20 +94,10 @@ serve(async (req) => {
     }
 
     const event = payload.event;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Supabase service role credentials missing for webhook processing');
-      return new Response(JSON.stringify({ error: 'Database service unconfigured' }), {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
+    const eventDeliveryId = payload.entity_id || payload.account_id || req.headers.get('x-razorpay-event-id') || null;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 1. Process payment.captured event
+    // 5. Handle payment.captured Event
     if (event === 'payment.captured') {
       const paymentEntity = payload.payload?.payment?.entity;
       if (!paymentEntity) {
@@ -103,13 +107,23 @@ serve(async (req) => {
         });
       }
 
-      const rzpOrderId = paymentEntity.order_id;
-      const rzpPaymentId = paymentEntity.id;
+      const rzpOrderId = (paymentEntity.order_id || '').trim();
+      const rzpPaymentId = (paymentEntity.id || '').trim();
       const amountPaise = paymentEntity.amount;
-      const currency = paymentEntity.currency || 'INR';
+      const currency = (paymentEntity.currency || 'INR').toUpperCase();
+      const status = paymentEntity.status;
 
       if (!rzpOrderId || !rzpPaymentId || !amountPaise) {
         return new Response(JSON.stringify({ error: 'Missing critical payment attributes' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // STRICT STATUS: Must be 'captured'
+      if (status !== 'captured') {
+        console.warn(`Webhook received payment with status: ${status}, expected: captured`);
+        return new Response(JSON.stringify({ error: `Payment status is ${status}, not captured` }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -124,22 +138,45 @@ serve(async (req) => {
 
       if (invoiceErr || !invoice) {
         console.warn(`Webhook: invoice not found for razorpay_order_id: ${rzpOrderId}`);
-        // Return 200 so Razorpay does not endlessly retry an unrecognized order
+        // Return 200 so Razorpay does not endlessly retry an unrecognized order from other systems
         return new Response(JSON.stringify({ received: true, note: 'Invoice not found in system' }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      // If already marked Paid, idempotent success
+      // Idempotency: If invoice is already 'Paid', verify it was settled with THIS gateway payment
       if (invoice.status === 'Paid') {
-        return new Response(JSON.stringify({ received: true, status: 'already_paid' }), {
-          status: 200,
+        const { data: existingPayment } = await supabaseAdmin
+          .from('payments')
+          .select('id, receipt_number')
+          .eq('invoice_id', invoice.id)
+          .eq('gateway_payment_id', rzpPaymentId)
+          .maybeSingle();
+
+        if (existingPayment) {
+          return new Response(JSON.stringify({
+            received: true,
+            status: 'already_paid_idempotent',
+            payment_id: existingPayment.id,
+            receipt_number: existingPayment.receipt_number,
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Paid under different payment ID
+        console.error(`Invoice ${invoice.id} already Paid under different payment reference than ${rzpPaymentId}`);
+        return new Response(JSON.stringify({
+          error: 'Invoice is already settled under a different transaction reference',
+        }), {
+          status: 400,
           headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      // Validate captured amount matches invoice amount
+      // Validate captured amount matches invoice amount exactly
       if (amountPaise !== invoice.amount_paise) {
         console.error(`Amount mismatch: gateway ${amountPaise} vs invoice ${invoice.amount_paise}`);
         return new Response(JSON.stringify({ error: 'Amount mismatch' }), {
@@ -148,7 +185,35 @@ serve(async (req) => {
         });
       }
 
-      // Atomic reconciliation via finalize_payment RPC
+      // Validate currency matches invoice currency exactly
+      const invoiceCurrency = (invoice.currency || 'INR').toUpperCase();
+      if (currency !== invoiceCurrency) {
+        console.error(`Currency mismatch: gateway ${currency} vs invoice ${invoiceCurrency}`);
+        return new Response(JSON.stringify({ error: 'Currency mismatch' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Cross-invoice payment reuse check
+      const { data: otherPayment } = await supabaseAdmin
+        .from('payments')
+        .select('id, invoice_id')
+        .eq('gateway_payment_id', rzpPaymentId)
+        .neq('invoice_id', invoice.id)
+        .maybeSingle();
+
+      if (otherPayment) {
+        console.error(`Payment ID ${rzpPaymentId} is already linked to another invoice`);
+        return new Response(JSON.stringify({
+          error: 'Gateway payment ID is already bound to another invoice',
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Atomic reconciliation via finalize_payment RPC (NO UNSAFE FALLBACK)
       const receiptNumber = `RCP-${invoice.invoice_number}-${Date.now().toString().slice(-4)}`;
       const { data: rpcResult, error: rpcErr } = await supabaseAdmin.rpc('finalize_payment', {
         p_invoice_id: invoice.id,
@@ -160,50 +225,44 @@ serve(async (req) => {
         p_receipt_number: receiptNumber,
         p_metadata: {
           verified_by: 'razorpay_webhook',
-          event_id: payload.payload?.payment?.entity?.id || null,
+          event_id: eventDeliveryId,
+          captured_at_ts: paymentEntity.created_at || null,
         },
       });
 
       if (rpcErr) {
         console.error('finalize_payment RPC error in webhook:', rpcErr);
-        // Fallback to manual transactional updates if RPC is not yet applied
-        await supabaseAdmin.from('payments').insert({
-          invoice_id: invoice.id,
-          order_id: invoice.order_id,
-          client_id: invoice.orders.client_id,
-          amount_paise: amountPaise,
-          currency: currency,
-          gateway: 'razorpay',
-          gateway_order_id: rzpOrderId,
-          gateway_payment_id: rzpPaymentId,
-          status: 'captured',
-          receipt_number: receiptNumber,
-          metadata: { verified_by: 'razorpay_webhook_fallback' },
+        // Return 500 so Razorpay retries webhook delivery later
+        // NEVER perform non-atomic direct write fallbacks!
+        return new Response(JSON.stringify({
+          error: 'Reconciliation transaction failed on database. Webhook will be retried.',
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
         });
-
-        await supabaseAdmin.from('invoices').update({
-          status: 'Paid',
-          paid_at: new Date().toISOString(),
-          razorpay_payment_id: rzpPaymentId,
-        }).eq('id', invoice.id);
       }
 
-      // Insert in-app notification for the client
+      // Insert in-app notification (isolated failure)
       await supabaseAdmin.from('notifications').insert({
         user_id: invoice.orders.client_id,
         type: 'payment_received',
         title: `Payment Received for Invoice ${invoice.invoice_number}`,
         body: `Payment of ${currency} ${(amountPaise / 100).toFixed(2)} was successfully captured. Receipt #${receiptNumber}.`,
-        link: '/invoices',
+        link: '/invoices/',
       }).catch((notifErr) => console.warn('Notification insert failed:', notifErr));
 
-      return new Response(JSON.stringify({ received: true, status: 'processed', rpc: rpcResult }), {
+      return new Response(JSON.stringify({
+        received: true,
+        status: 'processed',
+        payment_id: rpcResult.payment_id,
+        receipt_number: rpcResult.receipt_number,
+      }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // 2. Process payment.failed event
+    // 6. Handle payment.failed Event
     if (event === 'payment.failed') {
       const paymentEntity = payload.payload?.payment?.entity;
       const rzpOrderId = paymentEntity?.order_id;
@@ -230,6 +289,7 @@ serve(async (req) => {
               error_code: paymentEntity.error_code,
               error_description: paymentEntity.error_description,
               razorpay_order_id: rzpOrderId,
+              gateway_payment_id: paymentEntity.id,
             },
           });
         }
@@ -241,17 +301,16 @@ serve(async (req) => {
       });
     }
 
-    // Acknowledge all other events
+    // 7. Acknowledge All Other Unhandled Events
     return new Response(JSON.stringify({ received: true, status: 'unhandled_event', event }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err: any) {
     console.error('Unhandled webhook exception:', err);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    return new Response(JSON.stringify({ error: 'Internal server error processing webhook' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 });
-

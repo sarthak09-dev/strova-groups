@@ -27,6 +27,9 @@ jobs:
       - name: Run Security & Isolation Tests
         run: npm test
 
+      - name: Preflight Security & Configuration Check
+        run: npm run preflight -- --mode=test
+
       - name: Build Marketing Site
         run: npm run build
 

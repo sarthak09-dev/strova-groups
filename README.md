@@ -266,7 +266,7 @@ To protect site copy and architecture from unauthorized automated scraping and p
 The repository includes two automated test and audit suites:
 
 ### 1. Tenant Isolation Suite (`npm test` / `tests/isolation.test.mjs`)
-Executes 39 automated assertions verifying:
+Executes 125 automated assertions across 22 comprehensive test suites verifying:
 - Client Alpha (`client-a@example.com`) receives strictly Client Alpha orders, events, files, invoices, and messages. Zero rows returned for Client Beta.
 - Client Beta (`client-b@example.com`) receives strictly Client Beta records. Zero rows returned for Client Alpha.
 - Cross-tenant ID enumeration queries return 0 rows.
@@ -276,9 +276,23 @@ Executes 39 automated assertions verifying:
 - Tampered link signatures are rejected (403 Invalid signature).
 - Administrator session can view cross-client orders and audit log entries.
 - Non-admin client sessions querying audit log receive 0 rows.
+- Razorpay payment signature verification & idempotency.
+- Role privilege escalation prevention during signup.
+- Stored XSS neutralization & URL protocol sanitization.
+- Fail-closed gateway validation & secrets enforcement.
+- Cross-client invoice checkout tampering prevention.
+- Contact API origin/referer validation and 64KB payload limits.
+- Atomic payment reconciliation state machine & RPC balance calculation.
+- Webhook cryptographic HMAC-SHA256 signature verification.
+- Support ticket cross-client order association prevention.
+- Realtime notifications tenant isolation and read receipts.
+- Permanent light theme enforcement and dark mode selector purge.
+- RPC privilege restrictions: `finalize_payment` granted exclusively to `service_role`, revoked from `PUBLIC, anon, authenticated`.
+- Gateway verification & webhook fail-closed boundaries (deletion of direct DB fallbacks, 500 retry triggers).
+- Cloudflare Turnstile bot protection: prohibition of test keys in production and bilingual response handling.
 
 ### 2. Static Build Audit (`npm run audit` / `audit.mjs`)
-Audits all 15 rendered HTML pages in `dist/`:
+Audits all rendered HTML pages in `dist/`:
 - Exactly one `<h1>` per page.
 - Title strictly under 60 characters and description strictly under 160 characters.
 - Valid canonical URL on `https://strovagroups.in`.
@@ -324,15 +338,22 @@ Prior to formal commercial deployment, confirm the following items:
 - **Serverless Payment Endpoints**: Hosted as Supabase Edge Functions (`supabase/functions/create-razorpay-order` and `supabase/functions/verify-razorpay-payment`).
 
 ### B. Database Migration Execution
-Apply the consolidated portal schema migration to your Supabase project:
+Apply the migrations in numerical order to your Supabase project (via CLI `supabase db push` or in the Supabase Dashboard SQL Editor):
+
+1. `20261012000000_client_portal_schema.sql`: Core schema (profiles, orders, deliverables, invoices, payments, audit_log, RLS)
+2. `20261012000001_harden_and_extend_portal.sql`: Schema extensions, indices, client isolation policies
+3. `20261013000000_atomic_payment_rpc.sql`: Initial atomic payment reconciliation function
+4. `20261013000001_fix_support_ticket_rls.sql`: Support tickets order ownership check
+5. `20261013000002_realtime_and_notifications.sql`: Realtime tables and notifications publication
+6. `20261013000003_secure_finalize_payment_rpc.sql`: Production-hardened `finalize_payment` RPC with row locking, currency/amount strict checks, cross-invoice reuse guards, and exclusive `service_role` execute permission.
+
 ```bash
 # Link your Supabase CLI to your project
 supabase link --project-ref your-project-ref
 
-# Push the migration
+# Push migrations in sequence
 supabase db push
 ```
-Or execute `supabase/migrations/20261012000001_harden_and_extend_portal.sql` directly in the Supabase SQL Editor.
 
 ### C. Supabase Authentication Setup
 1. In Supabase Dashboard -> **Authentication** -> **Providers** -> **Email**:
@@ -354,8 +375,8 @@ Or execute `supabase/migrations/20261012000001_harden_and_extend_portal.sql` dir
 supabase secrets set RAZORPAY_KEY_SECRET="your_live_secret" RAZORPAY_WEBHOOK_SECRET="your_webhook_secret"
 ```
 4. In Razorpay Dashboard -> **Settings** -> **Webhooks**:
-   - Add Webhook URL: `https://your-project-id.supabase.co/functions/v1/verify-razorpay-payment`
-   - Active Events: `payment.captured`, `order.paid`
+   - Add Webhook URL: `https://your-project-id.supabase.co/functions/v1/razorpay-webhook`
+   - Active Events: `payment.captured`, `payment.failed`, `order.paid`
    - Secret: Matches `RAZORPAY_WEBHOOK_SECRET`
 
 ### E. Backup & Recovery Considerations
