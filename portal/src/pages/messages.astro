@@ -123,6 +123,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       }
 
       async function renderMessages(order: ClientOrder) {
+        if (!threadTitle || !threadRef || !messagesBody) return;
         activeOrder = order;
         threadTitle.textContent = order.title;
         threadRef.textContent = `${order.division} • ${order.order_ref}`;
@@ -155,7 +156,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
         currentChannelName = `messages:order:${order.id}`;
         subscribeToOrderMessages(order.id, (newMsg) => {
           // Avoid duplicate render if message was from self and already rendered
-          if (newMsg.sender_id !== session.user.id) {
+          if (session && newMsg.sender_id !== session.user.id) {
             appendSingleMessage(newMsg);
           }
         });
@@ -164,6 +165,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       }
 
       function renderChannels() {
+        if (!channelsList) return;
         channelsList.innerHTML = orders.map((o) => `
           <button type="button" class="channel-btn btn btn-secondary" data-id="${escapeHtml(o.id)}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${o.id === activeOrder.id ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${o.id === activeOrder.id ? '#EFF6FF' : '#fff'};">
             <div>

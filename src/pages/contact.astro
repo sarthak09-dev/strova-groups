@@ -404,7 +404,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
       if (hasErrors) {
         statusBox.className = 'form-status error';
         statusBox.textContent = 'Please fill out the highlighted fields above.';
-        firstInvalid?.focus();
+        (firstInvalid as HTMLElement | null)?.focus();
         return;
       }
 

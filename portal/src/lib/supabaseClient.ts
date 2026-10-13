@@ -18,8 +18,8 @@ export const RAZORPAY_KEY_ID = (typeof import.meta !== 'undefined' && import.met
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-// Re-export common domain types from pure type module
-export type {
+// Import and re-export common domain types from pure type module
+import type {
   UserProfile,
   ClientOrder,
   OrderEvent,
@@ -31,6 +31,18 @@ export type {
   AuditLogEntry,
   PortalStage,
 } from './portalTypes';
+export type {
+  UserProfile,
+  ClientOrder,
+  OrderEvent,
+  ClientInvoice,
+  ClientPayment,
+  DeliverableFile,
+  OrderMessage,
+  SupportTicket,
+  AuditLogEntry,
+  PortalStage,
+};
 export { PORTAL_STAGES, getStageProgressPercent } from './portalTypes';
 
 // Browser Supabase client instance (persists JWT tokens in browser storage)

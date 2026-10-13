@@ -265,8 +265,8 @@ To protect site copy and architecture from unauthorized automated scraping and p
 
 The repository includes two automated test and audit suites:
 
-### 1. Tenant Isolation Suite (`npm test` / `tests/isolation.test.mjs`)
-Executes 125 automated assertions across 22 comprehensive test suites verifying:
+### 1. Tenant Isolation & Security Suite (`npm test` / `tests/isolation.test.mjs`)
+Executes 138 automated assertions across 23 comprehensive test suites verifying:
 - Client Alpha (`client-a@example.com`) receives strictly Client Alpha orders, events, files, invoices, and messages. Zero rows returned for Client Beta.
 - Client Beta (`client-b@example.com`) receives strictly Client Beta records. Zero rows returned for Client Alpha.
 - Cross-tenant ID enumeration queries return 0 rows.
@@ -290,8 +290,19 @@ Executes 125 automated assertions across 22 comprehensive test suites verifying:
 - RPC privilege restrictions: `finalize_payment` granted exclusively to `service_role`, revoked from `PUBLIC, anon, authenticated`.
 - Gateway verification & webhook fail-closed boundaries (deletion of direct DB fallbacks, 500 retry triggers).
 - Cloudflare Turnstile bot protection: prohibition of test keys in production and bilingual response handling.
+- Razorpay Order Creation Security & Recovery (Suite 23): authoritative invoice ownership, amount tampering rejection, idempotent open order reuse, strict database update failure handling with orphan gateway order audit logging, and fail-closed HTTP 500.
 
-### 2. Static Build Audit (`npm run audit` / `audit.mjs`)
+### 2. Database Privilege & Search-Path Verifier (`npm run verify:db` / `scripts/verify_postgres_privileges.mjs`)
+Verifies effective PostgreSQL privileges and security controls across all migrations:
+- `public.finalize_payment(...)` execution granted exclusively to `service_role` and explicitly revoked from `PUBLIC`, `anon`, and `authenticated`.
+- `public.is_admin()` and `public.handle_new_user()` maintain immutable `SET search_path = public, pg_temp;`.
+- Exact 8-parameter function signature verified without signature drift.
+- Supports offline migration schema analysis as well as live live-database verification when `DATABASE_URL` is supplied.
+
+### 3. Astro & TypeScript Diagnostics (`npm run astro:check`)
+Executes Astro compiler and strict TypeScript diagnostics across all 78 component and page files with zero errors.
+
+### 4. Static Build Audit (`npm run audit` / `audit.mjs`)
 Audits all rendered HTML pages in `dist/`:
 - Exactly one `<h1>` per page.
 - Title strictly under 60 characters and description strictly under 160 characters.
@@ -379,6 +390,18 @@ supabase secrets set RAZORPAY_KEY_SECRET="your_live_secret" RAZORPAY_WEBHOOK_SEC
    - Active Events: `payment.captured`, `payment.failed`, `order.paid`
    - Secret: Matches `RAZORPAY_WEBHOOK_SECRET`
 
-### E. Backup & Recovery Considerations
+### E. Cloudflare Edge Security & WAF Rate Limiting
+Because the marketing contact handler (`functions/api/contact.ts`) runs on Cloudflare Pages edge workers where in-memory IP Maps are local to each edge worker isolate:
+1. In Cloudflare Dashboard -> **Security** -> **WAF** -> **Rate limiting rules**:
+   - Create rule: `Enquiry Endpoint Rate Limit`
+   - Expression: `http.request.uri.path eq "/api/contact"`
+   - Rate: 5 requests per 10 minutes per IP address
+   - Action: `Managed Challenge` or `Block`
+2. In Cloudflare Dashboard -> **SSL/TLS**:
+   - Mode: `Full (strict)`
+   - Minimum TLS: `TLS 1.2`
+   - Enable `HTTP Strict Transport Security (HSTS)`
+
+### F. Backup & Recovery Considerations
 - **Database Snapshots**: Supabase provides automated daily backups with Point-in-Time Recovery (PITR) on Pro tier.
 - **Rollback Procedure**: In case of deployment rollback, Cloudflare Pages supports instant 1-click rollbacks to previous immutable deployments.

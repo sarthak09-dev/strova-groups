@@ -274,3 +274,21 @@ BEGIN
 END;
 $$;
 
+-- ============================================================================
+-- SEARCH PATH HYGIENE ON RLS HELPER FUNCTION
+-- ============================================================================
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+SET search_path = public, pg_temp
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid()
+      AND role = 'admin'
+  );
+$$;
+
+

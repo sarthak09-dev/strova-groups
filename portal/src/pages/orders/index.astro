@@ -318,6 +318,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
         // Populate Messages for this order
         async function loadMessages() {
+          if (!order) return;
           const messages = await fetchOrderMessages(order.id);
           const messagesContainer = document.getElementById('messages-list-container');
           if (messagesContainer) {

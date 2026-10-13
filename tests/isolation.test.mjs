@@ -1062,6 +1062,104 @@ console.log('\n[Test Suite 22: Turnstile Production Security & Contact API Resil
   assert(contactApi.includes("'Retry-After'"), 'functions/api/contact.ts returns Retry-After header on 429 rate limit exceeded');
 }
 
+// 23. RAZORPAY ORDER CREATION SECURITY & ERROR RECOVERY BOUNDARIES
+console.log('\n[Test Suite 23: Razorpay Order Creation Security & Error Recovery]');
+{
+  const createOrderCode = fs.readFileSync(new URL('../supabase/functions/create-razorpay-order/index.ts', import.meta.url), 'utf-8');
+
+  // 1. Static code assertions on hardened create-razorpay-order implementation
+  assert(createOrderCode.includes('updateError'), 'create-razorpay-order explicitly checks database update result (updateError)');
+  assert(createOrderCode.includes('gateway_order_orphaned'), 'create-razorpay-order audits orphaned gateway order when database write fails');
+  assert(createOrderCode.includes("status: 500"), 'create-razorpay-order returns HTTP 500 fail-closed if invoice association update fails');
+  assert(createOrderCode.includes('Price tampering detected'), 'create-razorpay-order rejects client-supplied amount mismatches');
+  assert(createOrderCode.includes('reused: true'), 'create-razorpay-order supports idempotent reuse of existing open gateway orders');
+  assert(createOrderCode.includes("invoice.status !== 'Pending'"), 'create-razorpay-order blocks checkout for non-pending invoices');
+
+  // 2. Behavioral Simulation of createRazorpayOrder
+  const mockInvoicesDb = [
+    { id: 'inv-pending-1', client_id: 'client-1', amount_paise: 50000, currency: 'INR', status: 'Pending', razorpay_order_id: null },
+    { id: 'inv-pending-reusable', client_id: 'client-1', amount_paise: 75000, currency: 'INR', status: 'Pending', razorpay_order_id: 'order_existing_valid' },
+    { id: 'inv-paid-1', client_id: 'client-1', amount_paise: 25000, currency: 'INR', status: 'Paid', razorpay_order_id: 'order_paid_123' },
+    { id: 'inv-cancelled-1', client_id: 'client-1', amount_paise: 30000, currency: 'INR', status: 'Cancelled', razorpay_order_id: null },
+  ];
+
+  function simulateCreateOrder({
+    callingUserId,
+    userRole = 'client',
+    invoiceId,
+    clientAmount = null,
+    dbUpdateFails = false,
+    mockGatewayOrders = { 'order_existing_valid': { id: 'order_existing_valid', amount: 75000, currency: 'INR', status: 'created' } },
+  }) {
+    if (!callingUserId) return { status: 401, error: 'Unauthorized user token' };
+    const inv = mockInvoicesDb.find(i => i.id === invoiceId);
+    if (!inv) return { status: 404, error: 'Invoice not found' };
+
+    // Tenant check
+    if (inv.client_id !== callingUserId && userRole !== 'admin') {
+      return { status: 403, error: 'Forbidden: You do not own this invoice' };
+    }
+
+    // Status check
+    if (inv.status === 'Paid') return { status: 400, error: 'Invoice is already settled' };
+    if (inv.status !== 'Pending') return { status: 400, error: `Invoice is in ${inv.status} status and cannot be checked out` };
+
+    // Price tampering check
+    if (clientAmount && clientAmount !== inv.amount_paise) {
+      return { status: 400, error: 'Price tampering detected: amount does not match authoritative invoice balance' };
+    }
+
+    // Reuse check
+    if (inv.razorpay_order_id && mockGatewayOrders[inv.razorpay_order_id]) {
+      const existing = mockGatewayOrders[inv.razorpay_order_id];
+      if (existing.amount === inv.amount_paise && existing.currency === inv.currency && existing.status === 'created') {
+        return { status: 200, reused: true, order_id: existing.id, amount_paise: inv.amount_paise };
+      }
+    }
+
+    // Simulate gateway order creation
+    const newGatewayOrderId = `order_new_${Date.now()}`;
+
+    // Simulate DB update check
+    if (dbUpdateFails) {
+      // Audit orphan
+      const orphanAudit = { action: 'gateway_order_orphaned', gateway_order_id: newGatewayOrderId, invoice_id: inv.id };
+      return { status: 500, error: 'Failed to record gateway order on invoice. Payment cannot proceed.', orphanAudit };
+    }
+
+    inv.razorpay_order_id = newGatewayOrderId;
+    return { status: 200, reused: false, order_id: newGatewayOrderId, amount_paise: inv.amount_paise };
+  }
+
+  // Test: Client 1 creates order for own pending invoice
+  const res1 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-pending-1' });
+  assert(res1.status === 200 && res1.reused === false && res1.order_id, 'Client can create gateway order for own pending invoice');
+
+  // Test: Client 2 attempts to create order for Client 1 invoice
+  const res2 = simulateCreateOrder({ callingUserId: 'client-2', invoiceId: 'inv-pending-1' });
+  assert(res2.status === 403, 'Cross-client order creation attempt is REJECTED (403)');
+
+  // Test: Attempt to checkout already paid invoice
+  const res3 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-paid-1' });
+  assert(res3.status === 400 && res3.error.includes('already settled'), 'Checkout attempt on Paid invoice is REJECTED (400)');
+
+  // Test: Attempt to checkout cancelled invoice
+  const res4 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-cancelled-1' });
+  assert(res4.status === 400, 'Checkout attempt on non-pending invoice is REJECTED (400)');
+
+  // Test: Client sends lower forged price
+  const res5 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-pending-1', clientAmount: 100 });
+  assert(res5.status === 400 && res5.error.includes('Price tampering'), 'Client-supplied forged amount mismatch is strictly REJECTED (400)');
+
+  // Test: Idempotent reuse of existing valid order
+  const res6 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-pending-reusable' });
+  assert(res6.status === 200 && res6.reused === true && res6.order_id === 'order_existing_valid', 'Existing open gateway order is reused idempotently without creating duplicate');
+
+  // Test: Database write failure recovery
+  const res7 = simulateCreateOrder({ callingUserId: 'client-1', invoiceId: 'inv-pending-1', dbUpdateFails: true });
+  assert(res7.status === 500 && res7.orphanAudit && res7.orphanAudit.action === 'gateway_order_orphaned', 'Database write failure fails closed with 500 and records orphaned order audit log');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');

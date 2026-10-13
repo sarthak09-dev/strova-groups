@@ -403,7 +403,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
       if (hasErrors) {
         statusBox.className = 'form-status error';
         statusBox.textContent = 'कृपया ऊपर हाइलाइट किए गए आवश्यक फ़ील्ड भरें।';
-        firstInvalid?.focus();
+        (firstInvalid as HTMLElement | null)?.focus();
         return;
       }
 

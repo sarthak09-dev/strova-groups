@@ -11,6 +11,8 @@
     "preview": "astro preview",
     "audit": "node audit.mjs",
     "test": "node tests/isolation.test.mjs",
+    "verify:db": "node scripts/verify_postgres_privileges.mjs",
+    "astro:check": "astro check",
     "preflight": "node scripts/preflight.mjs",
     "preflight:prod": "node scripts/preflight.mjs --mode=production",
     "astro": "astro"
@@ -24,5 +26,14 @@
     "astro": "^5.8.0",
     "gsap": "^3.12.7",
     "three": "^0.172.0"
+  },
+  "overrides": {
+    "esbuild": "^0.28.2",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/three": "^0.186.0",
+    "typescript": "^5.9.3"
   }
 }
