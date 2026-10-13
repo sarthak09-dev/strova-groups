@@ -1,6 +1,6 @@
 ---
 import PortalLayout from '../layouts/PortalLayout.astro';
-import { TURNSTILE_SITE_KEY, isSupabaseConfigured } from '../lib/supabaseClient';
+import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from '../lib/supabaseClient';
 ---
 
 <PortalLayout title="Client Sign In" currentNav="login">
@@ -24,6 +24,12 @@ import { TURNSTILE_SITE_KEY, isSupabaseConfigured } from '../lib/supabaseClient'
       {!isSupabaseConfigured && (
         <div class="notice-unconfigured" id="unconfigured-warning">
           <strong>Service Notice:</strong> Supabase authentication credentials (<code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_ANON_KEY</code>) are not configured. The portal is running in secure fail-closed mode.
+        </div>
+      )}
+
+      {!isTurnstileConfigured && (
+        <div class="notice-unconfigured" id="turnstile-unconfigured-warning" style="margin-bottom: 1.25rem;">
+          <strong>Security Notice:</strong> Bot challenge verification requires <code>PUBLIC_TURNSTILE_SITE_KEY</code>. Passcode dispatch requires real Turnstile credentials.
         </div>
       )}
 
@@ -333,20 +339,24 @@ import { TURNSTILE_SITE_KEY, isSupabaseConfigured } from '../lib/supabaseClient'
     // Turnstile explicit render
     function setupTurnstile() {
       const widget = document.getElementById('turnstile-widget');
+      const status = document.getElementById('turnstile-status');
       const win = window as any;
       if (widget && win.turnstile) {
-        const siteKey = widget.getAttribute('data-sitekey') || '1x00000000000000000000AA';
+        const siteKey = widget.getAttribute('data-sitekey') || '';
+        if (!siteKey) {
+          if (status) status.textContent = 'Notice: Turnstile site key not configured in environment.';
+          return;
+        }
+
         try {
           win.turnstile.render(widget, {
             sitekey: siteKey,
             callback: (token: string) => {
               turnstileToken = token;
-              const status = document.getElementById('turnstile-status');
               if (status) status.textContent = '✓ Bot challenge verified';
             },
             'error-callback': () => {
-              const status = document.getElementById('turnstile-status');
-              if (status) status.textContent = 'Challenge error. Please refresh.';
+              if (status) status.textContent = 'Challenge verification failed. Please refresh.';
             },
           });
         } catch (e) {

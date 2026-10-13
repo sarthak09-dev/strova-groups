@@ -59,6 +59,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       type ClientOrder,
       type OrderMessage,
     } from '../lib/supabaseClient';
+    import { subscribeToOrderMessages, unsubscribe } from '../lib/realtime';
     import { escapeHtml } from '../lib/sanitize';
 
     async function initMessages() {
@@ -91,11 +92,45 @@ import PortalLayout from '../layouts/PortalLayout.astro';
       }
 
       let activeOrder: ClientOrder = orders[0];
+      let currentChannelName = '';
+
+      function appendSingleMessage(m: any) {
+        if (!messagesBody) return;
+        // If empty message placeholder was shown, clear it
+        if (messagesBody.querySelector('.notification-empty') || messagesBody.textContent?.includes('No previous messages')) {
+          messagesBody.innerHTML = '';
+        }
+
+        const isClient = m.sender_role === 'client';
+        const time = m.created_at
+          ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Just now';
+
+        const msgDiv = document.createElement('div');
+        msgDiv.style.display = 'flex';
+        msgDiv.style.flexDirection = 'column';
+        msgDiv.style.alignItems = isClient ? 'flex-end' : 'flex-start';
+        msgDiv.innerHTML = `
+          <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">
+            ${isClient ? 'You' : 'Strova Team'} • ${escapeHtml(time)}
+          </span>
+          <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+            ${escapeHtml(m.message_text)}
+          </div>
+        `;
+        messagesBody.appendChild(msgDiv);
+        messagesBody.scrollTop = messagesBody.scrollHeight;
+      }
 
       async function renderMessages(order: ClientOrder) {
         activeOrder = order;
         threadTitle.textContent = order.title;
         threadRef.textContent = `${order.division} • ${order.order_ref}`;
+
+        // Unsubscribe from previous order channel if switching
+        if (currentChannelName) {
+          unsubscribe(currentChannelName);
+        }
 
         const msgs = await fetchOrderMessages(order.id);
         if (msgs.length === 0) {
@@ -115,6 +150,15 @@ import PortalLayout from '../layouts/PortalLayout.astro';
           }).join('');
           messagesBody.scrollTop = messagesBody.scrollHeight;
         }
+
+        // Subscribe to real-time incoming messages for this order
+        currentChannelName = `messages:order:${order.id}`;
+        subscribeToOrderMessages(order.id, (newMsg) => {
+          // Avoid duplicate render if message was from self and already rendered
+          if (newMsg.sender_id !== session.user.id) {
+            appendSingleMessage(newMsg);
+          }
+        });
 
         renderChannels();
       }
@@ -149,9 +193,15 @@ import PortalLayout from '../layouts/PortalLayout.astro';
           if (submitBtn) submitBtn.disabled = true;
 
           try {
-            await sendOrderMessage(activeOrder.id, text, profile?.role || 'client');
+            const sent = await sendOrderMessage(activeOrder.id, text, profile?.role || 'client');
             if (sendInput) sendInput.value = '';
-            await renderMessages(activeOrder);
+            // Instantly append sent message to UI
+            appendSingleMessage({
+              message_text: text,
+              sender_role: profile?.role || 'client',
+              sender_id: session.user.id,
+              created_at: new Date().toISOString(),
+            });
           } catch (err: any) {
             alert(err?.message || 'Error posting message to thread.');
           } finally {

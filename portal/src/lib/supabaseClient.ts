@@ -12,7 +12,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 // Environment variables exposed by Astro/Vite via PUBLIC_ prefix
 export const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SUPABASE_URL) || '';
 const SUPABASE_ANON_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SUPABASE_ANON_KEY) || '';
-export const TURNSTILE_SITE_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY) || '1x00000000000000000000AA';
+export const TURNSTILE_SITE_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY) || '';
+export const isTurnstileConfigured = Boolean(TURNSTILE_SITE_KEY);
 export const RAZORPAY_KEY_ID = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_RAZORPAY_KEY_ID) || '';
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -43,121 +44,6 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
     })
   : null;
 
-export interface UserProfile {
-  id: string;
-  email: string;
-  full_name: string;
-  role: 'client' | 'admin';
-  created_at: string;
-}
-
-export interface ClientOrder {
-  id: string;
-  order_ref: string;
-  client_id: string;
-  title: string;
-  division: 'technologies' | 'digital' | 'commerce';
-  current_stage: string;
-  scope_reference?: string;
-  target_completion_date?: string;
-  total_amount_paise: number;
-  balance_amount_paise: number;
-  currency: 'INR' | 'USD';
-  action_required_note?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface OrderEvent {
-  id: string;
-  order_id: string;
-  stage: string;
-  note: string;
-  created_at: string;
-}
-
-export interface ClientInvoice {
-  id: string;
-  order_id: string;
-  invoice_number: string;
-  status: 'Pending' | 'Paid';
-  amount_paise: number;
-  currency: 'INR' | 'USD';
-  due_date: string;
-  pdf_storage_path?: string;
-  razorpay_order_id?: string;
-  razorpay_payment_id?: string;
-  issued_at: string;
-  paid_at?: string;
-  created_at: string;
-  orders?: {
-    title: string;
-    order_ref: string;
-  };
-}
-
-export interface ClientPayment {
-  id: string;
-  invoice_id: string;
-  order_id: string;
-  client_id: string;
-  amount_paise: number;
-  currency: string;
-  gateway: string;
-  gateway_order_id?: string;
-  gateway_payment_id: string;
-  status: string;
-  receipt_number: string;
-  captured_at: string;
-  invoices?: {
-    invoice_number: string;
-  };
-}
-
-export interface DeliverableFile {
-  id: string;
-  order_id: string;
-  file_name: string;
-  storage_path: string;
-  file_size_bytes: number;
-  mime_type: string;
-  created_at: string;
-  orders?: {
-    title: string;
-    order_ref: string;
-  };
-}
-
-export interface OrderMessage {
-  id: string;
-  order_id: string;
-  sender_id: string;
-  sender_role: 'client' | 'admin';
-  message_text: string;
-  created_at: string;
-}
-
-export interface SupportTicket {
-  id: string;
-  client_id: string;
-  order_id?: string;
-  subject: string;
-  description: string;
-  priority: 'low' | 'normal' | 'high' | 'urgent';
-  status: 'open' | 'in_progress' | 'resolved' | 'closed';
-  created_at: string;
-  updated_at: string;
-}
-
-export interface AuditLogEntry {
-  id: string;
-  actor_id: string;
-  action: string;
-  target_table: string;
-  target_id: string;
-  details: Record<string, unknown>;
-  created_at: string;
-}
 
 /**
  * Retrieves the currently authenticated Supabase session.
@@ -415,6 +301,57 @@ export async function createSupportTicket(ticket: {
 
   if (error) throw error;
   return data;
+}
+
+/**
+ * Fetches unread notifications for the authenticated user.
+ */
+export async function fetchNotifications(limit = 20): Promise<any[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) return [];
+  return data || [];
+}
+
+/**
+ * Fetches the count of unread notifications.
+ */
+export async function fetchUnreadNotificationCount(): Promise<number> {
+  if (!supabase) return 0;
+  const { count, error } = await supabase
+    .from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_read', false);
+
+  if (error) return 0;
+  return count || 0;
+}
+
+/**
+ * Marks a notification as read.
+ */
+export async function markNotificationRead(notificationId: string): Promise<void> {
+  if (!supabase) return;
+  await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', notificationId);
+}
+
+/**
+ * Marks all notifications as read.
+ */
+export async function markAllNotificationsRead(): Promise<void> {
+  if (!supabase) return;
+  await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('is_read', false);
 }
 
 // -----------------------------------------------------------------------------

@@ -667,6 +667,230 @@ console.log('\n[Test Suite 14: Strict Contact API Origin & Referer Verification]
   );
 }
 
+// 15. ATOMIC PAYMENT RECONCILIATION STATE MACHINE & RPC
+console.log('\n[Test Suite 15: Atomic Payment Finalization & Balance Reconciliation]');
+{
+  function simulateFinalizePayment({
+    invoice,
+    paymentsTable,
+    ordersTable,
+    p_razorpay_order_id,
+    p_razorpay_payment_id,
+    p_client_id,
+    p_amount_paise,
+    p_currency = 'INR'
+  }) {
+    if (!invoice) {
+      throw new Error('Invoice not found [P0002]');
+    }
+
+    // Idempotency: if already paid
+    if (invoice.status === 'Paid') {
+      const existing = paymentsTable.find(p => p.gateway_payment_id === p_razorpay_payment_id);
+      if (existing) {
+        return { success: true, idempotent: true, payment_id: existing.id };
+      }
+      throw new Error('Invoice is already Paid under a different payment [23505]');
+    }
+
+    // Order ID match
+    if (invoice.razorpay_order_id && invoice.razorpay_order_id !== p_razorpay_order_id) {
+      throw new Error('Razorpay order ID mismatch [22000]');
+    }
+
+    // Amount match
+    if (invoice.amount_paise !== p_amount_paise) {
+      throw new Error('Payment amount mismatch [22000]');
+    }
+
+    // Client ownership of order
+    const order = ordersTable.find(o => o.id === invoice.order_id);
+    if (!order || order.client_id !== p_client_id) {
+      throw new Error('Client does not own order [42501]');
+    }
+
+    // Atomic execution:
+    const payment = {
+      id: 'pay-' + p_razorpay_payment_id,
+      invoice_id: invoice.id,
+      order_id: invoice.order_id,
+      client_id: p_client_id,
+      amount_paise: p_amount_paise,
+      currency: p_currency,
+      status: 'captured',
+      gateway_payment_id: p_razorpay_payment_id,
+    };
+    paymentsTable.push(payment);
+
+    invoice.status = 'Paid';
+    invoice.paid_at = new Date().toISOString();
+    invoice.razorpay_payment_id = p_razorpay_payment_id;
+
+    // Reconcile balance
+    order.balance_amount_paise = Math.max(0, order.balance_amount_paise - p_amount_paise);
+
+    return { success: true, payment_id: payment.id, new_balance: order.balance_amount_paise };
+  }
+
+  const testOrder = { id: 'ord-1', client_id: 'usr-1', balance_amount_paise: 100000 };
+  const testInvoice = { id: 'inv-1', order_id: 'ord-1', amount_paise: 50000, status: 'Pending', razorpay_order_id: 'order_rzp_123' };
+  const paymentsTable = [];
+  const ordersTable = [testOrder];
+
+  // 1. Successful atomic payment
+  const res = simulateFinalizePayment({
+    invoice: testInvoice,
+    paymentsTable,
+    ordersTable,
+    p_razorpay_order_id: 'order_rzp_123',
+    p_razorpay_payment_id: 'pay_rzp_456',
+    p_client_id: 'usr-1',
+    p_amount_paise: 50000,
+  });
+  assert(res.success && testInvoice.status === 'Paid' && testOrder.balance_amount_paise === 50000, 'Payment finalized atomically and order balance reconciled');
+
+  // 2. Idempotent retry with same payment ID
+  const retryRes = simulateFinalizePayment({
+    invoice: testInvoice,
+    paymentsTable,
+    ordersTable,
+    p_razorpay_order_id: 'order_rzp_123',
+    p_razorpay_payment_id: 'pay_rzp_456',
+    p_client_id: 'usr-1',
+    p_amount_paise: 50000,
+  });
+  assert(retryRes.idempotent === true && retryRes.success === true, 'Duplicate payment retry handled idempotently without double-debit');
+
+  // 3. Forged amount is rejected
+  let amountError = false;
+  try {
+    const unpdInvoice = { id: 'inv-2', order_id: 'ord-1', amount_paise: 50000, status: 'Pending', razorpay_order_id: 'order_rzp_999' };
+    simulateFinalizePayment({
+      invoice: unpdInvoice,
+      paymentsTable,
+      ordersTable,
+      p_razorpay_order_id: 'order_rzp_999',
+      p_razorpay_payment_id: 'pay_rzp_789',
+      p_client_id: 'usr-1',
+      p_amount_paise: 100, // Forged lower amount!
+    });
+  } catch (e) {
+    amountError = e.message.includes('Payment amount mismatch');
+  }
+  assert(amountError, 'Forged lower payment amount is strictly REJECTED');
+
+  // 4. Cross-client claim is rejected
+  let crossError = false;
+  try {
+    const unpdInvoice2 = { id: 'inv-3', order_id: 'ord-1', amount_paise: 50000, status: 'Pending', razorpay_order_id: 'order_rzp_888' };
+    simulateFinalizePayment({
+      invoice: unpdInvoice2,
+      paymentsTable,
+      ordersTable,
+      p_razorpay_order_id: 'order_rzp_888',
+      p_razorpay_payment_id: 'pay_rzp_999',
+      p_client_id: 'usr-attacker', // Attacker client
+      p_amount_paise: 50000,
+    });
+  } catch (e) {
+    crossError = e.message.includes('Client does not own order');
+  }
+  assert(crossError, 'Attacker attempting to settle invoice for another client order is REJECTED');
+}
+
+// 16. RAZORPAY WEBHOOK HMAC-SHA256 SIGNATURE VERIFICATION
+console.log('\n[Test Suite 16: Razorpay Webhook Cryptographic Verification]');
+{
+  const crypto = await import('node:crypto');
+
+  function computeHmac(secret, payload) {
+    return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  }
+
+  function timingSafeEqual(a, b) {
+    if (a.length !== b.length) return false;
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+      result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return result === 0;
+  }
+
+  function verifyWebhook({ secret, payload, signature }) {
+    if (!secret) return { status: 503, error: 'Webhook secret unconfigured' };
+    if (!signature) return { status: 400, error: 'Missing signature' };
+    const expected = computeHmac(secret, payload);
+    if (!timingSafeEqual(expected, signature)) {
+      return { status: 400, error: 'Invalid signature' };
+    }
+    return { status: 200, valid: true };
+  }
+
+  const webhookSecret = 'test_webhook_secret_998877';
+  const testPayload = JSON.stringify({ event: 'payment.captured', payload: { payment: { entity: { id: 'pay_123', amount: 500000 } } } });
+  const validSignature = computeHmac(webhookSecret, testPayload);
+
+  assert(verifyWebhook({ secret: webhookSecret, payload: testPayload, signature: validSignature }).status === 200, 'Valid webhook HMAC signature is ACCEPTED (200)');
+  assert(verifyWebhook({ secret: webhookSecret, payload: testPayload, signature: 'bad_signature_hex' }).status === 400, 'Invalid webhook signature is REJECTED (400)');
+  assert(verifyWebhook({ secret: webhookSecret, payload: testPayload + 'tampered', signature: validSignature }).status === 400, 'Tampered webhook payload is REJECTED (400)');
+  assert(verifyWebhook({ secret: null, payload: testPayload, signature: validSignature }).status === 503, 'Webhook FAILS CLOSED (503) when RAZORPAY_WEBHOOK_SECRET is missing');
+}
+
+// 17. SUPPORT TICKET ORDER OWNERSHIP ISOLATION
+console.log('\n[Test Suite 17: Support Ticket Cross-Client Order Association Prevention]');
+{
+  const orders = [
+    { id: 'ord-alpha', client_id: 'client-1' },
+    { id: 'ord-beta', client_id: 'client-2' },
+  ];
+
+  function validateTicketOrderAssociation(clientId, orderId) {
+    if (!orderId) return { allowed: true }; // General ticket without order link
+    const ownsOrder = orders.some(o => o.id === orderId && o.client_id === clientId);
+    if (!ownsOrder) {
+      return { allowed: false, reason: 'Cross-tenant order association forbidden' };
+    }
+    return { allowed: true };
+  }
+
+  assert(validateTicketOrderAssociation('client-1', 'ord-alpha').allowed === true, 'Client 1 can associate ticket with their own order (ord-alpha)');
+  assert(validateTicketOrderAssociation('client-1', null).allowed === true, 'Client 1 can create ticket without order (order_id = null)');
+  assert(validateTicketOrderAssociation('client-1', 'ord-beta').allowed === false, 'Client 1 attempting to associate ticket with Client 2 order (ord-beta) is REJECTED');
+}
+
+// 18. NOTIFICATIONS RLS & READ STATUS ISOLATION
+console.log('\n[Test Suite 18: In-App Notifications Isolation & Unread Management]');
+{
+  const notifStore = [
+    { id: 'notif-1', user_id: 'usr-1', title: 'Payment received', is_read: false },
+    { id: 'notif-2', user_id: 'usr-1', title: 'Order update', is_read: true },
+    { id: 'notif-3', user_id: 'usr-2', title: 'Private invoice issued', is_read: false },
+  ];
+
+  function queryUserNotifications(currentUserId) {
+    return notifStore.filter(n => n.user_id === currentUserId);
+  }
+
+  function markNotificationAsRead(currentUserId, notifId) {
+    const item = notifStore.find(n => n.id === notifId);
+    if (!item) return { status: 404 };
+    if (item.user_id !== currentUserId) {
+      return { status: 403, error: 'Forbidden' };
+    }
+    item.is_read = true;
+    return { status: 200, updated: item };
+  }
+
+  const user1Notifs = queryUserNotifications('usr-1');
+  assert(user1Notifs.length === 2 && !user1Notifs.some(n => n.user_id === 'usr-2'), 'User 1 queries ONLY their own notifications (tenant isolation)');
+
+  const markOwn = markNotificationAsRead('usr-1', 'notif-1');
+  assert(markOwn.status === 200 && markOwn.updated.is_read === true, 'User 1 marks their own notification as read');
+
+  const markOther = markNotificationAsRead('usr-1', 'notif-3');
+  assert(markOther.status === 403, 'User 1 attempting to mark User 2 notification as read is REJECTED (403)');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');

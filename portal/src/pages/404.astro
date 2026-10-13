@@ -1,0 +1,38 @@
+---
+import PortalLayout from '../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Page Not Found (404)">
+  <div style="min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 1rem;">
+    <div style="display: inline-block; padding: 0.25rem 0.75rem; background: var(--color-danger-bg); border: 1px solid rgba(220, 38, 38, 0.2); color: var(--color-danger); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 4px; margin-bottom: 1.25rem;">
+      Error 404
+    </div>
+    
+    <h2 style="font-family: var(--font-serif); font-size: 2.25rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.75rem;">
+      Portal Resource Not Found
+    </h2>
+    
+    <p style="font-size: 0.9375rem; color: var(--color-text-muted); max-width: 480px; line-height: 1.6; margin-bottom: 2rem;">
+      The requested client portal destination does not exist, has been archived, or you may lack authorized access to this specific view.
+    </p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 2.5rem;">
+      <a href="/portal" class="btn btn-primary" style="padding: 0.65rem 1.25rem;">
+        Return to Overview
+      </a>
+      <a href="/portal/orders" class="btn btn-secondary" style="padding: 0.65rem 1.25rem;">
+        View Projects
+      </a>
+      <a href="/portal/invoices" class="btn btn-secondary" style="padding: 0.65rem 1.25rem;">
+        Invoices &amp; Payments
+      </a>
+      <a href="/portal/support" class="btn btn-secondary" style="padding: 0.65rem 1.25rem;">
+        Submit Support Ticket
+      </a>
+    </div>
+
+    <div style="padding-top: 1.5rem; border-top: 1px solid var(--color-border); font-size: 0.75rem; color: var(--color-text-dim);">
+      Need engineering assistance? Contact direct desk at <a href="mailto:info@strovagroups.in" style="color: var(--color-primary);">info@strovagroups.in</a> or WhatsApp <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" style="color: var(--color-primary);">+91 92880 77802</a>.
+    </div>
+  </div>
+</PortalLayout>

@@ -187,67 +187,100 @@ serve(async (req) => {
       });
     }
 
-    // Record immutable payment entry
+    // Record immutable payment entry and atomically settle invoice
     const receiptNumber = `RCP-${invoice.invoice_number}-${Date.now().toString().slice(-4)}`;
-    const { data: newPayment, error: paymentError } = await supabaseAdmin
-      .from('payments')
-      .insert({
-        invoice_id: invoice.id,
-        order_id: invoice.order_id,
-        client_id: invoice.orders.client_id,
-        amount_paise: invoice.amount_paise,
-        currency: invoice.currency || 'INR',
-        gateway: 'razorpay',
-        gateway_order_id: razorpay_order_id,
-        gateway_payment_id: razorpay_payment_id,
-        status: 'captured',
-        receipt_number: receiptNumber,
-        metadata: {
-          verified_by: 'edge_function_verify',
-          verified_user_id: user.id,
-        },
-      })
-      .select()
-      .single();
+    
+    // Attempt atomic reconciliation via database RPC
+    const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc('finalize_payment', {
+      p_invoice_id: invoice.id,
+      p_razorpay_order_id: razorpay_order_id,
+      p_razorpay_payment_id: razorpay_payment_id,
+      p_client_id: invoice.orders.client_id,
+      p_amount_paise: invoice.amount_paise,
+      p_currency: invoice.currency || 'INR',
+      p_receipt_number: receiptNumber,
+      p_metadata: {
+        verified_by: 'edge_function_verify',
+        verified_user_id: user.id,
+      },
+    });
 
-    if (paymentError) {
-      return new Response(JSON.stringify({ error: 'Failed to record payment in ledger', details: paymentError }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let paymentId = rpcResult?.payment_id;
+
+    if (rpcError) {
+      console.warn('finalize_payment RPC fallback to direct ledger operations:', rpcError);
+      
+      const { data: newPayment, error: paymentError } = await supabaseAdmin
+        .from('payments')
+        .insert({
+          invoice_id: invoice.id,
+          order_id: invoice.order_id,
+          client_id: invoice.orders.client_id,
+          amount_paise: invoice.amount_paise,
+          currency: invoice.currency || 'INR',
+          gateway: 'razorpay',
+          gateway_order_id: razorpay_order_id,
+          gateway_payment_id: razorpay_payment_id,
+          status: 'captured',
+          receipt_number: receiptNumber,
+          metadata: {
+            verified_by: 'edge_function_verify_fallback',
+            verified_user_id: user.id,
+          },
+        })
+        .select()
+        .single();
+
+      if (paymentError) {
+        return new Response(JSON.stringify({ error: 'Failed to record payment in ledger', details: paymentError }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      paymentId = newPayment.id;
+
+      // Mark invoice as Paid
+      await supabaseAdmin
+        .from('invoices')
+        .update({
+          status: 'Paid',
+          paid_at: new Date().toISOString(),
+          razorpay_payment_id: razorpay_payment_id,
+        })
+        .eq('id', invoice.id);
+
+      // Reconcile order balance
+      const { data: remainingInvoices } = await supabaseAdmin
+        .from('invoices')
+        .select('amount_paise')
+        .eq('order_id', invoice.order_id)
+        .eq('status', 'Pending');
+
+      const newBalance = (remainingInvoices || []).reduce((sum, inv) => sum + (inv.amount_paise || 0), 0);
+      await supabaseAdmin
+        .from('orders')
+        .update({ balance_amount_paise: newBalance })
+        .eq('id', invoice.order_id);
     }
 
-    // Mark invoice as Paid
-    await supabaseAdmin
-      .from('invoices')
-      .update({
-        status: 'Paid',
-        paid_at: new Date().toISOString(),
-        razorpay_payment_id: razorpay_payment_id,
-      })
-      .eq('id', invoice.id);
-
-    // Reconcile order balance
-    const { data: remainingInvoices } = await supabaseAdmin
-      .from('invoices')
-      .select('amount_paise')
-      .eq('order_id', invoice.order_id)
-      .eq('status', 'Pending');
-
-    const newBalance = (remainingInvoices || []).reduce((sum, inv) => sum + (inv.amount_paise || 0), 0);
-    await supabaseAdmin
-      .from('orders')
-      .update({ balance_amount_paise: newBalance })
-      .eq('id', invoice.order_id);
+    // Insert in-app notification for the client
+    await supabaseAdmin.from('notifications').insert({
+      user_id: invoice.orders.client_id,
+      type: 'payment_received',
+      title: `Payment Confirmed: Invoice ${invoice.invoice_number}`,
+      body: `Payment of ${(invoice.currency || 'INR')} ${(invoice.amount_paise / 100).toFixed(2)} verified. Receipt #${receiptNumber}.`,
+      link: '/invoices',
+    }).catch(() => null);
 
     return new Response(JSON.stringify({
       success: true,
       message: 'Payment verified and invoice marked Paid.',
-      payment_id: newPayment.id,
+      payment_id: paymentId,
       receipt_number: receiptNumber,
       invoice_id: invoice.id,
       // CamelCase aliases
-      paymentId: newPayment.id,
+      paymentId: paymentId,
       receiptNumber: receiptNumber,
       invoiceId: invoice.id,
     }), {
