@@ -54,12 +54,9 @@ function isActive(href: string): boolean {
           <span>MSME: UDYAM-JH-20-0147452</span>
         </span>
         <span class="topbar-divider" aria-hidden="true">&bull;</span>
-        <span class="topbar-item">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span>Mon–Sat: 10:00 AM – 7:00 PM IST</span>
+        <span class="topbar-item ist-status-badge" aria-label="Operating hours and live status">
+          <span class="status-pulse-dot status-open" aria-hidden="true"></span>
+          <span class="status-text">10:00 AM – 7:00 PM IST</span>
         </span>
       </div>
       <div class="header__topbar-right">
@@ -108,13 +105,8 @@ function isActive(href: string): boolean {
       </ul>
     </nav>
 
-    <!-- Header Actions (Direct Contact, Live IST Status & CTA) -->
+    <!-- Header Actions (Direct Contact, Theme Toggle & CTA) -->
     <div class="header__actions">
-      <div class="header__status ist-status-badge" aria-label="Indian Standard Time operating status">
-        <span class="status-pulse-dot status-open" aria-hidden="true"></span>
-        <span class="status-text">IST UTC+5:30 &bull; Office Open</span>
-      </div>
-
       <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp header__wa-btn" aria-label="Chat on WhatsApp">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
@@ -228,36 +220,38 @@ function isActive(href: string): boolean {
 
 <script>
   // Mobile nav toggling logic
+  const siteHeader = document.querySelector('.site-header') as HTMLElement | null;
   const menuBtn = document.querySelector('.header__menu-btn') as HTMLButtonElement | null;
   const mobileMenu = document.getElementById('mobile-menu');
   const openIcon = document.querySelector('.header__menu-icon--open') as HTMLElement | null;
   const closeIcon = document.querySelector('.header__menu-icon--close') as HTMLElement | null;
 
   if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener('click', () => {
-      const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-      menuBtn.setAttribute('aria-expanded', String(!isExpanded));
-      menuBtn.setAttribute('aria-label', isExpanded ? 'Open menu' : 'Close menu');
-      mobileMenu.hidden = isExpanded;
+    const setMenuOpen = (open: boolean) => {
+      menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      mobileMenu.hidden = !open;
+      if (siteHeader) {
+        siteHeader.classList.toggle('is-menu-open', open);
+      }
+      document.body.classList.toggle('mobile-menu-open', open);
 
       if (openIcon && closeIcon) {
-        openIcon.style.display = isExpanded ? 'block' : 'none';
-        closeIcon.style.display = isExpanded ? 'none' : 'block';
+        openIcon.style.display = open ? 'none' : 'block';
+        closeIcon.style.display = open ? 'block' : 'none';
       }
 
-      document.body.style.overflow = isExpanded ? '' : 'hidden';
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    menuBtn.addEventListener('click', () => {
+      const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      setMenuOpen(!isExpanded);
     });
 
     mobileMenu.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
-        menuBtn.setAttribute('aria-expanded', 'false');
-        menuBtn.setAttribute('aria-label', 'Open menu');
-        mobileMenu.hidden = true;
-        if (openIcon && closeIcon) {
-          openIcon.style.display = 'block';
-          closeIcon.style.display = 'none';
-        }
-        document.body.style.overflow = '';
+        setMenuOpen(false);
       });
     });
   }
@@ -274,7 +268,15 @@ function isActive(href: string): boolean {
     border-bottom: 1px solid var(--border-color);
   }
 
+  .site-header.is-menu-open {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--bg-page);
+  }
+
   .header__inner {
+    position: relative;
+    z-index: 1002;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -288,6 +290,7 @@ function isActive(href: string): boolean {
     gap: var(--space-3);
     text-decoration: none;
     color: var(--text-primary);
+    flex-shrink: 0;
   }
 
   .header__wordmark {
@@ -295,6 +298,7 @@ function isActive(href: string): boolean {
     font-size: var(--text-xl);
     font-weight: 600;
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
   .header__nav-desktop {
@@ -311,6 +315,7 @@ function isActive(href: string): boolean {
     display: flex;
     align-items: center;
     gap: var(--space-1);
+    flex-wrap: nowrap;
   }
 
   .header__link {
@@ -322,6 +327,7 @@ function isActive(href: string): boolean {
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-sm);
     transition: all var(--duration-fast) var(--ease-out);
+    white-space: nowrap;
   }
 
   .header__link:hover {
@@ -338,6 +344,7 @@ function isActive(href: string): boolean {
     display: none;
     align-items: center;
     gap: var(--space-3);
+    flex-shrink: 0;
   }
 
   @media (min-width: 50rem) {
@@ -346,24 +353,22 @@ function isActive(href: string): boolean {
     }
   }
 
-  .header__status {
-    display: none;
-  }
-
-  @media (min-width: 76rem) {
-    .header__status {
-      display: inline-flex;
-    }
-  }
-
   .header__wa-btn {
+    display: none;
     padding: 0.4rem 0.8rem;
     font-size: var(--text-xs);
+  }
+
+  @media (min-width: 72rem) {
+    .header__wa-btn {
+      display: inline-flex;
+    }
   }
 
   .header__cta-btn {
     padding: 0.45rem 1rem;
     font-size: var(--text-xs);
+    white-space: nowrap;
   }
 
   .header__menu-btn {
@@ -386,17 +391,29 @@ function isActive(href: string): boolean {
 
   .header__nav-mobile {
     position: fixed;
-    top: 4.25rem;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    height: 100dvh;
     background: var(--bg-page);
-    padding: var(--space-6) var(--gutter);
+    padding: calc(4.25rem + var(--space-4)) var(--gutter) var(--space-6);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    z-index: 999;
+    gap: var(--space-6);
+    z-index: 1001;
+  }
+
+  .header__nav-mobile[hidden] {
+    display: none !important;
+  }
+
+  @media (min-width: 64rem) {
+    .header__nav-mobile {
+      display: none !important;
+    }
   }
 
   .header__mobile-links {

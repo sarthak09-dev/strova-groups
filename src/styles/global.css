@@ -139,6 +139,10 @@
   padding: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
@@ -493,6 +497,10 @@ select:focus-visible {
 /* -------------------------------------------------- */
 .mobile-quote-bar {
   display: none;
+}
+
+body.mobile-menu-open .mobile-quote-bar {
+  display: none !important;
 }
 
 @media (max-width: 768px) {
