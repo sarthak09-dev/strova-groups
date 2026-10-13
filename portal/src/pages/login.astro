@@ -330,7 +330,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
       try {
         const session = await getSession();
         if (session) {
-          window.location.href = '/portal';
+          window.location.href = '/';
         }
       } catch (e) {}
     }
@@ -351,6 +351,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
         try {
           win.turnstile.render(widget, {
             sitekey: siteKey,
+            theme: 'light',
             callback: (token: string) => {
               turnstileToken = token;
               if (status) status.textContent = '✓ Bot challenge verified';
@@ -553,7 +554,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           const result = await verifyOtp(activeEmail, code);
           if (result?.session) {
             // Check user role
-            let targetUrl = '/portal';
+            let targetUrl = '/';
             if (supabase) {
               const { data: profile } = await supabase
                 .from('profiles')
@@ -562,7 +563,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
                 .single();
 
               if (profile?.role === 'admin') {
-                targetUrl = '/portal/admin';
+                targetUrl = '/admin/';
               }
             }
             window.location.href = targetUrl;

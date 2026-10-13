@@ -4,7 +4,6 @@
  * - Scroll Progress Hairline Indicator
  * - Live IST Time & Office Open/Standby Status Ticker
  * - Interactive Cursor Sheen Micro-Interactions on Cards
- * - Interactive Light & Dark Theme Controller
  */
 
 export function initGlobalInteractions() {
@@ -120,40 +119,12 @@ export function initGlobalInteractions() {
     });
   }
 
-  // 5. Interactive Light & Dark Theme Controller
-  function setupThemeToggle() {
-    const toggleButtons = document.querySelectorAll<HTMLButtonElement>('#theme-toggle, #mobile-theme-toggle, .btn--theme-toggle');
-    if (toggleButtons.length === 0) return;
-
-    const getCurrentTheme = (): 'light' | 'dark' => {
-      const activeAttr = document.documentElement.getAttribute('data-theme');
-      if (activeAttr === 'light' || activeAttr === 'dark') return activeAttr;
-      return 'light';
-    };
-
-    const updateButtonsAria = (currentTheme: 'light' | 'dark') => {
-      toggleButtons.forEach((btn) => {
-        btn.setAttribute('aria-pressed', currentTheme === 'light' ? 'true' : 'false');
-        btn.setAttribute('title', `Current theme: ${currentTheme}. Click to switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme.`);
-      });
-    };
-
-    updateButtonsAria(getCurrentTheme());
-
-    toggleButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const currentTheme = getCurrentTheme();
-        const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        try {
-          localStorage.setItem('strova-theme', nextTheme);
-        } catch (e) {}
-        updateButtonsAria(nextTheme);
-      });
-    });
-  }
-
-  setupThemeToggle();
+  // Ensure document remains permanently light and purge any legacy theme keys
+  try {
+    localStorage.removeItem('strova-theme');
+    sessionStorage.removeItem('strova-theme');
+  } catch (e) {}
+  document.documentElement.removeAttribute('data-theme');
 }
 
 // Auto-run on DOM ready

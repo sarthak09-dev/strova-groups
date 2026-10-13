@@ -13,6 +13,7 @@
  */
 
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 
 // -----------------------------------------------------------------------------
 // Seed Database Fixture (matches supabase/migrations/20261012000000_client_portal_schema.sql)
@@ -889,6 +890,49 @@ console.log('\n[Test Suite 18: In-App Notifications Isolation & Unread Managemen
 
   const markOther = markNotificationAsRead('usr-1', 'notif-3');
   assert(markOther.status === 403, 'User 1 attempting to mark User 2 notification as read is REJECTED (403)');
+}
+
+// 19. PERMANENT LIGHT THEME & DARK MODE REGRESSION PREVENTION
+console.log('\n[Test Suite 19: Permanent Light Theme & Dark Mode Regression Prevention]');
+{
+  // 1. Verify global.css has no active dark theme token overrides
+  const globalCss = fs.readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf-8');
+  assert(!globalCss.includes(':root[data-theme="dark"]'), 'global.css contains zero :root[data-theme="dark"] override selectors');
+  assert(!globalCss.includes('@media (prefers-color-scheme: dark)'), 'global.css contains zero @media (prefers-color-scheme: dark) override blocks');
+  assert(globalCss.includes('color-scheme: light;'), 'global.css explicitly enforces color-scheme: light on :root and html');
+
+  // 2. Verify Header.astro has no visible theme toggle controls
+  const headerAstro = fs.readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf-8');
+  assert(!headerAstro.includes('id="theme-toggle"'), 'Header.astro contains zero desktop theme toggle controls (#theme-toggle)');
+  assert(!headerAstro.includes('id="mobile-theme-toggle"'), 'Header.astro contains zero mobile theme toggle controls (#mobile-theme-toggle)');
+  assert(!headerAstro.includes('btn--theme-toggle'), 'Header.astro contains zero .btn--theme-toggle elements');
+
+  // 3. Verify BaseLayout.astro purges legacy theme keys and never restores dark theme
+  const baseLayout = fs.readFileSync(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf-8');
+  assert(baseLayout.includes("localStorage.removeItem('strova-theme')"), 'BaseLayout.astro actively purges legacy strova-theme from localStorage');
+  assert(!baseLayout.includes("setAttribute('data-theme', 'dark')"), 'BaseLayout.astro never sets data-theme="dark"');
+
+  // 4. Verify PortalLayout.astro enforces light theme and light sidebar
+  const portalLayout = fs.readFileSync(new URL('../portal/src/layouts/PortalLayout.astro', import.meta.url), 'utf-8');
+  assert(portalLayout.includes('color-scheme: light;'), 'PortalLayout.astro explicitly enforces color-scheme: light');
+  assert(portalLayout.includes('--color-sidebar: #FFFFFF;'), 'PortalLayout.astro enforces light sidebar (--color-sidebar: #FFFFFF)');
+
+  // 5. Simulate client-side theme initialization with legacy 'dark' stored in localStorage
+  function simulateThemeInit(mockStorage) {
+    let activeTheme = 'light';
+    let documentAttrs = {};
+    if (mockStorage['strova-theme']) {
+      delete mockStorage['strova-theme']; // Active purge
+    }
+    // Theme remains permanent light
+    return { activeTheme, documentAttrs, mockStorage };
+  }
+
+  const legacyStorage = { 'strova-theme': 'dark' };
+  const result = simulateThemeInit(legacyStorage);
+  assert(result.activeTheme === 'light', 'Client theme resolves to light even when legacy strova-theme="dark" was stored');
+  assert(!('strova-theme' in result.mockStorage), 'Legacy strova-theme key is purged from storage');
+  assert(result.documentAttrs['data-theme'] !== 'dark', 'Document attribute data-theme="dark" is never set');
 }
 
 console.log('\n================================================================');

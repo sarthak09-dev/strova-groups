@@ -34,7 +34,7 @@ The platform is architected into two decoupled systems:
 2. **Client Portal (`https://portal.strovagroups.in`)**: Invite-only authenticated client workspace built with Supabase (Auth, Postgres, Storage, Row Level Security) and `@supabase/ssr`.
 
 - **Framework**: [Astro v5](https://astro.build/)
-- **Design System**: Editorial light-first design tokens with Newsreader Variable (serif) and Plus Jakarta Sans Variable (sans). Dark theme supported via CSS variables and pre-hydration theme toggle.
+- **Design System**: Editorial permanent light design tokens with Newsreader Variable (serif) and Plus Jakarta Sans Variable (sans). High-contrast `#0F172A` ink typography on crisp `#FFFFFF` and subtle `#F8FAFC` surfaces with permanent `color-scheme: light`.
 - **3D Graphics & Motion**:
   - Three.js physical kinetic sculpture on homepage hero with WebGL detection, pixel ratio capped at 2, IntersectionObserver pause/resume, and accessible SVG fallback.
   - Lightweight GSAP interactions and CSS scroll-driven progress animations.
@@ -69,7 +69,7 @@ strova-group/
 │   ├── content/                   # Content collections (journal & work with draft templates)
 │   ├── components/                # Header, Footer, SEOHead, ThreeHero, CredentialsStrip
 │   ├── layouts/
-│   │   └── BaseLayout.astro       # Root layout with schemas, theme script, skip link, sticky quote bar
+│   │   └── BaseLayout.astro       # Root layout with schemas, skip link, and sticky quote bar
 │   ├── pages/
 │   │   ├── index.astro            # Homepage (9-stage conversion narrative, "How quotes work", FAQ)
 │   │   ├── technologies.astro     # Strova Technologies (AI & automation housed here)
@@ -85,7 +85,7 @@ strova-group/
 │   │   └── 404.astro              # Branded 404 recovery page
 │   └── scripts/
 │       ├── analytics.ts           # Privacy-preserving cookieless event dispatcher
-│       └── globalInteractions.ts  # Theme toggle, IST clock ticker, card sheen effects
+│       └── globalInteractions.ts  # IST clock ticker, anchor smooth scroll, card sheen effects
 ├── portal/                        # Client Portal application (portal.strovagroups.in)
 │   ├── astro.config.mjs           # Portal Astro config
 │   ├── public/

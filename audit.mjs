@@ -204,17 +204,21 @@ for (const filePath of htmlFiles) {
       errors.push(`[${relPath}] Missing business operating hours 10:00 AM – 7:00 PM IST`);
     }
 
-    // Theme toggle accessibility
-    if (!content.includes('id="theme-toggle"')) {
-      errors.push(`[${relPath}] Missing desktop theme toggle button (#theme-toggle)`);
+    // Permanent Light Theme: Verify no theme toggle buttons exist in the DOM
+    if (content.includes('id="theme-toggle"')) {
+      errors.push(`[${relPath}] Obsolete desktop theme toggle button (#theme-toggle) still present`);
     }
-    if (!content.includes('id="mobile-theme-toggle"')) {
-      errors.push(`[${relPath}] Missing mobile theme toggle button (#mobile-theme-toggle)`);
+    if (content.includes('id="mobile-theme-toggle"')) {
+      errors.push(`[${relPath}] Obsolete mobile theme toggle button (#mobile-theme-toggle) still present`);
     }
 
-    // Pre-hydration theme script
-    if (!content.includes('localStorage.getItem(\'strova-theme\')')) {
-      errors.push(`[${relPath}] Missing inline pre-hydration theme script in <head>`);
+    // Verify color-scheme is set to light
+    if (!content.includes('name="color-scheme" content="light"')) {
+      errors.push(`[${relPath}] Missing permanent light color-scheme meta tag in <head>`);
+    }
+    // Verify no dark theme CSS selector exists
+    if (content.includes('[data-theme="dark"]')) {
+      errors.push(`[${relPath}] Disallowed active dark-theme selector [data-theme="dark"] found in page`);
     }
   }
 

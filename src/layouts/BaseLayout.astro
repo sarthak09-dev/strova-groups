@@ -96,14 +96,12 @@ const allJsonLd = [
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       document.documentElement.classList.add('js');
+      // Purge any legacy theme storage keys to ensure permanent light theme
       try {
-        const storedTheme = localStorage.getItem('strova-theme');
-        if (storedTheme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
+        localStorage.removeItem('strova-theme');
+        sessionStorage.removeItem('strova-theme');
       } catch (e) {}
+      document.documentElement.removeAttribute('data-theme');
     </script>
 
     <!-- Favicon -->

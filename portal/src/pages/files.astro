@@ -58,7 +58,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
     async function initFiles() {
       const session = await getSession();
       if (!session) {
-        window.location.href = '/portal/login';
+        window.location.href = '/login/';
         return;
       }
 

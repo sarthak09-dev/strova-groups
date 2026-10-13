@@ -17,7 +17,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
         Provision client profiles, schedule sprint milestones, issue invoices, review audit trails, and manage support.
       </p>
     </div>
-    <a href="/portal" class="btn btn-secondary" style="font-size: 0.8125rem;">
+    <a href="/" class="btn btn-secondary" style="font-size: 0.8125rem;">
       ← Client view preview
     </a>
   </div>
@@ -30,7 +30,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
     <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 480px; margin: 0 auto 1.5rem;">
       Your active session does not possess administrative privileges. Ordinary client sessions cannot access management tools or audit logs.
     </p>
-    <a href="/portal" class="btn btn-secondary">Return to client portal</a>
+    <a href="/" class="btn btn-secondary">Return to client portal</a>
   </div>
 
   <!-- Admin Interface (Rendered only for verified admins) -->
@@ -211,7 +211,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
     async function initAdmin() {
       const session = await getSession();
       if (!session) {
-        window.location.href = '/portal/login';
+        window.location.href = '/login/';
         return;
       }
 

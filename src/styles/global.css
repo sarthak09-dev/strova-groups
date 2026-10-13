@@ -9,6 +9,9 @@
 /* 1. Custom properties — Editorial Light-First Default */
 /* -------------------------------------------------- */
 :root {
+  /* Permanent light color scheme for OS, browser UI, scrollbars, and native form elements */
+  color-scheme: light;
+
   /* Brand palette */
   --color-ink:         #0F172A;
   --color-slate-900:   #0F172A;
@@ -100,37 +103,7 @@
 }
 
 /* -------------------------------------------------- */
-/* 2. Dark Theme Tokens Overrides                     */
-/* -------------------------------------------------- */
-:root[data-theme="dark"] {
-  --bg-page:        #090D16;
-  --bg-surface:     #0F1523;
-  --bg-elevated:    #161E31;
-  --bg-card:        #111726;
-  --bg-card-hover:  #161E31;
-  --bg-glass:       rgba(9, 13, 22, 0.92);
-
-  --text-primary:   #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted:     #64748B;
-
-  --border-color:   rgba(255, 255, 255, 0.1);
-  --border-subtle:  rgba(255, 255, 255, 0.06);
-  --border-focus:   #3B82F6;
-
-  --accent:         #3B82F6;
-  --accent-hover:   #60A5FA;
-  --accent-subtle:  rgba(59, 130, 246, 0.12);
-
-  --focus-ring:     0 0 0 3px rgba(59, 130, 246, 0.4);
-
-  --shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md:      0 4px 12px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg:      0 12px 24px -4px rgba(0, 0, 0, 0.6);
-}
-
-/* -------------------------------------------------- */
-/* 3. CSS Reset & Base Typography                     */
+/* 2. CSS Reset & Base Typography                     */
 /* -------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -144,6 +117,7 @@
 }
 
 html {
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -621,51 +595,3 @@ body.mobile-menu-open .mobile-quote-bar {
   background: #D97706;
 }
 
-/* Theme Toggle Button */
-.btn--theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-out);
-  padding: 0;
-}
-
-.btn--theme-toggle:hover {
-  color: var(--text-primary);
-  border-color: var(--accent);
-}
-
-.btn--theme-toggle:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.theme-icon-sun {
-  display: block;
-}
-.theme-icon-moon {
-  display: none;
-}
-
-:root[data-theme="dark"] .theme-icon-sun {
-  display: none;
-}
-:root[data-theme="dark"] .theme-icon-moon {
-  display: block;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-icon-sun {
-    display: none;
-  }
-  :root:not([data-theme="light"]) .theme-icon-moon {
-    display: block;
-  }
-}

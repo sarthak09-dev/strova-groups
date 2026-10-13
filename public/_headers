@@ -8,7 +8,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-XSS-Protection: 0
-  # Note: 'unsafe-inline' for script-src is strictly limited to Astro's zero-FOUC theme hydration snippet and component listeners.
+  # Note: 'unsafe-inline' for script-src is strictly limited to Astro's client scripts and component listeners.
   # Note: 'unsafe-inline' for style-src allows Astro's scoped component styles and dynamic CSS custom properties.
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://api.web3forms.com https://formspree.io; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com https://formspree.io;
 

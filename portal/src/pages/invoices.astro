@@ -101,7 +101,7 @@ import { RAZORPAY_KEY_ID } from '../lib/supabaseClient';
     async function initInvoices() {
       const session = await getSession();
       if (!session) {
-        window.location.href = '/portal/login';
+        window.location.href = '/login/';
         return;
       }
 
