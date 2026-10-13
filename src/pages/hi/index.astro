@@ -1,0 +1,618 @@
+---
+/**
+ * मुख्य पृष्ठ (Home Page) — हिन्दी संस्करण
+ * Strova Group — Technology, Commerce & Growth
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ThreeHero from '../../components/ThreeHero.astro';
+import CredentialsStrip from '../../components/CredentialsStrip.astro';
+
+const faqs = [
+  {
+    question: 'प्रोजेक्ट कोटेशन की प्रक्रिया क्या है?',
+    answer:
+      'आप हमारे कोटेशन फॉर्म या info@strovagroups.in पर अपनी आवश्यकताएं साझा करते हैं। एक कार्यदिवस के भीतर, हम आपकी तकनीकी आवश्यकताओं की समीक्षा कर एक विस्तृत लिखित कोटेशन प्रदान करते हैं, जिसमें माइलस्टोन, समयसीमा और निश्चित मूल्य शामिल होता है।',
+  },
+  {
+    question: '50% अग्रिम भुगतान संरचना कैसे काम करती है?',
+    answer:
+      'प्रत्येक प्रोजेक्ट लिखित स्कोप पर दोनों पक्षों के हस्ताक्षर और 50% अग्रिम भुगतान के साथ शुरू होता है। शेष 50% राशि स्टेजिंग प्रदर्शन, गुणवत्ता परीक्षण और अंतिम हैंडओवर से पूर्व देय होती है।',
+  },
+  {
+    question: 'क्या हमें सोर्स कोड और बौद्धिक संपदा का पूर्ण स्वामित्व मिलता है?',
+    answer:
+      'हाँ। अंतिम भुगतान के पश्चात सभी कस्टम कोड, रिपॉजिटरी और परिनियोजन कॉन्फ़िगरेशन का 100% स्वामित्व आपके संगठन को हस्तांतरित कर दिया जाता है। कोई विक्रेता लॉक-इन नहीं है।',
+  },
+  {
+    question: 'व्हाट्सएप ऑटोमेशन कैसे तैयार किया जाता है?',
+    answer:
+      'हम आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई और सुरक्षित वेबहुक का उपयोग करते हैं, जो आपके डेटाबेस या सीआरएम से सीधे जुड़ता है। यह बिना किसी अनौपचारिक स्क्रैपर के विश्वसनीय और अनुपालन-युक्त संचालन सुनिश्चित करता है।',
+  },
+  {
+    question: 'क्या आप अंतरराष्ट्रीय ग्राहकों के साथ काम करते हैं?',
+    answer:
+      'हाँ। हम भारत के व्यवसायों के साथ-साथ उत्तरी अमेरिका, यूरोप और एशिया-प्रशांत क्षेत्र के वैश्विक ग्राहकों को सेवा प्रदान करते हैं। भारतीय ग्राहकों के लिए INR और विदेशी ग्राहकों के लिए अनुरोध पर USD में वाणिज्यिक चालान जारी किए जाते हैं।',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<BaseLayout
+  title="स्ट्रोवा ग्रुप — तकनीक, कॉमर्स एवं डिजिटल विकास"
+  description="स्ट्रोवा ग्रुप व्यवसायों के लिए आधुनिक वेब प्लेटफॉर्म, सॉफ्टवेयर और ऑटोमेशन का निर्माण करता है। पारदर्शी कार्यप्रणाली और निश्चित मूल्य।"
+  jsonLd={[faqJsonLd]}
+  lang="hi"
+>
+  <!-- 1. Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <span class="hero__eyebrow">प्रौद्योगिकी · डिजिटल · ऑटोमेशन</span>
+        <h1 id="hero-title" class="hero__title">
+          बेहतर डिजिटल अनुभव।<br class="hero__br" /> स्मार्ट व्यवसाय संचालन।
+        </h1>
+        <p class="hero__lead">
+          हम आधुनिक वेबसाइट्स, कस्टम सॉफ़्टवेयर और व्यावहारिक व्यवसाय ऑटोमेशन का निर्माण करते हैं, जो आपकी टीम को सशक्त बनाते हैं।
+        </p>
+        <div class="hero__actions">
+          <a href="/hi/contact/" class="btn btn--primary btn--lg" data-track="quote_click">
+            प्रोजेक्ट पर चर्चा करें
+          </a>
+          <a href="#capabilities" class="btn btn--outline btn--lg">
+            हमारी क्षमताएं देखें &rarr;
+          </a>
+        </div>
+        <p class="hero__note">
+          1 कार्यदिवस के भीतर उत्तर · सीधा संस्थापक समीक्षा
+        </p>
+      </div>
+      <div class="hero__visual" aria-hidden="true">
+        <ThreeHero />
+      </div>
+    </div>
+  </section>
+
+  <!-- Verifiable Credentials -->
+  <CredentialsStrip />
+
+  <!-- 2. Service Areas -->
+  <section class="section" id="capabilities" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="capabilities-heading" class="section-title">हम क्या निर्माण करते हैं</h2>
+        <p class="section-subtitle text-secondary">
+          गंभीर व्यवसायों के लिए विश्वसनीय इंजीनियरिंग। तीन मुख्य क्षेत्र, गुणवत्ता का एक मानक।
+        </p>
+      </div>
+
+      <div class="services">
+        <article class="service">
+          <span class="service__number">01</span>
+          <h3 class="service__title">कस्टम सॉफ़्टवेयर</h3>
+          <p class="service__desc text-secondary">
+            उच्च गति वेब प्लेटफ़ॉर्म, नेटिव एंड्रॉइड एप्लिकेशन और क्लाउड सॉफ़्टवेयर — आपकी विशिष्ट आवश्यकताओं के अनुसार निर्मित और पूर्णतः आपके स्वामित्व में।
+          </p>
+          <a href="/hi/technologies/" class="service__link">
+            स्ट्रोवा टेक्नोलॉजीज देखें &rarr;
+          </a>
+        </article>
+
+        <article class="service">
+          <span class="service__number">02</span>
+          <h3 class="service__title">एआई एवं ऑटोमेशन</h3>
+          <p class="service__desc text-secondary">
+            आधिकारिक व्हाट्सएप बिजनेस ऑटोमेशन, सीआरएम एकीकरण और स्वचालित वर्कफ़्लो जो मैन्युअल कार्यों को समाप्त करते हैं।
+          </p>
+          <a href="/hi/technologies/" class="service__link">
+            ऑटोमेशन सेवाएं देखें &rarr;
+          </a>
+        </article>
+
+        <article class="service">
+          <span class="service__number">03</span>
+          <h3 class="service__title">डिजिटल विकास</h3>
+          <p class="service__desc text-secondary">
+            तकनीकी एसईओ (SEO), खोज प्रदर्शन अभियान और संरचित इनबाउंड फ़नल — जिनका मूल्यांकन व्यावसायिक पूछताछ से होता है, खोखले इंप्रेशन से नहीं।
+          </p>
+          <a href="/hi/digital/" class="service__link">
+            स्ट्रोवा डिजिटल देखें &rarr;
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Approach -->
+  <section class="section approach" aria-labelledby="approach-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="approach-heading" class="section-title">हमारी कार्यप्रणाली</h2>
+        <p class="section-subtitle text-secondary">
+          प्रत्येक कार्य एक अनुशासित क्रम का पालन करता है। कोई शॉर्टकट नहीं, कोई अस्पष्टता नहीं।
+        </p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step__number">01</span>
+          <h3 class="step__title">डिस्कवर</h3>
+          <p class="step__desc text-secondary">
+            आप अपनी आवश्यकताएं बताते हैं। हम सुनते हैं, प्रश्न पूछते हैं और समाधान प्रस्तावित करने से पहले मूल समस्या को समझते हैं।
+          </p>
+        </li>
+        <li class="step">
+          <span class="step__number">02</span>
+          <h3 class="step__title">स्कोप निर्धारण</h3>
+          <p class="step__desc text-secondary">
+            एक कार्यदिवस के भीतर हम माइलस्टोन, स्पष्ट डिलिवरेबल्स और निश्चित मूल्य के साथ लिखित स्कोप प्रदान करते हैं।
+          </p>
+        </li>
+        <li class="step">
+          <span class="step__number">03</span>
+          <h3 class="step__title">निर्माण</h3>
+          <p class="step__desc text-secondary">
+            लिखित सहमति और 50% अग्रिम के बाद विकास शुरू होता है। प्रत्येक स्प्रिंट के बाद आपको स्टेजिंग डेमो प्राप्त होता है।
+          </p>
+        </li>
+        <li class="step">
+          <span class="step__number">04</span>
+          <h3 class="step__title">सत्यापन</h3>
+          <p class="step__desc text-secondary">
+            स्टेजिंग पर संयुक्त परीक्षण। अंतिम भुगतान से पूर्व आप स्वीकृत विनिर्देशों के अनुसार प्रत्येक सुविधा का परीक्षण करते हैं।
+          </p>
+        </li>
+        <li class="step">
+          <span class="step__number">05</span>
+          <h3 class="step__title">सपोर्ट</h3>
+          <p class="step__desc text-secondary">
+            सोर्स कोड, रिपॉजिटरी और संपूर्ण दस्तावेज़ीकरण का हैंडओवर। 100% स्वामित्व आपके संगठन को स्थानांतरित होता है।
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. How We Work -->
+  <section class="section" aria-labelledby="how-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="how-heading" class="section-title">हम कैसे काम करते हैं</h2>
+        <p class="section-subtitle text-secondary">
+          एक स्पष्ट अनुबंध, एक जिम्मेदार टीम, एक उच्च मानक। पारदर्शी वाणिज्यिक शर्तें जो आपके समय और बौद्धिक संपदा की रक्षा करती हैं।
+        </p>
+      </div>
+
+      <div class="principles">
+        <div class="principle">
+          <h3 class="principle__title">लिखित निश्चित स्कोप</h3>
+          <p class="text-secondary text-sm">
+            काम शुरू होने से पहले प्रत्येक डिलिवरेबल, एपीआई और स्क्रीन का दस्तावेज़ीकरण होता है। कोई अप्रत्याशित शुल्क नहीं।
+          </p>
+        </div>
+        <div class="principle">
+          <h3 class="principle__title">50% अग्रिम संरचना</h3>
+          <p class="text-secondary text-sm">
+            अग्रिम जमा निर्धारित इंजीनियरिंग स्प्रिंट को सुरक्षित करता है। शेष राशि केवल स्टेजिंग स्वीकृति के बाद देय होती है।
+          </p>
+        </div>
+        <div class="principle">
+          <h3 class="principle__title">संपूर्ण कोड स्वामित्व</h3>
+          <p class="text-secondary text-sm">
+            अंतिम निपटान पर आपको पूर्ण बौद्धिक संपदा और कोड रिपॉजिटरी अधिकार मिलते हैं। शून्य वेंडर लॉक-इन।
+          </p>
+        </div>
+        <div class="principle">
+          <h3 class="principle__title">वैश्विक रिमोट डिलीवरी</h3>
+          <p class="text-secondary text-sm">
+            भारतीय और अंतरराष्ट्रीय दोनों प्रकार के उद्यमों के लिए पारदर्शी डिलीवरी। क्लाइंट पोर्टल द्वारा दैनिक अपडेट।
+          </p>
+        </div>
+      </div>
+
+      <div class="principles__cta">
+        <a href="/hi/contact/" class="btn btn--primary" data-track="quote_click">
+          अपना प्रोजेक्ट कोटेशन प्राप्त करें &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Founder -->
+  <section class="section founder" aria-labelledby="founder-heading">
+    <div class="container">
+      <div class="founder__inner">
+        <h2 id="founder-heading" class="section-title">सीधी संस्थापक जवाबदेही</h2>
+        <p class="text-secondary founder__text">
+          स्ट्रोवा ग्रुप की स्थापना सार्थक श्रेष्ठ (Sarthak Shresht) द्वारा की गई थी, जिसका कानूनी स्वामित्व बबिता कुमारी (Babita Kumari) के तहत पंजीकृत है (Udyam: UDYAM-JH-20-0147452)। जब आप स्ट्रोवा ग्रुप के साथ साझेदारी करते हैं, तो आपका प्रोजेक्ट किसी गुमनाम आउटसोर्सिंग लेयर को नहीं सौंपा जाता। हम प्रत्येक जुड़ाव पर प्रत्यक्ष तकनीकी और वास्तुशिल्प निगरानी बनाए रखते हैं।
+        </p>
+        <div class="founder__meta">
+          <span class="founder__name">Sarthak Shresht (सार्थक श्रेष्ठ)</span>
+          <span class="founder__role text-muted">संस्थापक · स्ट्रोवा ग्रुप</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQ -->
+  <section class="section" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="faq-heading" class="section-title">अक्सर पूछे जाने वाले सवाल</h2>
+      </div>
+
+      <div class="faq-list">
+        {faqs.map((faq, index) => (
+          <details class="faq-item" id={`faq-${index}`}>
+            <summary class="faq-question">
+              <span>{faq.question}</span>
+              <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-answer text-secondary">
+              <p>{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Final CTA -->
+  <section class="section cta" aria-labelledby="cta-heading">
+    <div class="container">
+      <div class="cta__inner">
+        <h2 id="cta-heading" class="cta__title">
+          बताएं कि आप क्या बनाना चाहते हैं।
+        </h2>
+        <p class="cta__desc text-secondary">
+          किसी लंबे आरएफपी की आवश्यकता नहीं है। अपना लक्ष्य और समयसीमा साझा करें। हम एक कार्यदिवस के भीतर स्पष्ट लिखित कोटेशन प्रदान करते हैं।
+        </p>
+        <div class="cta__actions">
+          <a href="/hi/contact/" class="btn btn--primary btn--lg" data-track="quote_click">
+            प्रोजेक्ट पर चर्चा करें
+          </a>
+          <a href="mailto:info@strovagroups.in" class="btn btn--outline btn--lg">
+            ईमेल: info@strovagroups.in
+          </a>
+          <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--lg">
+            व्हाट्सएप (+91 92880 77802)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-20);
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__inner {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: var(--space-16);
+    }
+    .hero {
+      padding-top: var(--space-24);
+      padding-bottom: var(--space-24);
+    }
+  }
+
+  .hero__eyebrow {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--space-5);
+  }
+
+  .hero__title {
+    font-size: var(--text-5xl);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin-bottom: var(--space-6);
+  }
+
+  .hero__br {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .hero__br {
+      display: inline;
+    }
+  }
+
+  .hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 42ch;
+    margin-bottom: var(--space-8);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .hero__note {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .services {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .services {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .service {
+    padding: var(--space-8);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+
+  .service:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .service__number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+
+  .service__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .service__desc {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .service__link {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .approach {
+    background: var(--bg-surface);
+    border-block: 1px solid var(--border-subtle);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    counter-reset: step;
+  }
+
+  @media (min-width: 64rem) {
+    .steps {
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  .step {
+    padding: var(--space-6) 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  @media (min-width: 64rem) {
+    .step {
+      border-top: none;
+      border-left: 1px solid var(--border-color);
+      padding-top: 0;
+      padding-left: var(--space-5);
+    }
+  }
+
+  .step__number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    color: var(--accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .step__title {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .step__desc {
+    font-size: var(--text-xs);
+    line-height: 1.65;
+  }
+
+  .principles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  @media (min-width: 48rem) {
+    .principles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .principles {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .principle {
+    padding-left: var(--space-5);
+    border-left: 2px solid var(--border-color);
+  }
+
+  .principle__title {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .principles__cta {
+    padding-top: var(--space-2);
+  }
+
+  .founder {
+    background: var(--bg-surface);
+    border-block: 1px solid var(--border-subtle);
+  }
+
+  .founder__inner {
+    max-width: 58ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .founder__text {
+    font-size: var(--text-base);
+    line-height: 1.7;
+    margin-block: var(--space-6);
+  }
+
+  .founder__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .founder__name {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .faq-list {
+    max-width: 54rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .faq-item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-6);
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .faq-item[open] {
+    border-color: var(--accent);
+  }
+
+  .faq-question {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    list-style: none;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-chevron {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding-top: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.65;
+  }
+
+  .cta {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .cta__inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .cta__title {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta__desc {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+</style>
+

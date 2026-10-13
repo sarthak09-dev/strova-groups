@@ -1,0 +1,361 @@
+---
+/**
+ * सामान्य प्रश्नोत्तर पृष्ठ (src/pages/hi/faq.astro)
+ * 
+ * समर्पित प्रश्नोत्तर पृष्ठ: सेवाएं, 50% अग्रिम माइलस्टोन मॉडल और इंजीनियरिंग मानक।
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+  category: string;
+}
+
+const faqs: FAQItem[] = [
+  // General & Process
+  {
+    category: 'प्रक्रिया एवं एंगेजमेंट',
+    question: 'प्रोजेक्ट कोटेशन कैसे काम करता है?',
+    answer:
+      'आप हमारे 60-सेकंड कोटेशन फॉर्म या info@strovagroups.in के माध्यम से अपनी परियोजना का विवरण साझा करते हैं। एक कार्यदिवस के भीतर, हम आपकी विशिष्टताओं की समीक्षा करते हैं और डिलिवरेबल्स, माइलस्टोन और समयसीमा को रेखांकित करते हुए एक निश्चित-स्कोप लिखित कोटेशन प्रदान करते हैं। कोई छिपे हुए शुल्क नहीं हैं।',
+  },
+  {
+    category: 'प्रक्रिया एवं एंगेजमेंट',
+    question: 'आपकी सामान्य प्रोजेक्ट डिलीवरी समयसीमा क्या है?',
+    answer:
+      'मानक वेब एप्लिकेशन और व्हाट्सएप ऑटोमेशन पाइपलाइन आमतौर पर 3 से 6 सप्ताह के भीतर लाइव हो जाती हैं। बड़े कस्टम सास सिस्टम और एंड्रॉइड एप्लिकेशन 2-सप्ताह के एजाइल स्प्रिंट्स का पालन करते हैं, जिसमें एमवीपी डिलीवरी 8 से 12 सप्ताह में स्टेजिंग वातावरण में पहुंचती है।',
+  },
+  {
+    category: 'प्रक्रिया एवं एंगेजमेंट',
+    question: '50% अग्रिम भुगतान नीति कैसे काम करती है?',
+    answer:
+      'हम पारदर्शी माइलस्टोन प्रतिबद्धताओं पर काम करते हैं। इंजीनियरिंग स्प्रिंट आरक्षित करने के लिए स्कोप और तकनीकी विनिर्देश पर हस्ताक्षर होने पर 50% जमा राशि आवश्यक होती है। शेष 50% केवल स्टेजिंग प्रदर्शन और गुणवत्ता आश्वासन स्वीकृति के बाद देय होता है।',
+  },
+  {
+    category: 'प्रक्रिया एवं एंगेजमेंट',
+    question: 'क्या हमें सोर्स कोड और बौद्धिक संपदा का पूर्ण स्वामित्व मिलता है?',
+    answer:
+      'हाँ, 100%। अंतिम माइलस्टोन निपटान पर, सभी कस्टम कोडबेस, रिपॉजिटरी, प्रलेखन और कॉन्फ़िगरेशन स्क्रिप्ट का पूर्ण स्वामित्व बिना किसी लाइसेंसिंग शुल्क या लॉक-इन के आपके संगठन को हस्तांतरित कर दिया जाता है।',
+  },
+  {
+    category: 'प्रक्रिया एवं एंगेजमेंट',
+    question: 'क्या आप लॉन्च के बाद वारंटी प्रदान करते हैं?',
+    answer:
+      'हाँ। प्रत्येक कस्टम सॉफ्टवेयर प्रोजेक्ट में उत्पादन परिनियोजन तिथि से 30-दिवसीय मानार्थ वारंटी शामिल है। हम सहमत विनिर्देश से भिन्न होने वाले किसी भी दोष को बिना किसी अतिरिक्त शुल्क के तुरंत हल करते हैं।',
+  },
+
+  // Technologies
+  {
+    category: 'स्ट्रोवा टेक्नोलॉजीज',
+    question: 'आप भारत में क्लीनिकों और स्वास्थ्य सेवा प्रदाताओं के लिए वेबसाइट कैसे बनाते हैं?',
+    answer:
+      'हम मोबाइल 4G/5G नेटवर्क पर मरीजों के लिए सब-सेकंड स्टैटिक प्लेटफॉर्म बनाते हैं। इनमें डॉक्टर के कार्यक्रम, सीधे व्हाट्सएप अपॉइंटमेंट बुकिंग और बिना किसी असुरक्षित तीसरे पक्ष ट्रैकर के सख्त DPDP Act 2023 डेटा सुरक्षा शामिल है।',
+  },
+  {
+    category: 'स्ट्रोवा टेक्नोलॉजीज',
+    question: 'व्हाट्सएप ऑटोमेशन हमारे मौजूदा टूल्स के साथ कैसे एकीकृत होता है?',
+    answer:
+      'हम आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई का उपयोग करते हैं। हम वेबहुक को सीधे आपके सीआरएम (ज़ोहो, हबस्पॉट), डेटाबेस या स्प्रेडशीट से जोड़ते हैं ताकि लीड योग्यता, अपॉइंटमेंट रिमाइंडर और बातचीत का इतिहास स्वचालित रूप से प्रबंधित हो सके।',
+  },
+  {
+    category: 'स्ट्रोवा टेक्नोलॉजीज',
+    question: 'एंड्रॉइड पर आप कौन से मोबाइल स्टैक का उपयोग करते हैं?',
+    answer:
+      'हम आधुनिक कोटलिन और जेटपैक कंपोज़ का उपयोग करके नेटिव एंड्रॉइड एप्लिकेशन बनाते हैं। हमारा मोबाइल आर्किटेक्चर Room SQLite के माध्यम से ऑफ़लाइन-प्रथम डेटा कैशिंग और कुशल बैटरी उपयोग को प्राथमिकता देता है।',
+  },
+
+  // Digital
+  {
+    category: 'स्ट्रोवा डिजिटल',
+    question: 'तकनीकी एसईओ स्प्रिंट में क्या शामिल है?',
+    answer:
+      'हमारे तकनीकी एसईओ ऑडिट में कोर वेब वाइटल्स (LCP, CLS, INP), Schema.org JSON-LD माइक्रोडेटा, क्रॉल बजट अनुकूलन, सर्वर प्रतिक्रिया हेडर और आंतरिक लिंक टोपोलॉजी शामिल हैं। हम केवल सतही सुझावों के बजाय मूल तकनीकी कारणों का समाधान करते हैं।',
+  },
+  {
+    category: 'स्ट्रोवा डिजिटल',
+    question: 'आप गूगल और मेटा पर सशुल्क विज्ञापन अभियानों का प्रबंधन कैसे करते हैं?',
+    answer:
+      'हम सर्वर-साइड रूपांतरण एपीआई (CAPI) ट्रैकिंग और स्वच्छ UTM एट्रिब्यूशन के साथ अभियानों का प्रबंधन करते हैं। हम शुद्ध विज्ञापन व्यय रिटर्न (ROAS) और योग्य ग्राहक अधिग्रहण लागत पर ध्यान केंद्रित करते हैं।',
+  },
+
+  // Commerce
+  {
+    category: 'स्ट्रोवा कॉमर्स',
+    question: 'स्ट्रोवा कॉमर्स क्या है और यह कब लॉन्च होगा?',
+    answer:
+      'स्ट्रोवा कॉमर्स हमारा आगामी डिवीजन है जो हेडलेस स्टोरफ्रंट्स, नेटिव व्हाट्सएप कैटलॉग चेकआउट, ओमनीचैनल स्टॉक सिंक और कैश-ऑन-डिलीवरी आरटीओ धोखाधड़ी सुरक्षा को समर्पित है। डिवीजन जल्द उपलब्ध होगा, वर्तमान में बीटा पार्टनर्स के लिए पूछताछ खुली है।',
+  },
+
+  // Commercial & International
+  {
+    category: 'बिलिंग एवं अंतरराष्ट्रीय',
+    question: 'क्या आप भारत के बाहर अंतरराष्ट्रीय ग्राहकों के साथ काम करते हैं?',
+    answer:
+      'हाँ। यद्यपि स्ट्रोवा ग्रुप भारत में स्थित है, हम भारतीय व्यावसायिक उद्यमों और अंतरराष्ट्रीय ग्राहकों दोनों के साथ काम करते हैं। अनुबंध और चालान अनुरोध पर INR या USD में तय किए जा सकते हैं।',
+  },
+  {
+    category: 'बिलिंग एवं अंतरराष्ट्रीय',
+    question: 'आप कौन सी भुगतान विधियां स्वीकार करते हैं?',
+    answer:
+      'घरेलू भारतीय ग्राहकों के लिए, हम एनईएफटी, आरटीजीएस, आईएमपीएस और यूपीआई बैंक ट्रांसफर स्वीकार करते हैं। अंतरराष्ट्रीय ग्राहकों के लिए, हम स्विफ्ट (SWIFT) अंतरराष्ट्रीय वायर और स्ट्राइप के माध्यम से कार्ड भुगतान स्वीकार करते हैं।',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'सामान्य प्रश्न (FAQ)',
+      item: 'https://strovagroups.in/hi/faq/',
+    },
+  ],
+};
+
+const categories = Array.from(new Set(faqs.map((f) => f.category)));
+---
+
+<BaseLayout
+  title="सामान्य प्रश्नोत्तर (FAQ) — Strova Group"
+  description="स्ट्रोवा ग्रुप की इंजीनियरिंग प्रक्रिया, 50% एडवांस माइलस्टोन मॉडल, कार्य समयसीमा और सेवाओं से संबंधित विस्तृत प्रश्नोत्तर।"
+  jsonLd={[faqJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <h1 class="page-hero__title">
+          अक्सर पूछे जाने वाले सवाल (FAQ)
+        </h1>
+        <p class="page-hero__lead">
+          हमारी तकनीकी क्षमताओं, 50% अग्रिम माइलस्टोन नीति, कोड हैंडओवर और कार्य संबंधों से संबंधित सामान्य प्रश्नों के स्पष्ट और ठोस उत्तर।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorized FAQs -->
+  <section class="section faq-page-section" aria-labelledby="faq-page-heading">
+    <div class="container">
+      <h2 id="faq-page-heading" class="sr-only">श्रेणी अनुसार प्रश्न और उत्तर</h2>
+
+      <div class="faq-categories-stack">
+        {categories.map((cat) => (
+          <div class="faq-category-block">
+            <h3 class="category-title">{cat}</h3>
+            <div class="faq-list">
+              {faqs
+                .filter((f) => f.category === cat)
+                .map((faq, idx) => (
+                  <details class="faq-item" id={`faq-${idx}`}>
+                    <summary class="faq-question">
+                      <span>{faq.question}</span>
+                      <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer">
+                      <p>{faq.answer}</p>
+                    </div>
+                  </details>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Still have questions CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">क्या आपका कोई विशिष्ट प्रश्न है?</h2>
+          <p class="cta-desc">
+            हम तकनीकी पूछताछ की सीधे समीक्षा करते हैं। 24 कार्य घंटों के भीतर उत्तर के लिए ईमेल, फोन या व्हाट्सएप के माध्यम से संपर्क करें।
+          </p>
+          <div class="cta-buttons">
+            <a href="/hi/contact/" class="btn btn--primary btn--lg">
+              प्रोजेक्ट ब्रीफ भेजें
+            </a>
+            <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--lg">
+              व्हाट्सएप (+91 92880 77802)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .faq-page-section {
+    padding-block: var(--space-16);
+  }
+
+  .faq-categories-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .category-title {
+    font-size: var(--text-xl);
+    color: var(--accent);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--accent-subtle);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .faq-item {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition-fast);
+  }
+
+  .faq-item[open] {
+    border-color: var(--accent);
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-5) var(--space-6);
+    font-size: var(--text-base);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-chevron {
+    color: var(--text-muted);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  .faq-answer {
+    padding: 0 var(--space-6) var(--space-6) var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .cta-section {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-12) var(--space-8);
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .btn--whatsapp {
+    background: #25d366;
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+  }
+
+  .btn--whatsapp:hover {
+    background: #1ebc59;
+    color: #ffffff;
+  }
+</style>
+

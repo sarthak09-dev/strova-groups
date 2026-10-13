@@ -1,0 +1,657 @@
+---
+/**
+ * कोटेशन अनुरोध / संपर्क पृष्ठ (src/pages/hi/contact.astro)
+ * 
+ * आवश्यकताएं:
+ * - 3 अनिवार्य फ़ील्ड: नाम, ईमेल, आपकी आवश्यकता (संदेश)
+ * - 3 वैकल्पिक फ़ील्ड: कंपनी, फोन/व्हाट्सएप, समयसीमा एवं क्षेत्र/समय क्षेत्र
+ * - मोबाइल पर 60 सेकंड के भीतर पूरा किया जा सकने वाला फॉर्म
+ * - वास्तविक fail-closed सबमिशन via /api/contact
+ * - Cloudflare Turnstile बॉट सुरक्षा + अदृश्य हनीपॉट
+ * - सीधा संपर्क: info@strovagroups.in, +91 92880 77802 (कॉल एवं व्हाट्सएप)
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const contactPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'प्रोजेक्ट कोटेशन अनुरोध — स्ट्रोवा ग्रुप',
+  description:
+    'स्ट्रोवा ग्रुप से लिखित निश्चित-स्कोप कोटेशन का अनुरोध करें। हम सभी विशिष्टताओं की समीक्षा करते हैं और 1 कार्यदिवस के भीतर उत्तर देते हैं।',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+    email: 'info@strovagroups.in',
+    telephone: '+919288077802',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'info@strovagroups.in',
+      telephone: '+919288077802',
+      availableLanguage: ['en', 'hi'],
+      hoursAvailable: {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        opens: '10:00',
+        closes: '19:00',
+      },
+    },
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'संपर्क एवं कोटेशन',
+      item: 'https://strovagroups.in/hi/contact/',
+    },
+  ],
+};
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+---
+
+<BaseLayout
+  title="प्रोजेक्ट कोटेशन अनुरोध — Strova Group"
+  description="स्ट्रोवा ग्रुप से निश्चित-मूल्य कोटेशन का अनुरोध करें। 60 सेकंड में फॉर्म भरें, 1 कार्य दिवस में संस्थापक समीक्षा और उत्तर।"
+  jsonLd={[contactPageJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-eyebrow">प्रोजेक्ट इनबाउंड</span>
+        <h1 class="page-hero__title">
+          निश्चित लिखित कोटेशन का अनुरोध करें
+        </h1>
+        <p class="page-hero__lead">
+          हमें अपने प्रोजेक्ट लक्ष्यों के बारे में बताएं। हम प्रत्यक्ष संस्थापक समीक्षा के साथ आवश्यकताओं का विश्लेषण करते हैं और 1 कार्यदिवस के भीतर एक विस्तृत, निश्चित कोटेशन प्रदान करते हैं।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote Form & Direct Channels Grid -->
+  <section class="section" aria-labelledby="contact-form-heading">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Inbound Form Card -->
+        <div class="contact-form-card card">
+          <div class="form-header">
+            <h2 id="contact-form-heading" class="form-title">प्रोजेक्ट कोटेशन फॉर्म</h2>
+            <p class="form-subtitle text-sm text-secondary">
+              तीन आवश्यक फ़ील्ड। मोबाइल पर 60 सेकंड से कम समय लगता है।
+            </p>
+          </div>
+
+          <form id="contact-form" class="inbound-form" novalidate>
+            <!-- Honeypot Field -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp_company">यदि आप मानव हैं तो यह फ़ील्ड न भरें</label>
+              <input type="text" id="hp_company" name="_hp_company" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Required 1: Full Name -->
+            <div class="form-group">
+              <label for="contact-name" class="form-label">
+                पूरा नाम <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                required
+                class="form-input"
+                placeholder="आपका नाम"
+                aria-required="true"
+              />
+              <span class="form-error" id="name-error" role="alert"></span>
+            </div>
+
+            <!-- Required 2: Email -->
+            <div class="form-group">
+              <label for="contact-email" class="form-label">
+                ईमेल पता <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="contact-email"
+                name="email"
+                required
+                class="form-input"
+                placeholder="name@company.com"
+                aria-required="true"
+              />
+              <span class="form-error" id="email-error" role="alert"></span>
+            </div>
+
+            <!-- Optional 1 & 2: Company & Phone -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-company" class="form-label">
+                  कंपनी / संगठन <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <input
+                  type="text"
+                  id="contact-company"
+                  name="company"
+                  class="form-input"
+                  placeholder="उदा. हेल्थकेयर क्लीनिक या ब्रांड"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-phone" class="form-label">
+                  फोन / व्हाट्सएप <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="contact-phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="+91 92880 77802"
+                />
+              </div>
+            </div>
+
+            <!-- Optional 3 & 4: Location/Timezone & Rough Timeline -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-timezone" class="form-label">
+                  देश / समय क्षेत्र <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <select id="contact-timezone" name="timezone" class="form-select">
+                  <option value="" selected>अपना क्षेत्र / टाइमज़ोन चुनें...</option>
+                  <option value="IN-IST">भारत (IST • UTC+5:30)</option>
+                  <option value="US-EST">उत्तरी अमेरिका — पूर्वी (EST/EDT)</option>
+                  <option value="US-CST">उत्तरी अमेरिका — मध्य (CST/CDT)</option>
+                  <option value="US-PST">उत्तरी अमेरिका — प्रशांत (PST/PDT)</option>
+                  <option value="UK-GMT">यूनाइटेड किंगडम / यूरोप (GMT/BST/CET)</option>
+                  <option value="UAE-GST">मध्य पूर्व / खाड़ी (GST • UTC+4)</option>
+                  <option value="SG-SGT">सिंगापुर / दक्षिण पूर्व एशिया (SGT • UTC+8)</option>
+                  <option value="AU-AEST">ऑस्ट्रेलिया / न्यूजीलैंड (AEST/NZST)</option>
+                  <option value="OTHER">अन्य अंतरराष्ट्रीय समय क्षेत्र</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-timeline" class="form-label">
+                  अनुमानित समयसीमा <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <select id="contact-timeline" name="timeline" class="form-select">
+                  <option value="" selected>अनुमानित समयसीमा चुनें...</option>
+                  <option value="2-4-weeks">2–4 सप्ताह के भीतर (अति आवश्यक)</option>
+                  <option value="1-2-months">1–2 महीने (मानक स्प्रिंट)</option>
+                  <option value="3-plus-months">3+ महीने (बड़ी परियोजना)</option>
+                  <option value="flexible">लचीला / प्रारंभिक विचार-विमर्श</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Required 3: What You Need (Message) -->
+            <div class="form-group">
+              <label for="contact-message" class="form-label">
+                आपकी आवश्यकता <span class="required" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="contact-message"
+                name="message"
+                rows="4"
+                required
+                class="form-textarea"
+                placeholder="हमें बताएं कि आप क्या बनाना चाहते हैं, वर्तमान चुनौतियां या तकनीकी आवश्यकताएं..."
+                aria-required="true"
+              ></textarea>
+              <span class="form-error" id="message-error" role="alert"></span>
+            </div>
+
+            <!-- Cloudflare Turnstile Bot Protection Widget -->
+            <div class="form-group turnstile-container">
+              <div
+                class="cf-turnstile"
+                data-sitekey={turnstileSiteKey}
+                data-theme="light"
+                data-size="flexible"
+              ></div>
+              <span class="form-error" id="turnstile-error" role="alert"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
+                <span>कोटेशन अनुरोध भेजें &rarr;</span>
+              </button>
+            </div>
+
+            <!-- Dynamic Form Status Box -->
+            <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+
+        <!-- Direct Channels Sidebar -->
+        <div class="contact-channels">
+          <!-- 1-Day Response Guarantee -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">हमारी प्रतिबद्धता</span>
+            <h3 class="channel-title">1 कार्यदिवस में उत्तर</h3>
+            <p class="channel-desc text-secondary text-sm">
+              हम प्रत्येक जानकारी की सीधे समीक्षा करते हैं। आपको 24 कार्य घंटों के भीतर स्पष्ट डिलिवरेबल्स, माइलस्टोन और निश्चित मूल्य के साथ एक प्रस्ताव प्राप्त होता है।
+            </p>
+          </div>
+
+          <!-- Direct WhatsApp -->
+          <div class="channel-card card">
+            <h3 class="channel-title">व्हाट्सएप पर चर्चा करें</h3>
+            <p class="channel-desc text-secondary text-sm">
+              त्वरित रीयल-टाइम चैट पसंद करते हैं? सीधे हमारी इंजीनियरिंग टीम से संपर्क करें।
+            </p>
+            <a
+              href="https://wa.me/919288077802"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn--whatsapp w-full"
+              data-track="whatsapp_click"
+            >
+              +91 92880 77802 पर संदेश भेजें &rarr;
+            </a>
+          </div>
+
+          <!-- Direct Email -->
+          <div class="channel-card card">
+            <h3 class="channel-title">सीधा ईमेल</h3>
+            <p class="channel-desc text-secondary text-sm">
+              क्या आपके पास मौजूदा तकनीकी आरेख, आरएफपी या उत्पाद विवरण हैं? हमारे इनबॉक्स पर भेजें।
+            </p>
+            <a
+              href="mailto:info@strovagroups.in"
+              class="btn btn--outline w-full"
+              data-track="email_click"
+            >
+              info@strovagroups.in &rarr;
+            </a>
+          </div>
+
+          <!-- Global & Remote Collaboration -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">अंतरराष्ट्रीय ग्राहक</span>
+            <h3 class="channel-title">वैश्विक रिमोट डिलीवरी</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              हम दुनिया भर के व्यवसायों के साथ काम करते हैं। क्लाइंट हब और स्लैक के माध्यम से दैनिक अपडेट, ईएसटी, जीएमटी और जीएसटी समय क्षेत्रों में निर्धारित वीडियो समीक्षाएं। अनुरोध पर INR या USD में वाणिज्यिक बिलिंग।
+            </p>
+          </div>
+
+          <!-- Corporate Details -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">वैधानिक पंजीकरण</span>
+            <p class="text-xs text-muted" style="line-height: 1.6;">
+              <strong>Strova Group</strong> बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान है।<br/>
+              एमएसएमई पंजीकरण: UDYAM-JH-20-0147452<br/>
+              समय: सोम–शनि, 10:00 AM – 7:00 PM IST
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  function setupContactForm() {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    if (!form) return;
+
+    let hasStartedForm = false;
+
+    // Track quote_form_started on first field focus
+    const inputElements = form.querySelectorAll('input, textarea, select');
+    inputElements.forEach((el) => {
+      el.addEventListener('focus', () => {
+        if (!hasStartedForm) {
+          hasStartedForm = true;
+          try {
+            window.dispatchEvent(
+              new CustomEvent('strova:analytics', {
+                detail: { event: 'quote_form_started', timestamp: Date.now() },
+              })
+            );
+          } catch {}
+        }
+      }, { once: true });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let hasErrors = false;
+      let firstInvalid: HTMLElement | null = null;
+
+      // Clear previous error states
+      form.querySelectorAll('.form-error').forEach((el) => {
+        el.textContent = '';
+        el.classList.remove('visible');
+      });
+      form.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+        el.removeAttribute('aria-invalid');
+      });
+
+      const statusBox = document.getElementById('form-status') as HTMLElement;
+      statusBox.className = 'form-status';
+      statusBox.innerHTML = '';
+
+      function markError(fieldId: string, errorId: string, message: string) {
+        const field = document.getElementById(fieldId) as HTMLElement | null;
+        const error = document.getElementById(errorId);
+        if (field) {
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', errorId);
+          if (!firstInvalid) firstInvalid = field;
+        }
+        if (error) {
+          error.textContent = message;
+          error.classList.add('visible');
+        }
+        hasErrors = true;
+      }
+
+      // 1. Honeypot check
+      const hpField = document.getElementById('hp_company') as HTMLInputElement | null;
+      if (hpField && hpField.value.trim() !== '') {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'अनुरोध एंटी-स्पैम फ़िल्टर द्वारा अस्वीकार कर दिया गया।';
+        return;
+      }
+
+      // 2. Client-side field validations
+      const nameField = document.getElementById('contact-name') as HTMLInputElement;
+      if (!nameField.value.trim() || nameField.value.trim().length < 2) {
+        markError('contact-name', 'name-error', 'कृपया अपना पूरा नाम दर्ज करें (कम से कम 2 अक्षर)।');
+      }
+
+      const emailField = document.getElementById('contact-email') as HTMLInputElement;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailField.value.trim() || !emailRegex.test(emailField.value.trim())) {
+        markError('contact-email', 'email-error', 'कृपया एक वैध व्यावसायिक ईमेल पता दर्ज करें।');
+      }
+
+      const messageField = document.getElementById('contact-message') as HTMLTextAreaElement;
+      if (!messageField.value.trim() || messageField.value.trim().length < 10) {
+        markError('contact-message', 'message-error', 'कृपया अपने प्रोजेक्ट का संक्षिप्त विवरण दर्ज करें (कम से कम 10 अक्षर)।');
+      }
+
+      if (hasErrors) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'कृपया ऊपर हाइलाइट किए गए आवश्यक फ़ील्ड भरें।';
+        firstInvalid?.focus();
+        return;
+      }
+
+      // Submit form payload to serverless endpoint
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>अनुरोध भेजा जा रहा है...</span>';
+
+      const formData = new FormData(form);
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        data[key] = typeof value === 'string' ? value : value.name;
+      });
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.success) {
+          try {
+            window.dispatchEvent(
+              new CustomEvent('strova:analytics', {
+                detail: { event: 'quote_form_submitted', timestamp: Date.now() },
+              })
+            );
+          } catch {}
+
+          window.location.href = result.redirectUrl || '/quote/confirmed/';
+        } else {
+          const errDetail = result.error || 'इस समय आपका कोटेशन अनुरोध सबमिट नहीं किया जा सका।';
+          statusBox.className = 'form-status error';
+          statusBox.innerHTML = `${errDetail}<br/>कृपया हमें सीधे <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> पर ईमेल करें या व्हाट्सएप <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a> पर संपर्क करें।`;
+        }
+      } catch (networkErr) {
+        statusBox.className = 'form-status error';
+        statusBox.innerHTML = `नेटवर्क त्रुटि। कृपया सीधे <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> पर ईमेल करें या व्हाट्सएप <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a> पर संपर्क करें।`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    });
+  }
+
+  setupContactForm();
+  document.addEventListener('astro:page-load', setupContactForm);
+</script>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-surface);
+  }
+
+  .page-hero__content {
+    max-width: 44rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-3xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-3);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .contact-grid {
+      grid-template-columns: 1.6fr 1fr;
+      gap: var(--space-10);
+    }
+  }
+
+  .contact-form-card {
+    padding: var(--space-8);
+  }
+
+  @media (max-width: 40rem) {
+    .contact-form-card {
+      padding: var(--space-6) var(--space-4);
+    }
+  }
+
+  .form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .inbound-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 40rem) {
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+    color: var(--text-primary);
+  }
+
+  .required {
+    color: var(--accent);
+  }
+
+  .optional {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
+  }
+
+  .form-input[aria-invalid="true"],
+  .form-textarea[aria-invalid="true"] {
+    border-color: #ef4444;
+  }
+
+  .form-error {
+    font-size: var(--text-xs);
+    color: #ef4444;
+    margin-top: var(--space-1);
+    display: none;
+  }
+
+  .form-error.visible {
+    display: block;
+  }
+
+  .turnstile-container {
+    min-height: 65px;
+    margin-top: var(--space-2);
+  }
+
+  .form-actions {
+    margin-top: var(--space-2);
+  }
+
+  .w-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-status {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    display: none;
+  }
+
+  .form-status.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #b91c1c;
+  }
+
+  .contact-channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .channel-card {
+    padding: var(--space-6);
+  }
+
+  .channel-title {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .channel-desc {
+    margin-bottom: var(--space-4);
+  }
+
+  .btn--whatsapp {
+    background: #25d366;
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+  }
+
+  .btn--whatsapp:hover {
+    background: #1ebc59;
+    color: #ffffff;
+  }
+</style>
+

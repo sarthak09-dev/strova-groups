@@ -1,0 +1,346 @@
+---
+/**
+ * कार्य एवं केस स्टडीज पृष्ठ (src/pages/hi/case-studies.astro)
+ * 
+ * इंजीनियरिंग मानकों का पारदर्शी प्रलेखन।
+ * कोई बनावटी आंकड़े या असत्यापित समीक्षाएं नहीं।
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'केस स्टडीज',
+      item: 'https://strovagroups.in/hi/case-studies/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="कार्य एवं केस स्टडीज — Strova Group"
+  description="स्ट्रोवा ग्रुप की इंजीनियरिंग कार्यप्रणाली, प्रोजेक्ट माइलस्टोन मानक और सत्यापित क्लाइंट एंगेजमेंट मॉडल की पारदर्शी जानकारी।"
+  jsonLd={[breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <h1 class="page-hero__title">
+          केस स्टडीज एवं वास्तुकला मानक
+        </h1>
+        <p class="page-hero__lead">
+          हम बनावटी केस स्टडीज, काल्पनिक आंकड़े या असत्यापित समीक्षाएं प्रकाशित करने से सख्त परहेज करते हैं। जैसे ही सक्रिय क्लाइंट कार्य संपन्न होते हैं और लिखित अनुमति प्राप्त होती है, विस्तृत तकनीकी विवरण यहां प्रकाशित किए जाते हैं।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Standards & Delivery Framework -->
+  <section class="section" aria-labelledby="standards-heading">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="standards-heading" class="section-title">प्रत्येक प्रोजेक्ट पर ग्राहकों की क्या अपेक्षाएं हो सकती हैं</h2>
+        <p class="section-subtitle">
+          हमारा इंजीनियरिंग स्टूडियो सत्यापित अनुशासन, पारदर्शी माइलस्टोन और शून्य वेंडर लॉक-इन पर काम करता है।
+        </p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="card expectation-card">
+          <div class="expectation-num">01</div>
+          <h3 class="expectation-title">निश्चित तकनीकी खाका</h3>
+          <p class="expectation-text">
+            कोड लिखने से पहले, आपको डेटाबेस स्कीमा मॉडल, एपीआई कॉन्ट्रैक्ट्स, माइलस्टोन डिलिवरेबल्स और निश्चित स्प्रिंट अनुमानों के साथ एक स्पष्ट तकनीकी विनिर्देश प्राप्त होता है।
+          </p>
+        </div>
+
+        <div class="card expectation-card">
+          <div class="expectation-num">02</div>
+          <h3 class="expectation-title">निजी स्टेजिंग एवं द्विसाप्ताहिक डेमो</h3>
+          <p class="expectation-text">
+            प्रत्येक स्प्रिंट पासवर्ड-संरक्षित स्टेजिंग यूआरएल पर तैनात होता है। आप प्रत्येक स्प्रिंट के बाद कार्यशील सॉफ़्टवेयर की समीक्षा करते हैं।
+          </p>
+        </div>
+
+        <div class="card expectation-card">
+          <div class="expectation-num">03</div>
+          <h3 class="expectation-title">100% कोड एवं आईपी स्वामित्व</h3>
+          <p class="expectation-text">
+            अंतिम भुगतान पर, सभी कस्टम कोडबेस, रिपॉजिटरी, दस्तावेज़ और कॉन्फ़िगरेशन स्क्रिप्ट का पूर्ण स्वामित्व बिना किसी लाइसेंसिंग शुल्क के आपके संगठन को हस्तांतरित कर दिया जाता है।
+          </p>
+        </div>
+
+        <div class="card expectation-card">
+          <div class="expectation-num">04</div>
+          <h3 class="expectation-title">30-दिवसीय निःशुल्क बग वारंटी</h3>
+          <p class="expectation-text">
+            हम अपने कोड की पूर्ण जिम्मेदारी लेते हैं। प्रत्येक कस्टम प्लेटफॉर्म में सहमत विनिर्देश से भिन्न होने वाले किसी भी अप्रत्याशित दोष को हल करने के लिए 30-दिवसीय निःशुल्क वारंटी शामिल है।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities in Action -->
+  <section class="section capabilities-framework-section" aria-labelledby="framework-heading">
+    <div class="container">
+      <div class="framework-card">
+        <h2 id="framework-heading" class="framework-title">सक्रिय इंजीनियरिंग क्षमताएं</h2>
+        <p class="framework-desc">
+          सार्वजनिक केस स्टडीज तैयार होने के दौरान, हमारे विभिन्न विभागों की तकनीकी क्षमताओं को देखें:
+        </p>
+        <div class="framework-grid">
+          <div class="framework-col">
+            <h3 class="framework-col__title">स्ट्रोवा टेक्नोलॉजीज</h3>
+            <ul class="framework-list">
+              <li>सब-सेकंड स्टैटिक और हाइब्रिड वेब प्लेटफॉर्म (Astro, Next.js)</li>
+              <li>ऑफलाइन-प्रथम Room SQLite सिंक के साथ नेटिव एंड्रॉइड ऐप्स</li>
+              <li>आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई ऑटोमेशन पाइपलाइन</li>
+              <li>मल्टी-टेनेंट कस्टम सास पोर्टल और व्यावसायिक डैशबोर्ड</li>
+            </ul>
+            <a href="/hi/technologies/" class="btn btn--outline btn--sm">प्रौद्योगिकियां देखें</a>
+          </div>
+          <div class="framework-col">
+            <h3 class="framework-col__title">स्ट्रोवा डिजिटल</h3>
+            <ul class="framework-list">
+              <li>तकनीकी एसईओ वास्तुकला एवं कोर वेब वाइटल्स सुधार</li>
+              <li>सर्वर-साइड रूपांतरण एपीआई (CAPI) एट्रिब्यूशन सेटअप</li>
+              <li>उच्च-इरादा खोज एवं परफॉर्मेंस विज्ञापन अभियान</li>
+              <li>इनबाउंड रूपांतरण दर अनुकूलन एवं फनल परीक्षण</li>
+            </ul>
+            <a href="/hi/digital/" class="btn btn--outline btn--sm">डिजिटल विकास देखें</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">अपनी तकनीकी आवश्यकताओं पर चर्चा करें</h2>
+          <p class="cta-desc">
+            24 कार्य घंटों के भीतर वास्तुकला मूल्यांकन और पारदर्शी माइलस्टोन प्रस्ताव के लिए स्ट्रोवा ग्रुप से जुड़ें।
+          </p>
+          <div class="cta-buttons">
+            <a href="/hi/contact/" class="btn btn--primary btn--lg">
+              प्रोजेक्ट ब्रीफ सबमिट करें
+            </a>
+            <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--lg">
+              व्हाट्सएप (+91 92880 77802)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .section-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .section-subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .expectation-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .expectation-num {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .expectation-title {
+    font-size: var(--text-xl);
+    margin: 0;
+  }
+
+  .expectation-text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .capabilities-framework-section {
+    padding-top: 0;
+  }
+
+  .framework-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-10);
+  }
+
+  .framework-title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .framework-desc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+  }
+
+  .framework-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 48rem) {
+    .framework-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-10);
+    }
+  }
+
+  .framework-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .framework-col__title {
+    font-size: var(--text-lg);
+    color: var(--accent);
+    margin: 0;
+  }
+
+  .framework-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .framework-list li {
+    position: relative;
+    padding-left: var(--space-4);
+  }
+
+  .framework-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .btn--sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+    align-self: flex-start;
+  }
+
+  .cta-section {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-12) var(--space-8);
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .btn--whatsapp {
+    background: #25d366;
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+  }
+
+  .btn--whatsapp:hover {
+    background: #1ebc59;
+    color: #ffffff;
+  }
+</style>
+

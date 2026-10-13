@@ -1,0 +1,676 @@
+---
+/**
+ * टेक्नोलॉजीज डिवीजन पृष्ठ (src/pages/hi/technologies.astro)
+ * 
+ * डिवीजन: स्ट्रोवा टेक्नोलॉजीज (Strova Technologies)
+ * मुख्य कार्य: उच्च-प्रदर्शन वेबसाइट्स, एंड्रॉइड ऐप्स, कस्टम सास, एआई एवं व्हाट्सएप ऑटोमेशन।
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'स्ट्रोवा टेक्नोलॉजीज — कस्टम सॉफ्टवेयर एवं एआई इंजीनियरिंग',
+  provider: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  serviceType: 'सॉफ्टवेयर विकास और एआई ऑटोमेशन',
+  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  description:
+    'कस्टम वेब प्लेटफॉर्म, नेटिव एंड्रॉइड ऐप्स, मल्टी-टेनेंट सास डैशबोर्ड और आधिकारिक व्हाट्सएप क्लाउड एपीआई ऑटोमेशन का निर्माण।',
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'प्रौद्योगिकियां',
+      item: 'https://strovagroups.in/hi/technologies/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="स्ट्रोवा टेक्नोलॉजीज — सॉफ्टवेयर एवं एआई | Strova Group"
+  description="स्ट्रोवा टेक्नोलॉजीज द्वारा निर्मित हाई-परफॉर्मेंस वेबसाइट्स, एंड्रॉइड ऐप्स, सास प्लेटफ़ॉर्म और सुरक्षित व्हाट्सएप एआई ऑटोमेशन सॉल्यूशंस।"
+  jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Division Header -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-eyebrow">स्ट्रोवा टेक्नोलॉजीज</span>
+        <h1 class="page-hero__title">
+          कस्टम सॉफ़्टवेयर, आधुनिक मोबाइल ऐप्स एवं व्यावहारिक ऑटोमेशन
+        </h1>
+        <p class="page-hero__lead">
+          हम मजबूत डिजिटल इंफ्रास्ट्रक्चर तैयार करते हैं। सब-सेकंड स्टेटिक वेब प्लेटफॉर्म से लेकर नेटिव एंड्रॉइड ऐप्स और व्हाट्सएप वर्कफ़्लो ऑटोमेशन तक, जो परिचालन जटिलता को समाप्त करते हैं।
+        </p>
+        <div class="page-hero__actions">
+          <a href="/hi/contact/?service=technologies" class="btn btn--primary btn--lg">
+            इंजीनियरिंग कोटेशन अनुरोध करें
+          </a>
+          <a href="#offerings" class="btn btn--outline btn--lg">
+            सेवा वास्तुकला की समीक्षा करें &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Specification Overview -->
+  <section class="section service-overview-section" aria-label="Division Overview">
+    <div class="container">
+      <div class="card service-overview-card">
+        <div class="service-overview-grid">
+          <div class="overview-item">
+            <span class="overview-item__label">सेवा का विवरण</span>
+            <p class="overview-item__val">प्रोडक्शन वेब प्लेटफॉर्म, नेटिव एंड्रॉइड एप्लिकेशन, मल्टी-टेनेंट सास सिस्टम और आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई ऑटोमेशन वर्कफ़्लो।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">किसके लिए उपयुक्त</span>
+            <p class="overview-item__val">व्यावसायिक उद्यम, क्लीनिक, तेजी से बढ़ते स्टार्टअप और ऐसे संगठन जो बिना किसी वेंडर लॉक-इन के मजबूत डिजिटल समाधान चाहते हैं।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">कोटेशन प्रक्रिया</span>
+            <p class="overview-item__val">1 कार्यदिवस के भीतर विस्तृत और निश्चित-मूल्य लिखित प्रस्ताव। कार्य लिखित सहमति और 50% अग्रिम के बाद शुरू होता है।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">अनुमानित समयसीमा</span>
+            <p class="overview-item__val">व्हाट्सएप ऑटोमेशन के लिए 2-4 सप्ताह &bull; कस्टम वेब ऐप्स के लिए 4-6 सप्ताह &bull; प्रोडक्शन सास और एंड्रॉइड एमवीपी के लिए 8-12 सप्ताह।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Engineering Capabilities -->
+  <section class="section" id="offerings" aria-labelledby="offerings-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="offerings-title" class="section-title">हम क्या बनाते हैं और हमारी तकनीक</h2>
+        <p class="section-subtitle">
+          दोष-सहिष्णुता (fault tolerance), कठोर सुरक्षा और स्वच्छ डेवलपर हैंडओवर के लिए निर्मित।
+        </p>
+      </div>
+
+      <div class="grid grid--2 capability-grid">
+        <!-- 1. Web Architecture -->
+        <article class="card capability-card">
+          <div class="capability-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3 class="capability-title">हाई-परफॉर्मेंस वेब प्लेटफ़ॉर्म</h3>
+          <p class="capability-text">
+            हम भारी मोनोलिथिक सीएमएस के बजाय स्टेटिक-फर्स्ट (Astro) और हाइब्रिड एज-रेंडर्ड आर्किटेक्चर का उपयोग करते हैं। इससे सब-सेकंड टाइम-टू-फर्स्ट-बाइट, उत्कृष्ट कोर वेब वाइटल्स और न्यूनतम सर्वर लागत मिलती है।
+          </p>
+          <ul class="capability-features">
+            <li><strong>फ्रेमवर्क:</strong> Astro, Next.js, TypeScript, Tailwind CSS</li>
+            <li><strong>परफॉर्मेंस:</strong> 95+ मोबाइल लाइटहाउस लक्ष्य स्कोर</li>
+            <li><strong>अभिगम्यता:</strong> WCAG 2.2 AA अनुपालन मार्कअप</li>
+            <li><strong>एज डिप्लॉयमेंट:</strong> Cloudflare Pages और Vercel कैशिंग</li>
+          </ul>
+        </article>
+
+        <!-- 2. Android Apps -->
+        <article class="card capability-card">
+          <div class="capability-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+          <h3 class="capability-title">नेटिव एवं क्रॉस-प्लेटफ़ॉर्म एंड्रॉइड</h3>
+          <p class="capability-text">
+            कोटलिन और जेटपैक कंपोज़ के साथ निर्मित नेटिव एंड्रॉइड ऐप्स। ऑफलाइन डेटा निरंतरता, हार्डवेयर सेंसर समन्वय और सख्त मेमोरी दक्षता के साथ अनुकूलित।
+          </p>
+          <ul class="capability-features">
+            <li><strong>कोर भाषा:</strong> Kotlin, Jetpack Compose, Coroutines, Flow</li>
+            <li><strong>ऑफलाइन सिंक:</strong> स्वचालित कतार के साथ SQLite / Room डेटाबेस</li>
+            <li><strong>अनुपालन:</strong> Google Play Store नीतियां एवं Android 14+ मानक</li>
+            <li><strong>हार्डवेयर एपीआई:</strong> बायोमेट्रिक प्रमाणीकरण, ब्लूटूथ, कैमरा फीड</li>
+          </ul>
+        </article>
+
+        <!-- 3. Custom SaaS & Dashboards -->
+        <article class="card capability-card">
+          <div class="capability-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+          </div>
+          <h3 class="capability-title">कस्टम सास एवं आंतरिक डैशबोर्ड</h3>
+          <p class="capability-text">
+            आपके विशिष्ट डेटा मॉडल के अनुसार डिज़ाइन किए गए ऑपरेशनल पोर्टल, रोल-आधारित क्लाइंट डैशबोर्ड और कस्टम व्यावसायिक प्रबंधन सॉफ़्टवेयर। कोई सामान्य टेम्पलेट नहीं जो आपके कार्यप्रवाह को बाधित करे।
+          </p>
+          <ul class="capability-features">
+            <li><strong>स्टैक:</strong> Node.js, Python, PostgreSQL, Redis, Docker</li>
+            <li><strong>सुरक्षा:</strong> भूमिका-आधारित पहुंच नियंत्रण (RBAC), JWT टोकन</li>
+            <li><strong>रीयल-टाइम:</strong> WebSockets, सर्वर-सेंट इवेंट्स, लाइव केपीआई डैशबोर्ड</li>
+            <li><strong>इंटीग्रेशन:</strong> Razorpay, Stripe, AWS S3, Cloudflare R2</li>
+          </ul>
+        </article>
+
+        <!-- 4. WhatsApp & AI Automation -->
+        <article class="card capability-card">
+          <div class="capability-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </div>
+          <h3 class="capability-title">व्हाट्सएप बिजनेस एवं एआई ऑटोमेशन</h3>
+          <p class="capability-text">
+            ग्राहक वार्तालाप को स्वचालित व्यावसायिक कार्यों में बदलें। हम आधिकारिक मेटा क्लाउड एपीआई, वेबहुक और अनुकूलित एलएलएम को एकीकृत कर सहायता ट्राइएज, लीड योग्यता और सीआरएम सिंक प्रदान करते हैं।
+          </p>
+          <ul class="capability-features">
+            <li><strong>आधिकारिक एपीआई:</strong> सत्यापित मेटा बिजनेस मैनेजर एवं व्हाट्सएप क्लाउड एपीआई</li>
+            <li><strong>लीड कैप्चर:</strong> इंटरैक्टिव संदेश टेम्पलेट और त्वरित उत्तर</li>
+            <li><strong>एलएलएम ट्राइएज:</strong> संदर्भ-आधारित सामान्य प्रश्नोत्तर और मानव एस्केलेशन</li>
+            <li><strong>डेटा सिंक:</strong> ज़ोहो, हबस्पॉट, ईआरपी या स्प्रेडशीट के लिए सीधा वेबहुक</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Focused Industry Solutions -->
+  <section class="section industry-solutions-section" aria-labelledby="industry-solutions-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="industry-solutions-title" class="section-title">विशिष्ट व्यावसायिक कार्यप्रवाहों के लिए समाधान</h2>
+        <p class="section-subtitle">
+          वास्तविक व्यावसायिक चुनौतियों और परिचालनात्मक आवश्यकताओं के लिए उद्देश्य-निर्मित सॉफ़्टवेयर वास्तुकला।
+        </p>
+      </div>
+
+      <div class="grid grid--2">
+        <article class="card solution-card">
+          <div class="solution-card__badge">स्वास्थ्य सेवा एवं स्थानीय क्लीनिक</div>
+          <h3 class="solution-card__title">भारत में क्लीनिकों के लिए वेबसाइट विकास</h3>
+          <p class="solution-card__desc">
+            जब मरीज किसी विशेषज्ञ या नैदानिक परीक्षण की तलाश करते हैं, तो गति अत्यंत महत्वपूर्ण होती है। हम भारत भर में दंत क्लीनिकों, डायग्नोस्टिक सेंटरों और अस्पतालों के लिए अल्ट्रा-फास्ट, मोबाइल-फर्स्ट प्लेटफॉर्म बनाते हैं।
+          </p>
+          <ul class="solution-card__list">
+            <li><strong>त्वरित मोबाइल एक्सेस:</strong> मोबाइल 4G/5G नेटवर्क पर सब-सेकंड पेज लोड गति ताकि मरीज तुरंत डॉक्टर की उपलब्धता देख सकें।</li>
+            <li><strong>सहज व्हाट्सएप अपॉइंटमेंट:</strong> प्री-फिल्ड विभाग पूछताछ के साथ क्लिक-टू-व्हाट्सएप रूटिंग जिसे स्टाफ तुरंत पुष्ट कर सकता है।</li>
+            <li><strong>DPDP डेटा सुरक्षा:</strong> कोई असुरक्षित ट्रैकर या डेटा रिसाव नहीं; पूछताछ एन्क्रिप्ट होकर सीधे आपके सत्यापित इनबॉक्स या सीआरएम में जाती है।</li>
+            <li><strong>स्थानीय एसईओ स्कीमा:</strong> स्थानीय मैप्स और उच्च-इरादा खोजों में शीर्ष स्थान के लिए MedicalClinic संरचित डेटा।</li>
+          </ul>
+        </article>
+
+        <article class="card solution-card">
+          <div class="solution-card__badge">संवादात्मक ऑटोमेशन</div>
+          <h3 class="solution-card__title">व्यवसायों के लिए व्हाट्सएप ऑटोमेशन</h3>
+          <p class="solution-card__desc">
+            धीमे उत्तरों और मैन्युअल संदेश प्रबंधन के कारण लीड खोना बंद करें। हम आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई वेबहुक तैनात करते हैं जो पूछताछ को संभालते हैं और 24/7 डेटा सिंक करते हैं।
+          </p>
+          <ul class="solution-card__list">
+            <li><strong>आधिकारिक सत्यापित एपीआई:</strong> मेटा क्लाउड एपीआई पर निर्मित, असुरक्षित ब्राउज़र स्क्रैपर्स पर शून्य निर्भरता।</li>
+            <li><strong>बुद्धिमान लीड योग्यता:</strong> इंटरैक्टिव बटन मेनू और संरचित प्रवाह के माध्यम से ग्राहक की आवश्यकता और बजट का स्वचालित संग्रह।</li>
+            <li><strong>सहज सीआरएम एकीकरण:</strong> संपर्क विवरण और चैट सारांश रीयल-टाइम में Zoho CRM, PostgreSQL या Google Sheets में सुरक्षित रूप से दर्ज।</li>
+            <li><strong>लाइव एजेंट एस्केलेशन:</strong> जब कोई ग्राहक लाइव परामर्श चाहता है, तो कार्यप्रवाह पूरी चैट संदर्भ के साथ तुरंत आपकी टीम को सतर्क करता है।</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Stack Grid -->
+  <section class="section tech-stack-section" aria-labelledby="stack-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="stack-title" class="section-title">परीक्षित, स्थिर और सुरक्षित टूल्स</h2>
+        <p class="section-subtitle">
+          हम सिद्ध तकनीकों का चयन करते हैं जो अधिकतम दीर्घायु, मजबूत सुरक्षा और आसान रखरखाव प्रदान करती हैं।
+        </p>
+      </div>
+
+      <div class="stack-grid">
+        <div class="stack-category">
+          <h3 class="stack-category__title">फ्रंटएंड एवं यूआई</h3>
+          <ul class="stack-category__tags">
+            <li>Astro</li>
+            <li>TypeScript</li>
+            <li>Next.js</li>
+            <li>Modern CSS / Tailwind</li>
+            <li>Three.js / GSAP</li>
+          </ul>
+        </div>
+        <div class="stack-category">
+          <h3 class="stack-category__title">मोबाइल प्लेटफॉर्म</h3>
+          <ul class="stack-category__tags">
+            <li>Kotlin Native</li>
+            <li>Jetpack Compose</li>
+            <li>Room / SQLite</li>
+            <li>Flutter (Hybrid)</li>
+            <li>Android WorkManager</li>
+          </ul>
+        </div>
+        <div class="stack-category">
+          <h3 class="stack-category__title">बैकएंड एवं डेटाबेस</h3>
+          <ul class="stack-category__tags">
+            <li>Node.js / Express</li>
+            <li>Python / FastAPI</li>
+            <li>PostgreSQL</li>
+            <li>Redis</li>
+            <li>Prisma / Drizzle ORM</li>
+          </ul>
+        </div>
+        <div class="stack-category">
+          <h3 class="stack-category__title">क्लाउड एवं ऑटोमेशन</h3>
+          <ul class="stack-category__tags">
+            <li>Meta WhatsApp Cloud API</li>
+            <li>Cloudflare Workers &amp; Pages</li>
+            <li>Docker Containers</li>
+            <li>OpenAI / Anthropic APIs</li>
+            <li>GitHub Actions CI/CD</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engineering Standards & Quality Commitments -->
+  <section class="section standards-section" aria-labelledby="standards-title">
+    <div class="container">
+      <div class="standards-box">
+        <div class="standards-content">
+          <h2 id="standards-title" class="standards-title">हमारे गैर-परक्राम्य इंजीनियरिंग मानक</h2>
+          <div class="standards-list">
+            <div class="standard-item">
+              <h3 class="standard-item__title">शून्य विक्रेता लॉक-इन</h3>
+              <p class="standard-item__text">
+                अंतिम भुगतान के बाद संपूर्ण स्रोत कोड रिपॉजिटरी आपके स्वामित्व में स्थानांतरित कर दी जाती है। बिना किसी लाइसेंस शुल्क के होस्ट या संशोधित करने की पूर्ण स्वतंत्रता।
+              </p>
+            </div>
+            <div class="standard-item">
+              <h3 class="standard-item__title">कठोर सुरक्षा एवं डेटा स्वच्छता</h3>
+              <p class="standard-item__text">
+                इनपुट सैनिटाइजेशन, एन्क्रिप्टेड एनवायरनमेंट वेरिएबल्स, पैरामीटराइज्ड डेटाबेस क्वेरीज़ और आधुनिक कंटेंट सिक्योरिटी पॉलिसी (CSP) प्रत्येक प्रोजेक्ट में अनिवार्य।
+              </p>
+            </div>
+            <div class="standard-item">
+              <h3 class="standard-item__title">माइलस्टोन परीक्षण एवं वारंटी</h3>
+              <p class="standard-item__text">
+                प्रत्येक रिलीज क्रॉस-ब्राउज़र परीक्षण से गुजरती है। हम वितरित कार्य पर 30-दिवसीय निःशुल्क बग वारंटी प्रदान करते हैं ताकि किसी भी अप्रत्याशित समस्या का समाधान तुरंत हो सके।
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process & Milestones -->
+  <section class="section" aria-labelledby="tech-pricing-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="tech-pricing-title" class="section-title">पारदर्शी परियोजना वितरण आधार रेखा</h2>
+        <p class="section-subtitle">
+          परियोजनाओं का अनुमान निर्धारित तकनीकी स्कोप और 50% अग्रिम जमा शर्तों पर लगाया जाता है।
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        <div class="card card--quiet">
+          <span class="section-eyebrow">चरण 1 &bull; तकनीकी स्कोप</span>
+          <h3 class="pillar-title">तकनीकी विशिष्टता</h3>
+          <p class="text-secondary text-sm">
+            हम एक स्पष्ट लिखित दस्तावेज़ में सभी उपयोगकर्ता प्रवाह, डेटाबेस स्कीमा और एकीकरण वेबहुक की रूपरेखा तैयार करते हैं।
+          </p>
+        </div>
+        <div class="card card--quiet">
+          <span class="section-eyebrow">चरण 2 &bull; लिखित प्रस्ताव</span>
+          <h3 class="pillar-title">निश्चित लिखित प्रस्ताव</h3>
+          <p class="text-secondary text-sm">
+            आपको 1 कार्यदिवस के भीतर स्प्रिंट्स, डिलिवरेबल्स और शून्य छिपी हुई लागतों का विवरण देने वाला मदवार कोटेशन प्राप्त होता है।
+          </p>
+        </div>
+        <div class="card card--quiet">
+          <span class="section-eyebrow">चरण 3 &bull; वितरण एवं हैंडओवर</span>
+          <h3 class="pillar-title">100% कोड स्वामित्व</h3>
+          <p class="text-secondary text-sm">
+            कार्य शुरू करने के लिए 50% अग्रिम, स्टेजिंग स्वीकृति पर 50% शेष। पूर्ण स्रोत कोड रिपॉजिटरी और बौद्धिक संपदा आपको हस्तांतरित।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-banner">
+        <div class="cta-content">
+          <h2 class="cta-title">क्या आपके मन में कोई तकनीकी योजना है?</h2>
+          <p class="cta-desc">
+            हमें अपनी कार्यात्मक आवश्यकताएं साझा करें। हम व्यवहार्यता की समीक्षा करेंगे, तकनीकी दृष्टिकोण तैयार करेंगे और एक निश्चित माइलस्टोन योजना प्रदान करेंगे।
+          </p>
+          <div class="cta-buttons">
+            <a href="/hi/contact/?service=technologies" class="btn btn--primary btn--lg">
+              तकनीकी चर्चा शुरू करें
+            </a>
+            <a href="/hi/case-studies/" class="btn btn--outline btn--lg">
+              वास्तुकला केस स्टडीज देखें
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  /* Capabilities */
+  .capability-card {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .capability-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--accent-subtle);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-6);
+  }
+
+  .capability-title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .capability-text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .capability-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-4);
+    margin-top: auto;
+  }
+
+  .capability-features strong {
+    color: var(--text-primary);
+  }
+
+  /* Stack Grid */
+  .tech-stack-section {
+    background: var(--bg-surface);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .stack-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .stack-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stack-category {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .stack-category__title {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-4);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .stack-category__tags {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .stack-category__tags li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  }
+
+  .stack-category__tags li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Standards */
+  .standards-box {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-12) var(--space-8);
+  }
+
+  .standards-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-8);
+  }
+
+  .standards-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 52rem) {
+    .standards-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .standard-item__title {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+  }
+
+  .standard-item__text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .cta-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--color-snow);
+  }
+
+  .cta-content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .cta-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .cta-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  /* Service Overview & Solution Cards */
+  .service-overview-section {
+    padding-top: 0;
+    padding-bottom: var(--space-8);
+  }
+
+  .service-overview-card {
+    padding: var(--space-8);
+    background: var(--bg-surface);
+  }
+
+  .service-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .overview-item__label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .overview-item__val {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .solution-card {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .solution-card__badge {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .solution-card__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .solution-card__desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .solution-card__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-4);
+    margin-top: auto;
+  }
+
+  .solution-card__list strong {
+    color: var(--text-primary);
+  }
+</style>
+

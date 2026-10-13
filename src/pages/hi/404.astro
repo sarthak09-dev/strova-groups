@@ -1,0 +1,136 @@
+---
+/**
+ * 404 त्रुटि पृष्ठ (src/pages/hi/404.astro)
+ * 
+ * आवश्यकताएं:
+ * - ब्रांडेड, सुलभ, रिस्पॉन्सिव त्रुटि लेआउट
+ * - noindex मेटा टैग
+ * - प्राथमिक पृष्ठों पर वापस नेविगेशन
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="पृष्ठ नहीं मिला (404) — Strova Group"
+  description="अनुरोधित पृष्ठ स्ट्रोवा ग्रुप पर नहीं मिल सका। हमारी सॉफ़्टवेयर इंजीनियरिंग और विकास सेवाओं का अन्वेषण करें।"
+  noindex={true}
+  lang="hi"
+>
+  <section class="error-section">
+    <div class="container text-center">
+      <div class="error-badge">त्रुटि 404</div>
+      <h1 class="error-title">पृष्ठ उपलब्ध नहीं है</h1>
+      <p class="error-desc">
+        आपके द्वारा अनुरोधित पृष्ठ मौजूद नहीं है या किसी अन्य पते पर स्थानांतरित कर दिया गया है। हमारी प्राथमिक सेवाओं पर लौटने के लिए नीचे दिए गए लिंक का उपयोग करें।
+      </p>
+
+      <div class="error-actions">
+        <a href="/hi/" class="btn btn--primary btn--lg">
+          मुख्य पृष्ठ पर लौटें
+        </a>
+        <a href="/hi/technologies/" class="btn btn--outline btn--lg">
+          स्ट्रोवा टेक्नोलॉजीज
+        </a>
+        <a href="/hi/contact/" class="btn btn--outline btn--lg">
+          संपर्क सहायता
+        </a>
+      </div>
+
+      <div class="error-links">
+        <span class="error-links__title">महत्वपूर्ण संसाधन</span>
+        <ul class="error-links__list">
+          <li><a href="/hi/digital/">स्ट्रोवा डिजिटल एवं एसईओ</a></li>
+          <li><a href="/hi/commerce/">स्ट्रोवा कॉमर्स (जल्द उपलब्ध)</a></li>
+          <li><a href="/hi/case-studies/">वास्तुकला केस स्टडीज</a></li>
+          <li><a href="/hi/about/">स्ट्रोवा ग्रुप परिचय</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .error-section {
+    padding-top: var(--space-20);
+    padding-bottom: var(--space-24);
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .error-section .container {
+    max-width: 44rem;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .error-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-4);
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .error-title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+
+  .error-desc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+
+  .error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-12);
+  }
+
+  .error-links {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-8);
+  }
+
+  .error-links__title {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .error-links__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-6);
+  }
+
+  .error-links__list a {
+    font-size: var(--text-sm);
+    color: var(--accent);
+  }
+
+  .error-links__list a:hover {
+    text-decoration: underline;
+  }
+</style>
+

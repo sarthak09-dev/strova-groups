@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'कोटेशन अनुरोध',
+      item: 'https://strovagroups.in/hi/contact/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'अनुरोध प्राप्त हुआ',
+      item: 'https://strovagroups.in/hi/quote/confirmed/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="कोटेशन अनुरोध प्राप्त — Strova Group"
+  description="आपका प्रोजेक्ट कोटेशन अनुरोध प्राप्त हो गया है। हम सभी विशिष्टताओं की समीक्षा करते हैं और 1 कार्यदिवस में लिखित कोटेशन प्रदान करते हैं।"
+  noindex={true}
+  jsonLd={[breadcrumbJsonLd]}
+  lang="hi"
+>
+  <section class="section">
+    <div class="container confirmed-container">
+      <div class="card confirmed-card">
+        <div class="confirmed-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+
+        <span class="section-eyebrow">अनुरोध प्राप्त हुआ</span>
+        <h1 class="confirmed-title">हमें आपका कोटेशन अनुरोध प्राप्त हुआ</h1>
+        <p class="confirmed-lead text-secondary">
+          स्ट्रोवा ग्रुप से संपर्क करने के लिए धन्यवाद। आपके संदर्भ के लिए एक पावती प्रतिलिपि कतारबद्ध कर दी गई है।
+        </p>
+
+        <div class="next-steps-card card card--quiet">
+          <h2 class="text-base" style="margin-bottom: var(--space-4);">आगे क्या होगा:</h2>
+          <ol class="next-steps-list">
+            <li>
+              <strong>1. संस्थापक समीक्षा:</strong> हमारा इंजीनियरिंग नेतृत्व आपके कार्यात्मक लक्ष्यों और तकनीकी आवश्यकताओं की समीक्षा करता है।
+            </li>
+            <li>
+              <strong>2. लिखित निश्चित कोटेशन (1 कार्यदिवस के भीतर):</strong> आपको स्कोप, माइलस्टोन, समयसीमा और निश्चित शर्तों का विवरण देने वाला प्रस्ताव प्राप्त होता है।
+            </li>
+            <li>
+              <strong>3. लिखित अनुबंध एवं 50% अग्रिम:</strong> आपसी सहमति और प्रारंभिक जमा राशि के तुरंत बाद विकास स्प्रिंट शुरू होते हैं।
+            </li>
+          </ol>
+        </div>
+
+        <div class="confirmed-footer text-sm text-secondary">
+          <p>
+            अति आवश्यक विवरण जोड़ना चाहते हैं? हमें सीधे <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> पर ईमेल करें या व्हाट्सएप <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a> पर संदेश भेजें।
+          </p>
+          <div style="margin-top: var(--space-6);">
+            <a href="/hi/" class="btn btn--outline">मुख्य पृष्ठ पर लौटें &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .confirmed-container {
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+
+  .confirmed-card {
+    padding: var(--space-10);
+    text-align: center;
+  }
+
+  .confirmed-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    color: var(--accent);
+  }
+
+  .confirmed-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .confirmed-lead {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-8);
+  }
+
+  .next-steps-card {
+    text-align: left;
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .next-steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .next-steps-list strong {
+    color: var(--text-primary);
+  }
+
+  .confirmed-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-6);
+  }
+</style>
+

@@ -1,8 +1,10 @@
 ---
 /*
  * SEO head component — generates <title>, meta, OG, Twitter, JSON-LD,
- * canonical, and hreflang for every page.
+ * canonical, and bilingual hreflang for every page.
  */
+import { getHreflangUrls, type Locale } from '../data/i18n';
+
 interface Props {
   title: string;
   description: string;
@@ -11,33 +13,45 @@ interface Props {
   ogType?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  lang?: Locale;
 }
 
 const {
   title,
   description,
-  canonical = Astro.url.href,
+  canonical,
   ogImage = '/images/og-default.png',
   ogType = 'website',
   jsonLd,
   noindex = false,
+  lang = 'en',
 } = Astro.props;
 
 const siteName = 'Strova Group';
-const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
-const canonicalUrl = new URL(canonical, Astro.site);
+const fullTitle = title.includes(siteName) || title.includes('स्ट्रोवा ग्रुप')
+  ? title
+  : `${title} — ${siteName}`;
+
+const hreflangs = getHreflangUrls(Astro.url.pathname);
+const canonicalHref = canonical
+  ? (canonical.startsWith('http') ? canonical : new URL(canonical, Astro.site).href)
+  : (lang === 'hi' ? hreflangs.hiUrl : hreflangs.enUrl);
+
 const ogImageUrl = new URL(ogImage, Astro.site);
-const defaultImageAlt = 'Strova Group — Technology & Digital Services in India';
+const defaultImageAlt = lang === 'hi'
+  ? 'स्ट्रोवा ग्रुप — भारत में उन्नत प्रौद्योगिकी एवं डिजिटल विकास'
+  : 'Strova Group — Technology & Digital Services in India';
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonicalUrl.href} />
+<link rel="canonical" href={canonicalHref} />
 
-<!-- Hreflang alternates -->
-<link rel="alternate" hreflang="en" href={canonicalUrl.href} />
-<link rel="alternate" hreflang="en-IN" href={canonicalUrl.href} />
-<link rel="alternate" hreflang="x-default" href={canonicalUrl.href} />
+<!-- Bilingual Hreflang alternates -->
+<link rel="alternate" hreflang="en" href={hreflangs.enUrl} />
+<link rel="alternate" hreflang="hi" href={hreflangs.hiUrl} />
+<link rel="alternate" hreflang="en-IN" href={hreflangs.enUrl} />
+<link rel="alternate" hreflang="x-default" href={hreflangs.xDefaultUrl} />
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -61,13 +75,14 @@ const defaultImageAlt = 'Strova Group — Technology & Digital Services in India
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content={ogType} />
-<meta property="og:url" content={canonicalUrl.href} />
+<meta property="og:url" content={canonicalHref} />
 <meta property="og:image" content={ogImageUrl.href} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={defaultImageAlt} />
 <meta property="og:site_name" content={siteName} />
-<meta property="og:locale" content="en_IN" />
+<meta property="og:locale" content={lang === 'hi' ? 'hi_IN' : 'en_IN'} />
+<meta property="og:locale:alternate" content={lang === 'hi' ? 'en_IN' : 'hi_IN'} />
 
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />

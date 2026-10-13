@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const googleReviewUrl = import.meta.env.PUBLIC_GOOGLE_REVIEW_URL || 'https://search.google.com/local/writereview?placeid=strova-group';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'समीक्षा एवं प्रतिक्रिया',
+      item: 'https://strovagroups.in/hi/review/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="ग्राहक समीक्षा एवं प्रतिक्रिया — Strova Group"
+  description="गूगल बिजनेस पर स्ट्रोवा ग्रुप के लिए ईमानदार समीक्षा दें। हम बिना किसी प्रोत्साहन के पारदर्शी ग्राहक प्रतिक्रिया को महत्व देते हैं।"
+  jsonLd={[breadcrumbJsonLd]}
+  lang="hi"
+>
+  <section class="section">
+    <div class="container prose-container">
+      <div class="review-card card">
+        <span class="section-eyebrow">ग्राहक प्रतिक्रिया</span>
+        <h1 class="review-title">स्ट्रोवा ग्रुप के साथ अपने अनुभव साझा करें</h1>
+        
+        <p class="review-lead text-secondary">
+          स्ट्रोवा ग्रुप के साथ काम करने के लिए धन्यवाद। ग्राहकों से प्राप्त स्वतंत्र, ईमानदार प्रतिक्रिया अन्य व्यवसाय स्वामियों को हमारी इंजीनियरिंग और व्यावसायिक पारदर्शिता का मूल्यांकन करने में मदद करती है।
+        </p>
+
+        <div class="review-guidelines card card--quiet">
+          <h2 class="text-base" style="margin-bottom: var(--space-2);">हमारी समीक्षा नीति:</h2>
+          <ul class="text-sm text-secondary" style="list-style: disc; padding-left: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>शून्य प्रोत्साहन:</strong> हम कभी भी समीक्षाओं के बदले छूट या वित्तीय प्रोत्साहन नहीं देते हैं।</li>
+            <li><strong>शून्य गेटिंग:</strong> हम प्रतिक्रिया को फ़िल्टर या पूर्व-स्क्रीन नहीं करते हैं। सभी ग्राहकों को सीधे गूगल के सार्वजनिक समीक्षा पृष्ठ पर निर्देशित किया जाता है।</li>
+            <li><strong>प्रत्यक्ष संचार:</strong> यदि आपको अपनी परियोजना पर किसी समस्या का सामना करना पड़ा है, तो आप हमेशा हमारे संस्थापक से <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> पर संपर्क कर सकते हैं।</li>
+          </ul>
+        </div>
+
+        <div class="review-action" style="margin-top: var(--space-8); display: flex; flex-wrap: wrap; gap: var(--space-4);">
+          <a
+            href={googleReviewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--primary btn--lg"
+          >
+            गूगल पर समीक्षा लिखें &rarr;
+          </a>
+          <a href="mailto:info@strovagroups.in?subject=Direct%20Client%20Feedback" class="btn btn--outline btn--lg">
+            संस्थापक को निजी प्रतिक्रिया भेजें
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose-container {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .review-card {
+    padding: var(--space-10);
+  }
+
+  .review-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .review-lead {
+    font-size: var(--text-base);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .review-guidelines {
+    padding: var(--space-6);
+  }
+</style>
+

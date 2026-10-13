@@ -1,0 +1,378 @@
+---
+/**
+ * कॉमर्स डिवीजन पृष्ठ (src/pages/hi/commerce.astro)
+ * 
+ * डिवीजन: स्ट्रोवा कॉमर्स (Strova Commerce) — "जल्द उपलब्ध" (Coming Soon)
+ * स्थिति: विकासधीन
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'स्ट्रोवा कॉमर्स — हेडलेस रिटेल एवं संवादात्मक कॉमर्स',
+  provider: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  serviceType: 'हेडलेस ई-कॉमर्स और व्हाट्सएप संवादात्मक चेकआउट',
+  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  description:
+    'अगली पीढ़ी के हेडलेस कॉमर्स स्टोरफ्रंट, नेटिव व्हाट्सएप कैटलॉग चेकआउट, ओमनीचैनल इन्वेंटरी सिंक और कैश-ऑन-डिलीवरी आरटीओ धोखाधड़ी सुरक्षा (जल्द उपलब्ध)।',
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'कॉमर्स',
+      item: 'https://strovagroups.in/hi/commerce/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="स्ट्रोवा कॉमर्स (जल्द उपलब्ध) — Strova Group"
+  description="स्ट्रोवा कॉमर्स: आधुनिक हेडलेस स्टोरफ्रंट्स, व्हाट्सएप संवादात्मक चेकआउट और ओमनीचैनल इन्वेंटरी इंजन। जल्द उपलब्ध।"
+  jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <section class="commerce-hero">
+    <div class="container text-center">
+      <div class="coming-soon-badge">
+        <span class="badge-dot"></span>
+        <span>स्ट्रोवा कॉमर्स &bull; जल्द उपलब्ध</span>
+      </div>
+      <h1 class="commerce-title">
+        संवादात्मक एवं हेडलेस ई-कॉमर्स का भविष्य
+      </h1>
+      <p class="commerce-lead">
+        हम एक एकीकृत रिटेल इंजन का निर्माण कर रहे हैं जो भारतीय और वैश्विक व्यापारियों के लिए अल्ट्रा-फास्ट स्टैटिक स्टोरफ्रंट, नेटिव व्हाट्सएप कैटलॉग चेकआउट और बुद्धिमान सीओडी धोखाधड़ी रोकथाम को जोड़ता है।
+      </p>
+
+      <div class="commerce-actions">
+        <a href="/hi/contact/?service=commerce" class="btn btn--primary btn--lg">
+          अर्ली एक्सेस पार्टनर सूची में शामिल हों
+        </a>
+        <a href="/hi/technologies/" class="btn btn--outline btn--lg">
+          सक्रिय तकनीकी क्षमताएं देखें
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Specification Overview -->
+  <section class="section service-overview-section" aria-label="Division Overview">
+    <div class="container">
+      <div class="card service-overview-card">
+        <div class="service-overview-grid">
+          <div class="overview-item">
+            <span class="overview-item__label">सेवा का विवरण</span>
+            <p class="overview-item__val">हेडलेस हाई-स्पीड स्टोरफ्रंट्स, संवादात्मक व्हाट्सएप कैटलॉग चेकआउट, ओमनीचैनल इन्वेंटरी सिंक और स्वचालित सीओडी आरटीओ सुरक्षा।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">किसके लिए उपयुक्त</span>
+            <p class="overview-item__val">डायरेक्ट-टू-कंज्यूमर (D2C) ब्रांड्स, भारत में खुदरा व्यापारी और वैश्विक ई-कॉमर्स विक्रेता जो 100ms से कम चेकआउट अनुभव चाहते हैं।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">वाणिज्यिक स्थिति</span>
+            <p class="overview-item__val">वर्तमान में निजी इंजीनियरिंग विकास में। पायलट पार्टनर ऑनबोर्डिंग और तकनीकी वास्तुकला समीक्षाएं खुली हैं।</p>
+          </div>
+          <div class="overview-item">
+            <span class="overview-item__label">अनुमानित समयसीमा</span>
+            <p class="overview-item__val">डिवीजन जल्द उपलब्ध होगा। प्रारंभिक साझेदार पूछताछ और तकनीकी वास्तुकला परामर्श वर्तमान में सक्रिय हैं।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architectural Pillars of Commerce -->
+  <section class="section" aria-labelledby="roadmap-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="roadmap-title" class="section-title">स्ट्रोवा कॉमर्स क्या तैयार कर रहा है</h2>
+        <p class="section-subtitle">
+          आधुनिक ई-कॉमर्स की मुख्य समस्याओं का समाधान: धीमी गति, चेकआउट ड्रॉप-ऑफ और कैश-ऑन-डिलीवरी आरटीओ घाटा।
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        <div class="card pillar-card">
+          <div class="pillar-number">01</div>
+          <h3 class="pillar-title">हेडलेस एज स्टोरफ्रंट्स</h3>
+          <p class="pillar-desc">
+            Astro और आधुनिक एज सीडीएन पर निर्मित कैटलॉग अनुभव। पेज ट्रांज़िशन 100ms से कम समय लेते हैं, जो मोबाइल उपयोगकर्ताओं के ड्रॉप-ऑफ को समाप्त करते हैं।
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">02</div>
+          <h3 class="pillar-title">व्हाट्सएप कैटलॉग एवं चेकआउट</h3>
+          <p class="pillar-desc">
+            ग्राहकों को चैट छोड़े बिना सीधे व्हाट्सएप के भीतर उत्पाद कैटलॉग ब्राउज़ करने, आकार चुनने और लेनदेन पूरा करने की सुविधा।
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">03</div>
+          <h3 class="pillar-title">बुद्धिमान सीओडी एवं आरटीओ सुरक्षा</h3>
+          <p class="pillar-desc">
+            कैश-ऑन-डिलीवरी प्रेषण से पहले स्वचालित व्हाट्सएप ओटीपी सत्यापन और एआई-संचालित खरीदार जोखिम मूल्यांकन, जिससे रिटर्न 30-45% तक कम होता है।
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">04</div>
+          <h3 class="pillar-title">ओमनीचैनल रीयल-टाइम सिंक</h3>
+          <p class="pillar-desc">
+            मजबूत मैसेज कतारों का उपयोग करके पीओएस सिस्टम, वेब स्टोरफ्रंट, अमेजन और क्विक-कॉमर्स चैनलों के बीच स्टॉक स्तरों का स्वचालित समन्वय।
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">05</div>
+          <h3 class="pillar-title">भारतीय भुगतान रूटिंग</h3>
+          <p class="pillar-desc">
+            नेटिव 1-क्लिक यूपीआई इंटेंट फ्लो, स्वचालित रिफंड वेबहुक और Razorpay, Cashfree और PayU में मल्टी-गेटवे फॉलबैक।
+          </p>
+        </div>
+
+        <div class="card pillar-card">
+          <div class="pillar-number">06</div>
+          <h3 class="pillar-title">वैश्विक मुद्रा एवं कर अनुपालन</h3>
+          <p class="pillar-desc">
+            अंतर्निहित बहु-मुद्रा मूल्य निर्धारण, भारतीय घरेलू लेनदेन के लिए स्वचालित जीएसटी ई-इनवॉइसिंग और निर्यात के लिए स्ट्राइप टैक्स गणना।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Early Partner Callout -->
+  <section class="section early-access-section">
+    <div class="container">
+      <div class="early-access-box">
+        <div class="early-access-content">
+          <h2 class="early-access-title">बीटा परिनियोजन के लिए 5 D2C ब्रांड्स की तलाश</h2>
+          <p class="early-access-desc">
+            हम सार्वजनिक लॉन्च से पहले हमारे व्हाट्सएप संवादात्मक चेकआउट और हेडलेस स्पीड आर्किटेक्चर का संचालन करने के लिए चुनिंदा ब्रांडों के साथ सहयोग कर रहे हैं।
+          </p>
+          <div class="early-access-perks">
+            <div class="perk-item">
+              <strong>शून्य प्लेटफॉर्म लाइसेंसिंग शुल्क</strong> बीटा परीक्षण चक्र के दौरान।
+            </div>
+            <div class="perk-item">
+              <strong>समर्पित इंजीनियरिंग सहायता</strong> सीधे स्ट्रोवा ग्रुप की कोर तकनीकी टीम से।
+            </div>
+            <div class="perk-item">
+              <strong>कस्टम एकीकरण कार्य</strong> आपके मौजूदा ईआरपी या इन्वेंटरी सिस्टम के लिए।
+            </div>
+          </div>
+          <a href="/hi/contact/?service=commerce" class="btn btn--primary btn--lg">
+            डिज़ाइन पार्टनर के रूप में आवेदन करें
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .commerce-hero {
+    padding-top: var(--space-20);
+    padding-bottom: var(--space-20);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-page) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .commerce-hero .container {
+    max-width: 52rem;
+  }
+
+  .coming-soon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-4);
+    background: rgba(148, 163, 184, 0.15);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 9999px;
+    margin-bottom: var(--space-6);
+  }
+
+  .badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .commerce-title {
+    font-size: var(--text-4xl);
+    line-height: 1.15;
+    margin-bottom: var(--space-6);
+  }
+
+  .commerce-lead {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+
+  .commerce-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .pillar-card {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pillar-number {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .pillar-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .pillar-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .early-access-section {
+    padding-bottom: var(--space-24);
+  }
+
+  .early-access-box {
+    background: linear-gradient(135deg, var(--color-slate) 0%, var(--color-void) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-16) var(--space-8);
+    color: var(--color-snow);
+    text-align: center;
+  }
+
+  .early-access-content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .early-access-title {
+    font-size: var(--text-3xl);
+    color: var(--color-snow);
+    margin-bottom: var(--space-4);
+  }
+
+  .early-access-desc {
+    font-size: var(--text-base);
+    color: #94a3b8;
+    margin-bottom: var(--space-8);
+  }
+
+  .early-access-perks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    text-align: left;
+    margin-bottom: var(--space-8);
+  }
+
+  @media (min-width: 48rem) {
+    .early-access-perks {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .perk-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+    color: #cbd5e1;
+  }
+
+  .perk-item strong {
+    color: var(--color-snow);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .service-overview-section {
+    padding-top: 0;
+    padding-bottom: var(--space-8);
+  }
+
+  .service-overview-card {
+    padding: var(--space-8);
+    background: var(--bg-surface);
+  }
+
+  .service-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .service-overview-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .overview-item__label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .overview-item__val {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>
+

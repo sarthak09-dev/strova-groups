@@ -87,7 +87,7 @@ for (const filePath of htmlFiles) {
   if (!relPath.includes('404')) {
     const hreflangs = getAllMatches(content, /<link\s+rel="alternate"\s+hreflang="([^"]*)"\s+href="([^"]*)"/gi);
     const langs = hreflangs.map(m => m[1]);
-    if (!langs.includes('en') || !langs.includes('en-IN') || !langs.includes('x-default')) {
+    if (!langs.includes('en') || !langs.includes('hi') || !langs.includes('en-IN') || !langs.includes('x-default')) {
       errors.push(`[${relPath}] Missing required hreflang (found: ${langs.join(', ')})`);
     }
   }
@@ -259,6 +259,10 @@ for (const filePath of htmlFiles) {
     }
 
     if (!fs.existsSync(targetFile)) {
+      const altHtml = path.join(distDir, cleanPath.replace(/\/+$/, '').slice(1) + '.html');
+      if (fs.existsSync(altHtml)) {
+        continue;
+      }
       errors.push(`[${relPath}] Broken internal link: "${href}" -> target file not found: ${targetFile}`);
     }
   }

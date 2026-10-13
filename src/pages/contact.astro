@@ -167,18 +167,38 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
               </div>
             </div>
 
-            <!-- Optional 3: Rough Timeline -->
-            <div class="form-group">
-              <label for="contact-timeline" class="form-label">
-                Rough Timeline <span class="optional">(Optional)</span>
-              </label>
-              <select id="contact-timeline" name="timeline" class="form-select">
-                <option value="" selected>Select a rough timeline...</option>
-                <option value="2-4-weeks">Within 2–4 weeks (High urgency)</option>
-                <option value="1-2-months">1–2 months (Standard sprint)</option>
-                <option value="3-plus-months">3+ months (Longer runway)</option>
-                <option value="flexible">Flexible / Exploring feasibility</option>
-              </select>
+            <!-- Optional 3 & 4: Location/Timezone & Rough Timeline -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contact-timezone" class="form-label">
+                  Country / Timezone <span class="optional">(Optional)</span>
+                </label>
+                <select id="contact-timezone" name="timezone" class="form-select">
+                  <option value="" selected>Select your region / timezone...</option>
+                  <option value="IN-IST">India (IST • UTC+5:30)</option>
+                  <option value="US-EST">North America — Eastern (EST/EDT)</option>
+                  <option value="US-CST">North America — Central (CST/CDT)</option>
+                  <option value="US-PST">North America — Pacific (PST/PDT)</option>
+                  <option value="UK-GMT">United Kingdom / Europe (GMT/BST/CET)</option>
+                  <option value="UAE-GST">Middle East / Gulf (GST • UTC+4)</option>
+                  <option value="SG-SGT">Singapore / Southeast Asia (SGT • UTC+8)</option>
+                  <option value="AU-AEST">Australia / New Zealand (AEST/NZST)</option>
+                  <option value="OTHER">Other international timezone</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-timeline" class="form-label">
+                  Rough Timeline <span class="optional">(Optional)</span>
+                </label>
+                <select id="contact-timeline" name="timeline" class="form-select">
+                  <option value="" selected>Select a rough timeline...</option>
+                  <option value="2-4-weeks">Within 2–4 weeks (High urgency)</option>
+                  <option value="1-2-months">1–2 months (Standard sprint)</option>
+                  <option value="3-plus-months">3+ months (Longer runway)</option>
+                  <option value="flexible">Flexible / Exploring feasibility</option>
+                </select>
+              </div>
             </div>
 
             <!-- Required 3: What You Need (Message) -->
@@ -262,6 +282,15 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
             >
               info@strovagroups.in &rarr;
             </a>
+          </div>
+
+          <!-- Global & Remote Collaboration -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">International Clients</span>
+            <h3 class="channel-title">Global Remote Delivery</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              We partner with businesses worldwide. Asynchronous daily updates via Client Hub and Slack, scheduled video reviews across EST, GMT, and GST timezones. Commercial invoicing in INR or USD on request.
+            </p>
           </div>
 
           <!-- Corporate Details -->

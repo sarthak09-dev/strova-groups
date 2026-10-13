@@ -1,5 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
+import { translations, type Locale } from '../data/i18n';
+
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = translations[lang];
 
 let hasJournalArticles = false;
 try {
@@ -8,6 +16,7 @@ try {
 } catch {}
 
 const currentYear = new Date().getFullYear();
+const isHi = lang === 'hi';
 ---
 
 <footer class="site-footer" role="contentinfo">
@@ -15,7 +24,7 @@ const currentYear = new Date().getFullYear();
     <div class="footer__grid">
       <!-- Brand column -->
       <div class="footer__brand">
-        <a href="/" class="footer__logo" aria-label="Strova Group — Home">
+        <a href={isHi ? '/hi/' : '/'} class="footer__logo" aria-label={isHi ? 'स्ट्रोवा ग्रुप — मुख्य पृष्ठ' : 'Strova Group — Home'}>
           <svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
             <rect width="36" height="36" rx="8" fill="var(--color-ink)"/>
             <path d="M23 12C23 10.3431 21.6569 9 20 9H14C11.7909 9 10 10.7909 10 13C10 15.2091 11.7909 17 14 17H22C24.2091 17 26 18.7909 26 21C26 23.2091 24.2091 25 22 25H16C14.3431 25 13 23.6569 13 22" stroke="#FFFFFF" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
@@ -24,64 +33,119 @@ const currentYear = new Date().getFullYear();
           <span class="footer__wordmark">Strova Group</span>
         </a>
         <p class="footer__tagline text-sm text-secondary">
-          Technology, commerce, and digital growth for growing businesses.
+          {t.tagline}
         </p>
         <p class="footer__proprietorship text-xs text-muted">
-          Strova Group is a proprietorship of Babita Kumari.
+          {t.footer.proprietorNotice}
         </p>
       </div>
 
       <!-- Column 1: Divisions -->
       <div class="footer__col">
-        <h2 class="footer__heading">Divisions</h2>
+        <h2 class="footer__heading">{t.footer.divisionsTitle}</h2>
         <ul class="footer__list" role="list">
-          <li><a href="/technologies/">Strova Technologies</a></li>
-          <li><a href="/digital/">Strova Digital</a></li>
-          <li><a href="/commerce/">Strova Commerce <span class="badge-subtle">Coming soon</span></a></li>
+          <li>
+            <a href={isHi ? '/hi/technologies/' : '/technologies/'}>
+              {isHi ? 'स्ट्रोवा टेक्नोलॉजीज' : 'Strova Technologies'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/digital/' : '/digital/'}>
+              {isHi ? 'स्ट्रोवा डिजिटल' : 'Strova Digital'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/commerce/' : '/commerce/'}>
+              {isHi ? 'स्ट्रोवा कॉमर्स' : 'Strova Commerce'}
+              <span class="badge-subtle">{isHi ? 'जल्द उपलब्ध' : 'Coming soon'}</span>
+            </a>
+          </li>
         </ul>
       </div>
 
       <!-- Column 2: Company -->
       <div class="footer__col">
-        <h2 class="footer__heading">Company</h2>
+        <h2 class="footer__heading">{t.footer.companyTitle}</h2>
         <ul class="footer__list" role="list">
-          <li><a href="/about/">About &amp; Overview</a></li>
-          <li><a href="/about/#founder">Founder &amp; Ownership</a></li>
-          {hasJournalArticles && <li><a href="/journal/">Journal</a></li>}
-          <li><a href="/contact/">Request a Quote</a></li>
-          <li><a href="/faq/">Frequently Asked Questions</a></li>
+          <li>
+            <a href={isHi ? '/hi/about/' : '/about/'}>
+              {isHi ? 'कंपनी परिचय' : 'About & Overview'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/about/#founder' : '/about/#founder'}>
+              {isHi ? 'संस्थापक एवं स्वामित्व' : 'Founder & Ownership'}
+            </a>
+          </li>
+          {hasJournalArticles && (
+            <li>
+              <a href={isHi ? '/hi/journal/' : '/journal/'}>
+                {isHi ? 'जर्नल' : 'Journal'}
+              </a>
+            </li>
+          )}
+          <li>
+            <a href={isHi ? '/hi/contact/' : '/contact/'}>
+              {isHi ? 'कोटेशन अनुरोध' : 'Request a Quote'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/faq/' : '/faq/'}>
+              {isHi ? 'अक्सर पूछे जाने वाले सवाल' : 'Frequently Asked Questions'}
+            </a>
+          </li>
         </ul>
       </div>
 
       <!-- Column 3: Legal -->
       <div class="footer__col">
-        <h2 class="footer__heading">Legal</h2>
+        <h2 class="footer__heading">{t.footer.legalTitle}</h2>
         <ul class="footer__list" role="list">
-          <li><a href="/privacy/">Privacy Policy</a></li>
-          <li><a href="/terms/">Terms of Service</a></li>
-          <li><a href="/cookies/">Cookie Policy</a></li>
-          <li><a href="/accessibility/">Accessibility</a></li>
-          <li><a href="/privacy/#privacy-choices">Privacy choices</a></li>
+          <li>
+            <a href={isHi ? '/hi/privacy/' : '/privacy/'}>
+              {isHi ? 'गोपनीयता नीति' : 'Privacy Policy'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/terms/' : '/terms/'}>
+              {isHi ? 'सेवा की शर्तें' : 'Terms of Service'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/cookies/' : '/cookies/'}>
+              {isHi ? 'कुकी नीति' : 'Cookie Policy'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/accessibility/' : '/accessibility/'}>
+              {isHi ? 'डिजिटल अभिगम्यता' : 'Accessibility'}
+            </a>
+          </li>
+          <li>
+            <a href={isHi ? '/hi/privacy/#privacy-choices' : '/privacy/#privacy-choices'}>
+              {isHi ? 'गोपनीयता विकल्प' : 'Privacy choices'}
+            </a>
+          </li>
         </ul>
       </div>
 
       <!-- Column 4: Clients & Contact -->
       <div class="footer__col">
-        <h2 class="footer__heading">Clients</h2>
+        <h2 class="footer__heading">{isHi ? 'क्लाइंट हब' : 'Clients'}</h2>
         <ul class="footer__list" role="list">
           <li>
             <a href="https://portal.strovagroups.in/login/" target="_blank" rel="noopener noreferrer">
-              Client login &rarr;
+              {isHi ? 'क्लाइंट लॉगिन' : 'Client login'} &rarr;
             </a>
           </li>
           <li>
             <a href="https://portal.strovagroups.in/" target="_blank" rel="noopener noreferrer">
-              Track your order &rarr;
+              {isHi ? 'ऑर्डर ट्रैकिंग' : 'Track your order'} &rarr;
             </a>
           </li>
         </ul>
 
-        <h2 class="footer__heading" style="margin-top: var(--space-6);">Contact</h2>
+        <h2 class="footer__heading" style="margin-top: var(--space-6);">{isHi ? 'सीधा संपर्क' : 'Contact'}</h2>
         <address class="footer__contact">
           <p><a href="mailto:info@strovagroups.in">info@strovagroups.in</a></p>
           <p>
@@ -99,7 +163,7 @@ const currentYear = new Date().getFullYear();
 
     <div class="footer__bottom">
       <div class="footer__legal-lines text-xs text-muted">
-        <p>&copy; {currentYear} Strova Group. All rights reserved.</p>
+        <p>&copy; {currentYear} Strova Group. {t.footer.rights}</p>
         <p>Strova Group is a proprietorship of Babita Kumari. Registered MSME Enterprise &bull; Udyam: UDYAM-JH-20-0147452</p>
       </div>
       <div class="footer__status-badge">
@@ -161,6 +225,7 @@ const currentYear = new Date().getFullYear();
   .footer__proprietorship {
     margin-top: var(--space-2);
     font-weight: 500;
+    line-height: 1.5;
   }
 
   .footer__heading {

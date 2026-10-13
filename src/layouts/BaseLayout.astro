@@ -2,6 +2,7 @@
 /*
  * Base layout — wraps every page.
  * Loads fonts, global CSS, Header, Footer, skip link, and analytics.
+ * Supports bilingual rendering for English ('en') and Hindi ('hi').
  */
 import '@fontsource-variable/newsreader';
 import '@fontsource-variable/plus-jakarta-sans';
@@ -10,6 +11,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
+import type { Locale } from '../data/i18n';
 
 interface Props {
   title: string;
@@ -20,6 +22,7 @@ interface Props {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
   bodyClass?: string;
+  lang?: Locale;
 }
 
 const {
@@ -31,6 +34,7 @@ const {
   jsonLd,
   noindex,
   bodyClass = '',
+  lang = 'en',
 } = Astro.props;
 
 const sameAsProfiles = [
@@ -52,11 +56,13 @@ const orgJsonLd: Record<string, unknown> = {
   logo: 'https://strovagroups.in/images/logo.svg',
   email: 'info@strovagroups.in',
   telephone: '+919288077802',
-  description: 'Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.',
+  description: lang === 'hi'
+    ? 'व्यवसाय के लिए आधुनिक सॉफ़्टवेयर, वेब प्लेटफ़ॉर्म और डिजिटल विकास। स्ट्रोवा ग्रुप बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान है।'
+    : 'Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.',
   founder: {
     '@type': 'Person',
     name: 'Sarthak Shresht',
-    jobTitle: 'Founder',
+    jobTitle: lang === 'hi' ? 'संस्थापक (Founder)' : 'Founder',
   },
   identifier: {
     '@type': 'PropertyValue',
@@ -78,6 +84,7 @@ const websiteJsonLd = {
   '@type': 'WebSite',
   name: 'Strova Group',
   url: 'https://strovagroups.in',
+  inLanguage: ['en', 'hi'],
 };
 
 /* Merge page-specific JSON-LD with global ones */
@@ -89,7 +96,7 @@ const allJsonLd = [
 ---
 
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang={lang} dir="ltr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -115,24 +122,35 @@ const allJsonLd = [
       ogType={ogType}
       jsonLd={allJsonLd}
       noindex={noindex}
+      lang={lang}
     />
   </head>
   <body class={bodyClass}>
     <!-- Top Fluid Scroll Progress Indicator -->
     <div id="scroll-progress-bar" class="scroll-progress-bar" aria-hidden="true"></div>
 
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <Header />
+    <a href="#main-content" class="skip-link">
+      {lang === 'hi' ? 'मुख्य सामग्री पर जाएं' : 'Skip to main content'}
+    </a>
+    <Header lang={lang} />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
 
     <!-- Calm Sticky Mobile Quote Action Bar -->
-    <div class="mobile-quote-bar" aria-label="Mobile quote request">
+    <div class="mobile-quote-bar" aria-label={lang === 'hi' ? 'मोबाइल कोटेशन अनुरोध' : 'Mobile quote request'}>
       <div class="mobile-quote-bar__inner">
-        <span class="mobile-quote-bar__text">Planning a project?</span>
-        <a href="/contact/" class="btn btn--primary btn--sm" data-track="quote_click">Request a quote</a>
+        <span class="mobile-quote-bar__text">
+          {lang === 'hi' ? 'प्रोजेक्ट की योजना बना रहे हैं?' : 'Planning a project?'}
+        </span>
+        <a
+          href={lang === 'hi' ? '/hi/contact/' : '/contact/'}
+          class="btn btn--primary btn--sm"
+          data-track="quote_click"
+        >
+          {lang === 'hi' ? 'कोटेशन प्राप्त करें' : 'Request a quote'}
+        </a>
       </div>
     </div>
 
@@ -141,4 +159,3 @@ const allJsonLd = [
     <script src="../scripts/analytics.ts"></script>
   </body>
 </html>
-

@@ -1,6 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import { getLocalizedPath, translations, type Locale } from '../data/i18n';
 
+interface Props {
+  lang?: Locale;
+}
+
+const { lang = 'en' } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 let hasJournalArticles = false;
@@ -16,15 +22,26 @@ try {
   hasWorkCases = workEntries.length > 0;
 } catch {}
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/technologies/', label: 'Technologies' },
-  { href: '/digital/', label: 'Digital' },
-  { href: '/commerce/', label: 'Commerce' },
-  ...(hasWorkCases ? [{ href: '/case-studies/', label: 'Work' }] : []),
-  { href: '/about/', label: 'About' },
+const t = translations[lang];
+
+const navLinks = lang === 'hi' ? [
+  { href: '/hi/', label: t.nav.home },
+  { href: '/hi/technologies/', label: t.nav.technologies },
+  { href: '/hi/digital/', label: t.nav.digital },
+  { href: '/hi/commerce/', label: t.nav.commerce },
+  ...(hasWorkCases ? [{ href: '/hi/case-studies/', label: t.nav.caseStudies }] : []),
+  { href: '/hi/about/', label: t.nav.about },
+  ...(hasJournalArticles ? [{ href: '/hi/journal/', label: 'जर्नल' }] : []),
+  { href: '/hi/contact/', label: t.nav.contact },
+] : [
+  { href: '/', label: t.nav.home },
+  { href: '/technologies/', label: t.nav.technologies },
+  { href: '/digital/', label: t.nav.digital },
+  { href: '/commerce/', label: t.nav.commerce },
+  ...(hasWorkCases ? [{ href: '/case-studies/', label: t.nav.caseStudies }] : []),
+  { href: '/about/', label: t.nav.about },
   ...(hasJournalArticles ? [{ href: '/journal/', label: 'Journal' }] : []),
-  { href: '/contact/', label: 'Contact' },
+  { href: '/contact/', label: t.nav.contact },
 ];
 
 const normalizePath = (p: string) => p.replace(/\/+$/, '') || '/';
@@ -32,9 +49,14 @@ const normalizedCurrent = normalizePath(currentPath);
 
 function isActive(href: string): boolean {
   const normalizedHref = normalizePath(href);
-  if (normalizedHref === '/') return normalizedCurrent === '/';
+  if (normalizedHref === '/' || normalizedHref === '/hi') {
+    return normalizedCurrent === normalizedHref;
+  }
   return normalizedCurrent === normalizedHref || normalizedCurrent.startsWith(normalizedHref + '/');
 }
+
+const enUrl = getLocalizedPath(currentPath, 'en');
+const hiUrl = getLocalizedPath(currentPath, 'hi');
 ---
 
 <header class="site-header" role="banner">
@@ -47,7 +69,7 @@ function isActive(href: string): boolean {
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          <span>India</span>
+          <span>{lang === 'hi' ? 'भारत (India)' : 'India'}</span>
         </span>
         <span class="topbar-divider" aria-hidden="true">&bull;</span>
         <span class="topbar-item">
@@ -79,7 +101,7 @@ function isActive(href: string): boolean {
   </div>
 
   <div class="container header__inner">
-    <a href="/" class="header__logo" aria-label="Strova Group — Home">
+    <a href={lang === 'hi' ? '/hi/' : '/'} class="header__logo" aria-label={lang === 'hi' ? 'स्ट्रोवा ग्रुप — मुख्य पृष्ठ' : 'Strova Group — Home'}>
       <svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
         <rect width="36" height="36" rx="8" fill="var(--color-ink)"/>
         <path d="M23 12C23 10.3431 21.6569 9 20 9H14C11.7909 9 10 10.7909 10 13C10 15.2091 11.7909 17 14 17H22C24.2091 17 26 18.7909 26 21C26 23.2091 24.2091 25 22 25H16C14.3431 25 13 23.6569 13 22" stroke="#FFFFFF" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
@@ -89,7 +111,7 @@ function isActive(href: string): boolean {
     </a>
 
     <!-- Desktop nav -->
-    <nav class="header__nav-desktop" aria-label="Main navigation">
+    <nav class="header__nav-desktop" aria-label={lang === 'hi' ? 'मुख्य नेविगेशन' : 'Main navigation'}>
       <ul class="header__links" role="list">
         {navLinks.map(link => (
           <li>
@@ -105,17 +127,38 @@ function isActive(href: string): boolean {
       </ul>
     </nav>
 
-    <!-- Header Actions (Direct Contact, Theme Toggle & CTA) -->
+    <!-- Header Actions (Language Toggle, Direct WhatsApp & CTA) -->
     <div class="header__actions">
+      <!-- Accessible Language Selector -->
+      <nav class="lang-switch" aria-label="Language selection / भाषा चुनें">
+        <a
+          href={enUrl}
+          class:list={['lang-switch__btn', { 'lang-switch__btn--active': lang === 'en' }]}
+          aria-current={lang === 'en' ? 'page' : undefined}
+          aria-label="View website in English"
+        >
+          EN
+        </a>
+        <span class="lang-switch__divider" aria-hidden="true">/</span>
+        <a
+          href={hiUrl}
+          class:list={['lang-switch__btn', { 'lang-switch__btn--active': lang === 'hi' }]}
+          aria-current={lang === 'hi' ? 'page' : undefined}
+          aria-label="हिंदी में देखें (View website in Hindi)"
+        >
+          HI
+        </a>
+      </nav>
+
       <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp header__wa-btn" aria-label="Chat on WhatsApp">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
         </svg>
-        <span>WhatsApp</span>
+        <span>{t.actions.whatsappChat}</span>
       </a>
 
-      <a href="/contact/" class="btn btn--primary header__cta-btn">
-        <span>Discuss a project</span>
+      <a href={lang === 'hi' ? '/hi/contact/' : '/contact/'} class="btn btn--primary header__cta-btn">
+        <span>{t.actions.discussProject}</span>
       </a>
     </div>
 
@@ -124,7 +167,7 @@ function isActive(href: string): boolean {
       class="header__menu-btn"
       aria-expanded="false"
       aria-controls="mobile-menu"
-      aria-label="Open menu"
+      aria-label={lang === 'hi' ? 'मेनू खोलें' : 'Open menu'}
       type="button"
     >
       <svg class="header__menu-icon header__menu-icon--open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -140,7 +183,29 @@ function isActive(href: string): boolean {
   </div>
 
   <!-- Mobile nav panel -->
-  <nav id="mobile-menu" class="header__nav-mobile" aria-label="Mobile navigation" hidden>
+  <nav id="mobile-menu" class="header__nav-mobile" aria-label={lang === 'hi' ? 'मोबाइल नेविगेशन' : 'Mobile navigation'} hidden>
+    <!-- Mobile Language Switcher -->
+    <div class="mobile-lang-wrap">
+      <span class="mobile-lang-label text-xs text-muted">{lang === 'hi' ? 'भाषा (Language):' : 'Language:'}</span>
+      <div class="lang-switch" role="group" aria-label="Language selection / भाषा चुनें">
+        <a
+          href={enUrl}
+          class:list={['lang-switch__btn', { 'lang-switch__btn--active': lang === 'en' }]}
+          aria-current={lang === 'en' ? 'page' : undefined}
+        >
+          English (EN)
+        </a>
+        <span class="lang-switch__divider" aria-hidden="true">/</span>
+        <a
+          href={hiUrl}
+          class:list={['lang-switch__btn', { 'lang-switch__btn--active': lang === 'hi' }]}
+          aria-current={lang === 'hi' ? 'page' : undefined}
+        >
+          हिंदी (HI)
+        </a>
+      </div>
+    </div>
+
     <ul class="header__mobile-links" role="list">
       {navLinks.map(link => (
         <li>
@@ -157,46 +222,35 @@ function isActive(href: string): boolean {
     <div class="header__mobile-footer">
       <div class="header__mobile-status ist-status-badge" aria-label="Indian Standard Time operating status">
         <span class="status-pulse-dot status-open" aria-hidden="true"></span>
-        <span class="status-text">IST UTC+5:30 &bull; Office Open</span>
+        <span class="status-text">IST UTC+5:30 &bull; 10:00 AM – 7:00 PM</span>
       </div>
 
-      <div class="header__mobile-contact-links">
-        <a href="/contact/" class="btn btn--primary w-full">Request a quote</a>
-        <a href="tel:+919288077802" class="header__mobile-contact-btn btn btn--outline">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-          <span>Call: +91 92880 77802</span>
+      <div class="header__mobile-actions">
+        <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp w-full">
+          <span>{t.actions.whatsappChat}</span>
         </a>
-        <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer" class="header__mobile-contact-btn btn btn--whatsapp">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          </svg>
-          <span>Chat on WhatsApp</span>
+        <a href={lang === 'hi' ? '/hi/contact/' : '/contact/'} class="btn btn--primary w-full">
+          <span>{t.actions.discussProject}</span>
         </a>
-      </div>
-
-      <div class="header__mobile-trust-details text-xs text-muted" style="line-height: 1.6; display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-4);">
-        <p><strong>MSME Registration:</strong> UDYAM-JH-20-0147452</p>
-        <p><strong>Operating Hours:</strong> Mon–Sat, 10:00 AM – 7:00 PM IST</p>
       </div>
     </div>
   </nav>
 </header>
 
 <script>
-  // Mobile nav toggling logic
-  const siteHeader = document.querySelector('.site-header') as HTMLElement | null;
-  const menuBtn = document.querySelector('.header__menu-btn') as HTMLButtonElement | null;
+  const menuBtn = document.querySelector('.header__menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
-  const openIcon = document.querySelector('.header__menu-icon--open') as HTMLElement | null;
-  const closeIcon = document.querySelector('.header__menu-icon--close') as HTMLElement | null;
+  const siteHeader = document.querySelector('.site-header');
 
   if (menuBtn && mobileMenu) {
+    const openIcon = menuBtn.querySelector('.header__menu-icon--open') as HTMLElement | null;
+    const closeIcon = menuBtn.querySelector('.header__menu-icon--close') as HTMLElement | null;
+
     const setMenuOpen = (open: boolean) => {
       menuBtn.setAttribute('aria-expanded', String(open));
       menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       mobileMenu.hidden = !open;
+
       if (siteHeader) {
         siteHeader.classList.toggle('is-menu-open', open);
       }
@@ -298,55 +352,101 @@ function isActive(href: string): boolean {
 
   .header__link:hover {
     color: var(--text-primary);
-    background: var(--bg-surface);
+    background: var(--bg-elevated);
   }
 
   .header__link--active {
     color: var(--accent);
     font-weight: 600;
+    background: var(--bg-elevated);
   }
 
   .header__actions {
-    display: none;
+    display: flex;
     align-items: center;
     gap: var(--space-3);
-    flex-shrink: 0;
   }
 
-  @media (min-width: 50rem) {
-    .header__actions {
-      display: flex;
-    }
+  /* Accessible Language Selector */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full, 9999px);
+    padding: 2px 3px;
+    gap: 2px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    user-select: none;
   }
 
-  .header__wa-btn {
-    display: none;
-    padding: 0.4rem 0.8rem;
-    font-size: var(--text-xs);
+  .lang-switch__btn {
+    padding: 4px 8px;
+    border-radius: var(--radius-full, 9999px);
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: all var(--duration-fast) var(--ease-out);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  @media (min-width: 72rem) {
+  .lang-switch__btn:hover {
+    color: var(--text-primary);
+  }
+
+  .lang-switch__btn--active {
+    background: var(--color-ink);
+    color: #FFFFFF !important;
+  }
+
+  .lang-switch__divider {
+    color: var(--border-color);
+    font-size: 0.65rem;
+  }
+
+  .mobile-lang-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+  }
+
+  .mobile-lang-label {
+    font-weight: 600;
+  }
+
+  @media (max-width: 63.99rem) {
     .header__wa-btn {
-      display: inline-flex;
+      display: none !important;
     }
   }
 
-  .header__cta-btn {
-    padding: 0.45rem 1rem;
-    font-size: var(--text-xs);
-    white-space: nowrap;
+  @media (max-width: 48rem) {
+    .header__cta-btn {
+      display: none !important;
+    }
   }
 
   .header__menu-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
     background: transparent;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: var(--space-2);
+    border-radius: var(--radius-sm);
     color: var(--text-primary);
     cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
   }
 
   @media (min-width: 64rem) {
@@ -355,47 +455,52 @@ function isActive(href: string): boolean {
     }
   }
 
+  .header__menu-btn:hover {
+    background: var(--bg-elevated);
+  }
+
+  /* Mobile Nav Panel */
   .header__nav-mobile {
     position: fixed;
-    top: 0;
+    top: 4.25rem;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 100dvh;
     background: var(--bg-page);
-    padding: calc(4.25rem + var(--space-4)) var(--gutter) var(--space-6);
-    overflow-y: auto;
+    padding: var(--space-6) var(--space-5);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: var(--space-6);
+    overflow-y: auto;
     z-index: 1001;
+    border-top: 1px solid var(--border-color);
   }
 
   .header__nav-mobile[hidden] {
     display: none !important;
   }
 
-  @media (min-width: 64rem) {
-    .header__nav-mobile {
-      display: none !important;
-    }
-  }
-
   .header__mobile-links {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-1);
+    margin-bottom: auto;
   }
 
   .header__mobile-link {
-    font-size: var(--text-lg);
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
     font-weight: 500;
     color: var(--text-primary);
     text-decoration: none;
-    padding-block: var(--space-2);
-    display: block;
+    padding: var(--space-3) var(--space-2);
     border-bottom: 1px solid var(--border-subtle);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .header__mobile-link:hover,
+  .header__mobile-link.header__link--active {
+    color: var(--accent);
   }
 
   .header__mobile-footer {
@@ -403,15 +508,98 @@ function isActive(href: string): boolean {
     flex-direction: column;
     gap: var(--space-4);
     padding-top: var(--space-6);
+    border-top: 1px solid var(--border-color);
   }
 
-  .header__mobile-contact-links {
+  .header__mobile-actions {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
 
-  .w-full {
-    width: 100%;
+  /* Topbar Styles */
+  .header__topbar {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    padding-block: 0.35rem;
+    letter-spacing: 0.01em;
+  }
+
+  .header__topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header__topbar-left,
+  .header__topbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 48rem) {
+    .header__topbar {
+      display: none;
+    }
+  }
+
+  .topbar-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .topbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .topbar-link:hover {
+    color: var(--accent);
+  }
+
+  .topbar-divider {
+    color: var(--border-color);
+    font-size: 0.5rem;
+  }
+
+  /* Live IST pulse badge */
+  .ist-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+  }
+
+  .status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10B981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    animation: pulse-green 2s infinite;
+  }
+
+  @keyframes pulse-green {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
   }
 </style>
+

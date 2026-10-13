@@ -1,0 +1,269 @@
+---
+/**
+ * अबाउट पृष्ठ (src/pages/hi/about.astro)
+ * 
+ * सत्यापित तथ्य:
+ * - ब्रांड: स्ट्रोवा ग्रुप (Strova Group)
+ * - संस्थापक: सार्थक श्रेष्ठ (Sarthak Shresht)
+ * - स्वामी: बबिता कुमारी (Babita Kumari, एकल स्वामी)
+ * - उद्योग आधार / एमएसएमई: UDYAM-JH-20-0147452
+ * - वैधानिक विवरण: "स्ट्रोवा ग्रुप (Strova Group) बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान है।"
+ * - ईमेल: info@strovagroups.in, फोन एवं व्हाट्सएप: +91 92880 77802
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CredentialsStrip from '../../components/CredentialsStrip.astro';
+
+const founderPersonJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sarthak Shresht',
+  jobTitle: 'संस्थापक',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  description: 'स्ट्रोवा ग्रुप के संस्थापक, तकनीकी वास्तुकला, इंजीनियरिंग निष्पादन और डिजिटल विकास प्रणालियों के निदेशक।',
+};
+
+const proprietorPersonJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Babita Kumari',
+  jobTitle: 'एकल स्वामी',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+  },
+  description: 'एमएसएमई पंजीकरण UDYAM-JH-20-0147452 के अंतर्गत स्ट्रोवा ग्रुप की कानूनी स्वामी।',
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'हमारे बारे में',
+      item: 'https://strovagroups.in/hi/about/',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="हमारे बारे में — स्ट्रोवा ग्रुप परिचय | Strova Group"
+  description="स्ट्रोवा ग्रुप के संस्थापक, कार्य सिद्धांत, स्वामित्व संरचना और पारदर्शी सॉफ्टवेयर इंजीनियरिंग के प्रति हमारे समर्पण की जानकारी।"
+  jsonLd={[founderPersonJsonLd, proprietorPersonJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-eyebrow">स्ट्रोवा ग्रुप परिचय</span>
+        <h1 class="page-hero__title">
+          कठोर अनुशासन एवं प्रत्यक्ष जवाबदेही पर आधारित इंजीनियरिंग
+        </h1>
+        <p class="page-hero__lead">
+          स्ट्रोवा ग्रुप की स्थापना एक सरल विश्वास पर हुई थी: बढ़ते व्यवसायों को बिना किसी अनावश्यक एजेंसी दिखावे के प्रोडक्शन-ग्रेड सॉफ्टवेयर इंजीनियरिंग, पारदर्शी माइलस्टोन और विश्वसनीय निष्पादन मिलना चाहिए।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verifiable Credentials Strip -->
+  <CredentialsStrip />
+
+  <!-- Founder Narrative & Legal Ownership -->
+  <section class="section founder-section" id="founder" aria-labelledby="founder-title">
+    <div class="container">
+      <div class="founder-grid">
+        <div class="founder-card card">
+          <span class="section-eyebrow">नेतृत्व एवं कानूनी स्वामित्व</span>
+          <h2 id="founder-title" class="founder-name">संस्थापक एवं संगठनात्मक संरचना</h2>
+          
+          <div class="prose">
+            <p>
+              स्ट्रोवा ग्रुप की स्थापना <strong>सार्थक श्रेष्ठ (Sarthak Shresht)</strong> द्वारा जटिल सॉफ्टवेयर इंजीनियरिंग और बढ़ते व्यवसायों की व्यावहारिक व्यावसायिक आवश्यकताओं के बीच की खाई को पाटने के लिए की गई थी।
+            </p>
+            <p>
+              यह व्यवसाय कानूनी रूप से <strong>बबिता कुमारी (Babita Kumari)</strong> के एकल स्वामित्व में एक भारतीय सूक्ष्म उद्यम के रूप में पंजीकृत है (उद्यम पंजीकरण संख्या: <code>UDYAM-JH-20-0147452</code>)। स्ट्रोवा ग्रुप (Strova Group) बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान है।
+            </p>
+            <p>
+              पारंपरिक एजेंसियों के विपरीत जो ग्राहक के कार्यों को अज्ञात कनिष्ठ ठेकेदारों को सौंप देती हैं, हमारा नेतृत्व हमारे द्वारा तैनात किए जाने वाले प्रत्येक कोडबेस, डेटाबेस स्कीमा और अभियान फनल पर सीधा तकनीकी नियंत्रण बनाए रखता है।
+            </p>
+          </div>
+
+          <div class="ownership-summary card card--quiet" style="margin-top: var(--space-6);">
+            <div class="grid grid--2">
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">संस्थापक (Founder)</span>
+                <p class="text-base" style="font-weight: 600;">सार्थक श्रेष्ठ (Sarthak Shresht)</p>
+                <p class="text-xs text-secondary">तकनीकी वास्तुकला एवं निष्पादन</p>
+              </div>
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">एकल स्वामी (Proprietor)</span>
+                <p class="text-base" style="font-weight: 600;">बबिता कुमारी (Babita Kumari)</p>
+                <p class="text-xs text-secondary">MSME UDYAM-JH-20-0147452</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Operating Principles -->
+  <section class="section principles-section" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">कार्य मानक</span>
+        <h2 id="principles-title" class="section-title">हमारे चार मुख्य परिचालन सिद्धांत</h2>
+        <p class="section-subtitle">
+          हम कोड गुणवत्ता, माइलस्टोन डिलीवरी और क्लाइंट साझेदारी को कैसे नियंत्रित करते हैं।
+        </p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="card card--quiet">
+          <span class="principle-number">01</span>
+          <h3 class="principle-title">कोड लिखने से पहले लिखित रूपरेखा</h3>
+          <p class="text-secondary text-sm">
+            हम कभी भी अनौपचारिक मौखिक मान्यताओं पर विकास शुरू नहीं करते हैं। प्रत्येक परियोजना उपयोगकर्ता प्रवाह, एंडपॉइंट्स, समयसीमा और परीक्षण योजनाओं का विवरण देने वाले तकनीकी खाके से शुरू होती है।
+          </p>
+        </div>
+
+        <div class="card card--quiet">
+          <span class="principle-number">02</span>
+          <h3 class="principle-title">100% कोड एवं आईपी स्वामित्व</h3>
+          <p class="text-secondary text-sm">
+            अंतिम माइलस्टोन भुगतान के बाद, पूर्ण बौद्धिक संपदा और स्रोत कोड रिपॉजिटरी पूरी तरह से आपके संगठन को हस्तांतरित कर दी जाती है। कोई वेंडर लॉक-इन या आवर्ती लाइसेंसिंग शुल्क नहीं।
+          </p>
+        </div>
+
+        <div class="card card--quiet">
+          <span class="principle-number">03</span>
+          <h3 class="principle-title">मापने योग्य व्यावसायिक उपयोगिता</h3>
+          <p class="text-secondary text-sm">
+            चाहे ऑफलाइन-प्रथम एंड्रॉइड एप्लिकेशन का निर्माण हो या सर्च परफॉर्मेंस मार्केटिंग का प्रबंधन, प्रत्येक प्रणाली को सत्यापित परिचालन लाभ और रूपांतरण मेट्रिक्स के अनुसार डिज़ाइन किया जाता है।
+          </p>
+        </div>
+
+        <div class="card card--quiet">
+          <span class="principle-number">04</span>
+          <h3 class="principle-title">प्रत्यक्ष संचार एवं डेटा गोपनीयता</h3>
+          <p class="text-secondary text-sm">
+            ग्राहक सीधे उन इंजीनियरों से संवाद करते हैं जो उनकी तकनीकी वास्तुकला को समझते हैं। सभी ग्राहक डेटा और व्यावसायिक तर्क भारत के DPDP Act 2023 के अनुसार सुरक्षित रखे जाते हैं।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verifiable Business Facts & Registry -->
+  <section class="section" aria-labelledby="registry-title">
+    <div class="container">
+      <div class="card" style="padding: var(--space-8);">
+        <span class="section-eyebrow">सत्यापन</span>
+        <h2 id="registry-title" class="section-title">सत्यापित व्यावसायिक पहचान</h2>
+        <div class="grid grid--3" style="margin-top: var(--space-6);">
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">व्यावसायिक प्रतिष्ठान</span>
+            <p class="text-sm font-semibold">Strova Group</p>
+            <p class="text-xs text-secondary">बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान</p>
+          </div>
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">एमएसएमई पंजीकरण</span>
+            <p class="text-sm font-semibold">UDYAM-JH-20-0147452</p>
+            <a href="https://udyamregistration.gov.in/Udyam_Verify.aspx" target="_blank" rel="noopener noreferrer" class="text-xs">
+              एमएसएमई पोर्टल पर सत्यापित करें &rarr;
+            </a>
+          </div>
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">आधिकारिक संपर्क</span>
+            <p class="text-sm font-semibold">info@strovagroups.in</p>
+            <p class="text-xs text-secondary">+91 92880 77802 (सोम–शनि IST)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inbound Contact CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="card cta-card" style="text-align: center; padding: var(--space-12) var(--space-8);">
+        <span class="section-eyebrow">सहयोग करें</span>
+        <h2 class="cta-title">स्ट्रोवा ग्रुप के साथ काम करने के लिए तैयार हैं?</h2>
+        <p class="cta-desc text-secondary" style="max-width: 44rem; margin: var(--space-3) auto var(--space-6);">
+          हमें अपने प्रोजेक्ट के लक्ष्य या तकनीकी विनिर्देश भेजें। हम प्रत्येक पूछताछ की समीक्षा करते हैं और 1 कार्यदिवस के भीतर एक स्पष्ट, निश्चित-स्कोप कोटेशन प्रदान करते हैं।
+        </p>
+        <div style="display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+          <a href="/hi/contact/" class="btn btn--primary btn--lg">कोटेशन का अनुरोध करें</a>
+          <a href="mailto:info@strovagroups.in" class="btn btn--outline btn--lg">info@strovagroups.in पर ईमेल करें</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-surface);
+  }
+
+  .page-hero__content {
+    max-width: 48rem;
+  }
+
+  .page-hero__title {
+    font-size: var(--text-3xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-4);
+  }
+
+  .page-hero__lead {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .founder-card {
+    padding: var(--space-10);
+  }
+
+  .founder-name {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .principle-number {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+    display: block;
+  }
+
+  .principle-title {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .cta-title {
+    font-size: var(--text-2xl);
+  }
+</style>
+
