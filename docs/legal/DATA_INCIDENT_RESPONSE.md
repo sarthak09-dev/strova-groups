@@ -80,3 +80,4 @@ A **Personal Data Breach** is any confirmed or reasonably suspected security inc
 1. Conduct a root-cause retrospective review with engineering and management.
 2. Implement permanent technical hardening (e.g. updating firewall rules, adding automated tests, tightening RLS policies).
 3. Document the final incident report and retain it in the compliance archive for **five (5) years**.
+

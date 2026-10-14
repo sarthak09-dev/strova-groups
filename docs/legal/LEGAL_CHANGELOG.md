@@ -55,3 +55,4 @@ The legal policies and internal documentation must be formally reviewed upon any
 2. **Subprocessor Alteration**: Any change or addition to cloud infrastructure, database hosting, payment aggregation, or email relay vendors.
 3. **New Commercial Division**: Launch of the Strova Commerce division or introduction of any consumer-facing retail transactions.
 4. **Periodic Audit**: Scheduled bi-annual review (Next review: **April 14, 2027**).
+

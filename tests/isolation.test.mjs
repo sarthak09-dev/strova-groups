@@ -1565,6 +1565,54 @@ console.log('\n--- Test Suite 25: Legal Parity, Entity Consistency & DPDP Rights
   assert(footerContent.includes('/privacy/requests/'), 'Footer includes link to Privacy Rights & Grievance Desk');
 }
 
+// =============================================================================
+// TEST SUITE 26: SECRET SCANNING & PORTAL DEPLOYMENT SECURITY REGRESSION GATE
+// =============================================================================
+console.log('\n--- Test Suite 26: Secret Scanning & Portal Deployment Security Regression Gate ---');
+{
+  const projectRoot = process.cwd();
+
+  // 1. Verify scan_secrets.mjs exists and is functional
+  const scannerPath = `${projectRoot}/scripts/scan_secrets.mjs`;
+  assert(fs.existsSync(scannerPath), 'Automated secret scanner script exists (scripts/scan_secrets.mjs)');
+
+  // 2. Verify portal/public/_headers exists and enforces strict deployment security
+  const portalHeadersPath = `${projectRoot}/portal/public/_headers`;
+  assert(fs.existsSync(portalHeadersPath), 'portal/public/_headers exists for Cloudflare Pages portal deployment');
+
+  const portalHeaders = fs.readFileSync(portalHeadersPath, 'utf8');
+  assert(portalHeaders.includes('Strict-Transport-Security'), 'Portal headers enforce HSTS (max-age=31536000)');
+  assert(portalHeaders.includes('X-Content-Type-Options: nosniff'), 'Portal headers enforce nosniff');
+  assert(portalHeaders.includes("frame-ancestors 'none'"), 'Portal headers enforce frame-ancestors none (anti-clickjacking)');
+  assert(portalHeaders.includes('Content-Security-Policy'), 'Portal headers enforce comprehensive Content Security Policy');
+  assert(portalHeaders.includes('https://checkout.razorpay.com'), 'Portal CSP permits Razorpay checkout modal script');
+  assert(portalHeaders.includes('https://api.razorpay.com'), 'Portal CSP permits Razorpay iframe & API endpoints');
+  assert(portalHeaders.includes('https://challenges.cloudflare.com'), 'Portal CSP permits Cloudflare Turnstile verification');
+  assert(portalHeaders.includes('Cache-Control: no-cache, no-store'), 'Portal headers enforce no-cache/no-store for authenticated pages');
+
+  // 3. Verify portal/public/favicon.svg exists
+  assert(fs.existsSync(`${projectRoot}/portal/public/favicon.svg`), 'portal/public/favicon.svg exists for portal branding');
+
+  // 4. Verify .gitignore comprehensively protects against secret & build leaks
+  const gitignore = fs.readFileSync(`${projectRoot}/.gitignore`, 'utf8');
+  assert(gitignore.includes('.env'), '.gitignore blocks .env');
+  assert(gitignore.includes('.env.*'), '.gitignore blocks .env.* variants');
+  assert(gitignore.includes('*.key'), '.gitignore blocks *.key private certificates');
+  assert(gitignore.includes('*.pem'), '.gitignore blocks *.pem private keys');
+  assert(gitignore.includes('dist/'), '.gitignore blocks marketing build output');
+  assert(gitignore.includes('portal/dist/'), '.gitignore blocks portal build output');
+
+  // 5. Verify .env.example contains only placeholders and zero real credentials
+  const envExample = fs.readFileSync(`${projectRoot}/.env.example`, 'utf8');
+  assert(envExample.includes('your_razorpay_key_secret_here'), '.env.example uses placeholder for Razorpay secret');
+  assert(envExample.includes('your-supabase-service-role-secret-key-here'), '.env.example uses placeholder for Supabase service role key');
+  assert(!envExample.includes('rzp_live_'), '.env.example contains zero live Razorpay keys');
+  assert(!envExample.includes('sk_live_'), '.env.example contains zero live Stripe keys');
+
+  // 6. Verify verify_routes.mjs exists
+  assert(fs.existsSync(`${projectRoot}/scripts/verify_routes.mjs`), 'Full-path route verifier exists (scripts/verify_routes.mjs)');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');

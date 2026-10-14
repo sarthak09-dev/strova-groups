@@ -85,3 +85,4 @@
 ## 10. Governing Law & Dispute Resolution
 
 10.1. This DPA shall be governed by and construed in accordance with the laws governing the principal Statement of Work, or in the absence of an explicit choice, the laws of the Republic of India, subject to the jurisdiction of competent courts at the domicile of Strova Group.
+

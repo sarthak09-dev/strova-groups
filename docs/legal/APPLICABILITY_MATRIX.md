@@ -48,3 +48,4 @@
 2. **Prohibited Terminology**: Never claim or imply that Strova Group is a "Private Limited Company", "Corporation", "LLC", or "PLC".
 3. **Appointed Roles**: Do not claim an appointed statutory "Data Protection Officer (DPO)" under GDPR Art. 37 or DPDP Act Sec. 10 (SDF classification), as a micro-enterprise is not classified as a Significant Data Fiduciary. Use the legitimate statutory designation: **Data Protection & Grievance Officer / Grievance Redressal Desk**.
 4. **Third-Party Trademarks**: All brand names (Google, Android, Cloudflare, Razorpay, Supabase, Meta, WhatsApp) are cited strictly under nominative fair use for descriptive technical compatibility.
+

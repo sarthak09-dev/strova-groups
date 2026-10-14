@@ -44,3 +44,4 @@ When personal data reaches the end of its designated retention period:
 2. **Cloud Storage Deliverables**: Executed via S3 API object deletion, ensuring no residual object versions or public CDN caches remain.
 3. **Email Submissions**: Hard deletion of message threads from the business mail server and trash purge.
 4. **Physical Media**: Strova Group operates on a paperless cloud infrastructure; any incidental physical documentation containing personal data is destroyed using cross-cut shredding.
+

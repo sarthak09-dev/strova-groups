@@ -1,4 +1,4 @@
-name: Strova Group CI
+name: Strova Group CI & Production Security Gate
 
 on:
   push:
@@ -8,9 +8,63 @@ on:
 
 jobs:
   verify:
-    name: Lint, Test, Audit & Build
+    name: Security, Test, TypeCheck, Build & Route Audit
     runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Clean Install from Lockfile
+        run: npm ci
+
+      - name: Automated Secret Scanning Gate (Source & Tracked Files)
+        run: npm run scan:secrets
+
+      - name: Verify PostgreSQL Migration Privileges & RLS Grants
+        run: npm run verify:db
+
+      - name: Security, Tenant Isolation & Concurrency Tests (Suites 1–25)
+        run: npm test
+
+      - name: Preflight Configuration Validation (Test Mode)
+        run: npm run preflight -- --mode=test
+
+      - name: Astro & TypeScript Compiler Diagnostics
+        run: npm run astro:check
+
+      - name: Build Production Marketing Website
+        run: npm run build
+
+      - name: Build Production Client Portal
+        run: npm run build:portal
+
+      - name: Automated Secret Scanning Gate (Build Outputs: dist/ & portal/dist/)
+        run: npm run scan:secrets
+
+      - name: Full-Path Route, Asset, Anchor & Live HTTP Smoke Tests
+        run: npm run verify:routes
+
+      - name: Production HTML Standards, SEO & JS Budget Audit
+        run: npm run audit
+
+      - name: Strict Dependency Vulnerability Audit Gate (Astro Static Allowlist)
+        run: npm run audit:deps
+
+  # Protected release gate: runs live database verification if secrets configured in repo
+  release-verification:
+    name: Live Supabase Privilege & Production Secret Gate
+    runs-on: ubuntu-latest
+    needs: [verify]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,27 +78,30 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Verify Database Privileges & Function Signatures
-        run: npm run verify:db
+      - name: Verify Live Database Permissions (Conditional on Secret Availability)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -n "$DATABASE_URL" ]; then
+            echo "Running live database privilege verification against Supabase..."
+            npm run verify:db:live
+          else
+            echo "DATABASE_URL secret not configured in repository. Static migration checks already verified in primary gate."
+          fi
 
-      - name: Run Security & Isolation Tests
-        run: npm test
-
-      - name: Preflight Security & Configuration Check (Test Mode)
-        run: npm run preflight -- --mode=test
-
-      - name: Astro & TypeScript Diagnostics
-        run: npm run astro:check
-
-      - name: Build Marketing Site
-        run: npm run build
-
-      - name: Build Client Portal
-        run: npm run build:portal
-
-      - name: Run Production Audit
-        run: npm run audit
-
-      - name: Strict Dependency Vulnerability Audit Gate
-        run: npm run audit:deps
-
+      - name: Production Deployment Preflight (Conditional on Secret Availability)
+        env:
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
+          RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.PUBLIC_TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        run: |
+          if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Running production preflight against configured secrets..."
+            npm run preflight:prod
+          else
+            echo "Production secrets not configured in GitHub Actions environment. Passing test-mode baseline."
+          fi

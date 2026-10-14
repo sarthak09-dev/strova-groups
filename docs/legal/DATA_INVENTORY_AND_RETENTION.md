@@ -32,3 +32,4 @@
 3. **Storage Security**: Deliverables stored in private S3 buckets. Direct public URLs are disabled. Access requires ephemeral HMAC-SHA256 signed download tokens expiring in **60 seconds**.
 4. **Payment Isolation**: Card numbers, UPI PINs, and banking credentials never touch Strova Group servers; payment execution occurs inside Razorpay's PCI-DSS Level 1 certified iframe environment.
 5. **No Model Training on Client Data**: Client codebases, proprietary databases, and project communications are never ingested into public AI training datasets or external foundational models without explicit, written SOW authorization.
+

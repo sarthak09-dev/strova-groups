@@ -35,3 +35,4 @@ When Strova Group delivers AI, WhatsApp automation, or custom language model int
 1. Strova Group maintains this register in the public repository and updates it upon engaging any new subprocessor.
 2. Active enterprise clients with executed DPAs may subscribe to notification updates by contacting `info@strovagroups.in`.
 3. Clients retain the right to object to any new subprocessor on reasonable data protection grounds within fourteen (14) days of publication.
+

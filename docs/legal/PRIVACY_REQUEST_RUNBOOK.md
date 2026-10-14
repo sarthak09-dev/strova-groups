@@ -101,3 +101,4 @@
 1. Record each request in the internal `privacy_requests_log`:
    - Reference ID, Date Received, Requester Email (hashed or masked after closure), Request Type, Outcome (Fulfilled / Partially Fulfilled / Rejected with Legal Grounds), Date Completed, Handling Officer.
 2. Maintain compliance logs for a minimum of **three (3) years** to demonstrate compliance during any regulatory audit by the Data Protection Board.
+

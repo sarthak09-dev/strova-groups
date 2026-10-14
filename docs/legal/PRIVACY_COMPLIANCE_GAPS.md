@@ -39,3 +39,4 @@ The following items are outside the scope of local repository code modifications
    - Set live Turnstile keys (`PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) to replace dummy keys in production deployment.
    - Apply the 7 database migrations to live Supabase project using `supabase db push` and verify live privileges via `npm run verify:db:live`.
    - Set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET` in Supabase Edge Functions environment.
+
