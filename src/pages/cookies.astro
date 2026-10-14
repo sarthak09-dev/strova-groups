@@ -56,12 +56,17 @@ const breadcrumbJsonLd = {
         These cookies are classified as strictly necessary for the technical operation of the authenticated portal and do not require marketing consent under applicable data protection laws.
       </p>
 
-      <h2>3. Local Storage &amp; Cache</h2>
+      <h2>3. Payment Gateway Modal Storage (Razorpay)</h2>
+      <p>
+        When a client authorizes payment for an invoice in the Client Portal via Razorpay, transient security tokens and session state are managed strictly within Razorpay's secure checkout modal iframe. These elements are required to detect payment fraud, securely handle UPI / 3D-Secure card verification, and maintain transaction integrity. Strova Group never accesses or stores payment instrument details or CVVs.
+      </p>
+
+      <h2>4. Local Storage &amp; Cache</h2>
       <p>
         Our website operates on a permanent, light-first corporate design system and does not write tracking preferences or behavioral profiles to <code>localStorage</code>. Cached assets are restricted to standard static files (fonts and scripts) stored by your browser for optimal performance.
       </p>
 
-      <h2>4. Managing Your Privacy Choices</h2>
+      <h2>5. Managing Your Privacy Choices</h2>
       <p id="privacy-choices">
         You can control or delete cookies and local storage directly through your browser settings:
       </p>
@@ -71,13 +76,14 @@ const breadcrumbJsonLd = {
         <li>Logging out of the client portal immediately terminates the active authentication session and removes the session cookie.</li>
       </ul>
 
-      <h2>5. Inquiries &amp; Data Rights</h2>
+      <h2>6. Inquiries &amp; Data Principal Rights</h2>
       <p>
-        If you have questions about our cookie policy or wish to exercise your data subject rights under India's Digital Personal Data Protection (DPDP) Act 2023, please contact our data grievance desk:
+        If you have questions about our cookie policy or wish to exercise your data principal rights under India's Digital Personal Data Protection (DPDP) Act 2023, you may submit a request online:
       </p>
       <ul>
+        <li><strong>Online Rights Desk:</strong> <a href="/privacy/requests/">Submit a Privacy Request &rarr;</a></li>
         <li><strong>Email:</strong> <a href="mailto:info@strovagroups.in">info@strovagroups.in</a></li>
-        <li><strong>Phone:</strong> <a href="tel:+919288077802">+91 92880 77802</a></li>
+        <li><strong>Phone &amp; WhatsApp:</strong> <a href="tel:+919288077802">+91 92880 77802</a></li>
       </ul>
 
       <p class="text-sm text-muted" style="margin-top: var(--space-8);">

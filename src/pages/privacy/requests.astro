@@ -1,0 +1,602 @@
+---
+/**
+ * Data Principal Privacy Rights & Grievance Request Desk (src/pages/privacy/requests.astro)
+ *
+ * Implements self-service intake for statutory rights under:
+ * - India Digital Personal Data Protection Act, 2023 (Sections 11, 12, 13, 14) & DPDP Rules, 2025
+ * - Information Technology (Reasonable Security Practices) Rules, 2011
+ * - EU & UK GDPR (Articles 15-22)
+ * - California Consumer Privacy Act / CPRA
+ *
+ * Features:
+ * - 48-hour statutory acknowledgment SLA
+ * - 30-day resolution commitment
+ * - Cloudflare Turnstile bot verification + anti-spam honeypot
+ * - Strict client-side and serverless validation via /api/privacy-request
+ * - Fail-closed handling and unique PR-YYYYMM-XXXX tracking reference generation
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://strovagroups.in/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Privacy Policy',
+      item: 'https://strovagroups.in/privacy/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'Privacy Rights Desk',
+      item: 'https://strovagroups.in/privacy/requests/',
+    },
+  ],
+};
+
+const pageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Privacy Rights & Grievance Redressal Desk — Strova Group',
+  description:
+    'Submit statutory data principal access, correction, erasure, consent withdrawal, or grievance requests under India DPDP Act 2023 and GDPR.',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+    email: 'info@strovagroups.in',
+    telephone: '+919288077802',
+  },
+};
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
+const isTurnstileConfigured = Boolean(turnstileSiteKey);
+---
+
+<BaseLayout
+  title="Privacy Rights & Grievance Desk — Strova Group"
+  description="Exercise statutory data principal rights under India's DPDP Act 2023. Submit and track data access, correction, erasure, and grievance requests."
+  jsonLd={[pageJsonLd, breadcrumbJsonLd]}
+>
+  <!-- Hero Section -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-eyebrow">Data Governance</span>
+        <h1 class="page-hero__title">Privacy Rights &amp; Grievance Desk</h1>
+        <p class="page-hero__lead">
+          Exercise your statutory data principal rights under the Digital Personal Data Protection Act, 2023 (DPDP Act) and international data protection laws. Submit access, rectification, erasure, nomination, or grievance requests directly to our Data Protection &amp; Grievance Officer.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Request Section -->
+  <section class="section" aria-labelledby="privacy-request-heading">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Request Form Card -->
+        <div class="contact-form-card card">
+          <div class="form-header">
+            <h2 id="privacy-request-heading" class="form-title">Submit a Privacy Request</h2>
+            <p class="form-subtitle text-sm text-secondary">
+              All requests are logged, acknowledged within 48 hours, and resolved within 30 calendar days.
+            </p>
+          </div>
+
+          <form id="privacy-request-form" class="inbound-form" novalidate>
+            <!-- Anti-Bot Honeypot -->
+            <div class="hp-field" aria-hidden="true" style="display: none;">
+              <label for="hp_website">Leave this field blank</label>
+              <input type="text" id="hp_website" name="_hp_website" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Full Legal Name -->
+            <div class="form-group">
+              <label for="request-name" class="form-label">
+                Full Legal Name <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="request-name"
+                name="name"
+                required
+                class="form-input"
+                placeholder="Your full legal name"
+                aria-required="true"
+              />
+              <span class="form-error" id="name-error" role="alert"></span>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group">
+              <label for="request-email" class="form-label">
+                Email Address Associated with Your Records <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="request-email"
+                name="email"
+                required
+                class="form-input"
+                placeholder="name@example.com"
+                aria-required="true"
+              />
+              <span class="form-error" id="email-error" role="alert"></span>
+            </div>
+
+            <!-- Phone & Relationship Row -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="request-phone" class="form-label">
+                  Phone / WhatsApp <span class="optional">(Optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="request-phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="+91 92880 77802"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="request-relationship" class="form-label">
+                  Relationship with Strova Group <span class="optional">(Optional)</span>
+                </label>
+                <select id="request-relationship" name="relationship" class="form-select">
+                  <option value="" selected>Select relationship type...</option>
+                  <option value="prospective_client">Prospective Client / Quote Inquirer</option>
+                  <option value="active_client">Active Client Organization</option>
+                  <option value="former_client">Former Client Organization</option>
+                  <option value="portal_user">Client Portal User (portal.strovagroups.in)</option>
+                  <option value="vendor_partner">Vendor / Subcontractor / Freelancer</option>
+                  <option value="general_public">Website Visitor / Other Data Principal</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Request Type Selector -->
+            <div class="form-group">
+              <label for="request-type" class="form-label">
+                Statutory Request Category <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="request-type" name="requestType" required class="form-select" aria-required="true">
+                <option value="" selected disabled>Select the category of your request...</option>
+                <option value="access">Data Access &amp; Summary (DPDP Sec 11 / GDPR Art 15) — Obtain a summary of data held</option>
+                <option value="correction">Correction &amp; Rectification (DPDP Sec 12 / GDPR Art 16) — Update inaccurate or incomplete details</option>
+                <option value="erasure">Data Erasure &amp; Deletion (DPDP Sec 12 / GDPR Art 17) — Delete records (excluding 7-yr tax hold)</option>
+                <option value="consent_withdrawal">Withdrawal of Consent (DPDP Sec 6 / GDPR Art 7) — Cease optional processing activities</option>
+                <option value="marketing_optout">Marketing Opt-Out — Stop receiving commercial communications</option>
+                <option value="nomination">Right of Nomination (DPDP Sec 14) — Appoint representative in case of incapacity</option>
+                <option value="grievance">Grievance or Redressal Complaint (DPDP Sec 13) — Formal data governance escalation</option>
+              </select>
+              <span class="form-error" id="type-error" role="alert"></span>
+            </div>
+
+            <!-- Request Details -->
+            <div class="form-group">
+              <label for="request-details" class="form-label">
+                Details of Your Request <span class="required" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="request-details"
+                name="details"
+                rows="5"
+                required
+                class="form-textarea"
+                placeholder="Specify the exact personal data, timeframe, communications, or portal account relevant to your request. For corrections, provide both current and updated details..."
+                aria-required="true"
+              ></textarea>
+              <span class="form-error" id="details-error" role="alert"></span>
+            </div>
+
+            <!-- Identity Affirmation Checkbox -->
+            <div class="form-group">
+              <label class="form-checkbox-label" style="display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  id="request-affirmation"
+                  name="affirmation"
+                  required
+                  style="margin-top: 0.25rem; cursor: pointer;"
+                />
+                <span class="text-xs text-secondary" style="line-height: 1.5;">
+                  I affirm under penalty of misrepresentation that I am the data principal named above or an authorized representative legally empowered to submit this request. I understand Strova Group may require identity verification prior to disclosing confidential records.
+                </span>
+              </label>
+              <span class="form-error" id="affirmation-error" role="alert"></span>
+            </div>
+
+            <!-- Cloudflare Turnstile Live Challenge Slot -->
+            <input type="hidden" name="lang" value="en" />
+            <div class="form-group turnstile-container">
+              {isTurnstileConfigured ? (
+                <div
+                  class="cf-turnstile"
+                  data-sitekey={turnstileSiteKey}
+                  data-theme="light"
+                  data-size="flexible"
+                ></div>
+              ) : (
+                <p class="text-xs text-muted" style="margin: 0; line-height: 1.5;">
+                  Security verification active on submission. You may also email <a href="mailto:info@strovagroups.in?subject=DPDP%20Privacy%20Request">info@strovagroups.in</a> directly.
+                </p>
+              )}
+              <span class="form-error" id="turnstile-error" role="alert"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
+                <span>Submit Privacy Request &rarr;</span>
+              </button>
+            </div>
+
+            <!-- Notice under submit -->
+            <p class="text-xs text-muted" style="margin-top: 1rem; line-height: 1.5;">
+              Notice under Section 6 of DPDP Act 2023: Details provided in this form are processed solely by Strova Group's Data Protection &amp; Grievance Redressal Desk to verify identity and fulfill your statutory request. They are retained in an immutable compliance ledger for 3 years to demonstrate regulatory compliance.
+            </p>
+
+            <!-- Dynamic Form Status Box -->
+            <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+          </form>
+
+          <!-- Success Reference Box (Hidden by default) -->
+          <div id="request-success-box" class="card card--quiet" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid #16A34A;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #DCFCE7; color: #16A34A; font-weight: bold;">✓</span>
+              <h3 style="margin: 0; font-size: 1.1rem; color: #16A34A;">Request Successfully Logged</h3>
+            </div>
+            <p class="text-sm text-secondary" id="success-message-text" style="line-height: 1.6; margin-bottom: 1rem;"></p>
+            <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Tracking Reference Number</div>
+              <div id="tracking-reference-code" style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #0F172A;"></div>
+            </div>
+            <ul class="text-xs text-muted" style="margin: 0; padding-left: 1.25rem; line-height: 1.6;">
+              <li>Formal statutory acknowledgment dispatched within <strong>48 hours</strong>.</li>
+              <li>Substantive investigation and resolution delivered within <strong>30 calendar days</strong>.</li>
+              <li>Save your tracking reference code for all communications with our grievance desk.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sidebar Information Card -->
+        <div class="contact-channels">
+          <!-- Statutory SLA Commitment -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">Statutory Commitment</span>
+            <h3 class="channel-title">48-Hour Acknowledgment</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              Under Section 13 of the DPDP Act 2023 and our Internal SOP, every data principal grievance is formally logged with an immutable timestamp and acknowledged within 48 hours.
+            </p>
+          </div>
+
+          <!-- Direct Grievance Redressal Desk -->
+          <div class="channel-card card">
+            <h3 class="channel-title">Grievance Redressal Desk</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              Prefer direct email or written communication? Contact our designated Grievance Officer:
+            </p>
+            <div style="font-size: 0.8125rem; margin-top: 0.75rem; line-height: 1.7; color: var(--color-text-secondary);">
+              <p><strong>Designation:</strong> Data Protection &amp; Grievance Officer</p>
+              <p><strong>Entity:</strong> Strova Group (Proprietorship of Babita Kumari)</p>
+              <p><strong>Email:</strong> <a href="mailto:info@strovagroups.in?subject=DPDP%20Grievance">info@strovagroups.in</a></p>
+              <p><strong>Direct Phone:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
+              <p><strong>Hours:</strong> Mon–Sat, 10:00 AM – 7:00 PM IST</p>
+            </div>
+          </div>
+
+          <!-- Statutory Retentions -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">Statutory Exceptions</span>
+            <h3 class="channel-title">7-Year Tax &amp; Invoicing Hold</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              Please note that requests for erasure under Section 12 cannot purge paid commercial invoices, tax receipts, or transaction ledger entries. Under Section 36 of the Central Goods and Services Tax (CGST) Act 2017 and Section 44AA of the Income Tax Act 1961, financial books and invoices must be retained for 7 years (84 months).
+            </p>
+          </div>
+
+          <!-- Regulatory Escalation -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">Regulatory Escalation</span>
+            <h3 class="channel-title">Data Protection Board of India</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              If our Grievance Redressal Desk fails to respond within 30 calendar days, or if you are unsatisfied with our resolution, you have the legal right under Section 13(3) of the DPDP Act 2023 to file an appeal before the <strong>Data Protection Board of India</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  function setupPrivacyRequestForm() {
+    const form = document.getElementById('privacy-request-form') as HTMLFormElement | null;
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let hasErrors = false;
+      let firstInvalid: HTMLElement | null = null;
+
+      // Clear previous error states
+      form.querySelectorAll('.form-error').forEach((el) => {
+        el.textContent = '';
+        el.classList.remove('visible');
+      });
+      form.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+        el.removeAttribute('aria-invalid');
+      });
+
+      const statusBox = document.getElementById('form-status') as HTMLElement;
+      statusBox.className = 'form-status';
+      statusBox.innerHTML = '';
+
+      function markError(fieldId: string, errorId: string, message: string) {
+        const field = document.getElementById(fieldId) as HTMLElement | null;
+        const error = document.getElementById(errorId);
+        if (field) {
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', errorId);
+          if (!firstInvalid) firstInvalid = field;
+        }
+        if (error) {
+          error.textContent = message;
+          error.classList.add('visible');
+        }
+        hasErrors = true;
+      }
+
+      // 1. Anti-bot honeypot check
+      const hp = (document.getElementById('hp_website') as HTMLInputElement | null)?.value.trim();
+      if (hp) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'Submission rejected by anti-bot filter.';
+        return;
+      }
+
+      // 2. Field validations
+      const name = (document.getElementById('request-name') as HTMLInputElement | null)?.value.trim() || '';
+      if (!name || name.length < 2) {
+        markError('request-name', 'name-error', 'Please provide your full legal name (at least 2 characters).');
+      }
+
+      const email = (document.getElementById('request-email') as HTMLInputElement | null)?.value.trim() || '';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        markError('request-email', 'email-error', 'Please enter a valid email address.');
+      }
+
+      const reqType = (document.getElementById('request-type') as HTMLSelectElement | null)?.value || '';
+      if (!reqType) {
+        markError('request-type', 'type-error', 'Please select a valid request category.');
+      }
+
+      const details = (document.getElementById('request-details') as HTMLTextAreaElement | null)?.value.trim() || '';
+      if (!details || details.length < 10) {
+        markError('request-details', 'details-error', 'Please describe your request in detail (at least 10 characters).');
+      }
+
+      const affirmation = (document.getElementById('request-affirmation') as HTMLInputElement | null)?.checked;
+      if (!affirmation) {
+        markError('request-affirmation', 'affirmation-error', 'You must affirm that you are the data principal or an authorized representative.');
+      }
+
+      if (hasErrors) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'Please correct the highlighted fields before submitting.';
+        (firstInvalid as HTMLElement | null)?.focus();
+        return;
+      }
+
+      // 3. Submit payload
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>Logging Request Securely...</span>';
+
+      const formData = new FormData(form);
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        data[key] = typeof value === 'string' ? value : value.name;
+      });
+
+      try {
+        const response = await fetch('/api/privacy-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.success) {
+          form.style.display = 'none';
+          const successBox = document.getElementById('request-success-box');
+          const codeEl = document.getElementById('tracking-reference-code');
+          const msgEl = document.getElementById('success-message-text');
+
+          if (codeEl) codeEl.textContent = result.trackingId || 'PR-CONFIRMED';
+          if (msgEl) msgEl.textContent = result.message || 'Your privacy request has been logged successfully.';
+          if (successBox) successBox.style.display = 'block';
+
+          // Trigger analytics event
+          try {
+            window.dispatchEvent(
+              new CustomEvent('strova:analytics', {
+                detail: { event: 'privacy_request_submitted', trackingId: result.trackingId, timestamp: Date.now() },
+              })
+            );
+          } catch {}
+        } else {
+          statusBox.className = 'form-status error';
+          statusBox.textContent = result.error || 'Failed to submit privacy request. Please contact info@strovagroups.in.';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      } catch (err) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'A network error occurred. Please contact info@strovagroups.in directly.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPrivacyRequestForm);
+  } else {
+    setupPrivacyRequestForm();
+  }
+</script>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .inbound-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .required {
+    color: #DC2626;
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .form-input[aria-invalid="true"],
+  .form-select[aria-invalid="true"],
+  .form-textarea[aria-invalid="true"] {
+    border-color: #DC2626;
+  }
+
+  .form-error {
+    display: none;
+    font-size: 0.75rem;
+    color: #DC2626;
+    font-weight: 500;
+  }
+
+  .form-error.visible {
+    display: block;
+  }
+
+  .form-status {
+    display: none;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .form-status.error {
+    display: block;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #991B1B;
+  }
+
+  .contact-channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .channel-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .link-underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

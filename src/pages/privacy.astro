@@ -1,4 +1,13 @@
 ---
+/**
+ * Privacy Policy Page (src/pages/privacy.astro)
+ *
+ * Implements comprehensive data protection disclosures under:
+ * - India Digital Personal Data Protection Act, 2023 (DPDP Act) & DPDP Rules, 2025
+ * - Information Technology Act, 2000 & SPDI Rules, 2011
+ * - Consumer Protection (E-Commerce) Rules, 2020 & Dark Patterns Guidelines 2023
+ * - Conditional International Frameworks (EU GDPR, UK GDPR, CCPA/CPRA, PIPEDA, PDPA)
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const breadcrumbJsonLd = {
@@ -19,93 +28,205 @@ const breadcrumbJsonLd = {
     },
   ],
 };
+
+const policyJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Privacy Policy — Strova Group',
+  description:
+    "Comprehensive Privacy Policy of Strova Group outlining data protection governance, data principal rights under India DPDP Act 2023, data inventory, and subprocessor disclosures.",
+  publisher: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+    email: 'info@strovagroups.in',
+    telephone: '+919288077802',
+  },
+};
 ---
 
 <BaseLayout
   title="Privacy Policy — Strova Group"
-  description="Strova Group's Privacy Policy outlining data protection practices under India's Digital Personal Data Protection Act (DPDP Act 2023)."
-  jsonLd={[breadcrumbJsonLd]}
+  description="Strova Group's Privacy Policy: data governance, DPDP Act 2023 rights, data inventory, statutory retention schedules, and grievance redressal desk."
+  jsonLd={[policyJsonLd, breadcrumbJsonLd]}
 >
   <section class="section">
     <div class="container prose">
       <span class="section-eyebrow">Privacy &amp; Data Governance</span>
-      <h1>Privacy Policy</h1>
-      <p class="text-sm text-muted">Last updated: October 12, 2026</p>
+      <h1>Privacy Policy &amp; Data Protection Statement</h1>
+      <p class="text-sm text-muted">Effective Date: October 14, 2026 &bull; Version 2.0</p>
 
       <div class="card card--quiet" style="padding: var(--space-6); margin-block: var(--space-6); border-left: 3px solid var(--accent);">
-        <p class="text-xs text-muted" style="margin: 0;">
-          <strong>Data Fiduciary Notice:</strong> Strova Group is a proprietorship of Babita Kumari (MSME Registration: UDYAM-JH-20-0147452). This privacy policy outlines data governance across our marketing website (<a href="https://strovagroups.in">strovagroups.in</a>) and invite-only client portal (<a href="https://portal.strovagroups.in">portal.strovagroups.in</a>).
+        <p class="text-xs text-muted" style="margin: 0; line-height: 1.6;">
+          <strong>Legal Identity &amp; Scope:</strong> <strong>Strova Group</strong> is an independent commercial micro-enterprise operating as a sole proprietorship of <strong>Babita Kumari</strong> (MSME Registration: UDYAM-JH-20-0147452). This Privacy Policy applies to personal data processed through our public marketing website (<a href="https://strovagroups.in">strovagroups.in</a>), our client portal (<a href="https://portal.strovagroups.in">portal.strovagroups.in</a>), commercial communications, and client project fulfillment.
         </p>
       </div>
 
-      <h2>1. Data Fiduciary Identity &amp; Principles</h2>
+      <h2>1. Dual Operating Roles: Data Fiduciary &amp; Data Processor</h2>
       <p>
-        Under the Digital Personal Data Protection Act, 2023 ("DPDP Act") of India, <strong>Strova Group</strong> acts as a Data Fiduciary. We adhere strictly to purpose limitation, data minimization, and transparent processing. We do not sell, rent, monetize, or disclose your personal data to data brokers or advertising exchanges.
-      </p>
-
-      <h2>2. Personal Data We Collect</h2>
-      <p>
-        We restrict collection to operational necessities for quotation evaluation and project execution:
+        Under the Digital Personal Data Protection Act, 2023 ("DPDP Act") and relevant global frameworks (such as the EU/UK General Data Protection Regulation), Strova Group operates in two distinct legal capacities:
       </p>
       <ul>
-        <li><strong>Quote Requests:</strong> Name, work email address, project requirements, and optional fields (company name, phone/WhatsApp number, rough project timeline).</li>
-        <li><strong>Client Portal (portal.strovagroups.in):</strong> Client email address for 6-digit one-time passcode (OTP) authentication, project milestone events, order messaging exchanges, and deliverable file access logs.</li>
-        <li><strong>Communications:</strong> Direct email correspondence sent to <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> or messages initiated via our official WhatsApp business channel (<a href="https://wa.me/919288077802">+91 92880 77802</a>).</li>
-        <li><strong>Technical Edge Logs:</strong> Standard request metadata (anonymized IP, user-agent, timestamp) collected by Cloudflare edge servers solely for bot mitigation and DDoS prevention.</li>
+        <li>
+          <strong>Data Fiduciary (Data Controller):</strong> When you browse our website, request a project quote, communicate with our team via email or WhatsApp, create or access an account on our Client Portal, or contract with us as a direct commercial client, Strova Group determines the purpose and means of processing your personal data.
+        </li>
+        <li>
+          <strong>Data Processor:</strong> When corporate clients contract Strova Group to develop, integrate, maintain, or host bespoke software applications, WhatsApp automations, or SaaS platforms that process personal data belonging to our client's end-customers, the client acts as the Data Fiduciary and Strova Group acts strictly as a Data Processor. In such cases, processing is governed by our formal written <a href="/terms/">Statement of Work</a> and Data Processing Addendum (DPA), which incorporate strict confidentiality, purpose-limitation, and subprocessing controls.
+        </li>
       </ul>
 
-      <h2>3. Lawful Purpose of Processing</h2>
+      <h2>2. Personal Data Inventory</h2>
       <p>
-        Data is processed strictly for legitimate uses under Section 7 of the DPDP Act 2023:
-      </p>
-      <ul>
-        <li>Evaluating inbound project specifications and returning written fixed-scope proposals within 1 business day.</li>
-        <li>Delivering contractual milestones, staging previews, and repository handover.</li>
-        <li>Operating the secure client portal for order tracking, messaging, and file delivery.</li>
-        <li>Fulfilling legal, accounting, and tax compliance obligations in India.</li>
-      </ul>
-
-      <h2>4. Cookies &amp; Tracking Architecture</h2>
-      <p>
-        Our public marketing site sets <strong>zero tracking or third-party advertising cookies</strong>. We use cookieless, privacy-preserving event analytics that do not track users across domains.
-      </p>
-      <p>
-        Our authenticated client portal utilizes only strictly necessary, encrypted session cookies (<code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code>) required for session persistence.
+        In accordance with the principle of data minimization (Section 6 of the DPDP Act), we collect only the personal data strictly required to deliver our professional services:
       </p>
 
-      <h2>5. Data Retention &amp; Erasure Schedule</h2>
-      <p>
-        Inquiries that do not materialize into active client contracts are retained for up to twelve (12) months before being securely purged, unless earlier erasure is requested.
-      </p>
-      <p>
-        Active client project records and invoices are retained for seven (7) years to satisfy statutory tax and commercial record-keeping regulations under Indian law.
-      </p>
-
-      <h2 id="privacy-choices">6. Data Principal Rights &amp; Privacy Choices</h2>
-      <p>
-        Under the DPDP Act 2023, you have the following rights:
-      </p>
-      <ul>
-        <li><strong>Right to Access:</strong> Request a summary of personal data held about you and how it has been processed.</li>
-        <li><strong>Right to Correction &amp; Erasure:</strong> Request the correction of inaccurate data or complete erasure of non-statutory records.</li>
-        <li><strong>Right of Grievance Redressal:</strong> Submit any inquiry or concern regarding data governance to our designated Grievance Officer.</li>
-        <li><strong>Right to Nominate:</strong> Nominate an individual to exercise data rights in the event of death or incapacity.</li>
-      </ul>
-
-      <h2>7. Grievance Redressal Desk</h2>
-      <p>
-        To submit a data access, correction, or deletion request, contact our grievance desk:
-      </p>
-      <div class="card card--quiet" style="padding: var(--space-6);">
-        <p><strong>Entity:</strong> Strova Group (Proprietorship of Babita Kumari)</p>
-        <p><strong>Designation:</strong> Data Protection &amp; Grievance Officer</p>
-        <p><strong>Email:</strong> <a href="mailto:info@strovagroups.in?subject=DPDP%20Data%20Request">info@strovagroups.in</a></p>
-        <p><strong>Phone:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
-        <p><strong>Response Timeline:</strong> Formal statutory acknowledgment within 48 hours; resolution within 30 calendar days.</p>
+      <div class="table-responsive" style="overflow-x: auto; margin-block: var(--space-6);">
+        <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--color-border); text-align: left;">
+              <th style="padding: 0.75rem 0.5rem;">Data Category</th>
+              <th style="padding: 0.75rem 0.5rem;">Data Elements</th>
+              <th style="padding: 0.75rem 0.5rem;">Lawful Basis / Purpose</th>
+              <th style="padding: 0.75rem 0.5rem;">Retention Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">Prospective Inquiries &amp; Quotes</td>
+              <td style="padding: 0.75rem 0.5rem;">Full name, business email, company name, phone/WhatsApp, project description, timeline.</td>
+              <td style="padding: 0.75rem 0.5rem;">Affirmative consent &amp; pre-contractual evaluation (DPDP Sec 6).</td>
+              <td style="padding: 0.75rem 0.5rem;">12 months from inquiry date or until erasure request.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">Client Portal Authentication</td>
+              <td style="padding: 0.75rem 0.5rem;">Client email address, 6-digit cryptographic OTP, Supabase authentication tokens, session timestamps.</td>
+              <td style="padding: 0.75rem 0.5rem;">Contractual performance &amp; portal security (DPDP Sec 7(b)).</td>
+              <td style="padding: 0.75rem 0.5rem;">Active duration of client engagement + 30 days post-termination.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">Invoicing &amp; Commercial Records</td>
+              <td style="padding: 0.75rem 0.5rem;">Client billing entity name, GSTIN, PAN, billing address, Razorpay order/payment IDs, bank transfer UTR numbers.</td>
+              <td style="padding: 0.75rem 0.5rem;">Statutory compliance: CGST Act 2017 Sec 36 &amp; Income Tax Act Sec 44AA.</td>
+              <td style="padding: 0.75rem 0.5rem;"><strong>7 years (84 months)</strong> from end of relevant financial year (Mandatory Legal Hold).</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">In-App Messages &amp; Support</td>
+              <td style="padding: 0.75rem 0.5rem;">Project exchange messages, ticket subjects, technical diagnostics, file attachments.</td>
+              <td style="padding: 0.75rem 0.5rem;">Contractual delivery &amp; warranty verification.</td>
+              <td style="padding: 0.75rem 0.5rem;">Duration of project + 3-year commercial limitation window.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">Security &amp; Edge Telemetry</td>
+              <td style="padding: 0.75rem 0.5rem;">IP address, Cloudflare Turnstile token, browser User-Agent, edge request timestamps.</td>
+              <td style="padding: 0.75rem 0.5rem;">Legitimate security interest (DDoS defense, bot prevention, rate limiting).</td>
+              <td style="padding: 0.75rem 0.5rem;">Transient edge processing; security firewall logs retained up to 30 days.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: 0.75rem 0.5rem; font-weight: 600;">Privacy Rights &amp; Grievances</td>
+              <td style="padding: 0.75rem 0.5rem;">Requester name, email, request category, tracking reference (PR-YYYYMM-XXXX), resolution audit notes.</td>
+              <td style="padding: 0.75rem 0.5rem;">Legal compliance: DPDP Act 2023 Sec 13 &amp; IT Rules 2011.</td>
+              <td style="padding: 0.75rem 0.5rem;">3 years from resolution date to demonstrate regulatory compliance.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <p class="text-sm text-muted" style="margin-top: var(--space-8);">
-        Strova Group is a proprietorship of Babita Kumari. Registered MSME: UDYAM-JH-20-0147452.
+      <h2>3. Cookie-Free Marketing &amp; Essential Storage Only</h2>
+      <p>
+        We do not employ non-essential tracking cookies or invasive third-party ad pixels:
+      </p>
+      <ul>
+        <li>
+          <strong>Public Marketing Site (<a href="https://strovagroups.in">strovagroups.in</a>):</strong> Operates with <strong>zero tracking cookies</strong> and zero third-party advertising cookies. Our web analytics engine is privacy-preserving and cookieless, capturing aggregated interactions without storing persistent device identifiers.
+        </li>
+        <li>
+          <strong>Client Portal (<a href="https://portal.strovagroups.in">portal.strovagroups.in</a>):</strong> Uses strictly necessary authentication session cookies protected by the <code>HttpOnly</code>, <code>Secure</code>, and <code>SameSite=Lax</code> security attributes.
+        </li>
+        <li>
+          <strong>Payment Gateway Modal:</strong> When paying an invoice via Razorpay, transient session cookies are set inside the Razorpay secure checkout iframe strictly to process the transaction and prevent payment fraud.
+        </li>
+      </ul>
+      <p>
+        For full technical details, consult our standalone <a href="/cookies/">Cookie Policy</a>.
+      </p>
+
+      <h2>4. Authorized Subprocessors &amp; Cloud Infrastructure</h2>
+      <p>
+        Strova Group engages reputable enterprise cloud infrastructure providers to deliver its services. All subprocessors are bound by written data processing agreements ensuring security standards equivalent to or exceeding the DPDP Act 2023:
+      </p>
+      <ul>
+        <li><strong>Cloudflare, Inc. (USA / Global CDN):</strong> Edge hosting, DNS management, DDoS mitigation, and Turnstile bot protection.</li>
+        <li><strong>Supabase, Inc. (AWS Mumbai, India / Global):</strong> Managed PostgreSQL database, client authentication, and role-based access control storage.</li>
+        <li><strong>Razorpay Software Private Limited (India):</strong> RBI-authorized payment aggregator processing domestic (UPI, Netbanking, Cards) and international client payments. Strova Group never stores raw debit/credit card numbers or CVVs.</li>
+        <li><strong>Web3Forms / Formspree:</strong> Encrypted relay routing for inbound quote and privacy request notifications to our internal operations desk.</li>
+        <li><strong>Meta Platforms, Inc. / WhatsApp Business API:</strong> Direct client communications initiated at the customer's election.</li>
+      </ul>
+
+      <h2>5. AI Model Training &amp; Automated Processing Safeguards</h2>
+      <p>
+        When delivering automation, custom SaaS, or engineering services:
+      </p>
+      <ul>
+        <li>Client proprietary business data, source code, confidential databases, and customer communications are <strong>never used to train public or foundational third-party artificial intelligence models</strong>.</li>
+        <li>Any AI or automated workflows developed by Strova Group utilize enterprise APIs with zero-data-retention (ZDR) agreements and strict tenant isolation.</li>
+      </ul>
+
+      <h2>6. International Data Transfers</h2>
+      <p>
+        Under Section 16 of the DPDP Act 2023, personal data may be transferred outside India unless restricted by Central Government notifications. For international clients in the European Economic Area (EEA), United Kingdom, United States, Canada, Australia, and Singapore, Strova Group executes standard contractual clauses and DPDP-compliant processor commitments to guarantee cross-border data protection.
+      </p>
+
+      <h2 id="privacy-choices">7. Data Principal Rights under DPDP Act 2023</h2>
+      <p>
+        As a Data Principal under Indian law and applicable international regulations, you possess statutory rights regarding your personal information:
+      </p>
+      <ul>
+        <li><strong>Right to Access &amp; Summary (Section 11):</strong> Request confirmation of whether your data is being processed, a summary of personal data held, and identities of Data Fiduciaries/Processors with whom data has been shared.</li>
+        <li><strong>Right to Correction &amp; Completion (Section 12):</strong> Request correction of inaccurate personal data, completion of incomplete records, or updating of your contact details.</li>
+        <li><strong>Right to Erasure (Section 12):</strong> Request deletion of personal data when the original processing purpose is complete. <em>Important Statutory Exception:</em> Erasure does not apply to commercial tax invoices, financial ledgers, or audit logs required to be retained under Section 36 of the CGST Act 2017 (7-year mandatory retention).</li>
+        <li><strong>Right of Grievance Redressal (Section 13):</strong> Register grievances regarding our data protection practices with our designated officer.</li>
+        <li><strong>Right to Nominate (Section 14):</strong> Nominate an individual to exercise data principal rights in the event of your death or incapacity.</li>
+        <li><strong>Right to Withdraw Consent (Section 6):</strong> Withdraw processing consent at any time for non-statutory purposes.</li>
+      </ul>
+
+      <h2>8. How to Exercise Your Rights (Self-Service Web Desk)</h2>
+      <p>
+        To submit a formal request for access, correction, erasure, or grievance redressal, please use our dedicated web portal:
+      </p>
+      <div class="card card--quiet" style="padding: var(--space-6); margin-block: var(--space-4);">
+        <h3 style="margin-top: 0; font-size: 1.125rem;">Dedicated Privacy Rights &amp; Grievance Desk</h3>
+        <p class="text-sm text-secondary" style="margin-bottom: 1rem;">
+          Submit your request online to receive an automated tracking code (PR-YYYYMM-XXXX), 48-hour formal acknowledgment, and 30-day statutory resolution.
+        </p>
+        <a href="/privacy/requests/" class="btn btn--primary">Open Privacy Rights Desk &rarr;</a>
+      </div>
+
+      <h2>9. Data Protection &amp; Grievance Redressal Desk</h2>
+      <p>
+        In accordance with the DPDP Act 2023, the Information Technology (Reasonable Security Practices) Rules 2011, and the Consumer Protection (E-Commerce) Rules 2020, Strova Group has appointed a dedicated Grievance Officer:
+      </p>
+      <div class="card card--quiet" style="padding: var(--space-6);">
+        <p><strong>Designation:</strong> Data Protection &amp; Grievance Officer</p>
+        <p><strong>Operating Entity:</strong> Strova Group (Proprietorship of Babita Kumari)</p>
+        <p><strong>MSME Registration:</strong> UDYAM-JH-20-0147452</p>
+        <p><strong>Grievance Email:</strong> <a href="mailto:info@strovagroups.in?subject=Privacy%20Grievance">info@strovagroups.in</a></p>
+        <p><strong>Telephone &amp; WhatsApp:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
+        <p><strong>Operating Hours:</strong> Monday through Saturday, 10:00 AM – 7:00 PM IST (UTC+5:30)</p>
+        <p><strong>Statutory Timelines:</strong> Formal acknowledgment within <strong>48 hours</strong>; substantive resolution within <strong>30 calendar days</strong>.</p>
+      </div>
+
+      <h2>10. Regulatory Escalation to Data Protection Board of India</h2>
+      <p>
+        If our Grievance Redressal Desk fails to respond to your submission within 30 calendar days, or if you are unsatisfied with our resolution, you have the legal right under Section 13(3) of the DPDP Act 2023 to submit a formal complaint before the <strong>Data Protection Board of India</strong>.
+      </p>
+
+      <h2>11. Policy Amendments &amp; Notifications</h2>
+      <p>
+        We review and update this Privacy Policy periodically to reflect legal amendments, technological enhancements, and regulatory notifications under the DPDP Rules 2025. Material updates will be announced via a prominent notice on our website and client portal.
+      </p>
+
+      <p class="text-sm text-muted" style="margin-top: var(--space-8); border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+        Strova Group is an independent micro-enterprise operating as a proprietorship of Babita Kumari. Registered MSME: UDYAM-JH-20-0147452. Governing law: Republic of India.
       </p>
     </div>
   </section>

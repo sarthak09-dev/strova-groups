@@ -1,0 +1,601 @@
+---
+/**
+ * Data Principal Privacy Rights & Grievance Request Desk - Hindi (src/pages/hi/privacy/requests.astro)
+ *
+ * Implements self-service intake for statutory rights under:
+ * - भारत का डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 (धाराएँ 11, 12, 13, 14) एवं DPDP नियमावली 2025
+ * - सूचना प्रौद्योगिकी (उचित सुरक्षा पद्धतियाँ) नियमावली, 2011
+ *
+ * Features:
+ * - 48-घंटे की औपचारिक पावती गारंटी
+ * - 30-दिवसीय निवारण प्रतिबद्धता
+ * - Cloudflare Turnstile बॉट सत्यापन + एंटी-स्पैम हनीपॉट
+ * - /api/privacy-request के माध्यम से सर्वरलेस सत्यापन
+ * - PR-YYYYMM-XXXX ट्रैकिंग संदर्भ संख्या
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'मुख्य पृष्ठ',
+      item: 'https://strovagroups.in/hi/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'गोपनीयता नीति',
+      item: 'https://strovagroups.in/hi/privacy/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'डेटा अधिकार केंद्र',
+      item: 'https://strovagroups.in/hi/privacy/requests/',
+    },
+  ],
+};
+
+const pageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'डेटा अधिकार एवं शिकायत निवारण केंद्र — Strova Group',
+  description:
+    'भारत के DPDP Act 2023 के तहत डेटा एक्सेस, सुधार, विलोपन, सहमति वापसी या शिकायत निवारण अनुरोध सबमिट करें।',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Strova Group',
+    url: 'https://strovagroups.in',
+    email: 'info@strovagroups.in',
+    telephone: '+919288077802',
+  },
+};
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
+const isTurnstileConfigured = Boolean(turnstileSiteKey);
+---
+
+<BaseLayout
+  title="डेटा अधिकार एवं शिकायत निवारण केंद्र — Strova Group"
+  description="भारत के DPDP Act 2023 के तहत अपने वैधानिक डेटा अधिकारों का प्रयोग करें। डेटा एक्सेस, सुधार, विलोपन और शिकायत अनुरोध दर्ज करें।"
+  jsonLd={[pageJsonLd, breadcrumbJsonLd]}
+  lang="hi"
+>
+  <!-- Hero Section -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero__content">
+        <span class="section-eyebrow">डेटा सुरक्षा एवं अधिकार</span>
+        <h1 class="page-hero__title">डेटा अधिकार एवं शिकायत निवारण केंद्र</h1>
+        <p class="page-hero__lead">
+          डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 (DPDP Act) के तहत अपने वैधानिक डेटा अधिकारों का प्रयोग करें। सीधे हमारे डेटा संरक्षण एवं शिकायत निवारण अधिकारी को डेटा एक्सेस, सुधार, विलोपन, नामांकन या शिकायत अनुरोध भेजें।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Request Section -->
+  <section class="section" aria-labelledby="privacy-request-heading">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Request Form Card -->
+        <div class="contact-form-card card">
+          <div class="form-header">
+            <h2 id="privacy-request-heading" class="form-title">गोपनीयता अनुरोध दर्ज करें</h2>
+            <p class="form-subtitle text-sm text-secondary">
+              सभी अनुरोधों को दर्ज किया जाता है, 48 घंटों में पावती दी जाती है, और 30 कैलेंडर दिनों में समाधान किया जाता है।
+            </p>
+          </div>
+
+          <form id="privacy-request-form" class="inbound-form" novalidate>
+            <!-- Anti-Bot Honeypot -->
+            <div class="hp-field" aria-hidden="true" style="display: none;">
+              <label for="hp_website">इस फ़ील्ड को खाली छोड़ दें</label>
+              <input type="text" id="hp_website" name="_hp_website" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Full Legal Name -->
+            <div class="form-group">
+              <label for="request-name" class="form-label">
+                पूरा कानूनी नाम <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="request-name"
+                name="name"
+                required
+                class="form-input"
+                placeholder="आपका पूरा नाम"
+                aria-required="true"
+              />
+              <span class="form-error" id="name-error" role="alert"></span>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group">
+              <label for="request-email" class="form-label">
+                रिकॉर्ड से जुड़ा ईमेल पता <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="request-email"
+                name="email"
+                required
+                class="form-input"
+                placeholder="name@example.com"
+                aria-required="true"
+              />
+              <span class="form-error" id="email-error" role="alert"></span>
+            </div>
+
+            <!-- Phone & Relationship Row -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="request-phone" class="form-label">
+                  फ़ोन / व्हाट्सएप <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="request-phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="+91 92880 77802"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="request-relationship" class="form-label">
+                  स्ट्रोवा ग्रुप से संबंध <span class="optional">(वैकल्पिक)</span>
+                </label>
+                <select id="request-relationship" name="relationship" class="form-select">
+                  <option value="" selected>संबंध का प्रकार चुनें...</option>
+                  <option value="prospective_client">संभावित ग्राहक / पूछताछकर्ता</option>
+                  <option value="active_client">सक्रिय ग्राहक संगठन</option>
+                  <option value="former_client">पूर्व ग्राहक संगठन</option>
+                  <option value="portal_user">क्लाइंट पोर्टल उपयोगकर्ता (portal.strovagroups.in)</option>
+                  <option value="vendor_partner">विक्रेता / सब-कॉन्ट्रैक्टर / फ्रीलांसर</option>
+                  <option value="general_public">वेबसाइट आगंतुक / अन्य डेटा प्रिंसिपल</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Request Type Selector -->
+            <div class="form-group">
+              <label for="request-type" class="form-label">
+                अनुरोध की श्रेणी <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="request-type" name="requestType" required class="form-select" aria-required="true">
+                <option value="" selected disabled>अनुरोध की श्रेणी चुनें...</option>
+                <option value="access">डेटा पहुंच एवं सारांश (DPDP धारा 11) — संग्रहीत डेटा का विवरण प्राप्त करें</option>
+                <option value="correction">सुधार एवं अद्यतन (DPDP धारा 12) — गलत या अधूरी जानकारी ठीक करें</option>
+                <option value="erasure">डेटा विलोपन (DPDP धारा 12) — गैर-वैधानिक रिकॉर्ड हटाएँ (7 वर्ष कर सीमा लागू)</option>
+                <option value="consent_withdrawal">सहमति वापसी (DPDP धारा 6) — वैकल्पिक डेटा उपयोग बंद करें</option>
+                <option value="marketing_optout">मार्केटिंग ऑप्ट-आउट — प्रचार संचार प्राप्त करना बंद करें</option>
+                <option value="nomination">नामांकन का अधिकार (DPDP धारा 14) — असमर्थता की स्थिति में प्रतिनिधि नियुक्त करें</option>
+                <option value="grievance">शिकायत निवारण (DPDP धारा 13) — डेटा सुरक्षा या गोपनीयता संबंधी शिकायत</option>
+              </select>
+              <span class="form-error" id="type-error" role="alert"></span>
+            </div>
+
+            <!-- Request Details -->
+            <div class="form-group">
+              <label for="request-details" class="form-label">
+                अनुरोध का विस्तृत विवरण <span class="required" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="request-details"
+                name="details"
+                rows="5"
+                required
+                class="form-textarea"
+                placeholder="कृपया बताएं कि आप किस डेटा, समयसीमा या संचार के संबंध में अनुरोध कर रहे हैं। सुधार के लिए वर्तमान और सही विवरण दोनों प्रदान करें..."
+                aria-required="true"
+              ></textarea>
+              <span class="form-error" id="details-error" role="alert"></span>
+            </div>
+
+            <!-- Identity Affirmation Checkbox -->
+            <div class="form-group">
+              <label class="form-checkbox-label" style="display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  id="request-affirmation"
+                  name="affirmation"
+                  required
+                  style="margin-top: 0.25rem; cursor: pointer;"
+                />
+                <span class="text-xs text-secondary" style="line-height: 1.5;">
+                  मैं पुष्टि करता/करती हूँ कि मैं ऊपर नामित डेटा प्रिंसिपल हूँ या उनकी ओर से यह अनुरोध सबमिट करने के लिए कानूनी रूप से अधिकृत प्रतिनिधि हूँ। मैं समझता/समझती हूँ कि गोपनीय रिकॉर्ड जारी करने से पहले स्ट्रोवा ग्रुप पहचान सत्यापन मांग सकता है।
+                </span>
+              </label>
+              <span class="form-error" id="affirmation-error" role="alert"></span>
+            </div>
+
+            <!-- Cloudflare Turnstile Challenge Slot -->
+            <input type="hidden" name="lang" value="hi" />
+            <div class="form-group turnstile-container">
+              {isTurnstileConfigured ? (
+                <div
+                  class="cf-turnstile"
+                  data-sitekey={turnstileSiteKey}
+                  data-theme="light"
+                  data-size="flexible"
+                ></div>
+              ) : (
+                <p class="text-xs text-muted" style="margin: 0; line-height: 1.5;">
+                  फॉर्म सबमिशन पर सुरक्षा सत्यापन सक्रिय है। आप सीधे <a href="mailto:info@strovagroups.in?subject=DPDP%20Privacy%20Request">info@strovagroups.in</a> पर ईमेल भी कर सकते हैं।
+                </p>
+              )}
+              <span class="form-error" id="turnstile-error" role="alert"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn--primary btn--lg w-full">
+                <span>गोपनीयता अनुरोध दर्ज करें &rarr;</span>
+              </button>
+            </div>
+
+            <!-- Notice under submit -->
+            <p class="text-xs text-muted" style="margin-top: 1rem; line-height: 1.5;">
+              DPDP अधिनियम 2023 की धारा 6 के तहत सूचना: इस फॉर्म में दिए गए विवरण केवल आपकी पहचान सत्यापित करने और आपके वैधानिक अनुरोध को पूरा करने के लिए स्ट्रोवा ग्रुप के डेटा संरक्षण एवं शिकायत निवारण डेस्क द्वारा संसाधित किए जाते हैं। विनियामक अनुपालन प्रदर्शित करने के लिए इन्हें 3 वर्षों तक सुरक्षित रखा जाता है।
+            </p>
+
+            <!-- Dynamic Form Status Box -->
+            <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+          </form>
+
+          <!-- Success Reference Box (Hidden by default) -->
+          <div id="request-success-box" class="card card--quiet" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid #16A34A;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #DCFCE7; color: #16A34A; font-weight: bold;">✓</span>
+              <h3 style="margin: 0; font-size: 1.1rem; color: #16A34A;">अनुरोध सफलतापूर्वक दर्ज किया गया</h3>
+            </div>
+            <p class="text-sm text-secondary" id="success-message-text" style="line-height: 1.6; margin-bottom: 1rem;"></p>
+            <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">ट्रैकिंग संदर्भ संख्या (Tracking ID)</div>
+              <div id="tracking-reference-code" style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #0F172A;"></div>
+            </div>
+            <ul class="text-xs text-muted" style="margin: 0; padding-left: 1.25rem; line-height: 1.6;">
+              <li><strong>48 घंटों</strong> के भीतर औपचारिक पावती भेजी जाएगी।</li>
+              <li><strong>30 कैलेंडर दिनों</strong> के भीतर जांच और समाधान पूर्ण किया जाएगा।</li>
+              <li>भविष्य के सभी पत्राचार के लिए अपनी ट्रैकिंग संदर्भ संख्या सुरक्षित रखें।</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sidebar Information Card -->
+        <div class="contact-channels">
+          <!-- Statutory SLA Commitment -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">वैधानिक प्रतिबद्धता</span>
+            <h3 class="channel-title">48-घंटे में पावती</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              DPDP अधिनियम 2023 की धारा 13 और हमारे आंतरिक नियमों के तहत, प्रत्येक शिकायत को समय-मुहर के साथ दर्ज किया जाता है और 48 घंटों में पावती जारी की जाती है।
+            </p>
+          </div>
+
+          <!-- Direct Grievance Redressal Desk -->
+          <div class="channel-card card">
+            <h3 class="channel-title">शिकायत निवारण डेस्क</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              सीधे ईमेल या पत्राचार पसंद करते हैं? हमारे शिकायत निवारण अधिकारी से संपर्क करें:
+            </p>
+            <div style="font-size: 0.8125rem; margin-top: 0.75rem; line-height: 1.7; color: var(--color-text-secondary);">
+              <p><strong>पद:</strong> डेटा संरक्षण एवं शिकायत निवारण अधिकारी</p>
+              <p><strong>प्रतिष्ठान:</strong> Strova Group (बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान)</p>
+              <p><strong>ईमेल:</strong> <a href="mailto:info@strovagroups.in?subject=DPDP%20Grievance">info@strovagroups.in</a></p>
+              <p><strong>सीधा फोन:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
+              <p><strong>कार्य समय:</strong> सोमवार – शनिवार, 10:00 AM – 7:00 PM IST</p>
+            </div>
+          </div>
+
+          <!-- Statutory Retentions -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">वैधानिक अपवाद</span>
+            <h3 class="channel-title">7-वर्षीय कर रिकॉर्ड सीमा</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              कृपया ध्यान दें कि धारा 12 के तहत डेटा विलोपन अनुरोध भुगतान किए गए चालानों या कर प्राप्तियों को नहीं मिटा सकता है। केंद्रीय वस्तु एवं सेवा कर (CGST) अधिनियम 2017 की धारा 36 और आयकर अधिनियम 1961 की धारा 44AA के तहत वित्तीय बहीखातों को 7 वर्षों (84 महीनों) तक बनाए रखना अनिवार्य है।
+            </p>
+          </div>
+
+          <!-- Regulatory Escalation -->
+          <div class="channel-card card card--quiet">
+            <span class="section-eyebrow">नियामक अपील</span>
+            <h3 class="channel-title">भारतीय डेटा संरक्षण बोर्ड (DPB)</h3>
+            <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
+              यदि हमारा शिकायत निवारण डेस्क 30 कैलेंडर दिनों में उत्तर नहीं देता है या आप हमारे समाधान से असंतुष्ट हैं, तो DPDP अधिनियम 2023 की धारा 13(3) के तहत आपको <strong>भारतीय डेटा संरक्षण बोर्ड</strong> में अपील करने का कानूनी अधिकार है।
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  function setupPrivacyRequestForm() {
+    const form = document.getElementById('privacy-request-form') as HTMLFormElement | null;
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let hasErrors = false;
+      let firstInvalid: HTMLElement | null = null;
+
+      // Clear previous error states
+      form.querySelectorAll('.form-error').forEach((el) => {
+        el.textContent = '';
+        el.classList.remove('visible');
+      });
+      form.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+        el.removeAttribute('aria-invalid');
+      });
+
+      const statusBox = document.getElementById('form-status') as HTMLElement;
+      statusBox.className = 'form-status';
+      statusBox.innerHTML = '';
+
+      function markError(fieldId: string, errorId: string, message: string) {
+        const field = document.getElementById(fieldId) as HTMLElement | null;
+        const error = document.getElementById(errorId);
+        if (field) {
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', errorId);
+          if (!firstInvalid) firstInvalid = field;
+        }
+        if (error) {
+          error.textContent = message;
+          error.classList.add('visible');
+        }
+        hasErrors = true;
+      }
+
+      // 1. Anti-bot honeypot check
+      const hp = (document.getElementById('hp_website') as HTMLInputElement | null)?.value.trim();
+      if (hp) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'स्वचालित बॉट फ़िल्टर द्वारा अनुरोध अस्वीकृत।';
+        return;
+      }
+
+      // 2. Field validations
+      const name = (document.getElementById('request-name') as HTMLInputElement | null)?.value.trim() || '';
+      if (!name || name.length < 2) {
+        markError('request-name', 'name-error', 'कृपया अपना पूरा कानूनी नाम प्रदान करें (कम से कम 2 वर्ण)।');
+      }
+
+      const email = (document.getElementById('request-email') as HTMLInputElement | null)?.value.trim() || '';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        markError('request-email', 'email-error', 'कृपया एक मान्य ईमेल पता दर्ज करें।');
+      }
+
+      const reqType = (document.getElementById('request-type') as HTMLSelectElement | null)?.value || '';
+      if (!reqType) {
+        markError('request-type', 'type-error', 'कृपया अनुरोध की श्रेणी चुनें।');
+      }
+
+      const details = (document.getElementById('request-details') as HTMLTextAreaElement | null)?.value.trim() || '';
+      if (!details || details.length < 10) {
+        markError('request-details', 'details-error', 'कृपया अपने अनुरोध का विस्तृत विवरण दें (कम से कम 10 वर्ण)।');
+      }
+
+      const affirmation = (document.getElementById('request-affirmation') as HTMLInputElement | null)?.checked;
+      if (!affirmation) {
+        markError('request-affirmation', 'affirmation-error', 'आपको पुष्टि करनी होगी कि आप डेटा प्रिंसिपल हैं या अधिकृत प्रतिनिधि हैं।');
+      }
+
+      if (hasErrors) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'कृपया सबमिट करने से पहले हाइलाइट किए गए फ़ील्ड को सही करें।';
+        (firstInvalid as HTMLElement | null)?.focus();
+        return;
+      }
+
+      // 3. Submit payload
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>अनुरोध दर्ज किया जा रहा है...</span>';
+
+      const formData = new FormData(form);
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        data[key] = typeof value === 'string' ? value : value.name;
+      });
+
+      try {
+        const response = await fetch('/api/privacy-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.success) {
+          form.style.display = 'none';
+          const successBox = document.getElementById('request-success-box');
+          const codeEl = document.getElementById('tracking-reference-code');
+          const msgEl = document.getElementById('success-message-text');
+
+          if (codeEl) codeEl.textContent = result.trackingId || 'PR-CONFIRMED';
+          if (msgEl) msgEl.textContent = result.message || 'आपका गोपनीयता अनुरोध सफलतापूर्वक दर्ज कर लिया गया है।';
+          if (successBox) successBox.style.display = 'block';
+
+          // Trigger analytics event
+          try {
+            window.dispatchEvent(
+              new CustomEvent('strova:analytics', {
+                detail: { event: 'privacy_request_submitted', trackingId: result.trackingId, timestamp: Date.now() },
+              })
+            );
+          } catch {}
+        } else {
+          statusBox.className = 'form-status error';
+          statusBox.textContent = result.error || 'अनुरोध दर्ज करने में विफल। कृपया info@strovagroups.in पर संपर्क करें।';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      } catch (err) {
+        statusBox.className = 'form-status error';
+        statusBox.textContent = 'नेटवर्क त्रुटि हुई। कृपया सीधे info@strovagroups.in पर संपर्क करें।';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPrivacyRequestForm);
+  } else {
+    setupPrivacyRequestForm();
+  }
+</script>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .inbound-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .required {
+    color: #DC2626;
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .form-input[aria-invalid="true"],
+  .form-select[aria-invalid="true"],
+  .form-textarea[aria-invalid="true"] {
+    border-color: #DC2626;
+  }
+
+  .form-error {
+    display: none;
+    font-size: 0.75rem;
+    color: #DC2626;
+    font-weight: 500;
+  }
+
+  .form-error.visible {
+    display: block;
+  }
+
+  .form-status {
+    display: none;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .form-status.error {
+    display: block;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #991B1B;
+  }
+
+  .contact-channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .channel-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .link-underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

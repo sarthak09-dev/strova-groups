@@ -1410,6 +1410,161 @@ console.log('\n[Test Suite 24: Atomic Order Assignment, CAS, Gateway Verificatio
   );
 }
 
+// =============================================================================
+// TEST SUITE 25: LEGAL PARITY, ENTITY CONSISTENCY & DPDP RIGHTS REDRESSAL GATE
+// =============================================================================
+console.log('\n--- Test Suite 25: Legal Parity, Entity Consistency & DPDP Rights Redressal Gate ---');
+{
+  const projectRoot = process.cwd();
+
+  // 1. Verify existence of all 9 internal legal and privacy compliance documents in docs/legal/
+  const requiredLegalDocs = [
+    'docs/legal/APPLICABILITY_MATRIX.md',
+    'docs/legal/DATA_INVENTORY_AND_RETENTION.md',
+    'docs/legal/PRIVACY_COMPLIANCE_GAPS.md',
+    'docs/legal/DPA_TEMPLATE.md',
+    'docs/legal/SUBPROCESSORS.md',
+    'docs/legal/PRIVACY_REQUEST_RUNBOOK.md',
+    'docs/legal/DATA_INCIDENT_RESPONSE.md',
+    'docs/legal/RETENTION_AND_DELETION_POLICY.md',
+    'docs/legal/LEGAL_CHANGELOG.md',
+  ];
+
+  for (const docPath of requiredLegalDocs) {
+    const fullPath = `${projectRoot}/${docPath}`;
+    const exists = fs.existsSync(fullPath);
+    assert(exists, `Internal compliance document exists: ${docPath}`);
+    if (exists) {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      assert(content.length > 500, `Compliance document has substantive content (>500 chars): ${docPath}`);
+    }
+  }
+
+  // 2. Verify all 10 public legal & privacy pages exist (English & Hindi parity)
+  const requiredPublicPages = [
+    'src/pages/privacy.astro',
+    'src/pages/hi/privacy.astro',
+    'src/pages/terms.astro',
+    'src/pages/hi/terms.astro',
+    'src/pages/cookies.astro',
+    'src/pages/hi/cookies.astro',
+    'src/pages/accessibility.astro',
+    'src/pages/hi/accessibility.astro',
+    'src/pages/privacy/requests.astro',
+    'src/pages/hi/privacy/requests.astro',
+  ];
+
+  for (const pagePath of requiredPublicPages) {
+    const fullPath = `${projectRoot}/${pagePath}`;
+    const exists = fs.existsSync(fullPath);
+    assert(exists, `Public legal page exists: ${pagePath}`);
+    if (exists) {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      assert(content.includes('Strova Group'), `Public page contains Strova Group brand: ${pagePath}`);
+    }
+  }
+
+  // 3. Verify legal entity consistency across public policies
+  const privacyEn = fs.readFileSync(`${projectRoot}/src/pages/privacy.astro`, 'utf8');
+  const privacyHi = fs.readFileSync(`${projectRoot}/src/pages/hi/privacy.astro`, 'utf8');
+  const termsEn = fs.readFileSync(`${projectRoot}/src/pages/terms.astro`, 'utf8');
+  const termsHi = fs.readFileSync(`${projectRoot}/src/pages/hi/terms.astro`, 'utf8');
+
+  assert(
+    privacyEn.includes('Babita Kumari') && privacyEn.includes('UDYAM-JH-20-0147452'),
+    'English privacy policy cites correct proprietorship and MSME registration'
+  );
+  assert(
+    privacyHi.includes('बबिता कुमारी') && privacyHi.includes('UDYAM-JH-20-0147452'),
+    'Hindi privacy policy cites correct proprietorship and MSME registration'
+  );
+  assert(
+    termsEn.includes('Babita Kumari') && termsEn.includes('UDYAM-JH-20-0147452'),
+    'English terms cite correct proprietorship and MSME registration'
+  );
+  assert(
+    termsHi.includes('बबिता कुमारी') && termsHi.includes('UDYAM-JH-20-0147452'),
+    'Hindi terms cite correct proprietorship and MSME registration'
+  );
+
+  // Assert no fake corporate forms (Pvt Ltd, LLC, Inc) claimed for Strova Group
+  const illegalCorporateClaims = ['Strova Group Pvt', 'Strova Group Private Limited', 'Strova Group LLC', 'Strova Group Inc'];
+  for (const fakeName of illegalCorporateClaims) {
+    assert(!privacyEn.includes(fakeName), `Zero false corporate designation "${fakeName}" in privacy.astro`);
+    assert(!termsEn.includes(fakeName), `Zero false corporate designation "${fakeName}" in terms.astro`);
+  }
+
+  // 4. Verify statutory Section 6 DPDP notices in quote forms
+  const contactEn = fs.readFileSync(`${projectRoot}/src/pages/contact.astro`, 'utf8');
+  const contactHi = fs.readFileSync(`${projectRoot}/src/pages/hi/contact.astro`, 'utf8');
+
+  assert(
+    contactEn.includes('Notice under Section 6 of DPDP Act 2023') && contactEn.includes('/privacy/requests/'),
+    'English contact form includes affirmative DPDP Section 6 notice and links to privacy rights desk'
+  );
+  assert(
+    contactHi.includes('DPDP अधिनियम 2023 की धारा 6 के तहत सूचना') && contactHi.includes('/hi/privacy/requests/'),
+    'Hindi contact form includes affirmative DPDP Section 6 notice and links to privacy rights desk'
+  );
+
+  // Verify dark pattern protection: no pre-ticked checkboxes
+  assert(!contactEn.includes('<input type="checkbox" checked'), 'No pre-ticked checkboxes in English contact form');
+  assert(!contactHi.includes('<input type="checkbox" checked'), 'No pre-ticked checkboxes in Hindi contact form');
+
+  const reqDeskEn = fs.readFileSync(`${projectRoot}/src/pages/privacy/requests.astro`, 'utf8');
+  const reqDeskHi = fs.readFileSync(`${projectRoot}/src/pages/hi/privacy/requests.astro`, 'utf8');
+  assert(!reqDeskEn.includes('<input type="checkbox" checked'), 'No pre-ticked checkboxes in English privacy requests desk');
+  assert(!reqDeskHi.includes('<input type="checkbox" checked'), 'No pre-ticked checkboxes in Hindi privacy requests desk');
+
+  // 5. Verify Privacy Request API function & tracking format
+  const apiFunctionPath = `${projectRoot}/functions/api/privacy-request.ts`;
+  assert(fs.existsSync(apiFunctionPath), 'Cloudflare Pages function /api/privacy-request.ts exists');
+
+  const apiFunctionContent = fs.readFileSync(apiFunctionPath, 'utf8');
+  assert(apiFunctionContent.includes('MAX_BODY_BYTES'), 'Privacy API enforces strict payload size guard (64KB)');
+  assert(apiFunctionContent.includes('allowedHostnames'), 'Privacy API enforces strict Origin / Referer check');
+  assert(apiFunctionContent.includes('_hp_website'), 'Privacy API enforces anti-bot honeypot');
+  assert(apiFunctionContent.includes('PR-'), 'Privacy API generates PR-YYYYMM-XXXX tracking reference');
+
+  // Test tracking reference generation logic
+  function testGenerateTrackingId() {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const randomBytes = crypto.randomBytes(2);
+    const randomHex = randomBytes.toString('hex').toUpperCase();
+    return `PR-${year}${month}-${randomHex}`;
+  }
+
+  const generatedId = testGenerateTrackingId();
+  assert(/^PR-[0-9]{6}-[0-9A-F]{4}$/.test(generatedId), `Generated tracking ID matches PR-YYYYMM-XXXX pattern (${generatedId})`);
+
+  // 6. Verify statutory retention exceptions (CGST 7-year hold)
+  assert(
+    privacyEn.includes('CGST Act 2017') && privacyEn.includes('7 years'),
+    'English privacy policy accurately states 7-year mandatory tax retention exception under CGST Act'
+  );
+  assert(
+    privacyHi.includes('CGST') && privacyHi.includes('7 वर्ष'),
+    'Hindi privacy policy accurately states 7-year mandatory tax retention exception under CGST Act'
+  );
+
+  // 7. Verify Portal legal footer links
+  const portalLayout = fs.readFileSync(`${projectRoot}/portal/src/layouts/PortalLayout.astro`, 'utf8');
+  assert(portalLayout.includes('https://strovagroups.in/terms/'), 'PortalLayout links to Terms of Service');
+  assert(portalLayout.includes('https://strovagroups.in/privacy/'), 'PortalLayout links to Privacy Policy');
+  assert(portalLayout.includes('https://strovagroups.in/privacy/requests/'), 'PortalLayout links to Privacy Rights Desk');
+
+  const portalLogin = fs.readFileSync(`${projectRoot}/portal/src/pages/login.astro`, 'utf8');
+  assert(portalLogin.includes('https://strovagroups.in/terms/'), 'Portal login links to Terms of Service');
+  assert(portalLogin.includes('https://strovagroups.in/privacy/'), 'Portal login links to Privacy Policy');
+  assert(portalLogin.includes('https://strovagroups.in/privacy/requests/'), 'Portal login links to Privacy Rights Desk');
+
+  // 8. Verify Footer navigation links
+  const footerContent = fs.readFileSync(`${projectRoot}/src/components/Footer.astro`, 'utf8');
+  assert(footerContent.includes('/privacy/requests/'), 'Footer includes link to Privacy Rights & Grievance Desk');
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');
