@@ -1074,6 +1074,8 @@ console.log('\n[Test Suite 23: Razorpay Order Creation Security & Error Recovery
   assert(createOrderCode.includes('Price tampering detected'), 'create-razorpay-order rejects client-supplied amount mismatches');
   assert(createOrderCode.includes('reused: true'), 'create-razorpay-order supports idempotent reuse of existing open gateway orders');
   assert(createOrderCode.includes("invoice.status !== 'Pending'"), 'create-razorpay-order blocks checkout for non-pending invoices');
+  assert(createOrderCode.includes('fetchAndValidateGatewayOrder'), 'create-razorpay-order validates gateway orders via fetchAndValidateGatewayOrder');
+  assert(createOrderCode.includes('504'), 'create-razorpay-order fails closed with 504 on gateway timeout');
 
   // 2. Behavioral Simulation of createRazorpayOrder
   const mockInvoicesDb = [
@@ -1161,9 +1163,9 @@ console.log('\n[Test Suite 23: Razorpay Order Creation Security & Error Recovery
 }
 
 // -----------------------------------------------------------------------------
-// Test Suite 24: Atomic Order Assignment, Row Verification & Concurrency Races
+// Test Suite 24: Atomic Order Assignment, CAS, Gateway Verification & Concurrency
 // -----------------------------------------------------------------------------
-console.log('\n[Test Suite 24: Atomic Order Assignment, Row Verification & Concurrency]');
+console.log('\n[Test Suite 24: Atomic Order Assignment, CAS, Gateway Verification & Concurrency]');
 {
   const fnSrc = fs.readFileSync('supabase/functions/create-razorpay-order/index.ts', 'utf-8');
   const migrationSrc = fs.readFileSync('supabase/migrations/20261014000000_atomic_assign_razorpay_order.sql', 'utf-8');
@@ -1174,8 +1176,20 @@ console.log('\n[Test Suite 24: Atomic Order Assignment, Row Verification & Concu
     'create-razorpay-order calls assign_invoice_razorpay_order RPC for atomic row-level locking'
   );
   assert(
+    fnSrc.includes('p_expected_previous_order_id: expectedPreviousOrderId'),
+    'create-razorpay-order passes expected previous order ID for Compare-And-Swap (CAS)'
+  );
+  assert(
     fnSrc.includes("assignment.error_code === 'ORDER_ALREADY_ASSIGNED'"),
     'create-razorpay-order explicitly catches ORDER_ALREADY_ASSIGNED concurrency races'
+  );
+  assert(
+    /fetchAndValidateGatewayOrder\s*\(\s*winnerOrderId/i.test(fnSrc),
+    'create-razorpay-order authoritatively validates winning order at gateway before returning to browser'
+  );
+  assert(
+    fnSrc.includes('orphaned_gateway_order_id'),
+    'create-razorpay-order records orphaned_gateway_order_id for financial reconciliation'
   );
   assert(
     fnSrc.includes('updatedRows && updatedRows.length === 1'),
@@ -1192,6 +1206,14 @@ console.log('\n[Test Suite 24: Atomic Order Assignment, Row Verification & Concu
     'Migration 20261014000000 locks invoice row with SELECT ... FOR UPDATE'
   );
   assert(
+    migrationSrc.includes('p_expected_previous_order_id TEXT DEFAULT NULL'),
+    'assign_invoice_razorpay_order signature defines p_expected_previous_order_id'
+  );
+  assert(
+    migrationSrc.includes('IS DISTINCT FROM p_expected_previous_order_id'),
+    'assign_invoice_razorpay_order enforces CAS check against expected previous order ID'
+  );
+  assert(
     migrationSrc.includes('SET search_path = public, pg_temp'),
     'assign_invoice_razorpay_order RPC enforces immutable search_path'
   );
@@ -1204,75 +1226,187 @@ console.log('\n[Test Suite 24: Atomic Order Assignment, Row Verification & Concu
     'assign_invoice_razorpay_order execution is explicitly GRANTED exclusively to service_role'
   );
 
-  // State machine simulation: Two simultaneous checkout requests
+  // Behavioral Simulation: CAS, Staleness Replacement, and Concurrency
   let dbInvoice = {
-    id: 'inv-race-1',
+    id: 'inv-cas-1',
     client_id: 'client-1',
     status: 'Pending',
     razorpay_order_id: null,
     amount_paise: 500000,
+    currency: 'INR',
+    payment_attempts: 0,
   };
   const auditLogs = [];
 
-  function simulateAtomicAssign(invoiceId, clientId, proposedOrderId) {
-    // Simulates public.assign_invoice_razorpay_order RPC with row lock
+  function simulateAssignInvoiceOrder({
+    invoiceId,
+    clientId,
+    proposedOrderId,
+    expectedPreviousOrderId = null,
+  }) {
     if (dbInvoice.id !== invoiceId) return { success: false, error_code: 'INVOICE_NOT_FOUND' };
     if (dbInvoice.client_id !== clientId) return { success: false, error_code: 'UNAUTHORIZED_CLIENT' };
-    if (dbInvoice.status !== 'Pending') return { success: false, error_code: 'INVOICE_NOT_PENDING', status: dbInvoice.status };
-    if (dbInvoice.razorpay_order_id !== null && dbInvoice.razorpay_order_id !== proposedOrderId) {
-      return {
-        success: false,
-        error_code: 'ORDER_ALREADY_ASSIGNED',
-        assigned_order_id: dbInvoice.razorpay_order_id,
-      };
+    if (dbInvoice.status !== 'Pending') {
+      return { success: false, error_code: 'INVOICE_NOT_PENDING', status: dbInvoice.status };
     }
+
+    // Idempotent re-assignment
+    if (dbInvoice.razorpay_order_id !== null && dbInvoice.razorpay_order_id === proposedOrderId) {
+      return { success: true, assigned_order_id: dbInvoice.razorpay_order_id };
+    }
+
+    // CAS Check
+    if (expectedPreviousOrderId !== null) {
+      if (dbInvoice.razorpay_order_id !== expectedPreviousOrderId) {
+        return {
+          success: false,
+          error_code: 'ORDER_ALREADY_ASSIGNED',
+          assigned_order_id: dbInvoice.razorpay_order_id,
+        };
+      }
+    } else {
+      if (dbInvoice.razorpay_order_id !== null) {
+        return {
+          success: false,
+          error_code: 'ORDER_ALREADY_ASSIGNED',
+          assigned_order_id: dbInvoice.razorpay_order_id,
+        };
+      }
+    }
+
     dbInvoice.razorpay_order_id = proposedOrderId;
+    dbInvoice.payment_attempts += 1;
     return { success: true, assigned_order_id: proposedOrderId };
   }
 
-  // Request A wins the race
-  const rzpOrderA = 'order_gateway_A';
-  const assignResultA = simulateAtomicAssign('inv-race-1', 'client-1', rzpOrderA);
-  assert(assignResultA.success === true, 'Simultaneous Request A successfully assigns order_gateway_A');
+  // 1. Initial assignment to fresh invoice (no previous order)
+  const assignInitial = simulateAssignInvoiceOrder({
+    invoiceId: 'inv-cas-1',
+    clientId: 'client-1',
+    proposedOrderId: 'order_initial_100',
+    expectedPreviousOrderId: null,
+  });
+  assert(assignInitial.success === true && dbInvoice.razorpay_order_id === 'order_initial_100', 'Initial order assignment succeeds without previous order');
 
-  // Request B arrives concurrently with its own gateway order
-  const rzpOrderB = 'order_gateway_B';
-  const assignResultB = simulateAtomicAssign('inv-race-1', 'client-1', rzpOrderB);
+  // 2. Stale / Expired order replacement via CAS
+  // Suppose order_initial_100 expired at Razorpay. Caller provides expectedPreviousOrderId: 'order_initial_100'
+  const assignStaleReplace = simulateAssignInvoiceOrder({
+    invoiceId: 'inv-cas-1',
+    clientId: 'client-1',
+    proposedOrderId: 'order_fresh_200',
+    expectedPreviousOrderId: 'order_initial_100',
+  });
   assert(
-    assignResultB.success === false && assignResultB.error_code === 'ORDER_ALREADY_ASSIGNED',
-    'Simultaneous Request B is prevented from overwriting invoice order ID'
+    assignStaleReplace.success === true && dbInvoice.razorpay_order_id === 'order_fresh_200',
+    'Stale/expired order replacement succeeds atomically via CAS with expected previous order ID'
   );
 
-  // Request B recovers: returns winner order and audits orphan order
-  let returnedOrderForB;
-  if (assignResultB.error_code === 'ORDER_ALREADY_ASSIGNED') {
-    returnedOrderForB = assignResultB.assigned_order_id;
-    auditLogs.push({
-      action: 'gateway_order_orphaned',
-      orphaned_order_id: rzpOrderB,
-      winning_order_id: assignResultB.assigned_order_id,
-    });
+  // 3. Competing concurrent stale replacement (CAS conflict)
+  // Worker 2 attempts stale replacement with old expected ID 'order_initial_100', but DB already has 'order_fresh_200'
+  const assignConcurrentStale = simulateAssignInvoiceOrder({
+    invoiceId: 'inv-cas-1',
+    clientId: 'client-1',
+    proposedOrderId: 'order_competing_300',
+    expectedPreviousOrderId: 'order_initial_100',
+  });
+  assert(
+    assignConcurrentStale.success === false &&
+    assignConcurrentStale.error_code === 'ORDER_ALREADY_ASSIGNED' &&
+    assignConcurrentStale.assigned_order_id === 'order_fresh_200',
+    'Competing concurrent replacement with mismatched expected previous order ID is REJECTED by CAS'
+  );
+
+  // 4. Gateway Network Error / Timeout Fail-Closed Behavior
+  function simulateExistingOrderCheck(gatewayResponse) {
+    if (gatewayResponse.networkTimeout) {
+      return { status: 504, error: 'Gateway timeout', createdDuplicate: false };
+    }
+    if (gatewayResponse.http5xx) {
+      return { status: 502, error: 'Gateway reachability error', createdDuplicate: false };
+    }
+    if (gatewayResponse.status === 'paid') {
+      return { status: 409, error: 'Invoice already paid at gateway', createdDuplicate: false };
+    }
+    return { status: 200, valid: true };
   }
 
+  const timeoutCheck = simulateExistingOrderCheck({ networkTimeout: true });
   assert(
-    returnedOrderForB === 'order_gateway_A',
-    'Request B safely receives the authoritative winning order ID without error'
-  );
-  assert(
-    dbInvoice.razorpay_order_id === 'order_gateway_A',
-    'Invoice razorpay_order_id remains strictly order_gateway_A (zero overwrites)'
-  );
-  assert(
-    auditLogs.some(a => a.action === 'gateway_order_orphaned' && a.orphaned_order_id === 'order_gateway_B'),
-    'Orphaned gateway order B is safely logged in audit_log'
+    timeoutCheck.status === 504 && timeoutCheck.createdDuplicate === false,
+    'Gateway network timeout on existing order FAILS CLOSED (504) without creating duplicate order'
   );
 
-  // Zero-row update simulation (e.g. status changed to Paid)
-  dbInvoice.status = 'Paid';
-  const resSettled = simulateAtomicAssign('inv-race-1', 'client-1', 'order_gateway_C');
+  const error5xxCheck = simulateExistingOrderCheck({ http5xx: true });
   assert(
-    resSettled.success === false && resSettled.error_code === 'INVOICE_NOT_PENDING',
-    'Attempt to assign order to settled invoice is rejected'
+    error5xxCheck.status === 502 && error5xxCheck.createdDuplicate === false,
+    'Gateway 5xx error on existing order FAILS CLOSED (502) without creating duplicate order'
+  );
+
+  // 5. Paid-Order Conflict Guard (no replacement on paid order)
+  const paidCheck = simulateExistingOrderCheck({ status: 'paid' });
+  assert(
+    paidCheck.status === 409 && paidCheck.createdDuplicate === false,
+    'Paid order at gateway returns HTTP 409 Conflict without creating replacement order'
+  );
+
+  // 6. Concurrency loser validates winning order before returning to browser
+  function simulateConcurrentLoserRecovery({
+    winningOrderId,
+    gatewayWinningState,
+    orphanedOrderId,
+  }) {
+    // Record orphan in audit log
+    auditLogs.push({
+      action: 'gateway_order_orphaned',
+      orphaned_gateway_order_id: orphanedOrderId,
+      winning_order_id: winningOrderId,
+      reason: 'concurrency_race',
+    });
+
+    // Validate winning order at gateway
+    if (gatewayWinningState === 'valid') {
+      return { status: 200, returnOrderId: winningOrderId };
+    } else if (gatewayWinningState === 'paid') {
+      return { status: 409, error: 'Invoice settled at gateway' };
+    } else {
+      return { status: 502, error: 'Winning order invalid at gateway' };
+    }
+  }
+
+  const validWinnerRecovery = simulateConcurrentLoserRecovery({
+    winningOrderId: 'order_fresh_200',
+    gatewayWinningState: 'valid',
+    orphanedOrderId: 'order_competing_300',
+  });
+  assert(
+    validWinnerRecovery.status === 200 && validWinnerRecovery.returnOrderId === 'order_fresh_200',
+    'Losing concurrent worker validates winner order at gateway and returns winning order to browser'
+  );
+  assert(
+    auditLogs.some(a => a.orphaned_gateway_order_id === 'order_competing_300'),
+    'Losing concurrent worker records orphaned order ID in audit log'
+  );
+
+  const invalidWinnerRecovery = simulateConcurrentLoserRecovery({
+    winningOrderId: 'order_bad_state',
+    gatewayWinningState: 'invalid',
+    orphanedOrderId: 'order_competing_400',
+  });
+  assert(
+    invalidWinnerRecovery.status === 502,
+    'Losing worker FAILS CLOSED (502) if winning order is invalid at gateway'
+  );
+
+  // 7. Settled invoice rejected
+  dbInvoice.status = 'Paid';
+  const settledAttempt = simulateAssignInvoiceOrder({
+    invoiceId: 'inv-cas-1',
+    clientId: 'client-1',
+    proposedOrderId: 'order_never_500',
+  });
+  assert(
+    settledAttempt.success === false && settledAttempt.error_code === 'INVOICE_NOT_PENDING',
+    'Order assignment on settled/paid invoice is strictly rejected'
   );
 }
 

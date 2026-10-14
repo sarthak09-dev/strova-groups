@@ -358,13 +358,13 @@ Prior to formal commercial deployment, confirm the following items:
 ### B. Database Migration Execution
 Apply the migrations in numerical order to your Supabase project (via CLI `supabase db push` or in the Supabase Dashboard SQL Editor):
 
-1. `20261012000000_client_portal_schema.sql`: Core schema (profiles, orders, deliverables, invoices, payments, audit_log, RLS)
+1. `20261012000000_client_portal_schema.sql`: Core schema (profiles, orders, order_events, files, invoices, messages, audit_log, RLS)
 2. `20261012000001_harden_and_extend_portal.sql`: Schema extensions, indices, client isolation policies
 3. `20261013000000_atomic_payment_rpc.sql`: Initial atomic payment reconciliation function
 4. `20261013000001_fix_support_ticket_rls.sql`: Support tickets order ownership check
 5. `20261013000002_realtime_and_notifications.sql`: Realtime tables and notifications publication
 6. `20261013000003_secure_finalize_payment_rpc.sql`: Production-hardened `finalize_payment` RPC with row locking, currency/amount strict checks, cross-invoice reuse guards, and exclusive `service_role` execute permission.
-7. `20261014000000_atomic_assign_razorpay_order.sql`: Atomic Razorpay order assignment RPC with row locking (`FOR UPDATE`), updated row count verification, concurrency race prevention, and exclusive `service_role` execution permission.
+7. `20261014000000_atomic_assign_razorpay_order.sql`: Atomic Razorpay order assignment RPC with row locking (`FOR UPDATE`), Compare-And-Swap (CAS) staleness replacement, updated row count verification, concurrency race prevention, and exclusive `service_role` execution permission.
 
 ```bash
 # Link your Supabase CLI to your project

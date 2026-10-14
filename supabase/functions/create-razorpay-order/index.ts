@@ -139,70 +139,177 @@ serve(async (req) => {
 
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
 
-    // Idempotent Order Reuse:
-    // If the invoice already has a valid razorpay_order_id, check if it's still open and valid at the gateway
-    if (invoice.razorpay_order_id) {
+    /**
+     * Authoritatively validates a Razorpay order at the gateway.
+     */
+    async function fetchAndValidateGatewayOrder(
+      orderId: string,
+      basicAuth: string,
+      expectedAmount: number,
+      expectedCurrency: string
+    ): Promise<
+      | { kind: 'valid'; order: any }
+      | { kind: 'paid'; order: any }
+      | { kind: 'invalid_or_stale'; status: string; reason: string }
+      | { kind: 'not_found' }
+      | { kind: 'gateway_error'; status: number; message: string }
+      | { kind: 'network_timeout'; message: string }
+    > {
       try {
-        const existingOrderRes = await fetch(`https://api.razorpay.com/v1/orders/${invoice.razorpay_order_id}`, {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(`https://api.razorpay.com/v1/orders/${encodeURIComponent(orderId)}`, {
           method: 'GET',
-          headers: { 'Authorization': `Basic ${auth}` },
+          headers: {
+            'Authorization': `Basic ${basicAuth}`,
+            'Accept': 'application/json',
+          },
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
-        if (existingOrderRes.ok) {
-          const existingOrder = await existingOrderRes.json();
-          // If existing gateway order matches amount and currency and is still created/attempted, reuse it!
-          if (
-            existingOrder.id === invoice.razorpay_order_id &&
-            existingOrder.amount === invoice.amount_paise &&
-            existingOrder.currency === currency &&
-            (existingOrder.status === 'created' || existingOrder.status === 'attempted')
-          ) {
-            return new Response(JSON.stringify({
-              key_id: razorpayKeyId,
-              order_id: existingOrder.id,
-              amount_paise: invoice.amount_paise,
-              currency,
-              invoice_number: invoice.invoice_number,
-              reused: true,
-              keyId: razorpayKeyId,
-              orderId: existingOrder.id,
-              amount: invoice.amount_paise,
-              invoiceNumber: invoice.invoice_number,
-            }), {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-          }
+        if (res.status === 404) {
+          return { kind: 'not_found' };
         }
-      } catch {
-        // Fall through to create a new order if gateway fetch fails
+
+        if (!res.ok) {
+          const errText = await res.text().catch(() => '');
+          return {
+            kind: 'gateway_error',
+            status: res.status,
+            message: `Gateway returned HTTP ${res.status}: ${errText.slice(0, 200)}`,
+          };
+        }
+
+        const order = await res.json();
+        if (!order || !order.id) {
+          return { kind: 'invalid_or_stale', status: 'unknown', reason: 'Malformed order payload' };
+        }
+
+        if (order.status === 'paid') {
+          return { kind: 'paid', order };
+        }
+
+        const matchesAmount = order.amount === expectedAmount;
+        const matchesCurrency = (order.currency || '').toUpperCase() === expectedCurrency.toUpperCase();
+        const isOpen = order.status === 'created' || order.status === 'attempted';
+
+        if (matchesAmount && matchesCurrency && isOpen) {
+          return { kind: 'valid', order };
+        }
+
+        return {
+          kind: 'invalid_or_stale',
+          status: order.status || 'unknown',
+          reason: `Order mismatch: status=${order.status}, amount=${order.amount} (expected ${expectedAmount}), currency=${order.currency} (expected ${expectedCurrency})`,
+        };
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          return { kind: 'network_timeout', message: 'Gateway request timed out while validating order' };
+        }
+        return { kind: 'network_timeout', message: err.message || 'Network error while contacting gateway' };
       }
     }
 
-    // Call Razorpay API to create order
-    const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        amount: invoice.amount_paise,
-        currency,
-        receipt: invoice.invoice_number,
-        notes: {
-          invoice_id: invoice.id,
-          client_id: invoice.orders.client_id,
-          order_id: invoice.order_id,
-        },
-      }),
-    });
+    // Idempotent Order Reuse & Staleness Verification:
+    let expectedPreviousOrderId: string | null = null;
 
-    const rzpOrder = await rzpResponse.json();
-    if (!rzpResponse.ok || !rzpOrder || !rzpOrder.id) {
-      // Do not leak sensitive provider internal errors
-      const safeErrorMsg = rzpOrder?.error?.description || 'Razorpay order creation rejected by gateway';
-      return new Response(JSON.stringify({ error: safeErrorMsg }), {
-        status: 502,
+    if (invoice.razorpay_order_id) {
+      const existingCheck = await fetchAndValidateGatewayOrder(
+        invoice.razorpay_order_id,
+        auth,
+        invoice.amount_paise,
+        currency
+      );
+
+      if (existingCheck.kind === 'valid') {
+        // Reuse valid open order idempotently
+        return new Response(JSON.stringify({
+          key_id: razorpayKeyId,
+          order_id: existingCheck.order.id,
+          amount_paise: invoice.amount_paise,
+          currency,
+          invoice_number: invoice.invoice_number,
+          reused: true,
+          keyId: razorpayKeyId,
+          orderId: existingCheck.order.id,
+          amount: invoice.amount_paise,
+          invoiceNumber: invoice.invoice_number,
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (existingCheck.kind === 'paid') {
+        // Gateway reports order is already paid! Never create replacement order.
+        return new Response(JSON.stringify({
+          error: 'This invoice has already been settled at the payment gateway. Payment reconciliation in progress.',
+          status: 'paid',
+          order_id: invoice.razorpay_order_id,
+        }), {
+          status: 409,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (existingCheck.kind === 'gateway_error' || existingCheck.kind === 'network_timeout') {
+        // Fail safely on network errors/timeouts/5xx: do NOT assume order is dead, do NOT create duplicate
+        const httpStatus = existingCheck.kind === 'network_timeout' ? 504 : 502;
+        return new Response(JSON.stringify({
+          error: 'Payment gateway reachability error while checking existing order. Please retry.',
+          detail: existingCheck.message,
+        }), {
+          status: httpStatus,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Order is dead, cancelled, expired, or 404: record expected previous ID for atomic CAS replacement
+      expectedPreviousOrderId = invoice.razorpay_order_id;
+    }
+
+    // Call Razorpay API to create new order with timeout guard
+    let rzpOrder: any;
+    try {
+      const createController = new AbortController();
+      const createTimeoutId = setTimeout(() => createController.abort(), 8000);
+
+      const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: invoice.amount_paise,
+          currency,
+          receipt: invoice.invoice_number,
+          notes: {
+            invoice_id: invoice.id,
+            client_id: invoice.orders.client_id,
+            order_id: invoice.order_id,
+          },
+        }),
+        signal: createController.signal,
+      });
+      clearTimeout(createTimeoutId);
+
+      rzpOrder = await rzpResponse.json();
+      if (!rzpResponse.ok || !rzpOrder || !rzpOrder.id) {
+        const safeErrorMsg = rzpOrder?.error?.description || 'Razorpay order creation rejected by gateway';
+        return new Response(JSON.stringify({ error: safeErrorMsg }), {
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } catch (createErr: any) {
+      const isTimeout = createErr.name === 'AbortError';
+      return new Response(JSON.stringify({
+        error: isTimeout
+          ? 'Gateway timeout while creating Razorpay order. Please retry.'
+          : 'Network error while contacting Razorpay gateway',
+      }), {
+        status: isTimeout ? 504 : 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -219,12 +326,13 @@ serve(async (req) => {
     let finalOrderId = rzpOrder.id;
     let assignmentSucceeded = false;
 
-    // 1. Attempt atomic RPC assignment with row-level locking (SELECT ... FOR UPDATE)
+    // 1. Attempt atomic RPC assignment with row-level locking (SELECT ... FOR UPDATE) and CAS
     const { data: assignResult, error: rpcError } = await supabaseAdmin
       .rpc('assign_invoice_razorpay_order', {
         p_invoice_id: invoice.id,
         p_client_id: invoice.orders.client_id,
         p_razorpay_order_id: rzpOrder.id,
+        p_expected_previous_order_id: expectedPreviousOrderId,
       });
 
     if (!rpcError && assignResult) {
@@ -233,9 +341,8 @@ serve(async (req) => {
         finalOrderId = assignment.assigned_order_id;
         assignmentSucceeded = true;
       } else if (assignment.error_code === 'ORDER_ALREADY_ASSIGNED') {
-        // Concurrency race: another simultaneous request assigned an order while we contacted Razorpay
-        finalOrderId = assignment.assigned_order_id;
-        assignmentSucceeded = true;
+        // Concurrency race: another simultaneous request assigned/modified an order
+        const winnerOrderId = assignment.assigned_order_id;
 
         // Log our redundant gateway order as orphaned for audit reconciliation
         await supabaseAdmin.from('audit_log').insert({
@@ -244,12 +351,44 @@ serve(async (req) => {
           target_table: 'invoices',
           target_id: invoice.id,
           details: {
-            reason: 'concurrent_race_prevented',
-            orphaned_order_id: rzpOrder.id,
-            winning_order_id: assignment.assigned_order_id,
+            reason: 'concurrency_race',
+            orphaned_gateway_order_id: rzpOrder.id,
+            winning_order_id: winnerOrderId,
             amount_paise: invoice.amount_paise,
           },
         });
+
+        // The loser MUST verify the winner's gateway order before giving it to the browser
+        if (winnerOrderId) {
+          const winnerValidation = await fetchAndValidateGatewayOrder(
+            winnerOrderId,
+            auth,
+            invoice.amount_paise,
+            currency
+          );
+
+          if (winnerValidation.kind === 'valid') {
+            finalOrderId = winnerOrderId;
+            assignmentSucceeded = true;
+          } else if (winnerValidation.kind === 'paid') {
+            return new Response(JSON.stringify({
+              error: 'This invoice has already been settled at the payment gateway.',
+              status: 'paid',
+              order_id: winnerOrderId,
+            }), {
+              status: 409,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          } else {
+            return new Response(JSON.stringify({
+              error: 'Concurrent gateway order verification failed',
+              detail: winnerValidation.kind === 'gateway_error' ? winnerValidation.message : 'Invalid winning order state',
+            }), {
+              status: 502,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+        }
       } else if (assignment.error_code === 'INVOICE_NOT_PENDING') {
         // Invoice was settled or cancelled concurrently
         await supabaseAdmin.from('audit_log').insert({
@@ -259,7 +398,7 @@ serve(async (req) => {
           target_id: invoice.id,
           details: {
             reason: 'invoice_no_longer_pending',
-            orphaned_order_id: rzpOrder.id,
+            orphaned_gateway_order_id: rzpOrder.id,
             invoice_status: assignment.status,
             amount_paise: invoice.amount_paise,
           },
@@ -274,16 +413,22 @@ serve(async (req) => {
       }
     } else {
       // 2. Direct PostgREST atomic conditional update fallback with row count verification
-      const { data: updatedRows, error: updateError } = await supabaseAdmin
+      let updateQuery = supabaseAdmin
         .from('invoices')
         .update({
           razorpay_order_id: rzpOrder.id,
           payment_attempts: (invoice.payment_attempts || 0) + 1,
         })
         .eq('id', invoice.id)
-        .eq('status', 'Pending')
-        .or(`razorpay_order_id.is.null,razorpay_order_id.eq.${rzpOrder.id}`)
-        .select('id, razorpay_order_id, status');
+        .eq('status', 'Pending');
+
+      if (expectedPreviousOrderId) {
+        updateQuery = updateQuery.eq('razorpay_order_id', expectedPreviousOrderId);
+      } else {
+        updateQuery = updateQuery.or(`razorpay_order_id.is.null,razorpay_order_id.eq.${rzpOrder.id}`);
+      }
+
+      const { data: updatedRows, error: updateError } = await updateQuery.select('id, razorpay_order_id, status');
 
       if (!updateError && updatedRows && updatedRows.length === 1) {
         finalOrderId = updatedRows[0].razorpay_order_id;
@@ -297,9 +442,7 @@ serve(async (req) => {
           .single();
 
         if (freshInvoice && freshInvoice.status === 'Pending' && freshInvoice.razorpay_order_id) {
-          // Another concurrent request succeeded in assigning an order
-          finalOrderId = freshInvoice.razorpay_order_id;
-          assignmentSucceeded = true;
+          const winnerOrderId = freshInvoice.razorpay_order_id;
 
           await supabaseAdmin.from('audit_log').insert({
             actor_id: user.id,
@@ -307,12 +450,34 @@ serve(async (req) => {
             target_table: 'invoices',
             target_id: invoice.id,
             details: {
-              reason: 'concurrent_update_race_prevented',
-              orphaned_order_id: rzpOrder.id,
-              winning_order_id: freshInvoice.razorpay_order_id,
+              reason: 'concurrency_race',
+              orphaned_gateway_order_id: rzpOrder.id,
+              winning_order_id: winnerOrderId,
               amount_paise: invoice.amount_paise,
             },
           });
+
+          // Validate winner's order at gateway
+          const winnerValidation = await fetchAndValidateGatewayOrder(
+            winnerOrderId,
+            auth,
+            invoice.amount_paise,
+            currency
+          );
+
+          if (winnerValidation.kind === 'valid') {
+            finalOrderId = winnerOrderId;
+            assignmentSucceeded = true;
+          } else if (winnerValidation.kind === 'paid') {
+            return new Response(JSON.stringify({
+              error: 'This invoice has already been settled at the payment gateway.',
+              status: 'paid',
+              order_id: winnerOrderId,
+            }), {
+              status: 409,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
         }
       }
     }
@@ -326,7 +491,7 @@ serve(async (req) => {
         target_id: invoice.id,
         details: {
           error: rpcError?.message || 'Database update matched zero rows',
-          gateway_order_id: rzpOrder.id,
+          orphaned_gateway_order_id: rzpOrder.id,
           amount_paise: invoice.amount_paise,
         },
       });

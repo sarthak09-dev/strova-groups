@@ -203,7 +203,7 @@ if (dbUrl) {
       'profiles',
       'orders',
       'order_events',
-      'deliverables',
+      'files',
       'invoices',
       'payments',
       'messages',
@@ -255,8 +255,8 @@ if (dbUrl) {
     report(!finalizeGrantees.includes('anon'), 'Live DB: anon has NO execute privilege on finalize_payment');
     report(!finalizeGrantees.includes('authenticated'), 'Live DB: authenticated has NO execute privilege on finalize_payment');
     report(
-      finalizeGrantees.includes('service_role') || finalizeGrantees.includes('postgres'),
-      'Live DB: service_role/postgres retains execute privilege on finalize_payment'
+      finalizeGrantees.includes('service_role'),
+      'Live DB: service_role retains execute privilege on finalize_payment'
     );
 
     // 4. Verify assign_invoice_razorpay_order routine privileges
@@ -271,8 +271,8 @@ if (dbUrl) {
     report(!assignGrantees.includes('anon'), 'Live DB: anon has NO execute privilege on assign_invoice_razorpay_order');
     report(!assignGrantees.includes('authenticated'), 'Live DB: authenticated has NO execute privilege on assign_invoice_razorpay_order');
     report(
-      assignGrantees.includes('service_role') || assignGrantees.includes('postgres'),
-      'Live DB: service_role/postgres retains execute privilege on assign_invoice_razorpay_order'
+      assignGrantees.includes('service_role'),
+      'Live DB: service_role retains execute privilege on assign_invoice_razorpay_order'
     );
 
     await client.end();

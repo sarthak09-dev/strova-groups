@@ -7,6 +7,7 @@
 --    - Uses explicit row locking (SELECT ... FOR UPDATE) on invoices
 --    - Verifies invoice ownership matches client_id
 --    - Verifies invoice status is strictly 'Pending'
+--    - Supports atomic Compare-And-Swap (CAS) via p_expected_previous_order_id
 --    - Idempotently allows re-assignment of the identical order_id
 --    - Prevents concurrent requests from overwriting an already assigned order
 --    - Returns JSONB result with success flag, assigned order ID, and error code
@@ -15,10 +16,14 @@
 -- 4. Enforces immutable search_path = public, pg_temp
 -- ============================================================================
 
+DROP FUNCTION IF EXISTS public.assign_invoice_razorpay_order(UUID, UUID, TEXT);
+DROP FUNCTION IF EXISTS public.assign_invoice_razorpay_order(UUID, UUID, TEXT, TEXT);
+
 CREATE OR REPLACE FUNCTION public.assign_invoice_razorpay_order(
   p_invoice_id UUID,
   p_client_id UUID,
-  p_razorpay_order_id TEXT
+  p_razorpay_order_id TEXT,
+  p_expected_previous_order_id TEXT DEFAULT NULL
 )
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -69,17 +74,40 @@ BEGIN
     );
   END IF;
 
-  -- 5. Concurrency Guard: Check if another concurrent request already assigned a different gateway order
-  IF v_invoice.razorpay_order_id IS NOT NULL AND v_invoice.razorpay_order_id != p_razorpay_order_id THEN
+  -- 5. Idempotent check: if current order is already identical to requested order
+  IF v_invoice.razorpay_order_id IS NOT NULL AND v_invoice.razorpay_order_id = p_razorpay_order_id THEN
     RETURN jsonb_build_object(
-      'success', false,
-      'error_code', 'ORDER_ALREADY_ASSIGNED',
+      'success', true,
       'assigned_order_id', v_invoice.razorpay_order_id,
-      'message', 'A gateway order has already been assigned to this invoice by another request'
+      'status', 'Pending',
+      'message', 'Gateway order already assigned to this invoice'
     );
   END IF;
 
-  -- 6. Perform the atomic update and increment payment attempts
+  -- 6. Concurrency Guard / Atomic Compare-And-Swap (CAS):
+  -- When caller provides an expected previous order ID (stale replacement):
+  IF p_expected_previous_order_id IS NOT NULL THEN
+    IF v_invoice.razorpay_order_id IS DISTINCT FROM p_expected_previous_order_id THEN
+      RETURN jsonb_build_object(
+        'success', false,
+        'error_code', 'ORDER_ALREADY_ASSIGNED',
+        'assigned_order_id', v_invoice.razorpay_order_id,
+        'message', 'A gateway order has already been modified or assigned by another concurrent request'
+      );
+    END IF;
+  ELSE
+    -- If no previous order was expected (first assignment), invoice razorpay_order_id must be NULL
+    IF v_invoice.razorpay_order_id IS NOT NULL THEN
+      RETURN jsonb_build_object(
+        'success', false,
+        'error_code', 'ORDER_ALREADY_ASSIGNED',
+        'assigned_order_id', v_invoice.razorpay_order_id,
+        'message', 'A gateway order has already been assigned to this invoice by another request'
+      );
+    END IF;
+  END IF;
+
+  -- 7. Perform the atomic update and increment payment attempts
   UPDATE public.invoices
   SET razorpay_order_id = p_razorpay_order_id,
       payment_attempts = COALESCE(payment_attempts, 0) + 1
@@ -97,9 +125,9 @@ $$;
 -- -----------------------------------------------------------------------------
 -- Privilege Restrictions: Revoke from untrusted callers, grant ONLY to service_role
 -- -----------------------------------------------------------------------------
-REVOKE ALL ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT) TO service_role;
+REVOKE ALL ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT, TEXT) TO service_role;
 
-COMMENT ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT) IS
-  'Atomically assigns a Razorpay gateway order to a pending invoice with row locking and race-condition prevention. Accessible ONLY by service_role.';
+COMMENT ON FUNCTION public.assign_invoice_razorpay_order(UUID, UUID, TEXT, TEXT) IS
+  'Atomically assigns or replaces a Razorpay gateway order on a pending invoice with row locking and CAS race-condition prevention. Accessible ONLY by service_role.';
 
