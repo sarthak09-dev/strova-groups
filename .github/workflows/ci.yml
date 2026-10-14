@@ -1,4 +1,4 @@
-name: Strova Group CI & Production Security Gate
+name: "Strova Group CI & Production Security Gate"
 
 on:
   push:
@@ -8,77 +8,77 @@ on:
 
 jobs:
   verify:
-    name: Security, Test, TypeCheck, Build & Route Audit
+    name: "Security, Test, TypeCheck, Build & Route Audit"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: "Checkout Code"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: "Setup Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
 
-      - name: Clean Install from Lockfile
+      - name: "Clean Install from Lockfile"
         run: npm ci
 
-      - name: Automated Secret Scanning Gate (Source & Tracked Files)
+      - name: "Automated Secret Scanning Gate (Source & Tracked Files)"
         run: npm run scan:secrets
 
-      - name: Verify PostgreSQL Migration Privileges & RLS Grants
+      - name: "Verify PostgreSQL Migration Privileges & RLS Grants"
         run: npm run verify:db
 
-      - name: Security, Tenant Isolation & Concurrency Tests (Suites 1–25)
+      - name: "Security, Tenant Isolation & Concurrency Tests (Suites 1-26)"
         run: npm test
 
-      - name: Preflight Configuration Validation (Test Mode)
+      - name: "Preflight Configuration Validation (Test Mode)"
         run: npm run preflight -- --mode=test
 
-      - name: Astro & TypeScript Compiler Diagnostics
+      - name: "Astro & TypeScript Compiler Diagnostics"
         run: npm run astro:check
 
-      - name: Build Production Marketing Website
+      - name: "Build Production Marketing Website"
         run: npm run build
 
-      - name: Build Production Client Portal
+      - name: "Build Production Client Portal"
         run: npm run build:portal
 
-      - name: Automated Secret Scanning Gate (Build Outputs: dist/ & portal/dist/)
+      - name: "Automated Secret Scanning Gate (Build Outputs: dist/ & portal/dist/)"
         run: npm run scan:secrets
 
-      - name: Full-Path Route, Asset, Anchor & Live HTTP Smoke Tests
+      - name: "Full-Path Route, Asset, Anchor & Live HTTP Smoke Tests"
         run: npm run verify:routes
 
-      - name: Production HTML Standards, SEO & JS Budget Audit
+      - name: "Production HTML Standards, SEO & JS Budget Audit"
         run: npm run audit
 
-      - name: Strict Dependency Vulnerability Audit Gate (Astro Static Allowlist)
+      - name: "Strict Dependency Vulnerability Audit Gate (Astro Static Allowlist)"
         run: npm run audit:deps
 
   # Protected release gate: runs live database verification if secrets configured in repo
   release-verification:
-    name: Live Supabase Privilege & Production Secret Gate
+    name: "Live Supabase Privilege & Production Secret Gate"
     runs-on: ubuntu-latest
     needs: [verify]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Checkout Code
+      - name: "Checkout Code"
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "Setup Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: "Install Dependencies"
         run: npm ci
 
-      - name: Verify Live Database Permissions (Conditional on Secret Availability)
+      - name: "Verify Live Database Permissions (Conditional on Secret Availability)"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
@@ -89,7 +89,7 @@ jobs:
             echo "DATABASE_URL secret not configured in repository. Static migration checks already verified in primary gate."
           fi
 
-      - name: Production Deployment Preflight (Conditional on Secret Availability)
+      - name: "Production Deployment Preflight (Conditional on Secret Availability)"
         env:
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}

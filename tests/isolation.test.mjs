@@ -14,6 +14,7 @@
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import yaml from 'yaml';
 
 // -----------------------------------------------------------------------------
 // Seed Database Fixture (matches supabase/migrations/20261012000000_client_portal_schema.sql)
@@ -1611,6 +1612,19 @@ console.log('\n--- Test Suite 26: Secret Scanning & Portal Deployment Security R
 
   // 6. Verify verify_routes.mjs exists
   assert(fs.existsSync(`${projectRoot}/scripts/verify_routes.mjs`), 'Full-path route verifier exists (scripts/verify_routes.mjs)');
+
+  // 7. Verify .github/workflows/ci.yml is valid YAML syntax
+  const ciWorkflowPath = `${projectRoot}/.github/workflows/ci.yml`;
+  assert(fs.existsSync(ciWorkflowPath), '.github/workflows/ci.yml exists');
+  const ciWorkflowContent = fs.readFileSync(ciWorkflowPath, 'utf8');
+  let ciDoc = null;
+  try {
+    ciDoc = yaml.parse(ciWorkflowContent);
+  } catch (err) {
+    assert(false, `CI workflow YAML parse failed: ${err.message}`);
+  }
+  assert(ciDoc && ciDoc.jobs && ciDoc.jobs.verify, 'CI workflow contains valid verify job definition');
+  assert(ciDoc.jobs.verify.steps.length >= 10, 'CI workflow contains full 14-step verification gate');
 }
 
 console.log('\n================================================================');
