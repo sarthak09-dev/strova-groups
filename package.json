@@ -12,6 +12,8 @@
     "audit": "node audit.mjs",
     "test": "node tests/isolation.test.mjs",
     "verify:db": "node scripts/verify_postgres_privileges.mjs",
+    "verify:db:live": "node scripts/verify_postgres_privileges.mjs --require-db",
+    "audit:deps": "node scripts/audit_dependencies.mjs",
     "astro:check": "astro check",
     "preflight": "node scripts/preflight.mjs",
     "preflight:prod": "node scripts/preflight.mjs --mode=production",
@@ -33,7 +35,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/pg": "^8.23.1",
     "@types/three": "^0.186.0",
+    "pg": "^8.23.1",
     "typescript": "^5.9.3"
   }
 }

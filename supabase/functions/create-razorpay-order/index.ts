@@ -215,22 +215,117 @@ serve(async (req) => {
       });
     }
 
-    // Persist razorpay_order_id on invoice AND verify database write succeeded
-    const { error: updateError } = await supabaseAdmin
-      .from('invoices')
-      .update({ razorpay_order_id: rzpOrder.id })
-      .eq('id', invoice.id)
-      .eq('status', 'Pending'); // optimistic concurrency check
+    // Persist razorpay_order_id on invoice atomically AND verify database write succeeded
+    let finalOrderId = rzpOrder.id;
+    let assignmentSucceeded = false;
 
-    if (updateError) {
-      // Recovery & Auditing: Record orphan gateway order in audit_log
+    // 1. Attempt atomic RPC assignment with row-level locking (SELECT ... FOR UPDATE)
+    const { data: assignResult, error: rpcError } = await supabaseAdmin
+      .rpc('assign_invoice_razorpay_order', {
+        p_invoice_id: invoice.id,
+        p_client_id: invoice.orders.client_id,
+        p_razorpay_order_id: rzpOrder.id,
+      });
+
+    if (!rpcError && assignResult) {
+      const assignment = typeof assignResult === 'string' ? JSON.parse(assignResult) : assignResult;
+      if (assignment.success) {
+        finalOrderId = assignment.assigned_order_id;
+        assignmentSucceeded = true;
+      } else if (assignment.error_code === 'ORDER_ALREADY_ASSIGNED') {
+        // Concurrency race: another simultaneous request assigned an order while we contacted Razorpay
+        finalOrderId = assignment.assigned_order_id;
+        assignmentSucceeded = true;
+
+        // Log our redundant gateway order as orphaned for audit reconciliation
+        await supabaseAdmin.from('audit_log').insert({
+          actor_id: user.id,
+          action: 'gateway_order_orphaned',
+          target_table: 'invoices',
+          target_id: invoice.id,
+          details: {
+            reason: 'concurrent_race_prevented',
+            orphaned_order_id: rzpOrder.id,
+            winning_order_id: assignment.assigned_order_id,
+            amount_paise: invoice.amount_paise,
+          },
+        });
+      } else if (assignment.error_code === 'INVOICE_NOT_PENDING') {
+        // Invoice was settled or cancelled concurrently
+        await supabaseAdmin.from('audit_log').insert({
+          actor_id: user.id,
+          action: 'gateway_order_orphaned',
+          target_table: 'invoices',
+          target_id: invoice.id,
+          details: {
+            reason: 'invoice_no_longer_pending',
+            orphaned_order_id: rzpOrder.id,
+            invoice_status: assignment.status,
+            amount_paise: invoice.amount_paise,
+          },
+        });
+
+        return new Response(JSON.stringify({
+          error: 'Invoice is no longer pending payment.',
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } else {
+      // 2. Direct PostgREST atomic conditional update fallback with row count verification
+      const { data: updatedRows, error: updateError } = await supabaseAdmin
+        .from('invoices')
+        .update({
+          razorpay_order_id: rzpOrder.id,
+          payment_attempts: (invoice.payment_attempts || 0) + 1,
+        })
+        .eq('id', invoice.id)
+        .eq('status', 'Pending')
+        .or(`razorpay_order_id.is.null,razorpay_order_id.eq.${rzpOrder.id}`)
+        .select('id, razorpay_order_id, status');
+
+      if (!updateError && updatedRows && updatedRows.length === 1) {
+        finalOrderId = updatedRows[0].razorpay_order_id;
+        assignmentSucceeded = true;
+      } else {
+        // Row was not updated. Check if another concurrent request already assigned an order
+        const { data: freshInvoice } = await supabaseAdmin
+          .from('invoices')
+          .select('id, status, razorpay_order_id')
+          .eq('id', invoice.id)
+          .single();
+
+        if (freshInvoice && freshInvoice.status === 'Pending' && freshInvoice.razorpay_order_id) {
+          // Another concurrent request succeeded in assigning an order
+          finalOrderId = freshInvoice.razorpay_order_id;
+          assignmentSucceeded = true;
+
+          await supabaseAdmin.from('audit_log').insert({
+            actor_id: user.id,
+            action: 'gateway_order_orphaned',
+            target_table: 'invoices',
+            target_id: invoice.id,
+            details: {
+              reason: 'concurrent_update_race_prevented',
+              orphaned_order_id: rzpOrder.id,
+              winning_order_id: freshInvoice.razorpay_order_id,
+              amount_paise: invoice.amount_paise,
+            },
+          });
+        }
+      }
+    }
+
+    if (!assignmentSucceeded) {
+      // Neither update nor concurrent winner verified: fail closed
       await supabaseAdmin.from('audit_log').insert({
         actor_id: user.id,
         action: 'gateway_order_orphaned',
         target_table: 'invoices',
         target_id: invoice.id,
         details: {
-          error: updateError.message,
+          error: rpcError?.message || 'Database update matched zero rows',
           gateway_order_id: rzpOrder.id,
           amount_paise: invoice.amount_paise,
         },
@@ -248,12 +343,12 @@ serve(async (req) => {
     // Standardized contract with snake_case and camelCase aliases for interoperability
     return new Response(JSON.stringify({
       key_id: razorpayKeyId,
-      order_id: rzpOrder.id,
+      order_id: finalOrderId,
       amount_paise: invoice.amount_paise,
       currency,
       invoice_number: invoice.invoice_number,
       keyId: razorpayKeyId,
-      orderId: rzpOrder.id,
+      orderId: finalOrderId,
       amount: invoice.amount_paise,
       invoiceNumber: invoice.invoice_number,
     }), {

@@ -45,7 +45,6 @@ jobs:
       - name: Run Production Audit
         run: npm run audit
 
-      - name: Dependency Vulnerability Review
-        run: |
-          npm audit || echo "Advisories noted: Astro upstream framework advisory mitigated by 100% static prerendered architecture."
+      - name: Strict Dependency Vulnerability Audit Gate
+        run: npm run audit:deps
 

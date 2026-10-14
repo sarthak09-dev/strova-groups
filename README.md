@@ -266,7 +266,7 @@ To protect site copy and architecture from unauthorized automated scraping and p
 The repository includes two automated test and audit suites:
 
 ### 1. Tenant Isolation & Security Suite (`npm test` / `tests/isolation.test.mjs`)
-Executes 138 automated assertions across 23 comprehensive test suites verifying:
+Executes 152 automated assertions across 24 comprehensive test suites verifying:
 - Client Alpha (`client-a@example.com`) receives strictly Client Alpha orders, events, files, invoices, and messages. Zero rows returned for Client Beta.
 - Client Beta (`client-b@example.com`) receives strictly Client Beta records. Zero rows returned for Client Alpha.
 - Cross-tenant ID enumeration queries return 0 rows.
@@ -291,18 +291,25 @@ Executes 138 automated assertions across 23 comprehensive test suites verifying:
 - Gateway verification & webhook fail-closed boundaries (deletion of direct DB fallbacks, 500 retry triggers).
 - Cloudflare Turnstile bot protection: prohibition of test keys in production and bilingual response handling.
 - Razorpay Order Creation Security & Recovery (Suite 23): authoritative invoice ownership, amount tampering rejection, idempotent open order reuse, strict database update failure handling with orphan gateway order audit logging, and fail-closed HTTP 500.
+- Atomic Order Assignment & Concurrency Guard (Suite 24): `assign_invoice_razorpay_order` RPC with `FOR UPDATE` locking, verified row count updates, prevention of simultaneous order ID overwriting, and graceful winner order ID retrieval.
 
-### 2. Database Privilege & Search-Path Verifier (`npm run verify:db` / `scripts/verify_postgres_privileges.mjs`)
-Verifies effective PostgreSQL privileges and security controls across all migrations:
+### 2. Database Privilege & Search-Path Verifier (`npm run verify:db` / `npm run verify:db:live`)
+Verifies effective PostgreSQL privileges and security controls across all 7 migrations:
 - `public.finalize_payment(...)` execution granted exclusively to `service_role` and explicitly revoked from `PUBLIC`, `anon`, and `authenticated`.
+- `public.assign_invoice_razorpay_order(...)` execution granted exclusively to `service_role` and explicitly revoked from `PUBLIC`, `anon`, and `authenticated`.
 - `public.is_admin()` and `public.handle_new_user()` maintain immutable `SET search_path = public, pg_temp;`.
-- Exact 8-parameter function signature verified without signature drift.
-- Supports offline migration schema analysis as well as live live-database verification when `DATABASE_URL` is supplied.
+- Exact function signatures verified without parameter drift.
+- Supports offline migration schema analysis (`npm run verify:db`) and live database verification (`npm run verify:db:live` with `DATABASE_URL` configured; fails closed on connection failure).
 
-### 3. Astro & TypeScript Diagnostics (`npm run astro:check`)
+### 3. Strict Dependency Vulnerability Audit Gate (`npm run audit:deps` / `scripts/audit_dependencies.mjs`)
+Enforces a zero-tolerance vulnerability policy across production and development dependencies:
+- Verifies that only documented, narrowly scoped Astro upstream framework advisories on the static architecture (such as GHSA-2pvr-wf23-7pc7) are permitted.
+- Strictly fails the audit and CI workflow with exit code 1 if any unapproved, new, or third-party dependency vulnerabilities are detected.
+
+### 4. Astro & TypeScript Diagnostics (`npm run astro:check`)
 Executes Astro compiler and strict TypeScript diagnostics across all 78 component and page files with zero errors.
 
-### 4. Static Build Audit (`npm run audit` / `audit.mjs`)
+### 5. Static Build Audit (`npm run audit` / `audit.mjs`)
 Audits all rendered HTML pages in `dist/`:
 - Exactly one `<h1>` per page.
 - Title strictly under 60 characters and description strictly under 160 characters.
@@ -357,6 +364,7 @@ Apply the migrations in numerical order to your Supabase project (via CLI `supab
 4. `20261013000001_fix_support_ticket_rls.sql`: Support tickets order ownership check
 5. `20261013000002_realtime_and_notifications.sql`: Realtime tables and notifications publication
 6. `20261013000003_secure_finalize_payment_rpc.sql`: Production-hardened `finalize_payment` RPC with row locking, currency/amount strict checks, cross-invoice reuse guards, and exclusive `service_role` execute permission.
+7. `20261014000000_atomic_assign_razorpay_order.sql`: Atomic Razorpay order assignment RPC with row locking (`FOR UPDATE`), updated row count verification, concurrency race prevention, and exclusive `service_role` execution permission.
 
 ```bash
 # Link your Supabase CLI to your project
@@ -364,6 +372,9 @@ supabase link --project-ref your-project-ref
 
 # Push migrations in sequence
 supabase db push
+
+# Verify live PostgreSQL permissions and migration application
+DATABASE_URL="postgres://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres" npm run verify:db:live
 ```
 
 ### C. Supabase Authentication Setup

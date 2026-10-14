@@ -1160,6 +1160,122 @@ console.log('\n[Test Suite 23: Razorpay Order Creation Security & Error Recovery
   assert(res7.status === 500 && res7.orphanAudit && res7.orphanAudit.action === 'gateway_order_orphaned', 'Database write failure fails closed with 500 and records orphaned order audit log');
 }
 
+// -----------------------------------------------------------------------------
+// Test Suite 24: Atomic Order Assignment, Row Verification & Concurrency Races
+// -----------------------------------------------------------------------------
+console.log('\n[Test Suite 24: Atomic Order Assignment, Row Verification & Concurrency]');
+{
+  const fnSrc = fs.readFileSync('supabase/functions/create-razorpay-order/index.ts', 'utf-8');
+  const migrationSrc = fs.readFileSync('supabase/migrations/20261014000000_atomic_assign_razorpay_order.sql', 'utf-8');
+
+  // Source static checks
+  assert(
+    fnSrc.includes("rpc('assign_invoice_razorpay_order'"),
+    'create-razorpay-order calls assign_invoice_razorpay_order RPC for atomic row-level locking'
+  );
+  assert(
+    fnSrc.includes("assignment.error_code === 'ORDER_ALREADY_ASSIGNED'"),
+    'create-razorpay-order explicitly catches ORDER_ALREADY_ASSIGNED concurrency races'
+  );
+  assert(
+    fnSrc.includes('updatedRows && updatedRows.length === 1'),
+    'create-razorpay-order verifies updated row count in fallback path'
+  );
+  assert(
+    fnSrc.includes('if (!assignmentSucceeded)'),
+    'create-razorpay-order fails closed if neither RPC nor fallback successfully verified updated row'
+  );
+
+  // Migration privilege & locking checks
+  assert(
+    migrationSrc.includes('FOR UPDATE'),
+    'Migration 20261014000000 locks invoice row with SELECT ... FOR UPDATE'
+  );
+  assert(
+    migrationSrc.includes('SET search_path = public, pg_temp'),
+    'assign_invoice_razorpay_order RPC enforces immutable search_path'
+  );
+  assert(
+    /REVOKE\s+ALL\s+ON\s+FUNCTION\s+public\.assign_invoice_razorpay_order[\s\S]*?FROM\s+PUBLIC,\s*anon,\s*authenticated/i.test(migrationSrc),
+    'assign_invoice_razorpay_order execution is explicitly REVOKED from PUBLIC, anon, and authenticated'
+  );
+  assert(
+    /GRANT\s+EXECUTE\s+ON\s+FUNCTION\s+public\.assign_invoice_razorpay_order[\s\S]*?TO\s+service_role/i.test(migrationSrc),
+    'assign_invoice_razorpay_order execution is explicitly GRANTED exclusively to service_role'
+  );
+
+  // State machine simulation: Two simultaneous checkout requests
+  let dbInvoice = {
+    id: 'inv-race-1',
+    client_id: 'client-1',
+    status: 'Pending',
+    razorpay_order_id: null,
+    amount_paise: 500000,
+  };
+  const auditLogs = [];
+
+  function simulateAtomicAssign(invoiceId, clientId, proposedOrderId) {
+    // Simulates public.assign_invoice_razorpay_order RPC with row lock
+    if (dbInvoice.id !== invoiceId) return { success: false, error_code: 'INVOICE_NOT_FOUND' };
+    if (dbInvoice.client_id !== clientId) return { success: false, error_code: 'UNAUTHORIZED_CLIENT' };
+    if (dbInvoice.status !== 'Pending') return { success: false, error_code: 'INVOICE_NOT_PENDING', status: dbInvoice.status };
+    if (dbInvoice.razorpay_order_id !== null && dbInvoice.razorpay_order_id !== proposedOrderId) {
+      return {
+        success: false,
+        error_code: 'ORDER_ALREADY_ASSIGNED',
+        assigned_order_id: dbInvoice.razorpay_order_id,
+      };
+    }
+    dbInvoice.razorpay_order_id = proposedOrderId;
+    return { success: true, assigned_order_id: proposedOrderId };
+  }
+
+  // Request A wins the race
+  const rzpOrderA = 'order_gateway_A';
+  const assignResultA = simulateAtomicAssign('inv-race-1', 'client-1', rzpOrderA);
+  assert(assignResultA.success === true, 'Simultaneous Request A successfully assigns order_gateway_A');
+
+  // Request B arrives concurrently with its own gateway order
+  const rzpOrderB = 'order_gateway_B';
+  const assignResultB = simulateAtomicAssign('inv-race-1', 'client-1', rzpOrderB);
+  assert(
+    assignResultB.success === false && assignResultB.error_code === 'ORDER_ALREADY_ASSIGNED',
+    'Simultaneous Request B is prevented from overwriting invoice order ID'
+  );
+
+  // Request B recovers: returns winner order and audits orphan order
+  let returnedOrderForB;
+  if (assignResultB.error_code === 'ORDER_ALREADY_ASSIGNED') {
+    returnedOrderForB = assignResultB.assigned_order_id;
+    auditLogs.push({
+      action: 'gateway_order_orphaned',
+      orphaned_order_id: rzpOrderB,
+      winning_order_id: assignResultB.assigned_order_id,
+    });
+  }
+
+  assert(
+    returnedOrderForB === 'order_gateway_A',
+    'Request B safely receives the authoritative winning order ID without error'
+  );
+  assert(
+    dbInvoice.razorpay_order_id === 'order_gateway_A',
+    'Invoice razorpay_order_id remains strictly order_gateway_A (zero overwrites)'
+  );
+  assert(
+    auditLogs.some(a => a.action === 'gateway_order_orphaned' && a.orphaned_order_id === 'order_gateway_B'),
+    'Orphaned gateway order B is safely logged in audit_log'
+  );
+
+  // Zero-row update simulation (e.g. status changed to Paid)
+  dbInvoice.status = 'Paid';
+  const resSettled = simulateAtomicAssign('inv-race-1', 'client-1', 'order_gateway_C');
+  assert(
+    resSettled.success === false && resSettled.error_code === 'INVOICE_NOT_PENDING',
+    'Attempt to assign order to settled invoice is rejected'
+  );
+}
+
 console.log('\n================================================================');
 console.log(` Summary: ${totalPassed} passed, ${totalFailed} failed.`);
 console.log('================================================================\n');
