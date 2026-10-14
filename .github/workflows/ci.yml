@@ -1,14 +1,21 @@
-name: "Strova Group CI & Production Security Gate"
+name: "Strova Group CI & Production Release Gate"
 
 on:
   push:
     branches: [ main, "feat/**" ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      trigger_release_gate:
+        description: "Run protected production release gate"
+        required: false
+        default: "true"
+        type: boolean
 
 jobs:
   verify:
-    name: "Security, Test, TypeCheck, Build & Route Audit"
+    name: "Source CI: Security, Test, TypeCheck, Build & Route Audit"
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +28,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
 
       - name: "Clean Install from Lockfile"
         run: npm ci
@@ -29,7 +36,7 @@ jobs:
       - name: "Automated Secret Scanning Gate (Source & Tracked Files)"
         run: npm run scan:secrets
 
-      - name: "Verify PostgreSQL Migration Privileges & RLS Grants"
+      - name: "Verify PostgreSQL Migration Privileges & RLS Grants (Static AST)"
         run: npm run verify:db
 
       - name: "Security, Tenant Isolation & Concurrency Tests (Suites 1-26)"
@@ -50,21 +57,22 @@ jobs:
       - name: "Automated Secret Scanning Gate (Build Outputs: dist/ & portal/dist/)"
         run: npm run scan:secrets
 
-      - name: "Full-Path Route, Asset, Anchor & Live HTTP Smoke Tests"
+      - name: "Full-Path Route, Asset, Anchor & Local HTTP Smoke Tests"
         run: npm run verify:routes
 
       - name: "Production HTML Standards, SEO & JS Budget Audit"
         run: npm run audit
 
-      - name: "Strict Dependency Vulnerability Audit Gate (Astro Static Allowlist)"
+      - name: "Strict Dependency Vulnerability Audit Gate (Zero Exceptions)"
         run: npm run audit:deps
 
-  # Protected release gate: runs live database verification if secrets configured in repo
-  release-verification:
-    name: "Live Supabase Privilege & Production Secret Gate"
+  # Protected production release gate: strictly separated from ordinary source CI
+  production-release-gate:
+    name: "Protected Production Release Gate"
     runs-on: ubuntu-latest
     needs: [verify]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     steps:
       - name: "Checkout Code"
         uses: actions/checkout@v4
@@ -73,23 +81,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
 
-      - name: "Install Dependencies"
+      - name: "Install Dependencies from Lockfile"
         run: npm ci
 
-      - name: "Verify Live Database Permissions (Conditional on Secret Availability)"
+      - name: "Verify Live Database Permissions & RLS (Fail-Closed Gate)"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          if [ -n "$DATABASE_URL" ]; then
-            echo "Running live database privilege verification against Supabase..."
-            npm run verify:db:live
-          else
-            echo "DATABASE_URL secret not configured in repository. Static migration checks already verified in primary gate."
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret is not configured in the production environment. The production release gate requires live database privilege verification."
+            exit 1
           fi
+          echo "Executing live database privilege verification against Supabase..."
+          npm run verify:db:live
 
-      - name: "Production Deployment Preflight (Conditional on Secret Availability)"
+      - name: "Verify Production Configuration & Secrets (Fail-Closed Gate)"
         env:
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
@@ -99,9 +107,14 @@ jobs:
           PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.PUBLIC_TURNSTILE_SITE_KEY }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
-          if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "Running production preflight against configured secrets..."
-            npm run preflight:prod
-          else
-            echo "Production secrets not configured in GitHub Actions environment. Passing test-mode baseline."
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$RAZORPAY_KEY_SECRET" ] || [ -z "$TURNSTILE_SECRET_KEY" ]; then
+            echo "::error::Required production secrets are missing from the production environment. The production release gate cannot pass without verified configuration."
+            exit 1
           fi
+          echo "Executing production preflight against configured secrets..."
+          npm run preflight:prod
+
+      - name: "Verify Live Production HTTPS Endpoints (Fail-Closed Gate)"
+        run: |
+          echo "Executing remote HTTPS endpoint verification for production domains..."
+          npm run verify:routes -- --require-live-domains

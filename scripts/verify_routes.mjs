@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import https from 'node:https';
 
 const ROOT_DIR = process.cwd();
 const DIST_MARKETING = path.join(ROOT_DIR, 'dist');
@@ -235,9 +236,8 @@ for (const page of portalPages) {
 }
 
 // -----------------------------------------------------------------------------
-// Phase 3: Native HTTP Smoke Testing
+// Phase 3: Local HTTP Static Artifact Smoke Testing (Loopback 127.0.0.1)
 // -----------------------------------------------------------------------------
-console.log('\n[Phase 3: Live HTTP Smoke Testing via Local Servers]');
 
 function createStaticServer(distDir) {
   return http.createServer((req, res) => {
@@ -295,7 +295,48 @@ function makeHttpRequest(port, requestPath) {
   });
 }
 
+function makeHttpsRequest(urlStr, timeoutMs = 6000) {
+  return new Promise((resolve) => {
+    try {
+      const u = new URL(urlStr);
+      const req = https.get(u, {
+        timeout: timeoutMs,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; StrovaReleaseVerifier/1.0)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+      }, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          resolve({
+            success: true,
+            statusCode: res.statusCode,
+            headers: res.headers,
+            body: data,
+          });
+        });
+      });
+      req.on('timeout', () => {
+        req.destroy();
+        resolve({ success: false, error: 'ETIMEDOUT' });
+      });
+      req.on('error', (err) => {
+        resolve({ success: false, error: err.code || err.message });
+      });
+    } catch (err) {
+      resolve({ success: false, error: err.message });
+    }
+  });
+}
+
 async function runHttpSmokeTests() {
+  console.log('\n[Phase 3: Local HTTP Static Artifact Smoke Testing (Loopback 127.0.0.1)]');
+  console.log('  ℹ Note: These requests verify that generated dist/ files serve valid HTTP responses locally.');
+  console.log('    They do NOT prove that live Cloudflare DNS, SSL edge termination, or deployed hosts are functional.\n');
+
   const marketingServer = createStaticServer(DIST_MARKETING);
   const portalServer = createStaticServer(DIST_PORTAL);
 
@@ -305,7 +346,7 @@ async function runHttpSmokeTests() {
   await new Promise((res) => marketingServer.listen(M_PORT, '127.0.0.1', res));
   await new Promise((res) => portalServer.listen(P_PORT, '127.0.0.1', res));
 
-  // Critical marketing routes to test
+  // Critical marketing routes to test locally
   const marketingRoutes = [
     '/',
     '/technologies/',
@@ -337,14 +378,14 @@ async function runHttpSmokeTests() {
 
   for (const r of marketingRoutes) {
     const resp = await makeHttpRequest(M_PORT, r);
-    assert(resp.statusCode === 200, `HTTP GET http://strovagroups.in${r} returns 200 OK (${resp.body.length} bytes)`);
+    assert(resp.statusCode === 200, `Local Artifact HTTP GET (Marketing) ${r} returns 200 OK (${resp.body.length} bytes)`);
   }
 
   // 404 test
   const m404 = await makeHttpRequest(M_PORT, '/non-existent-page-xyz/');
-  assert(m404.statusCode === 404 && m404.body.includes('404'), 'Marketing 404 route returns HTTP 404 with custom error page');
+  assert(m404.statusCode === 404 && m404.body.includes('404'), 'Local Artifact Marketing 404 route returns HTTP 404 with custom error page');
 
-  // Critical portal routes to test
+  // Critical portal routes to test locally
   const portalRoutes = [
     '/',
     '/login/',
@@ -360,15 +401,56 @@ async function runHttpSmokeTests() {
 
   for (const r of portalRoutes) {
     const resp = await makeHttpRequest(P_PORT, r);
-    assert(resp.statusCode === 200, `HTTP GET http://portal.strovagroups.in${r} returns 200 OK (${resp.body.length} bytes)`);
+    assert(resp.statusCode === 200, `Local Artifact HTTP GET (Portal) ${r} returns 200 OK (${resp.body.length} bytes)`);
   }
 
   const p404 = await makeHttpRequest(P_PORT, '/portal-unknown-path/');
-  assert(p404.statusCode === 404, 'Portal 404 route returns HTTP 404');
+  assert(p404.statusCode === 404, 'Local Artifact Portal 404 route returns HTTP 404');
 
-  // Clean shutdown
+  // Clean shutdown of local test servers
   await new Promise((res) => marketingServer.close(res));
   await new Promise((res) => portalServer.close(res));
+
+  // ---------------------------------------------------------------------------
+  // Phase 4: Remote Deployed Domain HTTPS Smoke Test (Live Cloudflare / DNS)
+  // ---------------------------------------------------------------------------
+  console.log('\n[Phase 4: Remote Deployed Domain HTTPS Verification (Production Domains)]');
+  const requireLiveDomains = process.argv.includes('--require-live-domains') || process.env.REQUIRE_LIVE_DOMAINS === 'true';
+
+  const liveChecks = [
+    { name: 'Marketing Apex Domain', url: 'https://strovagroups.in/' },
+    { name: 'Marketing Technologies Page', url: 'https://strovagroups.in/technologies/' },
+    { name: 'Marketing Robots.txt', url: 'https://strovagroups.in/robots.txt' },
+    { name: 'Marketing Sitemap Index', url: 'https://strovagroups.in/sitemap-index.xml' },
+    { name: 'Client Portal Apex Domain', url: 'https://portal.strovagroups.in/' },
+    { name: 'Client Portal Login', url: 'https://portal.strovagroups.in/login/' },
+  ];
+
+  for (const check of liveChecks) {
+    const result = await makeHttpsRequest(check.url);
+    if (result.success) {
+      const isOkOrRedirect = result.statusCode >= 200 && result.statusCode < 400;
+      assert(isOkOrRedirect, `Remote HTTPS [${check.name}] ${check.url} responded with status ${result.statusCode}`);
+
+      // Verify essential security headers on live responses
+      if (result.statusCode === 200) {
+        const h = result.headers;
+        if (h['strict-transport-security']) {
+          assert(true, `Remote HTTPS [${check.name}] enforces Strict-Transport-Security`);
+        }
+        if (h['x-content-type-options'] === 'nosniff') {
+          assert(true, `Remote HTTPS [${check.name}] enforces nosniff`);
+        }
+      }
+    } else {
+      if (requireLiveDomains) {
+        assert(false, `Remote Deployed Endpoint [${check.name}] ${check.url} failed: ${result.error}`);
+      } else {
+        console.log(`  ℹ Remote Endpoint [${check.name}] ${check.url}: UNVERIFIED`);
+        console.log(`    Detail: ${result.error}. Local artifact checks do NOT prove remote deployment works.`);
+      }
+    }
+  }
 }
 
 await runHttpSmokeTests();
