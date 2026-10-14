@@ -32,3 +32,4 @@ export const collections = {
   journal: journalCollection,
   work: workCollection,
 };
+
