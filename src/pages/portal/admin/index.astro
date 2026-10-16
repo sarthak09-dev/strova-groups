@@ -1,0 +1,419 @@
+---
+import PortalLayout from '../../../layouts/PortalLayout.astro';
+import { PORTAL_STAGES } from '../../../lib/portal/supabase';
+---
+
+<PortalLayout title="Operations Administration" currentNav="admin">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+        <span class="badge badge-danger">Administrator Scope</span>
+        <span class="badge badge-success">Backend RLS Enforced</span>
+      </div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main);">
+        Operations & Engagement Management
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Provision client profiles, schedule sprint milestones, issue invoices, review audit trails, and manage support.
+      </p>
+    </div>
+    <a href="/" class="btn btn-secondary" style="font-size: 0.8125rem;">
+      ← Client view preview
+    </a>
+  </div>
+
+  <!-- Role Verification Error State (Shown if user is not an administrator) -->
+  <div id="admin-forbidden" style="display: none; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 2.5rem; text-align: center; margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: #991B1B; margin-bottom: 0.5rem;">
+      403 Forbidden — Administrator Role Required
+    </h3>
+    <p style="font-size: 0.875rem; color: #7F1D1D; max-width: 480px; margin: 0 auto 1.5rem;">
+      Your active session does not possess administrative privileges. Ordinary client sessions cannot access management tools or audit logs.
+    </p>
+    <a href="/" class="btn btn-secondary">Return to client portal</a>
+  </div>
+
+  <!-- Admin Interface (Rendered only for verified admins) -->
+  <div id="admin-content" style="display: none; display: flex; flex-direction: column; gap: 2rem;">
+    <!-- Section 1: Client & Order Provisioning -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+      <!-- Create Client -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          1. Invite / Provision Client
+        </h3>
+        <form id="create-client-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label for="new-client-email" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Client Email</label>
+            <input type="email" id="new-client-email" required placeholder="founder@company.com" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+          </div>
+          <div>
+            <label for="new-client-name" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Full Name / Organization</label>
+            <input type="text" id="new-client-name" required placeholder="Client Organization Name" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+          </div>
+          <button type="submit" id="btn-provision-client" class="btn btn-primary" style="font-size: 0.8125rem;">
+            Provision Profile & Send Invite
+          </button>
+        </form>
+      </div>
+
+      <!-- Create Order -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          2. Create Project Engagement
+        </h3>
+        <form id="create-order-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label for="order-client-select" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Select Client</label>
+            <select id="order-client-select" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+              <option value="">Select an active client...</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label for="order-division-select" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Division</label>
+              <select id="order-division-select" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+                <option value="technologies">Strova Technologies</option>
+                <option value="digital">Strova Digital</option>
+                <option value="commerce">Strova Commerce</option>
+              </select>
+            </div>
+            <div>
+              <label for="order-ref-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Order Ref</label>
+              <input type="text" id="order-ref-input" required placeholder="ORD-2026-003" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
+          </div>
+          <div>
+            <label for="order-title-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Project Title</label>
+            <input type="text" id="order-title-input" required placeholder="Custom Software or Automation Blueprint" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+          </div>
+          <button type="submit" id="btn-create-order" class="btn btn-primary" style="font-size: 0.8125rem;">
+            Create Project
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Section 2: Milestone Updates & Invoice Creation -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+      <!-- Add Milestone Event -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          3. Advance Milestone / Record Event
+        </h3>
+        <form id="add-event-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label for="event-order-select" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Target Order</label>
+            <select id="event-order-select" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+              <option value="">Select project...</option>
+            </select>
+          </div>
+          <div>
+            <label for="event-stage-select" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Stage</label>
+            <select id="event-stage-select" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+              {PORTAL_STAGES.map((s) => (
+                <option value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label for="event-note-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Client-Visible Milestone Note</label>
+            <textarea id="event-note-input" rows="3" required placeholder="Milestone achieved: Webhook queue deployed on staging..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
+          </div>
+          <button type="submit" id="btn-add-event" class="btn btn-primary" style="font-size: 0.8125rem;">
+            Record Milestone & Notify Client
+          </button>
+        </form>
+      </div>
+
+      <!-- Create Invoice -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">
+          4. Issue Commercial Invoice
+        </h3>
+        <form id="create-invoice-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label for="invoice-order-select" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Target Order</label>
+            <select id="invoice-order-select" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+              <option value="">Select project...</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label for="invoice-num-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Invoice No.</label>
+              <input type="text" id="invoice-num-input" required placeholder="INV-2026-003" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
+            <div>
+              <label for="invoice-amount-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Amount (INR)</label>
+              <input type="number" id="invoice-amount-input" step="0.01" required placeholder="50000.00" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+            </div>
+          </div>
+          <div>
+            <label for="invoice-due-input" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem;">Due Date</label>
+            <input type="date" id="invoice-due-input" required style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;" />
+          </div>
+          <button type="submit" id="btn-create-invoice" class="btn btn-primary" style="font-size: 0.8125rem;">
+            Issue Invoice & Enable Razorpay Checkout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Section 3: Administrative Audit Log -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">
+            Administrative Audit Log
+          </h3>
+          <p style="font-size: 0.8125rem; color: var(--color-text-dim);">
+            Immutable record of all server-side operations, financial modifications, and permissions.
+          </p>
+        </div>
+        <span class="badge" style="background: #F1F5F9; color: #475569;">RLS Protected: Admin Only</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--color-border); color: var(--color-text-dim);">
+              <th style="padding: 0.5rem 0.75rem;">Timestamp</th>
+              <th style="padding: 0.5rem 0.75rem;">Action</th>
+              <th style="padding: 0.5rem 0.75rem;">Target Entity</th>
+              <th style="padding: 0.5rem 0.75rem;">Entity ID</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table-body">
+            <!-- Injected via real audit log query -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="audit-empty" style="display: none; padding: 2rem; text-align: center; color: var(--color-text-dim);">
+        No audit log entries recorded yet.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import {
+      getSession,
+      getUserProfile,
+      fetchAdminClients,
+      fetchAdminOrders,
+      fetchAdminAuditLogs,
+      supabase,
+      type UserProfile,
+      type ClientOrder,
+    } from '../../../lib/portal/supabaseClient';
+    import { escapeHtml } from '../../../lib/portal/sanitize';
+
+    async function initAdmin() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login/';
+        return;
+      }
+
+      const profile = await getUserProfile(session.user.id);
+      const forbiddenEl = document.getElementById('admin-forbidden');
+      const contentEl = document.getElementById('admin-content');
+
+      if (!profile || profile.role !== 'admin') {
+        if (forbiddenEl) forbiddenEl.style.display = 'block';
+        if (contentEl) contentEl.style.display = 'none';
+        return;
+      }
+
+      if (forbiddenEl) forbiddenEl.style.display = 'none';
+      if (contentEl) contentEl.style.display = 'flex';
+
+      // Load real clients for dropdown
+      const clients = await fetchAdminClients();
+      const clientSelect = document.getElementById('order-client-select') as HTMLSelectElement;
+      if (clientSelect) {
+        clients.forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.full_name || c.email} (${c.email})`;
+          clientSelect.appendChild(opt);
+        });
+      }
+
+      // Load real orders for event & invoice dropdowns
+      const orders = await fetchAdminOrders();
+      const eventOrderSelect = document.getElementById('event-order-select') as HTMLSelectElement;
+      const invOrderSelect = document.getElementById('invoice-order-select') as HTMLSelectElement;
+
+      orders.forEach((o) => {
+        if (eventOrderSelect) {
+          const opt = document.createElement('option');
+          opt.value = o.id;
+          opt.textContent = `${o.order_ref}: ${o.title}`;
+          eventOrderSelect.appendChild(opt);
+        }
+        if (invOrderSelect) {
+          const opt = document.createElement('option');
+          opt.value = o.id;
+          opt.textContent = `${o.order_ref}: ${o.title}`;
+          invOrderSelect.appendChild(opt);
+        }
+      });
+
+      // Load real audit logs
+      const logs = await fetchAdminAuditLogs();
+      const auditTbody = document.getElementById('audit-table-body');
+      const auditEmpty = document.getElementById('audit-empty');
+
+      if (auditTbody && auditEmpty) {
+        if (logs.length === 0) {
+          auditEmpty.style.display = 'block';
+          auditTbody.innerHTML = '';
+        } else {
+          auditEmpty.style.display = 'none';
+          auditTbody.innerHTML = logs.map((log) => {
+            const dateStr = log.created_at ? new Date(log.created_at).toLocaleString('en-IN') : 'Recent';
+            return `
+              <tr style="border-bottom: 1px solid var(--color-border-subtle);">
+                <td style="padding: 0.65rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(dateStr)}</td>
+                <td style="padding: 0.65rem 0.75rem;"><span class="badge badge-progress">${escapeHtml(log.action)}</span></td>
+                <td style="padding: 0.65rem 0.75rem; font-family: monospace;">${escapeHtml(log.target_table)}</td>
+                <td style="padding: 0.65rem 0.75rem; font-family: monospace; color: var(--color-text-dim);">${escapeHtml(log.target_id)}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 1. Provision client form
+      const clientForm = document.getElementById('create-client-form') as HTMLFormElement;
+      if (clientForm) {
+        clientForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = (document.getElementById('new-client-email') as HTMLInputElement)?.value.trim();
+          const name = (document.getElementById('new-client-name') as HTMLInputElement)?.value.trim();
+          if (!email || !supabase) return;
+
+          try {
+            // Send magic link / OTP invite via Supabase Auth
+            const { error: inviteErr } = await supabase.auth.signInWithOtp({
+              email,
+              options: { data: { full_name: name, role: 'client' } },
+            });
+
+            if (inviteErr) throw inviteErr;
+
+            alert(`Client invite dispatched to ${email}. Once the client signs in, their profile will be active.`);
+            clientForm.reset();
+          } catch (err: any) {
+            alert(err?.message || 'Error provisioning client.');
+          }
+        });
+      }
+
+      // 2. Create order form
+      const orderForm = document.getElementById('create-order-form') as HTMLFormElement;
+      if (orderForm) {
+        orderForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const clientId = (document.getElementById('order-client-select') as HTMLSelectElement)?.value;
+          const division = (document.getElementById('order-division-select') as HTMLSelectElement)?.value as any;
+          const orderRef = (document.getElementById('order-ref-input') as HTMLInputElement)?.value.trim();
+          const title = (document.getElementById('order-title-input') as HTMLInputElement)?.value.trim();
+
+          if (!clientId || !orderRef || !title || !supabase) return;
+
+          try {
+            const { data, error } = await supabase
+              .from('orders')
+              .insert({
+                client_id: clientId,
+                division,
+                order_ref: orderRef,
+                title,
+                current_stage: 'Brief received',
+                total_amount_paise: 0,
+                balance_amount_paise: 0,
+                currency: 'INR',
+              })
+              .select()
+              .single();
+
+            if (error) throw error;
+            alert(`Project ${orderRef} created successfully.`);
+            window.location.reload();
+          } catch (err: any) {
+            alert(err?.message || 'Error creating order.');
+          }
+        });
+      }
+
+      // 3. Add milestone event form
+      const eventForm = document.getElementById('add-event-form') as HTMLFormElement;
+      if (eventForm) {
+        eventForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const orderId = (document.getElementById('event-order-select') as HTMLSelectElement)?.value;
+          const stage = (document.getElementById('event-stage-select') as HTMLSelectElement)?.value;
+          const note = (document.getElementById('event-note-input') as HTMLTextAreaElement)?.value.trim();
+
+          if (!orderId || !stage || !note || !supabase) return;
+
+          try {
+            const { error: evErr } = await supabase.from('order_events').insert({
+              order_id: orderId,
+              stage,
+              note,
+            });
+            if (evErr) throw evErr;
+
+            // Update order current stage
+            await supabase.from('orders').update({ current_stage: stage }).eq('id', orderId);
+
+            alert('Milestone event recorded and project timeline updated.');
+            eventForm.reset();
+            window.location.reload();
+          } catch (err: any) {
+            alert(err?.message || 'Error recording milestone event.');
+          }
+        });
+      }
+
+      // 4. Create invoice form
+      const invForm = document.getElementById('create-invoice-form') as HTMLFormElement;
+      if (invForm) {
+        invForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const orderId = (document.getElementById('invoice-order-select') as HTMLSelectElement)?.value;
+          const invoiceNum = (document.getElementById('invoice-num-input') as HTMLInputElement)?.value.trim();
+          const amountInr = parseFloat((document.getElementById('invoice-amount-input') as HTMLInputElement)?.value || '0');
+          const dueDate = (document.getElementById('invoice-due-input') as HTMLInputElement)?.value;
+
+          if (!orderId || !invoiceNum || amountInr <= 0 || !supabase) return;
+
+          try {
+            const amountPaise = Math.round(amountInr * 100);
+            const { error: invErr } = await supabase.from('invoices').insert({
+              order_id: orderId,
+              invoice_number: invoiceNum,
+              amount_paise: amountPaise,
+              currency: 'INR',
+              due_date: dueDate,
+              status: 'Pending',
+              issued_at: new Date().toISOString().split('T')[0],
+            });
+            if (invErr) throw invErr;
+
+            alert(`Commercial invoice ${invoiceNum} created for ₹${amountInr.toFixed(2)}.`);
+            invForm.reset();
+            window.location.reload();
+          } catch (err: any) {
+            alert(err?.message || 'Error creating invoice.');
+          }
+        });
+      }
+    }
+
+    initAdmin();
+  </script>
+</PortalLayout>

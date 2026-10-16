@@ -1,0 +1,190 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Support" currentNav="support">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Client Support & Assistance
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Submit technical queries, bug reports, or change requests directly to our core engineering desk.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.8125rem;">
+      <span style="color: var(--color-text-dim);">Response Target:</span>
+      <span class="badge badge-success">Within 1 Business Day</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+    <!-- Create Ticket Form -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; height: fit-content;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem;">
+        Open New Support Ticket
+      </h3>
+
+      <form id="new-ticket-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <label for="ticket-subject" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Subject / Brief Title</label>
+          <input type="text" id="ticket-subject" required placeholder="e.g., DNS verification or staging issue" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;" />
+        </div>
+
+        <div>
+          <label for="ticket-order" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Associated Project (Optional)</label>
+          <select id="ticket-order" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+            <option value="">General inquiry / Non-project specific</option>
+            <!-- Injected dynamically from authorized orders -->
+          </select>
+        </div>
+
+        <div>
+          <label for="ticket-priority" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
+          <select id="ticket-priority" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+            <option value="normal">Normal (Standard operational response)</option>
+            <option value="high">High (Production or staging blocker)</option>
+            <option value="urgent">Urgent (Service downtime)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ticket-description" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Detailed Description</label>
+          <textarea id="ticket-description" rows="4" required placeholder="Describe the behavior observed, expected outcome, or question..." style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px;"></textarea>
+        </div>
+
+        <button type="submit" id="submit-ticket-btn" class="btn btn-primary" style="width: 100%;">
+          Submit Support Ticket
+        </button>
+      </form>
+    </div>
+
+    <!-- Ticket History & Status -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem;">
+        Your Ticket History
+      </h3>
+
+      <div id="tickets-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Injected tickets -->
+      </div>
+
+      <div id="tickets-empty" style="display: none; padding: 3rem 1rem; text-align: center; color: var(--color-text-dim);">
+        No support requests recorded for your account.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import {
+      getSession,
+      fetchMyOrders,
+      fetchSupportTickets,
+      createSupportTicket,
+      type SupportTicket,
+    } from '../../lib/portal/supabaseClient';
+    import { escapeHtml } from '../../lib/portal/sanitize';
+
+    async function initSupport() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login/';
+        return;
+      }
+
+      // Populate project dropdown from real orders
+      const orders = await fetchMyOrders();
+      const orderSelect = document.getElementById('ticket-order') as HTMLSelectElement;
+      if (orderSelect && orders.length > 0) {
+        orders.forEach((o) => {
+          const opt = document.createElement('option');
+          opt.value = o.id;
+          opt.textContent = `${o.order_ref} — ${o.title}`;
+          orderSelect.appendChild(opt);
+        });
+      }
+
+      // Populate tickets history
+      async function loadTickets() {
+        const tickets = await fetchSupportTickets();
+        const container = document.getElementById('tickets-list-container');
+        const emptyEl = document.getElementById('tickets-empty');
+
+        if (!container || !emptyEl) return;
+
+        if (tickets.length === 0) {
+          emptyEl.style.display = 'block';
+          container.innerHTML = '';
+        } else {
+          emptyEl.style.display = 'none';
+          container.innerHTML = tickets.map((t) => {
+            const dateStr = t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently';
+            const statusClass = t.status === 'resolved' || t.status === 'closed' ? 'badge-success' : 'badge-progress';
+
+            return `
+              <div style="border: 1px solid var(--color-border); border-radius: 6px; padding: 1.25rem; background: #FAFAFA;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem;">
+                  <div>
+                    <span class="badge ${t.priority === 'urgent' ? 'badge-danger' : 'badge-pending'}" style="margin-bottom: 0.25rem;">
+                      ${escapeHtml(t.priority)}
+                    </span>
+                    <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--color-text-main);">
+                      ${escapeHtml(t.subject)}
+                    </h4>
+                  </div>
+                  <span class="badge ${statusClass}">
+                    ${escapeHtml(t.status)}
+                  </span>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45; margin-bottom: 0.75rem;">
+                  ${escapeHtml(t.description)}
+                </p>
+                <div style="font-size: 0.75rem; color: var(--color-text-dim); border-top: 1px solid var(--color-border-subtle); padding-top: 0.5rem;">
+                  Opened on ${escapeHtml(dateStr)}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      await loadTickets();
+
+      // Form submission
+      const form = document.getElementById('new-ticket-form') as HTMLFormElement;
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const subjectEl = document.getElementById('ticket-subject') as HTMLInputElement;
+          const orderEl = document.getElementById('ticket-order') as HTMLSelectElement;
+          const priorityEl = document.getElementById('ticket-priority') as HTMLSelectElement;
+          const descEl = document.getElementById('ticket-description') as HTMLTextAreaElement;
+          const submitBtn = document.getElementById('submit-ticket-btn') as HTMLButtonElement;
+
+          const subject = subjectEl?.value.trim();
+          const description = descEl?.value.trim();
+          const priority = (priorityEl?.value || 'normal') as any;
+          const order_id = orderEl?.value || undefined;
+
+          if (!subject || !description) return;
+
+          if (submitBtn) submitBtn.disabled = true;
+
+          try {
+            await createSupportTicket({ subject, description, priority, order_id });
+            form.reset();
+            await loadTickets();
+            alert('Support ticket submitted successfully. Our engineering team has been notified.');
+          } catch (err: any) {
+            alert(err?.message || 'Error creating support ticket.');
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        });
+      }
+    }
+
+    initSupport();
+  </script>
+</PortalLayout>

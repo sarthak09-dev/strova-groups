@@ -1,0 +1,131 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Files & Deliverables" currentNav="files">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Files & Deliverables
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Secure repository for architecture blueprints, audit reports, source code bundles, and staging deliverables.
+      </p>
+    </div>
+
+    <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 4px; padding: 0.5rem 1rem; font-size: 0.75rem; color: #1E40AF;">
+      🔒 60-Second Ephemeral Cryptographic Signed URLs
+    </div>
+  </div>
+
+  <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">Authorized Project Files</h3>
+      <input
+        type="search"
+        id="file-search"
+        placeholder="Filter filenames..."
+        style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px;"
+      />
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--color-border); color: var(--color-text-dim); font-size: 0.75rem; text-transform: uppercase;">
+            <th style="padding: 0.75rem;">File Name</th>
+            <th style="padding: 0.75rem;">Associated Project</th>
+            <th style="padding: 0.75rem;">File Size</th>
+            <th style="padding: 0.75rem;">Upload Date</th>
+            <th style="padding: 0.75rem; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="files-table-body">
+          <!-- Injected via real Supabase PostgREST query -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="files-empty" style="display: none; padding: 3rem 1rem; text-align: center; color: var(--color-text-dim);">
+      No deliverables uploaded yet for your organization.
+    </div>
+  </div>
+
+  <script>
+    import { getSession, fetchMyFiles, createDownloadSignedUrl, type DeliverableFile } from '../../lib/portal/supabaseClient';
+    import { escapeHtml } from '../../lib/portal/sanitize';
+
+    async function initFiles() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login/';
+        return;
+      }
+
+      const files = await fetchMyFiles();
+      const tableBody = document.getElementById('files-table-body');
+      const emptyDiv = document.getElementById('files-empty');
+      const searchInput = document.getElementById('file-search') as HTMLInputElement;
+
+      function render(filter = '') {
+        const filtered = files.filter((f) => !filter || f.file_name.toLowerCase().includes(filter));
+
+        if (!tableBody || !emptyDiv) return;
+
+        if (filtered.length === 0) {
+          emptyDiv.style.display = 'block';
+          tableBody.innerHTML = '';
+        } else {
+          emptyDiv.style.display = 'none';
+          tableBody.innerHTML = filtered.map((f) => {
+            const projectTitle = f.orders?.title || 'Project Engagement';
+            const sizeStr = f.file_size_bytes ? `${(f.file_size_bytes / 1024).toFixed(0)} KB` : 'Direct download';
+            const dateStr = f.created_at ? new Date(f.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently';
+
+            return `
+              <tr style="border-bottom: 1px solid var(--color-border-subtle); transition: background 150ms ease;">
+                <td style="padding: 0.85rem 0.75rem; font-weight: 600;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📄</span>
+                    <span>${escapeHtml(f.file_name)}</span>
+                  </div>
+                </td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-muted);">${escapeHtml(projectTitle)}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(sizeStr)}</td>
+                <td style="padding: 0.85rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(dateStr)}</td>
+                <td style="padding: 0.85rem 0.75rem; text-align: right;">
+                  <button type="button" class="btn btn-secondary download-file-btn" data-path="${escapeHtml(f.storage_path)}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                    Download ↗
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          tableBody.querySelectorAll('.download-file-btn').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+              const path = btn.getAttribute('data-path');
+              if (path) {
+                const url = await createDownloadSignedUrl(path);
+                if (url) {
+                  window.open(url, '_blank');
+                } else {
+                  alert('Signed download link could not be generated.');
+                }
+              }
+            });
+          });
+        }
+      }
+
+      render();
+      if (searchInput) {
+        searchInput.addEventListener('input', (e: any) => {
+          render(e.target.value.toLowerCase().trim());
+        });
+      }
+    }
+
+    initFiles();
+  </script>
+</PortalLayout>

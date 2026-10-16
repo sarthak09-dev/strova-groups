@@ -1,7 +1,7 @@
 # Strova Group — Production Static Website & Client Portal
 
 > **Technology, commerce, and digital growth for growing businesses.**  
-> Official web platform for **Strova Group** (`https://strovagroups.in`) and the invite-only client portal (`https://portal.strovagroups.in`).
+> Official web platform for **Strova Group** (`https://strovagroups.in`) and the invite-only client portal (`https://strovagroups.in/portal`).
 
 ---
 
@@ -29,9 +29,9 @@
 
 ## 2. Architecture & Tech Stack
 
-The platform is architected into two decoupled systems:
-1. **Marketing Site (`https://strovagroups.in`)**: 100% static Astro site (`output: "static"`). Zero server vulnerabilities, zero database dependencies, zero tracking cookies. Instant static edge delivery via Cloudflare Pages.
-2. **Client Portal (`https://portal.strovagroups.in`)**: Invite-only authenticated client workspace built with Supabase (Auth, Postgres, Storage, Row Level Security) and `@supabase/ssr`.
+The platform is architected into a unified high-speed system:
+1. **Marketing Site (`https://strovagroups.in`)**: 100% static Astro site (`output: "static"`). Zero server vulnerabilities, zero database dependencies, zero tracking cookies. Instant static edge delivery via Cloudflare Pages or Vercel.
+2. **Same-Domain Client Portal (`https://strovagroups.in/portal`)**: Invite-only authenticated client workspace built with Supabase (Auth, Postgres, Storage, Row Level Security) and `@supabase/ssr`. Zero cross-subdomain cookie issues.
 
 - **Framework**: [Astro v5](https://astro.build/)
 - **Design System**: Editorial permanent light design tokens with Newsreader Variable (serif) and Plus Jakarta Sans Variable (sans). High-contrast `#0F172A` ink typography on crisp `#FFFFFF` and subtle `#F8FAFC` surfaces with permanent `color-scheme: light`.
@@ -195,7 +195,7 @@ By default, Supabase's built-in email service is rate-limited (3 emails/hour). F
 5. Enter host, port (587/465), user, and SMTP password provided by your mail provider (e.g., Zoho, Google Workspace, AWS SES).
 
 ### Inviting a Client & Creating an Order
-1. Sign in to the portal as admin at `https://portal.strovagroups.in/admin`.
+1. Sign in to the portal as admin at `https://strovagroups.in/portal/admin/`.
 2. **Invite / Provision Client**: Enter the client's business email and company name. Supabase provisions the auth user and sends an invite email.
 3. **Create Order**: Select the client profile, assign division (`technologies`, `digital`, `commerce`), and title.
 4. **Advance Milestone**: Select order, pick stage from the 8 stages, and enter a client-visible progress note.
@@ -350,10 +350,10 @@ Prior to formal commercial deployment, confirm the following items:
 ## 13. Production Operations & Deployment Guide
 
 ### A. Deployment Target & Architecture
-- **Marketing Site (`https://strovagroups.in`)**: Deployed via Cloudflare Pages using `npm run build` with output in `dist/`.
-- **Client Portal (`https://portal.strovagroups.in`)**: Deployed via Cloudflare Pages using `npm run build:portal` with output in `portal/dist/`.
+- **Marketing Site & Client Portal (`https://strovagroups.in`)**: Deployed via Cloudflare Pages or Vercel using `npm run build` with output in `dist/`. The client portal is served under `https://strovagroups.in/portal/` on the same domain, eliminating cross-subdomain cookie issues.
+- **Isolated Portal Build**: Also buildable independently via `npm run build:portal` with output in `portal/dist/`.
 - **Database & Auth (`Supabase`)**: Managed PostgreSQL with Row Level Security (RLS) and email OTP passwordless authentication.
-- **Serverless Payment Endpoints**: Hosted as Supabase Edge Functions (`supabase/functions/create-razorpay-order` and `supabase/functions/verify-razorpay-payment`).
+- **Serverless Payment Endpoints**: Hosted as Supabase Edge Functions (`supabase/functions/create-razorpay-order`, `supabase/functions/verify-razorpay-payment`, and `supabase/functions/razorpay-webhook`).
 
 ### B. Database Migration Execution
 Apply the migrations in numerical order to your Supabase project (via CLI `supabase db push` or in the Supabase Dashboard SQL Editor):
@@ -386,8 +386,8 @@ DATABASE_URL="postgres://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase
    - Enable Cloudflare Turnstile bot protection.
    - Enter your `TURNSTILE_SECRET_KEY`.
 3. In Supabase Dashboard -> **URL Configuration**:
-   - Site URL: `https://portal.strovagroups.in`
-   - Additional Redirect URLs: `https://portal.strovagroups.in/**`, `https://strovagroups.in/**`
+   - Site URL: `https://strovagroups.in/portal`
+   - Additional Redirect URLs: `https://strovagroups.in/**`
 
 ### D. Razorpay Live Configuration
 1. Obtain Live Key ID and Key Secret from Razorpay Dashboard -> **Settings** -> **API Keys**.

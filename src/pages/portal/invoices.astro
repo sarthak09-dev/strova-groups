@@ -1,0 +1,338 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import { RAZORPAY_KEY_ID } from '../../lib/portal/supabaseClient';
+---
+
+<PortalLayout title="Invoices & Payments" currentNav="invoices">
+  <!-- Razorpay Checkout Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js" async defer></script>
+
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Invoices & Online Payments
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Authoritative commercial tax invoices, transaction receipts, and secure Razorpay payment gateway integration.
+      </p>
+    </div>
+
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 4px; padding: 0.5rem 1rem; font-size: 0.8125rem;">
+      <span style="color: var(--color-text-dim);">Authoritative Currency:</span>
+      <strong style="color: var(--color-text-main); margin-left: 0.25rem;">INR (Paise)</strong>
+    </div>
+  </div>
+
+  <!-- Invoices Table Section -->
+  <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem;">
+      Commercial Invoices
+    </h3>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--color-border); color: var(--color-text-dim); font-size: 0.75rem; text-transform: uppercase;">
+            <th style="padding: 0.75rem;">Invoice No.</th>
+            <th style="padding: 0.75rem;">Project / Order</th>
+            <th style="padding: 0.75rem;">Issue Date</th>
+            <th style="padding: 0.75rem;">Due Date</th>
+            <th style="padding: 0.75rem;">Amount Due</th>
+            <th style="padding: 0.75rem;">Status</th>
+            <th style="padding: 0.75rem; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="invoices-table-body">
+          <!-- Injected via real Supabase PostgREST query -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="invoices-empty" style="display: none; padding: 2.5rem 1rem; text-align: center; color: var(--color-text-dim);">
+      No commercial invoices issued for your account.
+    </div>
+  </div>
+
+  <!-- Payment History / Receipts Section -->
+  <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem;">
+    <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
+      Payment History & Receipts
+    </h3>
+    <p style="font-size: 0.8125rem; color: var(--color-text-dim); margin-bottom: 1.25rem;">
+      Immutable audit log of verified transactions and settlement receipts.
+    </p>
+
+    <div id="payments-history-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <!-- Injected payments -->
+    </div>
+
+    <div id="payments-empty" style="display: none; padding: 2rem 1rem; text-align: center; color: var(--color-text-dim);">
+      No transactions recorded yet.
+    </div>
+  </div>
+
+  <!-- Payment Processing Status Modal -->
+  <div id="payment-status-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div style="background: #fff; max-width: 440px; width: 100%; border-radius: 8px; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+      <div id="modal-spinner" style="font-size: 2.5rem; margin-bottom: 1rem;">⏳</div>
+      <h3 id="modal-title" style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem;">Processing Payment</h3>
+      <p id="modal-desc" style="font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+        Communicating with payment gateway...
+      </p>
+      <button type="button" id="modal-close-btn" class="btn btn-secondary" style="display: none; width: 100%;">
+        Dismiss
+      </button>
+    </div>
+  </div>
+
+  <script>
+    import {
+      getSession,
+      fetchMyInvoices,
+      fetchMyPayments,
+      createDownloadSignedUrl,
+      RAZORPAY_KEY_ID,
+      SUPABASE_URL,
+      supabase,
+      type ClientInvoice,
+    } from '../../lib/portal/supabaseClient';
+    import { escapeHtml } from '../../lib/portal/sanitize';
+
+    async function initInvoices() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login/';
+        return;
+      }
+
+      const invoices = await fetchMyInvoices();
+      const tbody = document.getElementById('invoices-table-body');
+      const emptyEl = document.getElementById('invoices-empty');
+
+      if (tbody && emptyEl) {
+        if (invoices.length === 0) {
+          tbody.innerHTML = '';
+          emptyEl.style.display = 'block';
+        } else {
+          emptyEl.style.display = 'none';
+          tbody.innerHTML = invoices.map((inv) => {
+            const isPaid = inv.status === 'Paid';
+            const projectTitle = inv.orders?.title || 'Project Engagement';
+            const amountFormatted = `₹${(inv.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+            return `
+              <tr style="border-bottom: 1px solid var(--color-border); transition: background 150ms ease;">
+                <td style="padding: 1rem 0.75rem; font-family: monospace; font-weight: 600;">${escapeHtml(inv.invoice_number)}</td>
+                <td style="padding: 1rem 0.75rem;">
+                  <strong style="color: var(--color-text-main);">${escapeHtml(projectTitle)}</strong>
+                </td>
+                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(inv.issued_at || 'Recent')}</td>
+                <td style="padding: 1rem 0.75rem; color: var(--color-text-dim);">${escapeHtml(inv.due_date || 'On delivery')}</td>
+                <td style="padding: 1rem 0.75rem; font-weight: 600; color: var(--color-text-main);">${amountFormatted}</td>
+                <td style="padding: 1rem 0.75rem;">
+                  <span class="badge ${isPaid ? 'badge-success' : 'badge-pending'}">${escapeHtml(inv.status)}</span>
+                </td>
+                <td style="padding: 1rem 0.75rem; text-align: right;">
+                  ${isPaid ? `
+                    <button type="button" class="btn btn-secondary btn-download-pdf" data-path="${escapeHtml(inv.pdf_storage_path || '')}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                      Receipt PDF ↗
+                    </button>
+                  ` : `
+                    <button type="button" class="btn btn-primary btn-pay-razorpay" data-invoice-id="${escapeHtml(inv.id)}" data-amount="${inv.amount_paise}" data-inv="${escapeHtml(inv.invoice_number)}" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                      Pay ${amountFormatted}
+                    </button>
+                  `}
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          // Wire Download Receipt PDF buttons
+          tbody.querySelectorAll('.btn-download-pdf').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+              const path = btn.getAttribute('data-path');
+              if (path) {
+                const url = await createDownloadSignedUrl(path);
+                if (url) window.open(url, '_blank');
+                else alert('Receipt download unavailable.');
+              } else {
+                alert('Receipt PDF is being archived by accounts.');
+              }
+            });
+          });
+
+          // Wire Razorpay Checkout buttons
+          tbody.querySelectorAll('.btn-pay-razorpay').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+              const invoiceId = btn.getAttribute('data-invoice-id');
+              const invoiceNum = btn.getAttribute('data-inv');
+              const amountPaise = parseInt(btn.getAttribute('data-amount') || '0', 10);
+
+              const modal = document.getElementById('payment-status-modal');
+              const modalSpinner = document.getElementById('modal-spinner');
+              const modalTitle = document.getElementById('modal-title');
+              const modalDesc = document.getElementById('modal-desc');
+              const modalClose = document.getElementById('modal-close-btn');
+
+              if (!modal || !invoiceId) return;
+
+              modal.style.display = 'flex';
+              if (modalSpinner) modalSpinner.textContent = '⏳';
+              if (modalTitle) modalTitle.textContent = 'Initiating Checkout';
+              if (modalDesc) modalDesc.textContent = `Connecting to Razorpay gateway for invoice ${invoiceNum}...`;
+              if (modalClose) modalClose.style.display = 'none';
+
+              // If RAZORPAY_KEY_ID is missing or test placeholder without active backend:
+              if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'rzp_test_placeholder') {
+                if (modalSpinner) modalSpinner.textContent = '🔒';
+                if (modalTitle) modalTitle.textContent = 'Gateway Configuration Notice';
+                if (modalDesc) modalDesc.textContent = 'Razorpay live/test credentials (PUBLIC_RAZORPAY_KEY_ID) are currently being provisioned. To settle via direct NEFT/RTGS bank transfer, please contact accounts at info@strovagroups.in.';
+                if (modalClose) modalClose.style.display = 'inline-block';
+                return;
+              }
+
+              const win = window as any;
+              if (typeof win.Razorpay !== 'function') {
+                if (modalSpinner) modalSpinner.textContent = '⚠️';
+                if (modalTitle) modalTitle.textContent = 'Gateway Error';
+                if (modalDesc) modalDesc.textContent = 'Unable to load Razorpay checkout library. Please check network connection and retry.';
+                if (modalClose) modalClose.style.display = 'inline-block';
+                return;
+              }
+
+              try {
+                // Request authoritative order ID from server Edge function
+                const orderEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/create-razorpay-order` : '/functions/v1/create-razorpay-order';
+                const res = await fetch(orderEndpoint, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.access_token}`,
+                  },
+                  body: JSON.stringify({ invoice_id: invoiceId }),
+                });
+
+                if (!res.ok) {
+                  const errJson = await res.json().catch(() => ({}));
+                  throw new Error(errJson.error || 'Server rejected payment order creation.');
+                }
+
+                const orderData = await res.json();
+                modal.style.display = 'none';
+
+                const rzp = new win.Razorpay({
+                  key: RAZORPAY_KEY_ID,
+                  amount: orderData.amount_paise || amountPaise,
+                  currency: orderData.currency || 'INR',
+                  name: 'Strova Group',
+                  description: `Settlement for ${invoiceNum}`,
+                  order_id: orderData.order_id,
+                  prefill: {
+                    email: session.user.email,
+                  },
+                  theme: {
+                    color: '#1D4ED8',
+                  },
+                  handler: async (response: any) => {
+                    modal.style.display = 'flex';
+                    if (modalSpinner) modalSpinner.textContent = '⏳';
+                    if (modalTitle) modalTitle.textContent = 'Verifying Payment';
+                    if (modalDesc) modalDesc.textContent = 'Verifying cryptographic HMAC signature on the server...';
+
+                    try {
+                      const verifyEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/verify-razorpay-payment` : '/functions/v1/verify-razorpay-payment';
+                      const verifyRes = await fetch(verifyEndpoint, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${session.access_token}`,
+                        },
+                        body: JSON.stringify({
+                          invoice_id: invoiceId,
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_signature: response.razorpay_signature,
+                        }),
+                      });
+
+                      if (!verifyRes.ok) {
+                        const errJson = await verifyRes.json().catch(() => ({}));
+                        throw new Error(errJson.error || 'Signature verification failed.');
+                      }
+
+                      if (modalSpinner) modalSpinner.textContent = '✅';
+                      if (modalTitle) modalTitle.textContent = 'Payment Confirmed';
+                      if (modalDesc) modalDesc.textContent = `Receipt has been recorded. Payment ID: ${escapeHtml(response.razorpay_payment_id)}`;
+                      if (modalClose) {
+                        modalClose.style.display = 'inline-block';
+                        modalClose.onclick = () => window.location.reload();
+                      }
+                    } catch (vErr: any) {
+                      if (modalSpinner) modalSpinner.textContent = '❌';
+                      if (modalTitle) modalTitle.textContent = 'Verification Error';
+                      if (modalDesc) modalDesc.textContent = vErr?.message || 'Server signature verification error.';
+                      if (modalClose) modalClose.style.display = 'inline-block';
+                    }
+                  },
+                  modal: {
+                    ondismiss: () => {
+                      modal.style.display = 'none';
+                    },
+                  },
+                });
+
+                rzp.open();
+              } catch (err: any) {
+                if (modalSpinner) modalSpinner.textContent = '❌';
+                if (modalTitle) modalTitle.textContent = 'Payment Error';
+                if (modalDesc) modalDesc.textContent = err?.message || 'Failed to initiate gateway checkout.';
+                if (modalClose) modalClose.style.display = 'inline-block';
+              }
+            });
+          });
+        }
+      }
+
+      // Populate verified payment receipts
+      const payments = await fetchMyPayments();
+      const paymentsContainer = document.getElementById('payments-history-container');
+      const paymentsEmpty = document.getElementById('payments-empty');
+
+      if (paymentsContainer && paymentsEmpty) {
+        if (payments.length === 0) {
+          paymentsEmpty.style.display = 'block';
+          paymentsContainer.style.display = 'none';
+        } else {
+          paymentsEmpty.style.display = 'none';
+          paymentsContainer.style.display = 'flex';
+          paymentsContainer.innerHTML = payments.map((p) => {
+            const date = new Date(p.captured_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+            return `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FAFAFA; font-size: 0.8125rem;">
+                <div>
+                  <strong style="color: var(--color-text-main); font-family: monospace;">Receipt #${escapeHtml(p.receipt_number || p.gateway_payment_id)}</strong>
+                  <p style="color: var(--color-text-dim); font-size: 0.75rem; margin-top: 2px;">Settled on ${escapeHtml(date)} via ${escapeHtml(p.gateway)}</p>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-weight: 600; color: var(--color-success);">₹${(p.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  <span class="badge badge-success" style="display: block; margin-top: 2px;">Verified</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Modal dismiss handler
+      const closeBtn = document.getElementById('modal-close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          const modal = document.getElementById('payment-status-modal');
+          if (modal) modal.style.display = 'none';
+        });
+      }
+    }
+
+    initInvoices();
+  </script>
+</PortalLayout>

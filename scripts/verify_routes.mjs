@@ -207,15 +207,23 @@ for (const page of portalPages) {
 
       const ext = path.extname(pathname).toLowerCase();
       if (ext) {
-        targetFile = path.join(DIST_PORTAL, pathname.slice(1));
-      } else if (pathname === '/' || pathname === '') {
+        const cleanExt = pathname.startsWith('/portal/') ? pathname.slice(8) : pathname.slice(1);
+        targetFile = fs.existsSync(path.join(DIST_PORTAL, cleanExt))
+          ? path.join(DIST_PORTAL, cleanExt)
+          : path.join(DIST_PORTAL, pathname.slice(1));
+      } else if (pathname === '/' || pathname === '' || pathname === '/portal' || pathname === '/portal/') {
         targetFile = path.join(DIST_PORTAL, 'index.html');
       } else {
         const cleanPath = pathname.replace(/^\/+|\/+$/g, '');
-        targetFile = path.join(DIST_PORTAL, cleanPath, 'index.html');
+        const portalRelative = cleanPath.startsWith('portal/')
+          ? cleanPath.slice(7)
+          : (cleanPath === 'portal' ? '' : cleanPath);
+        targetFile = (portalRelative === '' || fs.existsSync(path.join(DIST_PORTAL, portalRelative, 'index.html')))
+          ? path.join(DIST_PORTAL, portalRelative, 'index.html')
+          : path.join(DIST_PORTAL, cleanPath, 'index.html');
       }
 
-      const targetExists = fs.existsSync(targetFile);
+      const targetExists = fs.existsSync(targetFile) || fs.existsSync(path.join(DIST_MARKETING, pathname.replace(/^\/+|\/+$/g, ''), 'index.html'));
       assert(targetExists, `[Portal: ${relPath}] Internal route exists: ${link}`);
     }
   }
@@ -374,6 +382,16 @@ async function runHttpSmokeTests() {
     '/sitemap-index.xml',
     '/robots.txt',
     '/llms.txt',
+    // Same-domain client portal routes
+    '/portal/',
+    '/portal/login/',
+    '/portal/logout/',
+    '/portal/orders/',
+    '/portal/invoices/',
+    '/portal/files/',
+    '/portal/messages/',
+    '/portal/support/',
+    '/portal/admin/',
   ];
 
   for (const r of marketingRoutes) {
@@ -422,8 +440,8 @@ async function runHttpSmokeTests() {
     { name: 'Marketing Technologies Page', url: 'https://strovagroups.in/technologies/' },
     { name: 'Marketing Robots.txt', url: 'https://strovagroups.in/robots.txt' },
     { name: 'Marketing Sitemap Index', url: 'https://strovagroups.in/sitemap-index.xml' },
-    { name: 'Client Portal Apex Domain', url: 'https://portal.strovagroups.in/' },
-    { name: 'Client Portal Login', url: 'https://portal.strovagroups.in/login/' },
+    { name: 'Client Portal Same-Domain Apex', url: 'https://strovagroups.in/portal/' },
+    { name: 'Client Portal Same-Domain Login', url: 'https://strovagroups.in/portal/login/' },
   ];
 
   for (const check of liveChecks) {

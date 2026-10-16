@@ -9,7 +9,9 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes('/portal/'),
+    }),
   ],
   vite: {
     build: {

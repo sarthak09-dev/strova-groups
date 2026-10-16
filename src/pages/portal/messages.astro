@@ -1,0 +1,218 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+
+<PortalLayout title="Messages" currentNav="messages">
+  <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 600; color: var(--color-text-main); margin-bottom: 0.25rem;">
+        Direct Engineering Messages
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--color-text-muted);">
+        Encrypted asynchronous communication channel linked to your active project milestones.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.75rem;">
+    <!-- Project Thread List -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.5rem; height: fit-content;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem;">Active Project Channels</h3>
+      <div id="project-channels-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <!-- Injected project channel buttons -->
+      </div>
+    </div>
+
+    <!-- Active Chat Box -->
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.75rem; display: flex; flex-direction: column; height: 580px;">
+      <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); margin-bottom: 1rem;">
+        <h4 id="active-thread-title" style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600;">Select a project</h4>
+        <p id="active-thread-ref" style="font-size: 0.75rem; color: var(--color-text-dim); font-family: monospace;"></p>
+      </div>
+
+      <div id="thread-messages-body" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.5rem; margin-bottom: 1rem;">
+        <!-- Injected chat bubbles -->
+      </div>
+
+      <form id="thread-send-form" style="display: flex; gap: 0.75rem; align-items: flex-end;">
+        <textarea
+          id="thread-input"
+          rows="2"
+          required
+          placeholder="Type an architectural question, update or sprint feedback..."
+          style="flex: 1; padding: 0.625rem; font-size: 0.875rem; font-family: inherit; border: 1px solid var(--color-border); border-radius: 4px; resize: none;"
+        ></textarea>
+        <button type="submit" id="thread-submit-btn" class="btn btn-primary" style="padding: 0.625rem 1.25rem;">
+          Send
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    import {
+      getSession,
+      getUserProfile,
+      fetchMyOrders,
+      fetchOrderMessages,
+      sendOrderMessage,
+      type ClientOrder,
+      type OrderMessage,
+    } from '../../lib/portal/supabaseClient';
+    import { subscribeToOrderMessages, unsubscribe } from '../../lib/portal/realtime';
+    import { escapeHtml } from '../../lib/portal/sanitize';
+
+    async function initMessages() {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = '/portal/login/';
+        return;
+      }
+
+      const profile = await getUserProfile(session.user.id);
+      const orders = await fetchMyOrders();
+
+      const channelsList = document.getElementById('project-channels-list');
+      const threadTitle = document.getElementById('active-thread-title');
+      const threadRef = document.getElementById('active-thread-ref');
+      const messagesBody = document.getElementById('thread-messages-body');
+      const sendForm = document.getElementById('thread-send-form') as HTMLFormElement;
+      const sendInput = document.getElementById('thread-input') as HTMLTextAreaElement;
+      const submitBtn = document.getElementById('thread-submit-btn') as HTMLButtonElement;
+
+      if (!channelsList || !threadTitle || !threadRef || !messagesBody) return;
+
+      if (orders.length === 0) {
+        channelsList.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No active projects found. Messaging is enabled on scoped engagements.</p>`;
+        threadTitle.textContent = 'No active channels';
+        messagesBody.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">Engagements will appear here when scope is initiated.</p>`;
+        if (sendInput) sendInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
+        return;
+      }
+
+      let activeOrder: ClientOrder = orders[0];
+      let currentChannelName = '';
+
+      function appendSingleMessage(m: any) {
+        if (!messagesBody) return;
+        // If empty message placeholder was shown, clear it
+        if (messagesBody.querySelector('.notification-empty') || messagesBody.textContent?.includes('No previous messages')) {
+          messagesBody.innerHTML = '';
+        }
+
+        const isClient = m.sender_role === 'client';
+        const time = m.created_at
+          ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Just now';
+
+        const msgDiv = document.createElement('div');
+        msgDiv.style.display = 'flex';
+        msgDiv.style.flexDirection = 'column';
+        msgDiv.style.alignItems = isClient ? 'flex-end' : 'flex-start';
+        msgDiv.innerHTML = `
+          <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">
+            ${isClient ? 'You' : 'Strova Team'} • ${escapeHtml(time)}
+          </span>
+          <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+            ${escapeHtml(m.message_text)}
+          </div>
+        `;
+        messagesBody.appendChild(msgDiv);
+        messagesBody.scrollTop = messagesBody.scrollHeight;
+      }
+
+      async function renderMessages(order: ClientOrder) {
+        if (!threadTitle || !threadRef || !messagesBody) return;
+        activeOrder = order;
+        threadTitle.textContent = order.title;
+        threadRef.textContent = `${order.division} • ${order.order_ref}`;
+
+        // Unsubscribe from previous order channel if switching
+        if (currentChannelName) {
+          unsubscribe(currentChannelName);
+        }
+
+        const msgs = await fetchOrderMessages(order.id);
+        if (msgs.length === 0) {
+          messagesBody.innerHTML = `<p style="font-size: 0.8125rem; color: var(--color-text-dim);">No previous messages in this channel. Send your requirement or query below.</p>`;
+        } else {
+          messagesBody.innerHTML = msgs.map((m) => {
+            const isClient = m.sender_role === 'client';
+            const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return `
+              <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
+                <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
+                <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+                  ${escapeHtml(m.message_text)}
+                </div>
+              </div>
+            `;
+          }).join('');
+          messagesBody.scrollTop = messagesBody.scrollHeight;
+        }
+
+        // Subscribe to real-time incoming messages for this order
+        currentChannelName = `messages:order:${order.id}`;
+        subscribeToOrderMessages(order.id, (newMsg) => {
+          // Avoid duplicate render if message was from self and already rendered
+          if (session && newMsg.sender_id !== session.user.id) {
+            appendSingleMessage(newMsg);
+          }
+        });
+
+        renderChannels();
+      }
+
+      function renderChannels() {
+        if (!channelsList) return;
+        channelsList.innerHTML = orders.map((o) => `
+          <button type="button" class="channel-btn btn btn-secondary" data-id="${escapeHtml(o.id)}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${o.id === activeOrder.id ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${o.id === activeOrder.id ? '#EFF6FF' : '#fff'};">
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${escapeHtml(o.title)}</p>
+              <p style="font-size: 0.75rem; color: var(--color-text-dim);">${escapeHtml(o.order_ref)} • ${escapeHtml(o.current_stage)}</p>
+            </div>
+          </button>
+        `).join('');
+
+        channelsList.querySelectorAll('.channel-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const found = orders.find((ord) => ord.id === id);
+            if (found) renderMessages(found);
+          });
+        });
+      }
+
+      await renderMessages(activeOrder);
+
+      if (sendForm) {
+        sendForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const text = sendInput ? sendInput.value.trim() : '';
+          if (!text || !activeOrder) return;
+
+          if (submitBtn) submitBtn.disabled = true;
+
+          try {
+            const sent = await sendOrderMessage(activeOrder.id, text, profile?.role || 'client');
+            if (sendInput) sendInput.value = '';
+            // Instantly append sent message to UI
+            appendSingleMessage({
+              message_text: text,
+              sender_role: profile?.role || 'client',
+              sender_id: session.user.id,
+              created_at: new Date().toISOString(),
+            });
+          } catch (err: any) {
+            alert(err?.message || 'Error posting message to thread.');
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        });
+      }
+    }
+
+    initMessages();
+  </script>
+</PortalLayout>

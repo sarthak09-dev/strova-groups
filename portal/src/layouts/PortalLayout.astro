@@ -500,7 +500,7 @@ const { title, currentNav = 'overview' } = Astro.props;
       <!-- Desktop Sidebar -->
       {currentNav !== 'login' && (
         <aside class="app-sidebar" id="app-sidebar">
-          <a href="/" class="sidebar-brand">
+          <a href="/portal/" class="sidebar-brand">
             <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
               <rect width="36" height="36" rx="8" fill="#1D4ED8"/>
               <path d="M23 12C23 10.3431 21.6569 9 20 9H14C11.7909 9 10 10.7909 10 13C10 15.2091 11.7909 17 14 17H22C24.2091 17 26 18.7909 26 21C26 23.2091 24.2091 25 22 25H16C14.3431 25 13 23.6569 13 22" stroke="#FFFFFF" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
@@ -513,7 +513,7 @@ const { title, currentNav = 'overview' } = Astro.props;
           </a>
 
           <nav class="sidebar-nav">
-            <a href="/" class={`nav-item ${currentNav === 'overview' ? 'active' : ''}`}>
+            <a href="/portal/" class={`nav-item ${currentNav === 'overview' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"/>
                 <rect x="14" y="3" width="7" height="7"/>
@@ -523,7 +523,7 @@ const { title, currentNav = 'overview' } = Astro.props;
               <span>Overview</span>
             </a>
 
-            <a href="/orders/" class={`nav-item ${currentNav === 'orders' ? 'active' : ''}`}>
+            <a href="/portal/orders/" class={`nav-item ${currentNav === 'orders' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"/>
                 <polyline points="2 17 12 22 22 17"/>
@@ -532,7 +532,7 @@ const { title, currentNav = 'overview' } = Astro.props;
               <span>Projects & Orders</span>
             </a>
 
-            <a href="/invoices/" class={`nav-item ${currentNav === 'invoices' ? 'active' : ''}`}>
+            <a href="/portal/invoices/" class={`nav-item ${currentNav === 'invoices' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
                 <line x1="2" y1="10" x2="22" y2="10"/>
@@ -540,7 +540,7 @@ const { title, currentNav = 'overview' } = Astro.props;
               <span>Invoices & Payments</span>
             </a>
 
-            <a href="/files/" class={`nav-item ${currentNav === 'files' ? 'active' : ''}`}>
+            <a href="/portal/files/" class={`nav-item ${currentNav === 'files' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
                 <polyline points="13 2 13 9 20 9"/>
@@ -548,14 +548,14 @@ const { title, currentNav = 'overview' } = Astro.props;
               <span>Files & Deliverables</span>
             </a>
 
-            <a href="/messages/" class={`nav-item ${currentNav === 'messages' ? 'active' : ''}`}>
+            <a href="/portal/messages/" class={`nav-item ${currentNav === 'messages' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
               <span>Messages</span>
             </a>
 
-            <a href="/support/" class={`nav-item ${currentNav === 'support' ? 'active' : ''}`}>
+            <a href="/portal/support/" class={`nav-item ${currentNav === 'support' ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -565,7 +565,7 @@ const { title, currentNav = 'overview' } = Astro.props;
             </a>
 
             <!-- Admin nav item shown if role is admin -->
-            <a href="/admin/" id="sidebar-admin-link" class={`nav-item ${currentNav === 'admin' ? 'active' : ''}`} style="display: none; border-top: 1px solid #E2E8F0; margin-top: 0.5rem; padding-top: 0.75rem;">
+            <a href="/portal/admin/" id="sidebar-admin-link" class={`nav-item ${currentNav === 'admin' ? 'active' : ''}`} style="display: none; border-top: 1px solid #E2E8F0; margin-top: 0.5rem; padding-top: 0.75rem;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
@@ -579,7 +579,7 @@ const { title, currentNav = 'overview' } = Astro.props;
                 <p class="user-name" id="sidebar-user-name">Loading...</p>
                 <p class="user-email" id="sidebar-user-email">...</p>
               </div>
-              <a href="/logout/" title="Sign out" style="color: #64748B; text-decoration: none;">
+              <a href="/portal/logout/" title="Sign out" style="color: #64748B; text-decoration: none;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                   <polyline points="16 17 21 12 16 7"/>
@@ -628,10 +628,10 @@ const { title, currentNav = 'overview' } = Astro.props;
                 </div>
               </div>
 
-              <a href="https://strovagroups.in" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 0.75rem;">
-                Public site ↗
+              <a href="/" class="btn btn-outline" style="font-size: 0.75rem;">
+                Marketing site ↗
               </a>
-              <a href="/logout/" class="btn btn-secondary" style="font-size: 0.75rem;">
+              <a href="/portal/logout/" class="btn btn-secondary" style="font-size: 0.75rem;">
                 Sign out
               </a>
             </div>

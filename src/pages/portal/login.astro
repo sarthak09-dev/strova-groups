@@ -1,0 +1,601 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from '../../lib/portal/supabaseClient';
+---
+
+<PortalLayout title="Client Sign In" currentNav="login">
+  <!-- Cloudflare Turnstile API script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-badge">
+          <span class="pulse-dot"></span>
+          <span>Invite-Only Client Hub</span>
+        </div>
+        <h1 class="login-title">Client Workspace</h1>
+        <p class="login-subtitle">
+          Enter your registered business email to receive an official 6-digit one-time passcode.
+        </p>
+      </div>
+
+      <!-- Service Configuration Banner (shown only if required credentials are unset) -->
+      {!isSupabaseConfigured && (
+        <div class="notice-unconfigured" id="unconfigured-warning">
+          <strong>Service Notice:</strong> Supabase authentication credentials (<code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_ANON_KEY</code>) are not configured. The portal is running in secure fail-closed mode.
+        </div>
+      )}
+
+      {!isTurnstileConfigured && (
+        <div class="notice-unconfigured" id="turnstile-unconfigured-warning" style="margin-bottom: 1.25rem;">
+          <strong>Security Notice:</strong> Bot challenge verification requires <code>PUBLIC_TURNSTILE_SITE_KEY</code>. Passcode dispatch requires real Turnstile credentials.
+        </div>
+      )}
+
+      <!-- Step 1: Request OTP Form -->
+      <div id="step-email-container">
+        <form id="otp-request-form" class="auth-form">
+          <div class="form-group">
+            <label for="email" class="form-label">Authorized Business Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder="founder@yourcompany.com"
+              class="form-input"
+            />
+          </div>
+
+          <!-- Cloudflare Turnstile Live Widget Slot -->
+          <div class="turnstile-box">
+            <div id="turnstile-widget" data-sitekey={TURNSTILE_SITE_KEY}></div>
+            <p id="turnstile-status" class="turnstile-hint">Verifying browser authenticity...</p>
+          </div>
+
+          <div id="request-error-msg" class="alert-error" style="display: none;"></div>
+
+          <button type="submit" id="request-code-btn" class="btn btn-primary btn-block">
+            <span class="btn-text">Request 6-digit code</span>
+            <span class="btn-spinner" style="display: none;">Verifying...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 2: Verify OTP Form (Hidden initially) -->
+      <div id="step-otp-container" style="display: none;">
+        <div class="notice-info">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <div>
+            <p style="font-weight: 600; margin-bottom: 2px;">Code dispatched</p>
+            <p id="otp-dispatched-message" style="font-size: 0.8125rem; opacity: 0.9;">
+              If your email is registered as an active Strova Group client, a 6-digit verification code has been dispatched. Expires in 10 minutes.
+            </p>
+          </div>
+        </div>
+
+        <form id="otp-verify-form" class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Enter 6-Digit One-Time Code</label>
+            <div class="otp-inputs" id="otp-inputs-row">
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="0" autofocus />
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="1" />
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="2" />
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="3" />
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="4" />
+              <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-cell" data-idx="5" />
+            </div>
+            <!-- Hidden combined OTP input -->
+            <input type="hidden" id="otp" name="otp" />
+          </div>
+
+          <div id="verify-error-msg" class="alert-error" style="display: none;"></div>
+
+          <button type="submit" id="verify-code-btn" class="btn btn-primary btn-block">
+            <span class="verify-btn-text">Verify & open workspace</span>
+            <span class="verify-btn-spinner" style="display: none;">Authenticating...</span>
+          </button>
+
+          <div class="otp-footer">
+            <span id="countdown-timer">Resend available in 60s</span>
+            <button type="button" id="resend-code-btn" disabled class="btn-link">
+              Resend code
+            </button>
+          </div>
+
+          <div style="text-align: center; margin-top: 1rem;">
+            <button type="button" id="change-email-btn" class="btn-link" style="color: var(--color-text-dim);">
+              ← Change email address
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Legal & Compliance Links -->
+    <div class="login-footer" style="text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: #64748B;">
+      <p style="margin-bottom: 0.5rem;">Access to the Strova Group Client Hub is governed by our commercial terms.</p>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://strovagroups.in/terms/" target="_blank" rel="noopener noreferrer" style="color: #475569; text-decoration: underline;">Terms</a>
+        <span>&bull;</span>
+        <a href="https://strovagroups.in/privacy/" target="_blank" rel="noopener noreferrer" style="color: #475569; text-decoration: underline;">Privacy</a>
+        <span>&bull;</span>
+        <a href="https://strovagroups.in/cookies/" target="_blank" rel="noopener noreferrer" style="color: #475569; text-decoration: underline;">Cookies</a>
+        <span>&bull;</span>
+        <a href="https://strovagroups.in/privacy/requests/" target="_blank" rel="noopener noreferrer" style="color: #475569; text-decoration: underline;">Privacy Rights</a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .login-wrapper {
+      max-width: 480px;
+      margin: 2rem auto;
+      width: 100%;
+    }
+
+    .login-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: #F1F5F9;
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    .login-title {
+      font-family: var(--font-serif);
+      font-size: 1.85rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--color-text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .notice-unconfigured {
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      color: #92400E;
+      padding: 0.875rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.45;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9375rem;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: #FFFFFF;
+      color: var(--color-text-main);
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+    }
+
+    .turnstile-box {
+      min-height: 65px;
+      padding: 0.5rem;
+      background: #F8FAFC;
+      border: 1px dashed var(--color-border);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .turnstile-hint {
+      font-size: 0.75rem;
+      color: var(--color-text-dim);
+      margin-top: 0.25rem;
+    }
+
+    .btn-block {
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9375rem;
+    }
+
+    .notice-info {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      color: #1E40AF;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      font-size: 0.875rem;
+    }
+
+    .alert-error {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 4px;
+      padding: 0.75rem;
+      font-size: 0.8125rem;
+      color: #991B1B;
+      line-height: 1.4;
+    }
+
+    .otp-inputs {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: space-between;
+    }
+
+    .otp-cell {
+      width: 48px;
+      height: 54px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: monospace;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: #FFFFFF;
+      color: var(--color-text-main);
+      transition: all 150ms ease;
+    }
+
+    .otp-cell:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+    }
+
+    .otp-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      color: var(--color-text-dim);
+      margin-top: 0.25rem;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: inherit;
+      padding: 0;
+    }
+
+    .btn-link:disabled {
+      color: var(--color-text-dim);
+      text-decoration: none;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <script>
+    import { supabase, isSupabaseConfigured, signInWithOtp, verifyOtp, getSession } from '../../lib/portal/supabaseClient';
+
+    let turnstileToken = '';
+
+    // Check if user already has an active authenticated session
+    async function checkExistingSession() {
+      try {
+        const session = await getSession();
+        if (session) {
+          window.location.href = '/portal/';
+        }
+      } catch (e) {}
+    }
+    checkExistingSession();
+
+    // Turnstile explicit render
+    function setupTurnstile() {
+      const widget = document.getElementById('turnstile-widget');
+      const status = document.getElementById('turnstile-status');
+      const win = window as any;
+      if (widget && win.turnstile) {
+        const siteKey = widget.getAttribute('data-sitekey') || '';
+        if (!siteKey) {
+          if (status) status.textContent = 'Notice: Turnstile site key not configured in environment.';
+          return;
+        }
+
+        try {
+          win.turnstile.render(widget, {
+            sitekey: siteKey,
+            theme: 'light',
+            callback: (token: string) => {
+              turnstileToken = token;
+              if (status) status.textContent = '✓ Bot challenge verified';
+            },
+            'error-callback': () => {
+              if (status) status.textContent = 'Challenge verification failed. Please refresh.';
+            },
+          });
+        } catch (e) {
+          console.warn('Turnstile render deferred', e);
+        }
+      }
+    }
+
+    if ((window as any).turnstile) {
+      setupTurnstile();
+    } else {
+      setTimeout(setupTurnstile, 1000);
+    }
+
+    const emailForm = document.getElementById('otp-request-form') as HTMLFormElement;
+    const verifyForm = document.getElementById('otp-verify-form') as HTMLFormElement;
+    const stepEmailContainer = document.getElementById('step-email-container');
+    const stepOtpContainer = document.getElementById('step-otp-container');
+    const resendBtn = document.getElementById('resend-code-btn') as HTMLButtonElement;
+    const countdownSpan = document.getElementById('countdown-timer');
+    const requestError = document.getElementById('request-error-msg');
+    const verifyError = document.getElementById('verify-error-msg');
+    const changeEmailBtn = document.getElementById('change-email-btn');
+
+    let activeEmail = '';
+    let resendCountdown = 60;
+    let countdownInterval: any = null;
+    let failedAttempts = 0;
+
+    function startResendCountdown() {
+      resendCountdown = 60;
+      if (resendBtn) resendBtn.disabled = true;
+      if (countdownSpan) countdownSpan.textContent = `Resend available in ${resendCountdown}s`;
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        resendCountdown--;
+        if (resendCountdown <= 0) {
+          clearInterval(countdownInterval);
+          if (resendBtn) resendBtn.disabled = false;
+          if (countdownSpan) countdownSpan.textContent = 'Code expired?';
+        } else {
+          if (countdownSpan) countdownSpan.textContent = `Resend available in ${resendCountdown}s`;
+        }
+      }, 1000);
+    }
+
+    // OTP 6-cell keyboard input handling
+    const otpCells = document.querySelectorAll('.otp-cell') as NodeListOf<HTMLInputElement>;
+    const hiddenOtp = document.getElementById('otp') as HTMLInputElement;
+
+    function syncOtp() {
+      let combined = '';
+      otpCells.forEach((c) => { combined += c.value; });
+      if (hiddenOtp) hiddenOtp.value = combined;
+    }
+
+    otpCells.forEach((cell, idx) => {
+      cell.addEventListener('input', (e: any) => {
+        const val = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = val ? val[0] : '';
+        syncOtp();
+        if (val && idx < 5) {
+          otpCells[idx + 1].focus();
+        }
+      });
+
+      cell.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Backspace' && !cell.value && idx > 0) {
+          otpCells[idx - 1].focus();
+        }
+      });
+
+      cell.addEventListener('paste', (e: ClipboardEvent) => {
+        e.preventDefault();
+        const clipboard = e.clipboardData;
+        const pasted = (clipboard ? clipboard.getData('text') : '').replace(/[^0-9]/g, '');
+        if (pasted.length > 0) {
+          for (let i = 0; i < 6; i++) {
+            if (i < pasted.length && otpCells[i]) {
+              otpCells[i].value = pasted[i];
+            }
+          }
+          syncOtp();
+          const nextIdx = Math.min(5, pasted.length);
+          if (otpCells[nextIdx]) otpCells[nextIdx].focus();
+        }
+      });
+    });
+
+    // Step 1: Email Form Submit
+    if (emailForm) {
+      emailForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (requestError) requestError.style.display = 'none';
+        const emailInput = document.getElementById('email') as HTMLInputElement;
+        activeEmail = emailInput ? emailInput.value.trim().toLowerCase() : '';
+
+        if (!activeEmail) return;
+
+        if (!isSupabaseConfigured) {
+          if (requestError) {
+            requestError.textContent = 'Authentication service is unconfigured. Please configure PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY.';
+            requestError.style.display = 'block';
+          }
+          return;
+        }
+
+        const btn = document.getElementById('request-code-btn') as HTMLButtonElement;
+        const btnText = btn?.querySelector('.btn-text') as HTMLElement;
+        const btnSpinner = btn?.querySelector('.btn-spinner') as HTMLElement;
+        if (btnText) btnText.style.display = 'none';
+        if (btnSpinner) btnSpinner.style.display = 'inline';
+        if (btn) btn.disabled = true;
+
+        try {
+          await signInWithOtp(activeEmail, turnstileToken);
+
+          if (btnText) btnText.style.display = 'inline';
+          if (btnSpinner) btnSpinner.style.display = 'none';
+          if (btn) btn.disabled = false;
+
+          if (stepEmailContainer) stepEmailContainer.style.display = 'none';
+          if (stepOtpContainer) stepOtpContainer.style.display = 'block';
+          if (otpCells[0]) otpCells[0].focus();
+          startResendCountdown();
+        } catch (err: any) {
+          if (btnText) btnText.style.display = 'inline';
+          if (btnSpinner) btnSpinner.style.display = 'none';
+          if (btn) btn.disabled = false;
+
+          if (requestError) {
+            requestError.textContent = err?.message || 'Unable to dispatch verification code. Please verify email and retry.';
+            requestError.style.display = 'block';
+          }
+        }
+      });
+    }
+
+    if (changeEmailBtn) {
+      changeEmailBtn.addEventListener('click', () => {
+        if (stepOtpContainer) stepOtpContainer.style.display = 'none';
+        if (stepEmailContainer) stepEmailContainer.style.display = 'block';
+        const emailInput = document.getElementById('email') as HTMLInputElement;
+        if (emailInput) emailInput.focus();
+      });
+    }
+
+    if (resendBtn) {
+      resendBtn.addEventListener('click', async () => {
+        if (!activeEmail || !isSupabaseConfigured) return;
+        try {
+          await signInWithOtp(activeEmail, turnstileToken);
+          startResendCountdown();
+        } catch (err: any) {
+          if (verifyError) {
+            verifyError.textContent = err?.message || 'Error resending code.';
+            verifyError.style.display = 'block';
+          }
+        }
+      });
+    }
+
+    // Step 2: OTP Verify Submit
+    if (verifyForm) {
+      verifyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        syncOtp();
+        const code = hiddenOtp ? hiddenOtp.value.trim() : '';
+
+        if (failedAttempts >= 5) {
+          if (verifyError) {
+            verifyError.textContent = 'Too many failed attempts. Security lockout active for 15 minutes.';
+            verifyError.style.display = 'block';
+          }
+          return;
+        }
+
+        if (code.length !== 6) {
+          if (verifyError) {
+            verifyError.textContent = 'Please enter the complete 6-digit verification code.';
+            verifyError.style.display = 'block';
+          }
+          return;
+        }
+
+        const verifyBtn = document.getElementById('verify-code-btn') as HTMLButtonElement;
+        const btnText = verifyBtn?.querySelector('.verify-btn-text') as HTMLElement;
+        const btnSpinner = verifyBtn?.querySelector('.verify-btn-spinner') as HTMLElement;
+        if (btnText) btnText.style.display = 'none';
+        if (btnSpinner) btnSpinner.style.display = 'inline';
+        if (verifyBtn) verifyBtn.disabled = true;
+
+        try {
+          const result = await verifyOtp(activeEmail, code);
+          if (result?.session) {
+            // Check user role
+            let targetUrl = '/portal/';
+            if (supabase) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', result.session.user.id)
+                .single();
+
+              if (profile?.role === 'admin') {
+                targetUrl = '/portal/admin/';
+              }
+            }
+            window.location.href = targetUrl;
+          } else {
+            throw new Error('Verification session could not be established.');
+          }
+        } catch (err: any) {
+          failedAttempts++;
+          if (btnText) btnText.style.display = 'inline';
+          if (btnSpinner) btnSpinner.style.display = 'none';
+          if (verifyBtn) verifyBtn.disabled = false;
+
+          if (verifyError) {
+            verifyError.textContent = err?.message || `Invalid verification code. ${5 - failedAttempts} attempt(s) remaining.`;
+            verifyError.style.display = 'block';
+          }
+        }
+      });
+    }
+  </script>
+</PortalLayout>
