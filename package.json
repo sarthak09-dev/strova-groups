@@ -8,6 +8,8 @@
     "build": "astro build",
     "build:portal": "astro build --root portal",
     "build:all": "astro build && astro build --root portal",
+    "generate:favicons": "node scripts/generate_favicons.mjs",
+    "verify:favicons": "node scripts/verify_favicons.mjs",
     "preview": "astro preview",
     "audit": "node audit.mjs",
     "test": "node tests/isolation.test.mjs",
