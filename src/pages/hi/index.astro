@@ -56,30 +56,38 @@ const faqJsonLd = {
   lang="hi"
 >
   <!-- 1. Hero -->
-  <section class="hero" aria-labelledby="hero-title">
+  <section class="hero" id="hero-stage" aria-labelledby="hero-title">
+    <!-- Cinematic 3D Scene Backdrop -->
+    <div class="hero__stage" aria-hidden="true">
+      <ThreeHero />
+    </div>
+
     <div class="container hero__inner">
       <div class="hero__content">
-        <span class="hero__eyebrow">प्रौद्योगिकी · डिजिटल · ऑटोमेशन</span>
+        <span class="hero__eyebrow">स्ट्रोवा ग्रुप &bull; क्रिएटिव टेक्नोलॉजी एवं इंजीनियरिंग</span>
         <h1 id="hero-title" class="hero__title">
-          बेहतर डिजिटल अनुभव।<br class="hero__br" /> स्मार्ट व्यवसाय संचालन।
+          विचारों को डिजिटल<br />अनुभवों में बदलना।
         </h1>
         <p class="hero__lead">
-          हम आधुनिक वेबसाइट्स, कस्टम सॉफ़्टवेयर और व्यावहारिक व्यवसाय ऑटोमेशन का निर्माण करते हैं, जो आपकी टीम को सशक्त बनाते हैं।
+          स्ट्रोवा ग्रुप आधुनिक वेबसाइट्स, कस्टम वेब एप्लिकेशन और बिजनेस पोर्टल का निर्माण करता है जो व्यवसायों को आगे बढ़ाते हैं।
         </p>
         <div class="hero__actions">
           <a href="/hi/contact/" class="btn btn--primary btn--lg" data-track="quote_click">
-            प्रोजेक्ट पर चर्चा करें
+            प्रोजेक्ट पर चर्चा करें &rarr;
           </a>
           <a href="#capabilities" class="btn btn--outline btn--lg">
-            हमारी क्षमताएं देखें &rarr;
+            हमारा काम देखें
           </a>
         </div>
         <p class="hero__note">
-          1 कार्यदिवस के भीतर उत्तर · सीधा संस्थापक समीक्षा
+          1 कार्यदिवस के भीतर उत्तर &bull; सीधा संस्थापक समीक्षा
         </p>
-      </div>
-      <div class="hero__visual" aria-hidden="true">
-        <ThreeHero />
+        <a href="#capabilities" class="hero__scroll-indicator" aria-label="आगे बढ़ें">
+          <span class="scroll-indicator__track">
+            <span class="scroll-indicator__dot"></span>
+          </span>
+          <span class="scroll-indicator__label">नीचे स्क्रॉल करें</span>
+        </a>
       </div>
     </div>
   </section>
@@ -297,75 +305,164 @@ const faqJsonLd = {
 </BaseLayout>
 
 <style>
+  /* ---------- Hero ---------- */
   .hero {
-    padding-top: var(--space-16);
-    padding-bottom: var(--space-20);
+    position: relative;
+    min-height: calc(100vh - 5.5rem);
+    min-height: calc(100svh - 5.5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 75% 30%, rgba(99, 102, 241, 0.05) 0%, rgba(29, 78, 216, 0.02) 40%, transparent 70%),
+      radial-gradient(circle at 20% 80%, rgba(34, 211, 238, 0.03) 0%, transparent 60%),
+      var(--bg-page);
+  }
+
+  .hero__stage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
   }
 
   .hero__inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-10);
-    align-items: center;
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
-  @media (min-width: 60rem) {
-    .hero__inner {
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: var(--space-16);
-    }
+  .hero__content {
+    max-width: 44rem;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.40) 100%);
+    padding: clamp(var(--space-5), 3.5vw, var(--space-7));
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(226, 232, 240, 0.65);
+    box-shadow: 0 16px 40px -16px rgba(15, 23, 42, 0.06);
+    transition: transform var(--duration-normal) var(--ease-out), opacity var(--duration-normal) var(--ease-out);
+  }
+
+  @media (max-width: 48rem) {
     .hero {
-      padding-top: var(--space-24);
-      padding-bottom: var(--space-24);
+      min-height: auto;
+      padding-top: var(--space-4);
+      padding-bottom: calc(var(--space-16) + 2rem);
+      justify-content: flex-start;
+    }
+    .hero__content {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.72) 100%);
+      padding: var(--space-5);
+    }
+    .hero__title {
+      font-size: clamp(2rem, 8vw, 2.5rem);
     }
   }
 
   .hero__eyebrow {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     font-family: var(--font-body);
     font-size: var(--text-xs);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: var(--space-5);
+    color: var(--color-cobalt);
+    margin-bottom: var(--space-3);
   }
 
   .hero__title {
-    font-size: var(--text-5xl);
+    font-size: clamp(2.25rem, 4.8vw + 0.2rem, 4rem);
     line-height: 1.15;
-    letter-spacing: -0.025em;
-    margin-bottom: var(--space-6);
-  }
-
-  .hero__br {
-    display: none;
-  }
-
-  @media (min-width: 48rem) {
-    .hero__br {
-      display: inline;
-    }
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin-bottom: var(--space-4);
   }
 
   .hero__lead {
-    font-size: var(--text-lg);
+    font-size: clamp(1rem, 1.1vw + 0.2rem, 1.18rem);
     color: var(--text-secondary);
     line-height: 1.65;
-    max-width: 42ch;
-    margin-bottom: var(--space-8);
+    max-width: 44ch;
+    margin-bottom: var(--space-5);
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
-    margin-bottom: var(--space-5);
+    align-items: center;
+    margin-bottom: var(--space-3);
   }
 
   .hero__note {
     font-size: var(--text-xs);
     color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  .hero__scroll-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+    width: fit-content;
+  }
+
+  .hero__scroll-indicator:hover {
+    color: var(--color-cobalt);
+  }
+
+  .scroll-indicator__track {
+    width: 20px;
+    height: 32px;
+    border: 2px solid var(--color-slate-400);
+    border-radius: 999px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .hero__scroll-indicator:hover .scroll-indicator__track {
+    border-color: var(--color-cobalt);
+  }
+
+  .scroll-indicator__dot {
+    width: 4px;
+    height: 7px;
+    background: var(--color-cobalt);
+    border-radius: 999px;
+    animation: scrollDotMove 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  @keyframes scrollDotMove {
+    0% { transform: translateY(0); opacity: 0; }
+    30% { opacity: 1; }
+    70% { transform: translateY(12px); opacity: 1; }
+    100% { transform: translateY(16px); opacity: 0; }
   }
 
   .services {
