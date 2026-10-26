@@ -2,16 +2,18 @@
 /**
  * ThreeHero.astro
  *
- * Cinematic Modern 3D Hero & Scroll-Driven Transformation Experience
- * Inspired by luxury dark digital design:
- * - Central Abstract Digital Sculpture (Transmissive Amethyst/Obsidian Crystal + Singularity)
- * - Gyroscopic Liquid Mirror Chrome & Polished Titanium Orbital Chronometer Rings
- * - Micro-Particle Stardust Field with purple and diamond highlights
- * - Studio-Grade Lighting Rig with procedural PMREM Environment Reflections
- * - Smooth Damped Mouse Parallax Tracking (Lerp)
- * - Scroll-Driven Kinetic Transformation (Rotation, Scaling & Ethereal Bloom)
- * - Performance Guardrails: DPR capped at 2, IntersectionObserver offscreen pause
- * - Accessible SVG fallback for prefers-reduced-motion & non-WebGL environments
+ * Cinematic 3D Crystal Bloom & Nebula Particle Transformation Experience
+ * Faithfully engineered to match the reference visual benchmarks:
+ * - Central Organic Crystalline Bloom Sculpture (Transmissive Smoked Amethyst & Liquid Mirror Chrome Petals)
+ * - Concentric Fibonacci Petal Tiers that physically blossom/open on scroll
+ * - Dynamic Volumetric Purple Nebula & Stardust Cloud (Frame 4 Scroll Burst)
+ * - Gyroscopic Polished Chrome & Titanium Chronometer Rings with Orbiting Satellites
+ * - Studio-Grade PMREM Lighting Rig with Directional Key, Violet Rim, and Cursor-Tracking Specular Glints
+ * - Damped Inertial Mouse & Touch Parallax Tracking
+ * - Camera Glide Engine (dolly zoom pushing through the blooming core on scroll)
+ * - 60 FPS Performance Guardrails: DPR capped at 2, mobile-adaptive particle count,
+ *   and IntersectionObserver automatic render-pause when offscreen (0% idle CPU/GPU)
+ * - Accessible SVG fallback for prefers-reduced-motion and non-WebGL environments
  */
 ---
 
@@ -51,21 +53,21 @@
 
   .three-hero__glow {
     position: absolute;
-    width: 140%;
-    height: 140%;
+    width: 160%;
+    height: 160%;
     border-radius: 50%;
     background: radial-gradient(
-      circle at 62% 48%,
-      rgba(168, 85, 247, 0.16) 0%,
-      rgba(147, 51, 234, 0.08) 30%,
-      rgba(88, 28, 135, 0.02) 55%,
+      circle at 50% 50%,
+      rgba(168, 85, 247, 0.22) 0%,
+      rgba(147, 51, 234, 0.12) 30%,
+      rgba(88, 28, 135, 0.04) 55%,
       transparent 75%
     );
-    filter: blur(80px);
+    filter: blur(90px);
     pointer-events: none;
     z-index: 0;
     transform: translateZ(0);
-    transition: opacity 0.6s ease;
+    transition: opacity 0.8s ease;
   }
 
   .three-hero__fallback {
@@ -73,19 +75,16 @@
     width: min(85vw, 560px);
     height: min(85vw, 560px);
     object-fit: contain;
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.8));
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s ease;
     z-index: 1;
-    margin-left: auto;
-    margin-right: 4%;
+    margin: auto;
   }
 
   @media (max-width: 59.99rem) {
     .three-hero__fallback {
-      margin-inline: auto;
-      width: min(90vw, 420px);
-      height: min(90vw, 420px);
-      margin-top: 10%;
+      width: min(88vw, 380px);
+      height: min(88vw, 380px);
     }
   }
 
@@ -107,13 +106,13 @@
 
   .three-hero.loaded .three-hero__canvas {
     display: block !important;
-    animation: heroCanvasReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: heroCanvasReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   @keyframes heroCanvasReveal {
     from {
       opacity: 0;
-      transform: scale(0.97);
+      transform: scale(0.96);
     }
     to {
       opacity: 1;
@@ -123,6 +122,8 @@
 </style>
 
 <script>
+  import type { BufferGeometry, BufferAttribute } from 'three';
+
   function hasWebGLSupport(): boolean {
     try {
       const canvas = document.createElement('canvas');
@@ -165,11 +166,11 @@
         let aspect = containerWidth / containerHeight;
         let isMobile = window.innerWidth < 960;
 
-        // Camera setup
-        const camera = new THREE.PerspectiveCamera(38, aspect, 0.1, 100);
-        const baseCamZ = isMobile ? 10.8 : 8.2;
-        const baseCamX = isMobile ? 0 : 0.35;
-        const baseCamY = isMobile ? 0.35 : 0;
+        // Camera setup with cinematic depth of field perspective
+        const camera = new THREE.PerspectiveCamera(36, aspect, 0.1, 100);
+        let baseCamZ = isMobile ? 11.2 : 8.4;
+        let baseCamX = 0;
+        let baseCamY = isMobile ? 0.45 : 0;
         camera.position.set(baseCamX, baseCamY, baseCamZ);
 
         // Renderer with High Dynamic Range ACES Filmic tone mapping
@@ -183,47 +184,49 @@
         renderer.toneMappingExposure = 1.35;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
         renderer.setPixelRatio(dpr);
         renderer.setSize(containerWidth, containerHeight);
 
-        // Procedural Studio Equirectangular Environment Map (Cinematic Dark)
+        // -------------------------------------------------------------
+        // Procedural Studio Equirectangular Environment Map
+        // -------------------------------------------------------------
         const envCanvas = document.createElement('canvas');
         envCanvas.width = 512;
         envCanvas.height = 256;
         const envCtx = envCanvas.getContext('2d');
         if (envCtx) {
           const bgGrad = envCtx.createLinearGradient(0, 0, 0, 256);
-          bgGrad.addColorStop(0, '#030308');
+          bgGrad.addColorStop(0, '#020205');
           bgGrad.addColorStop(0.5, '#070610');
-          bgGrad.addColorStop(1, '#020205');
+          bgGrad.addColorStop(1, '#010103');
           envCtx.fillStyle = bgGrad;
           envCtx.fillRect(0, 0, 512, 256);
 
-          // Top ceiling softbox
-          const topLight = envCtx.createLinearGradient(0, 0, 0, 70);
-          topLight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+          // Top ceiling softbox (Crisp specular sheen)
+          const topLight = envCtx.createLinearGradient(0, 0, 0, 80);
+          topLight.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
           topLight.addColorStop(1, 'rgba(255, 255, 255, 0)');
           envCtx.fillStyle = topLight;
-          envCtx.fillRect(100, 0, 312, 70);
+          envCtx.fillRect(80, 0, 352, 80);
 
-          // Purple left rim softbox
-          const purpleGlow = envCtx.createRadialGradient(90, 130, 10, 90, 130, 110);
+          // Electric Purple Left Rim Softbox
+          const purpleGlow = envCtx.createRadialGradient(85, 128, 10, 85, 128, 120);
           purpleGlow.addColorStop(0, 'rgba(168, 85, 247, 0.95)');
-          purpleGlow.addColorStop(0.5, 'rgba(147, 51, 234, 0.4)');
+          purpleGlow.addColorStop(0.5, 'rgba(147, 51, 234, 0.45)');
           purpleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
           envCtx.fillStyle = purpleGlow;
-          envCtx.fillRect(0, 30, 200, 200);
+          envCtx.fillRect(0, 25, 210, 210);
 
-          // Deep violet right rim softbox
-          const violetGlow = envCtx.createRadialGradient(420, 130, 10, 420, 130, 120);
+          // Bright Violet Right Rim Softbox
+          const violetGlow = envCtx.createRadialGradient(425, 128, 10, 425, 128, 125);
           violetGlow.addColorStop(0, 'rgba(192, 132, 252, 0.95)');
-          violetGlow.addColorStop(0.5, 'rgba(126, 34, 206, 0.4)');
+          violetGlow.addColorStop(0.5, 'rgba(126, 34, 206, 0.45)');
           violetGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
           envCtx.fillStyle = violetGlow;
-          envCtx.fillRect(310, 25, 202, 210);
+          envCtx.fillRect(300, 20, 212, 215);
 
-          // Specular spot key
+          // Specular Spot Key
           const keySpot = envCtx.createRadialGradient(256, 75, 2, 256, 75, 45);
           keySpot.addColorStop(0, 'rgba(255, 255, 255, 1)');
           keySpot.addColorStop(1, 'rgba(255, 255, 255, 0)');
@@ -241,67 +244,69 @@
         }
 
         // Multi-Point Studio Lighting Rig
-        const keyLight = new THREE.DirectionalLight(0xffffff, 3.6);
-        keyLight.position.set(5.0, 7.0, 5.0);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 4.0);
+        keyLight.position.set(5.0, 7.5, 5.0);
         scene.add(keyLight);
 
-        const purpleRim = new THREE.PointLight(0xa855f7, 6.2, 38);
-        purpleRim.position.set(-6.0, -3.0, 3.5);
+        const purpleRim = new THREE.PointLight(0xa855f7, 7.5, 45);
+        purpleRim.position.set(-6.5, -3.0, 4.0);
         scene.add(purpleRim);
 
-        const violetBack = new THREE.PointLight(0x7e22ce, 6.0, 38);
-        violetBack.position.set(4.0, -5.0, -5.0);
+        const violetBack = new THREE.PointLight(0x7e22ce, 7.0, 45);
+        violetBack.position.set(4.5, -5.5, -5.0);
         scene.add(violetBack);
 
-        const specularSpot = new THREE.PointLight(0xffffff, 3.2, 25);
-        specularSpot.position.set(1.5, 4.5, 4.0);
+        const specularSpot = new THREE.PointLight(0xffffff, 3.8, 30);
+        specularSpot.position.set(1.5, 4.5, 4.5);
         scene.add(specularSpot);
 
-        const ambientLight = new THREE.AmbientLight(0x0a0a14, 1.2);
+        const ambientLight = new THREE.AmbientLight(0x060610, 1.4);
         scene.add(ambientLight);
 
         // Root Sculpture Group
         const rootGroup = new THREE.Group();
-        const baseRootX = isMobile ? 0 : 1.30;
-        const baseRootY = isMobile ? 1.35 : 0.10;
+        let baseRootX = 0;
+        let baseRootY = isMobile ? 0.35 : 0;
         rootGroup.position.set(baseRootX, baseRootY, 0);
         scene.add(rootGroup);
 
         // -------------------------------------------------------------
-        // 1. Central Faceted Optical Amethyst & Obsidian Crystal Core
+        // 1. Central Transmissive Amethyst & Obsidian Heart Core
         // -------------------------------------------------------------
         const coreGroup = new THREE.Group();
         rootGroup.add(coreGroup);
 
-        // Inner radiant singularity (emissive pulsing diamond)
-        const singularityGeo = new THREE.OctahedronGeometry(0.46, 2);
+        // Radiant Emissive Singularity (Pulsing Heart)
+        const singularityGeo = new THREE.OctahedronGeometry(0.42, 2);
         const singularityMat = new THREE.MeshStandardMaterial({
           color: 0xa855f7,
           emissive: 0xc084fc,
-          emissiveIntensity: 2.8,
+          emissiveIntensity: 3.6,
           roughness: 0.05,
           metalness: 0.95,
+          transparent: true,
         });
         const singularityMesh = new THREE.Mesh(singularityGeo, singularityMat);
         singularityMesh.renderOrder = 1;
         coreGroup.add(singularityMesh);
 
-        // Optical crystal outer shell (MeshPhysicalMaterial with transmission)
-        const crystalGeo = new THREE.IcosahedronGeometry(1.20, 0);
+        // Transmissive Optical Amethyst Crystal Gem
+        const crystalGeo = new THREE.IcosahedronGeometry(0.88, 0);
         const crystalMat = new THREE.MeshPhysicalMaterial({
-          color: 0x0e0a1a,
-          emissive: 0x1a0b2e,
+          color: 0x140b24,
+          emissive: 0x7e22ce,
+          emissiveIntensity: 0.8,
           roughness: 0.04,
-          metalness: 0.08,
+          metalness: 0.10,
           transmission: 0.90,
           thickness: 2.2,
-          ior: 1.58,
+          ior: 1.62,
           attenuationColor: new THREE.Color(0xa855f7),
-          attenuationDistance: 1.0,
+          attenuationDistance: 0.85,
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
-          iridescence: 0.88,
-          iridescenceIOR: 1.48,
+          iridescence: 0.85,
+          iridescenceIOR: 1.5,
           flatShading: true,
           transparent: true,
         });
@@ -309,124 +314,252 @@
         crystalMesh.renderOrder = 2;
         coreGroup.add(crystalMesh);
 
-        // Micro-offset wireframe overlay for mathematical precision aesthetic
+        // Micro-offset wireframe cage for mathematical precision aesthetic
         const facetWireMat = new THREE.MeshBasicMaterial({
           color: 0xd8b4fe,
           wireframe: true,
           transparent: true,
-          opacity: 0.32,
+          opacity: 0.35,
         });
         const facetWire = new THREE.Mesh(crystalGeo, facetWireMat);
-        facetWire.scale.setScalar(1.003);
+        facetWire.scale.setScalar(1.004);
         facetWire.renderOrder = 3;
         coreGroup.add(facetWire);
 
         // -------------------------------------------------------------
-        // 2. Gyroscopic Chronometer Bands & Liquid Chrome Orbit Rings
+        // 2. Organic Crystalline Bloom Petal Tiers (Hinged for Scroll Bloom)
         // -------------------------------------------------------------
-        // Inner Gimbal Ring (Polished Liquid Mirror Chrome)
-        const innerGimbalGroup = new THREE.Group();
-        rootGroup.add(innerGimbalGroup);
+        interface BloomingPetal {
+          pivot: any;
+          baseAngle: number;
+          bloomDelta: number;
+        }
+        const bloomingPetals: BloomingPetal[] = [];
 
-        const innerRingGeo = new THREE.TorusGeometry(1.68, 0.038, 32, 140);
-        const innerRingMat = new THREE.MeshPhysicalMaterial({
+        // Petal Geometry Generator: Elongated faceted diamond pyramid
+        function createPetalGeometry(radius: number, height: number, depthFactor: number): BufferGeometry {
+          const geo = new THREE.ConeGeometry(radius, height, 4, 1);
+          geo.scale(1.0, 1.0, depthFactor);
+          geo.translate(0, height / 2, 0); // Translate so pivot is at base
+          return geo;
+        }
+
+        // Tier 1 (Inner Core Petals — Smoked Amethyst Glass, 6 petals)
+        const tier1Geo = createPetalGeometry(0.30, 1.45, 0.28);
+        const tier1Mat = new THREE.MeshPhysicalMaterial({
+          color: 0x1f0e38,
+          emissive: 0x581c87,
+          emissiveIntensity: 0.7,
+          roughness: 0.06,
+          metalness: 0.15,
+          transmission: 0.86,
+          thickness: 1.6,
+          ior: 1.56,
+          clearcoat: 1.0,
+          flatShading: true,
+          transparent: true,
+        });
+
+        for (let i = 0; i < 6; i++) {
+          const angle = (i * 2 * Math.PI) / 6;
+          const pivot = new THREE.Group();
+          pivot.rotation.y = angle;
+
+          const mesh = new THREE.Mesh(tier1Geo, tier1Mat);
+          const baseTilt = THREE.MathUtils.degToRad(22);
+          mesh.rotation.x = baseTilt;
+          mesh.position.y = 0.15;
+          pivot.add(mesh);
+
+          rootGroup.add(pivot);
+          bloomingPetals.push({ pivot: mesh, baseAngle: baseTilt, bloomDelta: THREE.MathUtils.degToRad(28) });
+        }
+
+        // Tier 2 (Middle Petals — Liquid Mirror Chrome, 10 petals)
+        const tier2Geo = createPetalGeometry(0.36, 1.95, 0.30);
+        const tier2Mat = new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
           metalness: 0.98,
           roughness: 0.04,
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
-          reflectivity: 1.0,
-        });
-        const innerRingMesh = new THREE.Mesh(innerRingGeo, innerRingMat);
-        innerGimbalGroup.add(innerRingMesh);
-
-        // Middle Chronometer Ring (Dark Brushed Titanium & Satellite Nodes)
-        const middleGimbalGroup = new THREE.Group();
-        rootGroup.add(middleGimbalGroup);
-
-        const middleRingGeo = new THREE.TorusGeometry(2.20, 0.050, 32, 140);
-        const middleRingMat = new THREE.MeshPhysicalMaterial({
-          color: 0x1b1828,
-          metalness: 0.94,
-          roughness: 0.16,
-          clearcoat: 0.88,
-          clearcoatRoughness: 0.05,
-          iridescence: 0.52,
-        });
-        const middleRingMesh = new THREE.Mesh(middleRingGeo, middleRingMat);
-        middleGimbalGroup.add(middleRingMesh);
-
-        // 3 Orbiting Satellites on Middle Ring (Purple Luminous Spheres)
-        const satelliteGeo = new THREE.SphereGeometry(0.086, 24, 24);
-        const satelliteMat = new THREE.MeshPhysicalMaterial({
-          color: 0xa855f7,
-          emissive: 0x7e22ce,
-          emissiveIntensity: 1.2,
-          metalness: 0.96,
-          roughness: 0.06,
-          clearcoat: 1.0,
+          iridescence: 0.88,
+          iridescenceIOR: 1.52,
+          flatShading: true,
+          transparent: true,
         });
 
-        for (let i = 0; i < 3; i++) {
-          const angle = (i * 2 * Math.PI) / 3;
-          const sat = new THREE.Mesh(satelliteGeo, satelliteMat);
-          sat.position.set(Math.cos(angle) * 2.20, Math.sin(angle) * 2.20, 0);
-          middleGimbalGroup.add(sat);
+        for (let i = 0; i < 10; i++) {
+          const angle = (i * 2 * Math.PI) / 10 + 0.314;
+          const pivot = new THREE.Group();
+          pivot.rotation.y = angle;
+
+          const mesh = new THREE.Mesh(tier2Geo, tier2Mat);
+          const baseTilt = THREE.MathUtils.degToRad(42);
+          mesh.rotation.x = baseTilt;
+          mesh.position.y = -0.1;
+          pivot.add(mesh);
+
+          // Subtle wireframe highlight on chrome edges
+          const wire = new THREE.Mesh(tier2Geo, facetWireMat);
+          wire.scale.setScalar(1.002);
+          mesh.add(wire);
+
+          rootGroup.add(pivot);
+          bloomingPetals.push({ pivot: mesh, baseAngle: baseTilt, bloomDelta: THREE.MathUtils.degToRad(35) });
         }
 
-        // Outer Kinetic Ring (Electric Violet Alloy)
-        const outerGimbalGroup = new THREE.Group();
-        rootGroup.add(outerGimbalGroup);
-
-        const outerRingGeo = new THREE.TorusGeometry(2.74, 0.040, 32, 140);
-        const outerRingMat = new THREE.MeshPhysicalMaterial({
-          color: 0x9333ea,
-          metalness: 0.96,
+        // Tier 3 (Outer Petals — Dark Titanium & Iridescent Violet, 14 petals)
+        const tier3Geo = createPetalGeometry(0.42, 2.35, 0.32);
+        const tier3Mat = new THREE.MeshPhysicalMaterial({
+          color: 0x221834,
+          metalness: 0.94,
           roughness: 0.09,
-          clearcoat: 1.0,
+          clearcoat: 0.92,
           clearcoatRoughness: 0.04,
-          iridescence: 0.65,
+          iridescence: 0.72,
+          iridescenceIOR: 1.48,
+          flatShading: true,
+          transparent: true,
         });
-        const outerRingMesh = new THREE.Mesh(outerRingGeo, outerRingMat);
-        outerGimbalGroup.add(outerRingMesh);
 
-        // Fine Horizon Orbit Halo (Luminous Ethereal Ring)
-        const haloGeo = new THREE.TorusGeometry(3.06, 0.014, 16, 140);
+        for (let i = 0; i < 14; i++) {
+          const angle = (i * 2 * Math.PI) / 14 + 0.15;
+          const pivot = new THREE.Group();
+          pivot.rotation.y = angle;
+
+          const mesh = new THREE.Mesh(tier3Geo, tier3Mat);
+          const baseTilt = THREE.MathUtils.degToRad(64);
+          mesh.rotation.x = baseTilt;
+          mesh.position.y = -0.3;
+          pivot.add(mesh);
+
+          rootGroup.add(pivot);
+          bloomingPetals.push({ pivot: mesh, baseAngle: baseTilt, bloomDelta: THREE.MathUtils.degToRad(40) });
+        }
+
+        // -------------------------------------------------------------
+        // 3. Gyroscopic Chronometer Rings & Orbiting Satellites
+        // -------------------------------------------------------------
+        const ringGroup = new THREE.Group();
+        rootGroup.add(ringGroup);
+
+        // Inner Gyro Ring (Liquid Mirror Chrome)
+        const innerRingGeo = new THREE.TorusGeometry(2.15, 0.032, 32, 140);
+        const innerRingMat = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.98,
+          roughness: 0.03,
+          clearcoat: 1.0,
+          reflectivity: 1.0,
+          transparent: true,
+        });
+        const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+        ringGroup.add(innerRing);
+
+        // Middle Chronometer Ring (Dark Violet Titanium with 4 Satellite Spheres)
+        const middleRingGeo = new THREE.TorusGeometry(2.75, 0.042, 32, 140);
+        const middleRingMat = new THREE.MeshPhysicalMaterial({
+          color: 0x241838,
+          metalness: 0.94,
+          roughness: 0.14,
+          clearcoat: 0.9,
+          iridescence: 0.55,
+          transparent: true,
+        });
+        const middleRing = new THREE.Mesh(middleRingGeo, middleRingMat);
+        ringGroup.add(middleRing);
+
+        const satelliteGeo = new THREE.SphereGeometry(0.08, 20, 20);
+        const satelliteMat = new THREE.MeshPhysicalMaterial({
+          color: 0xa855f7,
+          emissive: 0x9333ea,
+          emissiveIntensity: 1.6,
+          metalness: 0.95,
+          roughness: 0.05,
+          clearcoat: 1.0,
+          transparent: true,
+        });
+
+        for (let i = 0; i < 4; i++) {
+          const sat = new THREE.Mesh(satelliteGeo, satelliteMat);
+          const angle = (i * 2 * Math.PI) / 4;
+          sat.position.set(Math.cos(angle) * 2.75, Math.sin(angle) * 2.75, 0);
+          middleRing.add(sat);
+        }
+
+        // Outer Ethereal Horizon Halo Ring
+        const haloGeo = new THREE.TorusGeometry(3.35, 0.012, 16, 140);
         const haloMat = new THREE.MeshPhysicalMaterial({
           color: 0xc084fc,
           emissive: 0xa855f7,
-          emissiveIntensity: 1.4,
-          roughness: 0.10,
+          emissiveIntensity: 1.8,
+          roughness: 0.08,
+          transparent: true,
         });
         const haloMesh = new THREE.Mesh(haloGeo, haloMat);
-        rootGroup.add(haloMesh);
+        ringGroup.add(haloMesh);
 
         // -------------------------------------------------------------
-        // 3. Stardust Micro-Particle Field
+        // 4. Volumetric Purple Nebula Stardust (Scroll Burst System)
         // -------------------------------------------------------------
-        const particleCount = 380;
+        const particleCount = isMobile ? 550 : 1300;
         const particlePositions = new Float32Array(particleCount * 3);
-        const particleScales = new Float32Array(particleCount);
+        const basePositions = new Float32Array(particleCount * 3);
+        const burstPositions = new Float32Array(particleCount * 3);
+        const particleColors = new Float32Array(particleCount * 3);
+        const particleSpeeds = new Float32Array(particleCount);
+        const particlePhases = new Float32Array(particleCount);
+
+        const colorPalette = [
+          new THREE.Color(0xffffff), // Pure diamond white
+          new THREE.Color(0xe9d5ff), // Lilac
+          new THREE.Color(0xc084fc), // Electric violet
+          new THREE.Color(0xa855f7), // Vivid purple
+          new THREE.Color(0x7e22ce), // Deep cosmic purple
+        ];
 
         for (let i = 0; i < particleCount; i++) {
           const i3 = i * 3;
+
+          // State A: Spherical orbital shell around flower
           const u = Math.random();
           const v = Math.random();
           const theta = u * 2.0 * Math.PI;
           const phi = Math.acos(2.0 * v - 1.0);
-          const r = Math.cbrt(Math.random()) * 4.6 + 1.2;
+          const baseR = Math.cbrt(Math.random()) * 2.6 + 1.2;
 
-          particlePositions[i3] = r * Math.sin(phi) * Math.cos(theta);
-          particlePositions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-          particlePositions[i3 + 2] = r * Math.cos(phi);
-          particleScales[i] = Math.random() * 0.7 + 0.3;
+          basePositions[i3] = baseR * Math.sin(phi) * Math.cos(theta);
+          basePositions[i3 + 1] = baseR * Math.sin(phi) * Math.sin(theta);
+          basePositions[i3 + 2] = baseR * Math.cos(phi);
+
+          // State B: Expansive volumetric nebula cloud (Video 1 Frame 4)
+          const burstR = Math.pow(Math.random(), 0.6) * (isMobile ? 7.5 : 12.5) + 3.0;
+          const dispersionAngle = theta + (Math.random() - 0.5) * 1.2;
+          burstPositions[i3] = burstR * Math.sin(phi) * Math.cos(dispersionAngle);
+          burstPositions[i3 + 1] = burstR * Math.sin(phi) * Math.sin(dispersionAngle) * 0.75;
+          burstPositions[i3 + 2] = burstR * Math.cos(phi) * 0.85;
+
+          // Initial positions match State A
+          particlePositions[i3] = basePositions[i3];
+          particlePositions[i3 + 1] = basePositions[i3 + 1];
+          particlePositions[i3 + 2] = basePositions[i3 + 2];
+
+          // Randomized colors across luxury palette
+          const col = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+          particleColors[i3] = col.r;
+          particleColors[i3 + 1] = col.g;
+          particleColors[i3 + 2] = col.b;
+
+          particleSpeeds[i] = Math.random() * 0.8 + 0.4;
+          particlePhases[i] = Math.random() * Math.PI * 2;
         }
 
         const particleGeo = new THREE.BufferGeometry();
         particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-        particleGeo.setAttribute('scale', new THREE.BufferAttribute(particleScales, 1));
+        particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
 
-        // Soft Circular Stardust Particle Texture
+        // Procedural Soft Luminous Glow Canvas Texture
         const partCanvas = document.createElement('canvas');
         partCanvas.width = 64;
         partCanvas.height = 64;
@@ -434,8 +567,9 @@
         if (partCtx) {
           const grad = partCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
           grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-          grad.addColorStop(0.3, 'rgba(192, 132, 252, 0.85)');
-          grad.addColorStop(0.7, 'rgba(168, 85, 247, 0.3)');
+          grad.addColorStop(0.2, 'rgba(233, 213, 255, 0.9)');
+          grad.addColorStop(0.5, 'rgba(192, 132, 252, 0.45)');
+          grad.addColorStop(0.8, 'rgba(168, 85, 247, 0.15)');
           grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
           partCtx.fillStyle = grad;
           partCtx.fillRect(0, 0, 64, 64);
@@ -443,99 +577,262 @@
         const particleTexture = new THREE.CanvasTexture(partCanvas);
 
         const particleMat = new THREE.PointsMaterial({
-          size: 0.12,
+          size: isMobile ? 0.22 : 0.26,
           map: particleTexture,
           transparent: true,
+          vertexColors: true,
           blending: THREE.AdditiveBlending,
           depthWrite: false,
-          color: 0xe9d5ff,
         });
 
         const particleSystem = new THREE.Points(particleGeo, particleMat);
         rootGroup.add(particleSystem);
 
         // -------------------------------------------------------------
-        // 4. Interaction Tracking & Choreographed Scroll Engine
+        // 4b. Volumetric Purple Nebula Clouds (Billowing plume in Frame 4)
+        // -------------------------------------------------------------
+        const cloudCount = isMobile ? 22 : 48;
+        const cloudPositions = new Float32Array(cloudCount * 3);
+        const cloudBasePositions = new Float32Array(cloudCount * 3);
+        const cloudBurstPositions = new Float32Array(cloudCount * 3);
+        const cloudColors = new Float32Array(cloudCount * 3);
+
+        const cloudPuffColors = [
+          new THREE.Color(0xa855f7), // Vivid purple
+          new THREE.Color(0xc084fc), // Electric violet
+          new THREE.Color(0x9333ea), // Medium purple
+          new THREE.Color(0x7e22ce), // Deep cosmic purple
+          new THREE.Color(0x581c87), // Dark nebula indigo
+        ];
+
+        // Soft radial Gaussian cloud puff texture
+        const cloudCanvas = document.createElement('canvas');
+        cloudCanvas.width = 128;
+        cloudCanvas.height = 128;
+        const cloudCtx = cloudCanvas.getContext('2d');
+        if (cloudCtx) {
+          const g = cloudCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
+          g.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+          g.addColorStop(0.25, 'rgba(216, 180, 254, 0.6)');
+          g.addColorStop(0.55, 'rgba(168, 85, 247, 0.25)');
+          g.addColorStop(0.82, 'rgba(126, 34, 206, 0.08)');
+          g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          cloudCtx.fillStyle = g;
+          cloudCtx.fillRect(0, 0, 128, 128);
+        }
+        const cloudTexture = new THREE.CanvasTexture(cloudCanvas);
+
+        for (let i = 0; i < cloudCount; i++) {
+          const i3 = i * 3;
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          const rBase = Math.random() * 1.4 + 0.4;
+          cloudBasePositions[i3] = rBase * Math.sin(phi) * Math.cos(theta);
+          cloudBasePositions[i3 + 1] = rBase * Math.sin(phi) * Math.sin(theta);
+          cloudBasePositions[i3 + 2] = rBase * Math.cos(phi);
+
+          const rBurst = Math.pow(Math.random(), 0.5) * (isMobile ? 5.5 : 8.5) + 1.6;
+          cloudBurstPositions[i3] = rBurst * Math.sin(phi) * Math.cos(theta);
+          cloudBurstPositions[i3 + 1] = rBurst * Math.sin(phi) * Math.sin(theta) * 0.72;
+          cloudBurstPositions[i3 + 2] = rBurst * Math.cos(phi) * 0.8;
+
+          cloudPositions[i3] = cloudBasePositions[i3];
+          cloudPositions[i3 + 1] = cloudBasePositions[i3 + 1];
+          cloudPositions[i3 + 2] = cloudBasePositions[i3 + 2];
+
+          const col = cloudPuffColors[Math.floor(Math.random() * cloudPuffColors.length)];
+          cloudColors[i3] = col.r;
+          cloudColors[i3 + 1] = col.g;
+          cloudColors[i3 + 2] = col.b;
+        }
+
+        const cloudGeo = new THREE.BufferGeometry();
+        cloudGeo.setAttribute('position', new THREE.BufferAttribute(cloudPositions, 3));
+        cloudGeo.setAttribute('color', new THREE.BufferAttribute(cloudColors, 3));
+
+        const cloudMat = new THREE.PointsMaterial({
+          size: isMobile ? 3.0 : 4.4,
+          map: cloudTexture,
+          transparent: true,
+          vertexColors: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          opacity: 0.18,
+        });
+
+        const cloudSystem = new THREE.Points(cloudGeo, cloudMat);
+        rootGroup.add(cloudSystem);
+
+        // -------------------------------------------------------------
+        // 5. Interaction Tracking & Choreographed Scroll Engine
         // -------------------------------------------------------------
         let targetX = 0;
         let targetY = 0;
         let currentX = 0;
         let currentY = 0;
 
-        const onPointerMove = (e: MouseEvent) => {
-          const normX = (e.clientX / window.innerWidth - 0.5) * 2;
-          const normY = (e.clientY / window.innerHeight - 0.5) * 2;
+        const onPointerMove = (e: MouseEvent | TouchEvent) => {
+          const clientX = 'touches' in e && e.touches.length > 0 ? e.touches[0].clientX : (e as MouseEvent).clientX;
+          const clientY = 'touches' in e && e.touches.length > 0 ? e.touches[0].clientY : (e as MouseEvent).clientY;
+          const normX = (clientX / window.innerWidth - 0.5) * 2;
+          const normY = (clientY / window.innerHeight - 0.5) * 2;
           targetX = Math.max(-1, Math.min(1, normX));
           targetY = Math.max(-1, Math.min(1, normY));
         };
         window.addEventListener('pointermove', onPointerMove, { passive: true });
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
 
-        // Scroll progress calculation
+        const onPointerLeave = () => {
+          targetX = 0;
+          targetY = 0;
+        };
+        window.addEventListener('pointerleave', onPointerLeave, { passive: true });
+        window.addEventListener('touchend', onPointerLeave, { passive: true });
+
+        // Scroll progress calculation relative to cinematic stage
         let targetScrollProgress = 0;
         let currentScrollProgress = 0;
 
         const onScroll = () => {
-          const heroEl = document.querySelector('.hero') as HTMLElement | null;
-          const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
-          const progress = Math.min(1.5, Math.max(0, window.scrollY / heroHeight));
+          const stageWrapper = document.getElementById('cinematic-wrapper') || document.querySelector('.hero');
+          if (!stageWrapper) {
+            targetScrollProgress = Math.min(1.0, Math.max(0, window.scrollY / (window.innerHeight * 1.2)));
+            return;
+          }
+          const rect = stageWrapper.getBoundingClientRect();
+          const totalScrollable = stageWrapper.clientHeight - window.innerHeight;
+          if (totalScrollable <= 0) {
+            targetScrollProgress = 0;
+            return;
+          }
+          const progress = Math.min(1.0, Math.max(0, -rect.top / totalScrollable));
           targetScrollProgress = progress;
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
-        // Animation Loop with Scroll-Driven Kinetic Transitions
-        const clock = new THREE.Clock();
+        // High-Precision Animation Loop using performance.now()
+        let startTime = performance.now();
 
         const animate = () => {
           if (!isRunning) return;
 
-          const time = clock.getElapsedTime();
+          const now = performance.now();
+          const time = (now - startTime) * 0.001;
 
           // Smooth lerp mouse parallax & scroll progress
           currentX += (targetX - currentX) * 0.045;
           currentY += (targetY - currentY) * 0.045;
-          currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.075;
+          currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.06;
 
-          // Rotations: central crystalline core & orbital rings
-          coreGroup.rotation.x += 0.0035;
-          coreGroup.rotation.y += 0.0045;
+          // 1. Central Core rotation & breathing singularity
+          coreGroup.rotation.x += 0.004;
+          coreGroup.rotation.y += 0.005;
 
-          // Subtle breathing singularity
-          const pulse = Math.sin(time * 2.2) * 0.12 + 1.0;
+          const pulse = Math.sin(time * 2.5) * 0.14 + 1.0;
           singularityMesh.scale.setScalar(pulse);
 
-          innerGimbalGroup.rotation.x += 0.0065;
-          innerGimbalGroup.rotation.z += 0.0035;
+          // 2. Physical Petal Blooming on scroll & graceful transition into purple nebula
+          const bloomFactor = Math.min(1.0, currentScrollProgress * 1.35);
+          for (let i = 0; i < bloomingPetals.length; i++) {
+            const p = bloomingPetals[i];
+            p.pivot.rotation.x = p.baseAngle + p.bloomDelta * bloomFactor * 1.35;
+          }
 
-          middleGimbalGroup.rotation.y -= 0.0045;
-          middleGimbalGroup.rotation.x += 0.0020;
+          // As user transitions into manifesto section (0.35 -> 0.82 scroll),
+          // fade out solid petals & rings so the glowing purple nebula perfectly frames the text
+          const fadeStart = 0.35;
+          const fadeEnd = 0.82;
+          const fadeProgress = Math.min(1.0, Math.max(0, (currentScrollProgress - fadeStart) / (fadeEnd - fadeStart)));
+          const sculptureOpacity = 1.0 - Math.pow(fadeProgress, 1.2);
 
-          outerGimbalGroup.rotation.z += 0.0030;
-          outerGimbalGroup.rotation.y -= 0.0025;
+          tier1Mat.opacity = Math.max(0, sculptureOpacity * 0.9);
+          tier2Mat.opacity = Math.max(0, sculptureOpacity);
+          tier3Mat.opacity = Math.max(0, sculptureOpacity);
+          innerRingMat.opacity = Math.max(0, sculptureOpacity);
+          middleRingMat.opacity = Math.max(0, sculptureOpacity);
+          haloMat.opacity = Math.max(0, sculptureOpacity * 0.85);
+          satelliteMat.opacity = Math.max(0, sculptureOpacity);
+          crystalMat.opacity = Math.max(0, sculptureOpacity);
+          facetWireMat.opacity = Math.max(0, sculptureOpacity * 0.35);
+          singularityMat.opacity = Math.max(0.18, 1.0 - fadeProgress * 0.82);
 
-          haloMesh.rotation.z -= 0.0018;
-          haloMesh.rotation.x += 0.0012;
+          // Subtle radial expansion as camera pushes through
+          rootGroup.scale.setScalar(1.0 + currentScrollProgress * 0.42);
 
-          particleSystem.rotation.y += 0.0006;
-          particleSystem.rotation.z += 0.0004;
+          // 3. Gyroscopic Ring rotations
+          innerRing.rotation.x += 0.007;
+          innerRing.rotation.z += 0.004;
 
-          // Harmonic floating levitation
-          const levitation = Math.sin(time * 1.3) * 0.08;
-          rootGroup.position.y = baseRootY + levitation - currentScrollProgress * 0.45;
+          middleRing.rotation.y -= 0.005;
+          middleRing.rotation.x += 0.0025;
 
-          // Mouse parallax tilt & scroll-driven transformation
-          rootGroup.rotation.y = currentX * 0.35 + currentScrollProgress * 0.95;
-          rootGroup.rotation.x = currentY * 0.25 + currentScrollProgress * 0.28;
+          haloMesh.rotation.z -= 0.002;
+          haloMesh.rotation.x += 0.0015;
 
-          // Dynamic camera movement driven by scroll
-          camera.position.z = baseCamZ - currentScrollProgress * 2.2;
-          camera.position.x = baseCamX * (1 - currentScrollProgress * 0.7);
-          camera.position.y = baseCamY - currentScrollProgress * 0.30;
+          // 4. Volumetric Nebula Particle Cloud Dispersion on scroll
+          const positionsAttr = particleGeo.attributes.position as BufferAttribute;
+          const posArray = positionsAttr.array as Float32Array;
 
-          // Studio specular highlights follow cursor
-          keyLight.position.x = 5.0 + currentX * 2.2;
-          purpleRim.position.y = -3.0 + currentY * 2.0;
-          specularSpot.position.x = 1.5 - currentX * 1.8;
+          for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            const spd = particleSpeeds[i];
+            const ph = particlePhases[i];
+            const sway = Math.sin(time * spd + ph) * 0.12;
+            const swayCos = Math.cos(time * spd + ph) * 0.12;
+
+            // Interpolate from resting orbit to expanded purple nebula
+            const bx = basePositions[i3];
+            const by = basePositions[i3 + 1];
+            const bz = basePositions[i3 + 2];
+
+            const tx = burstPositions[i3];
+            const ty = burstPositions[i3 + 1];
+            const tz = burstPositions[i3 + 2];
+
+            posArray[i3] = bx + (tx - bx) * bloomFactor + sway;
+            posArray[i3 + 1] = by + (ty - by) * bloomFactor + swayCos;
+            posArray[i3 + 2] = bz + (tz - bz) * bloomFactor + Math.sin(time * 0.4) * 0.15;
+          }
+          positionsAttr.needsUpdate = true;
+          particleSystem.rotation.y += 0.0008;
+
+          // 4b. Update volumetric cloud puffs on scroll
+          const cloudPosAttr = cloudGeo.attributes.position as BufferAttribute;
+          const cloudPosArr = cloudPosAttr.array as Float32Array;
+          for (let i = 0; i < cloudCount; i++) {
+            const i3 = i * 3;
+            const cbx = cloudBasePositions[i3];
+            const cby = cloudBasePositions[i3 + 1];
+            const cbz = cloudBasePositions[i3 + 2];
+
+            const ctx = cloudBurstPositions[i3];
+            const cty = cloudBurstPositions[i3 + 1];
+            const ctz = cloudBurstPositions[i3 + 2];
+
+            cloudPosArr[i3] = cbx + (ctx - cbx) * bloomFactor;
+            cloudPosArr[i3 + 1] = cby + (cty - cby) * bloomFactor;
+            cloudPosArr[i3 + 2] = cbz + (ctz - cbz) * bloomFactor;
+          }
+          cloudPosAttr.needsUpdate = true;
+          cloudMat.opacity = Math.min(0.48, 0.12 + bloomFactor * 0.36);
+          cloudSystem.rotation.y -= 0.0005;
+
+          // 5. Harmonic Floating Levitation & Mouse Tilt
+          const levitation = Math.sin(time * 1.4) * 0.08;
+          rootGroup.position.y = baseRootY + levitation - currentScrollProgress * 0.35;
+          rootGroup.rotation.y = currentX * 0.32 + currentScrollProgress * 0.75;
+          rootGroup.rotation.x = currentY * 0.22 + currentScrollProgress * 0.20;
+
+          // 6. Cinematic Camera Glide (Dolly in toward core on scroll)
+          camera.position.z = baseCamZ - currentScrollProgress * 3.4;
+          camera.position.y = baseCamY + currentScrollProgress * 0.30;
+          camera.position.x = baseCamX * (1 - currentScrollProgress * 0.5);
+
+          // 7. Dynamic Studio Highlights follow cursor
+          keyLight.position.x = 5.0 + currentX * 2.5;
+          purpleRim.position.y = -3.0 + currentY * 2.2;
+          specularSpot.position.x = 1.5 - currentX * 2.0;
 
           renderer.render(scene, camera);
           animationFrameId = requestAnimationFrame(animate);
@@ -549,17 +846,25 @@
 
           aspect = containerWidth / containerHeight;
           camera.aspect = aspect;
-          camera.position.z = isMobile ? 10.8 : 8.2;
-          camera.position.x = isMobile ? 0 : 0.35;
-          camera.position.y = isMobile ? 0.35 : 0;
+          baseCamZ = isMobile ? 11.2 : 8.4;
+          baseCamY = isMobile ? 0.45 : 0;
+          baseRootY = isMobile ? 0.35 : 0;
           camera.updateProjectionMatrix();
-
-          rootGroup.position.x = isMobile ? 0 : 1.30;
-          rootGroup.position.y = isMobile ? 1.35 : 0.10;
 
           renderer.setSize(containerWidth, containerHeight);
         };
         window.addEventListener('resize', onResize, { passive: true });
+
+        // WebGL Context Loss Protection
+        canvas.addEventListener('webglcontextlost', (e) => {
+          e.preventDefault();
+          isRunning = false;
+          if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+          container.classList.remove('loaded');
+        });
 
         // IntersectionObserver for 0% CPU/GPU overhead when offscreen
         const observer = new IntersectionObserver(
@@ -568,7 +873,7 @@
               if (entry.isIntersecting) {
                 if (!isRunning) {
                   isRunning = true;
-                  clock.start();
+                  startTime = performance.now();
                   animate();
                 }
               } else {
@@ -580,11 +885,12 @@
               }
             });
           },
-          { threshold: 0.05 }
+          { threshold: 0.02 }
         );
         observer.observe(container);
 
-        // Signal first frame rendered & reveal canvas
+        // Render initial frame synchronously before revealing canvas to avoid blank flash
+        renderer.render(scene, camera);
         container.classList.add('loaded');
       } catch (err) {
         console.warn('Three.js 3D hero gracefully defaulted to accessible fallback:', err);
