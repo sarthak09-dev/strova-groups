@@ -2,17 +2,15 @@
 /**
  * ThreeHero.astro
  *
- * Cinematic 3D Hero & Scroll-Driven Digital Transformation Experience
- *
- * Creative Direction: "Ideas become digital experiences."
- * - Central Abstract Digital Sculpture (Transmissive Iridescent Crystal Core + Singularity)
- * - Flowing Sculptural Ribbon Arcs & Gyroscopic Chronometer Bands (Chrome, Titanium, Indigo, Cyan)
- * - Floating Dimensional Interface Panels (Web Platforms, AI Automation Engine, Secure Client Portal)
- * - Quantum Micro-Particle Field & Constellation Streams
+ * Cinematic Modern 3D Hero & Scroll-Driven Transformation Experience
+ * Inspired by luxury dark digital design:
+ * - Central Abstract Digital Sculpture (Transmissive Amethyst/Obsidian Crystal + Singularity)
+ * - Gyroscopic Liquid Mirror Chrome & Polished Titanium Orbital Chronometer Rings
+ * - Micro-Particle Stardust Field with purple and diamond highlights
  * - Studio-Grade Lighting Rig with procedural PMREM Environment Reflections
- * - Choreographed Scroll-Driven Animation (Phases A through E)
  * - Smooth Damped Mouse Parallax Tracking (Lerp)
- * - Performance Guardrails: DPR capped at 2, IntersectionObserver offscreen pause, lazy idle init
+ * - Scroll-Driven Kinetic Transformation (Rotation, Scaling & Ethereal Bloom)
+ * - Performance Guardrails: DPR capped at 2, IntersectionObserver offscreen pause
  * - Accessible SVG fallback for prefers-reduced-motion & non-WebGL environments
  */
 ---
@@ -53,20 +51,21 @@
 
   .three-hero__glow {
     position: absolute;
-    width: 120%;
-    height: 120%;
+    width: 140%;
+    height: 140%;
     border-radius: 50%;
     background: radial-gradient(
-      circle at 65% 45%,
-      rgba(99, 102, 241, 0.09) 0%,
-      rgba(34, 211, 238, 0.05) 35%,
-      rgba(29, 78, 216, 0.02) 60%,
+      circle at 62% 48%,
+      rgba(168, 85, 247, 0.16) 0%,
+      rgba(147, 51, 234, 0.08) 30%,
+      rgba(88, 28, 135, 0.02) 55%,
       transparent 75%
     );
-    filter: blur(60px);
+    filter: blur(80px);
     pointer-events: none;
     z-index: 0;
     transform: translateZ(0);
+    transition: opacity 0.6s ease;
   }
 
   .three-hero__fallback {
@@ -74,7 +73,7 @@
     width: min(85vw, 560px);
     height: min(85vw, 560px);
     object-fit: contain;
-    filter: drop-shadow(0 20px 40px rgba(15, 23, 42, 0.08));
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s ease;
     z-index: 1;
     margin-left: auto;
@@ -143,7 +142,7 @@
 
     if (!container || !canvas || !fallback) return;
 
-    // Check for prefers-reduced-motion
+    // Respect reduced-motion preferences
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
@@ -168,9 +167,9 @@
 
         // Camera setup
         const camera = new THREE.PerspectiveCamera(38, aspect, 0.1, 100);
-        const baseCamZ = isMobile ? 11.0 : 8.4;
-        const baseCamX = isMobile ? 0 : 0.4;
-        const baseCamY = isMobile ? 0.4 : 0;
+        const baseCamZ = isMobile ? 10.8 : 8.2;
+        const baseCamX = isMobile ? 0 : 0.35;
+        const baseCamY = isMobile ? 0.35 : 0;
         camera.position.set(baseCamX, baseCamY, baseCamZ);
 
         // Renderer with High Dynamic Range ACES Filmic tone mapping
@@ -188,16 +187,16 @@
         renderer.setPixelRatio(dpr);
         renderer.setSize(containerWidth, containerHeight);
 
-        // Procedural Studio Equirectangular Environment Map
+        // Procedural Studio Equirectangular Environment Map (Cinematic Dark)
         const envCanvas = document.createElement('canvas');
         envCanvas.width = 512;
         envCanvas.height = 256;
         const envCtx = envCanvas.getContext('2d');
         if (envCtx) {
           const bgGrad = envCtx.createLinearGradient(0, 0, 0, 256);
-          bgGrad.addColorStop(0, '#060810');
-          bgGrad.addColorStop(0.5, '#0b0f1a');
-          bgGrad.addColorStop(1, '#05060b');
+          bgGrad.addColorStop(0, '#030308');
+          bgGrad.addColorStop(0.5, '#070610');
+          bgGrad.addColorStop(1, '#020205');
           envCtx.fillStyle = bgGrad;
           envCtx.fillRect(0, 0, 512, 256);
 
@@ -208,20 +207,20 @@
           envCtx.fillStyle = topLight;
           envCtx.fillRect(100, 0, 312, 70);
 
-          // Cyan left rim softbox
-          const cyanGlow = envCtx.createRadialGradient(90, 130, 10, 90, 130, 110);
-          cyanGlow.addColorStop(0, 'rgba(34, 211, 238, 0.9)');
-          cyanGlow.addColorStop(0.5, 'rgba(34, 211, 238, 0.35)');
-          cyanGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          envCtx.fillStyle = cyanGlow;
+          // Purple left rim softbox
+          const purpleGlow = envCtx.createRadialGradient(90, 130, 10, 90, 130, 110);
+          purpleGlow.addColorStop(0, 'rgba(168, 85, 247, 0.95)');
+          purpleGlow.addColorStop(0.5, 'rgba(147, 51, 234, 0.4)');
+          purpleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          envCtx.fillStyle = purpleGlow;
           envCtx.fillRect(0, 30, 200, 200);
 
-          // Indigo right rim softbox
-          const indigoGlow = envCtx.createRadialGradient(420, 130, 10, 420, 130, 120);
-          indigoGlow.addColorStop(0, 'rgba(99, 102, 241, 0.95)');
-          indigoGlow.addColorStop(0.5, 'rgba(99, 102, 241, 0.4)');
-          indigoGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          envCtx.fillStyle = indigoGlow;
+          // Deep violet right rim softbox
+          const violetGlow = envCtx.createRadialGradient(420, 130, 10, 420, 130, 120);
+          violetGlow.addColorStop(0, 'rgba(192, 132, 252, 0.95)');
+          violetGlow.addColorStop(0.5, 'rgba(126, 34, 206, 0.4)');
+          violetGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          envCtx.fillStyle = violetGlow;
           envCtx.fillRect(310, 25, 202, 210);
 
           // Specular spot key
@@ -242,69 +241,67 @@
         }
 
         // Multi-Point Studio Lighting Rig
-        const keyLight = new THREE.DirectionalLight(0xffffff, 3.4);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 3.6);
         keyLight.position.set(5.0, 7.0, 5.0);
         scene.add(keyLight);
 
-        const cyanRim = new THREE.PointLight(0x22d3ee, 5.6, 35);
-        cyanRim.position.set(-6.0, -3.0, 3.5);
-        scene.add(cyanRim);
+        const purpleRim = new THREE.PointLight(0xa855f7, 6.2, 38);
+        purpleRim.position.set(-6.0, -3.0, 3.5);
+        scene.add(purpleRim);
 
-        const indigoBack = new THREE.PointLight(0x6366f1, 6.2, 35);
-        indigoBack.position.set(4.0, -5.0, -5.0);
-        scene.add(indigoBack);
+        const violetBack = new THREE.PointLight(0x7e22ce, 6.0, 38);
+        violetBack.position.set(4.0, -5.0, -5.0);
+        scene.add(violetBack);
 
-        const specularSpot = new THREE.PointLight(0xf8fafc, 3.0, 25);
+        const specularSpot = new THREE.PointLight(0xffffff, 3.2, 25);
         specularSpot.position.set(1.5, 4.5, 4.0);
         scene.add(specularSpot);
 
-        const ambientLight = new THREE.AmbientLight(0x0e1424, 1.4);
+        const ambientLight = new THREE.AmbientLight(0x0a0a14, 1.2);
         scene.add(ambientLight);
 
         // Root Sculpture Group
         const rootGroup = new THREE.Group();
-        // Position on desktop: centered-right (x = 1.35) so lower-left headline has generous breathing space
-        // Position on mobile: centered (x = 0), elevated (y = 0.95)
-        const baseRootX = isMobile ? 0 : 1.35;
-        const baseRootY = isMobile ? 1.45 : 0.15;
+        const baseRootX = isMobile ? 0 : 1.30;
+        const baseRootY = isMobile ? 1.35 : 0.10;
         rootGroup.position.set(baseRootX, baseRootY, 0);
         scene.add(rootGroup);
 
         // -------------------------------------------------------------
-        // 1. Central Faceted Optical Crystal Core (Transformation Core)
+        // 1. Central Faceted Optical Amethyst & Obsidian Crystal Core
         // -------------------------------------------------------------
         const coreGroup = new THREE.Group();
         rootGroup.add(coreGroup);
 
-        // Inner radiant singularity (drawn first inside transmissive glass)
-        const singularityGeo = new THREE.OctahedronGeometry(0.44, 1);
+        // Inner radiant singularity (emissive pulsing diamond)
+        const singularityGeo = new THREE.OctahedronGeometry(0.46, 2);
         const singularityMat = new THREE.MeshStandardMaterial({
-          color: 0x22d3ee,
-          emissive: 0x38bdf8,
-          emissiveIntensity: 2.5,
-          roughness: 0.08,
-          metalness: 0.9,
+          color: 0xa855f7,
+          emissive: 0xc084fc,
+          emissiveIntensity: 2.8,
+          roughness: 0.05,
+          metalness: 0.95,
         });
         const singularityMesh = new THREE.Mesh(singularityGeo, singularityMat);
         singularityMesh.renderOrder = 1;
         coreGroup.add(singularityMesh);
 
         // Optical crystal outer shell (MeshPhysicalMaterial with transmission)
-        const crystalGeo = new THREE.IcosahedronGeometry(1.15, 0);
+        const crystalGeo = new THREE.IcosahedronGeometry(1.20, 0);
         const crystalMat = new THREE.MeshPhysicalMaterial({
-          color: 0x0c1424,
-          emissive: 0x050c18,
+          color: 0x0e0a1a,
+          emissive: 0x1a0b2e,
           roughness: 0.04,
-          metalness: 0.06,
+          metalness: 0.08,
           transmission: 0.90,
-          thickness: 2.0,
-          ior: 1.54,
-          attenuationColor: new THREE.Color(0x22d3ee),
-          attenuationDistance: 0.9,
+          thickness: 2.2,
+          ior: 1.58,
+          attenuationColor: new THREE.Color(0xa855f7),
+          attenuationDistance: 1.0,
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
-          iridescence: 0.85,
-          iridescenceIOR: 1.45,
+          iridescence: 0.88,
+          iridescenceIOR: 1.48,
           flatShading: true,
           transparent: true,
         });
@@ -312,26 +309,26 @@
         crystalMesh.renderOrder = 2;
         coreGroup.add(crystalMesh);
 
-        // Micro-offset wireframe overlay
+        // Micro-offset wireframe overlay for mathematical precision aesthetic
         const facetWireMat = new THREE.MeshBasicMaterial({
-          color: 0x818cf8,
+          color: 0xd8b4fe,
           wireframe: true,
           transparent: true,
           opacity: 0.32,
         });
         const facetWire = new THREE.Mesh(crystalGeo, facetWireMat);
-        facetWire.scale.setScalar(1.0025);
+        facetWire.scale.setScalar(1.003);
         facetWire.renderOrder = 3;
         coreGroup.add(facetWire);
 
         // -------------------------------------------------------------
-        // 2. Sculptural Ribbon Bands & Gyroscopic Chronometer Rings
+        // 2. Gyroscopic Chronometer Bands & Liquid Chrome Orbit Rings
         // -------------------------------------------------------------
         // Inner Gimbal Ring (Polished Liquid Mirror Chrome)
         const innerGimbalGroup = new THREE.Group();
         rootGroup.add(innerGimbalGroup);
 
-        const innerRingGeo = new THREE.TorusGeometry(1.58, 0.038, 32, 120);
+        const innerRingGeo = new THREE.TorusGeometry(1.68, 0.038, 32, 140);
         const innerRingMat = new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
           metalness: 0.98,
@@ -347,24 +344,24 @@
         const middleGimbalGroup = new THREE.Group();
         rootGroup.add(middleGimbalGroup);
 
-        const middleRingGeo = new THREE.TorusGeometry(2.10, 0.052, 32, 120);
+        const middleRingGeo = new THREE.TorusGeometry(2.20, 0.050, 32, 140);
         const middleRingMat = new THREE.MeshPhysicalMaterial({
-          color: 0x1b2333,
+          color: 0x1b1828,
           metalness: 0.94,
-          roughness: 0.18,
-          clearcoat: 0.85,
-          clearcoatRoughness: 0.06,
-          iridescence: 0.48,
+          roughness: 0.16,
+          clearcoat: 0.88,
+          clearcoatRoughness: 0.05,
+          iridescence: 0.52,
         });
         const middleRingMesh = new THREE.Mesh(middleRingGeo, middleRingMat);
         middleGimbalGroup.add(middleRingMesh);
 
-        // 3 Orbiting Satellites on Middle Ring
-        const satelliteGeo = new THREE.SphereGeometry(0.082, 24, 24);
+        // 3 Orbiting Satellites on Middle Ring (Purple Luminous Spheres)
+        const satelliteGeo = new THREE.SphereGeometry(0.086, 24, 24);
         const satelliteMat = new THREE.MeshPhysicalMaterial({
-          color: 0x6366f1,
-          emissive: 0x312e81,
-          emissiveIntensity: 0.9,
+          color: 0xa855f7,
+          emissive: 0x7e22ce,
+          emissiveIntensity: 1.2,
           metalness: 0.96,
           roughness: 0.06,
           clearcoat: 1.0,
@@ -373,382 +370,92 @@
         for (let i = 0; i < 3; i++) {
           const angle = (i * 2 * Math.PI) / 3;
           const sat = new THREE.Mesh(satelliteGeo, satelliteMat);
-          sat.position.set(Math.cos(angle) * 2.10, Math.sin(angle) * 2.10, 0);
+          sat.position.set(Math.cos(angle) * 2.20, Math.sin(angle) * 2.20, 0);
           middleGimbalGroup.add(sat);
         }
 
-        // Outer Aerospace Kinetic Ring (Electric Indigo Alloy)
+        // Outer Kinetic Ring (Electric Violet Alloy)
         const outerGimbalGroup = new THREE.Group();
         rootGroup.add(outerGimbalGroup);
 
-        const outerRingGeo = new THREE.TorusGeometry(2.62, 0.042, 32, 120);
+        const outerRingGeo = new THREE.TorusGeometry(2.74, 0.040, 32, 140);
         const outerRingMat = new THREE.MeshPhysicalMaterial({
-          color: 0x4f46e5,
+          color: 0x9333ea,
           metalness: 0.96,
-          roughness: 0.10,
+          roughness: 0.09,
           clearcoat: 1.0,
           clearcoatRoughness: 0.04,
-          iridescence: 0.60,
+          iridescence: 0.65,
         });
         const outerRingMesh = new THREE.Mesh(outerRingGeo, outerRingMat);
         outerGimbalGroup.add(outerRingMesh);
 
-        // Fine Horizon Halo (Electric Cyan Luminous Ring)
-        const haloGeo = new THREE.TorusGeometry(2.92, 0.014, 16, 120);
+        // Fine Horizon Orbit Halo (Luminous Ethereal Ring)
+        const haloGeo = new THREE.TorusGeometry(3.06, 0.014, 16, 140);
         const haloMat = new THREE.MeshPhysicalMaterial({
-          color: 0x22d3ee,
-          emissive: 0x06b6d4,
-          emissiveIntensity: 0.75,
-          metalness: 0.9,
-          roughness: 0.06,
-          clearcoat: 1.0,
+          color: 0xc084fc,
+          emissive: 0xa855f7,
+          emissiveIntensity: 1.4,
+          roughness: 0.10,
         });
         const haloMesh = new THREE.Mesh(haloGeo, haloMat);
         rootGroup.add(haloMesh);
 
         // -------------------------------------------------------------
-        // 3. Floating Dimensional Interface Panels (Digital Experiences)
+        // 3. Stardust Micro-Particle Field
         // -------------------------------------------------------------
-        const panelsGroup = new THREE.Group();
-        rootGroup.add(panelsGroup);
+        const particleCount = 380;
+        const particlePositions = new Float32Array(particleCount * 3);
+        const particleScales = new Float32Array(particleCount);
 
-        // Texture 1: Web Platform & High-Speed Applications
-        const createWebTexture = () => {
-          const c = document.createElement('canvas');
-          c.width = 512;
-          c.height = 320;
-          const ctx = c.getContext('2d')!;
-          const g = ctx.createLinearGradient(0, 0, 512, 320);
-          g.addColorStop(0, '#0e172a');
-          g.addColorStop(1, '#090e1a');
-          ctx.fillStyle = g;
-          ctx.fillRect(0, 0, 512, 320);
-
-          ctx.strokeStyle = 'rgba(59, 130, 246, 0.55)';
-          ctx.lineWidth = 3;
-          ctx.strokeRect(1.5, 1.5, 509, 317);
-
-          ctx.fillStyle = '#17233d';
-          ctx.fillRect(0, 0, 512, 42);
-          ctx.fillStyle = '#ef4444';
-          ctx.beginPath(); ctx.arc(22, 21, 5.5, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath(); ctx.arc(40, 21, 5.5, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#10b981';
-          ctx.beginPath(); ctx.arc(58, 21, 5.5, 0, Math.PI * 2); ctx.fill();
-
-          ctx.font = '600 13px system-ui, sans-serif';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText('strovagroups.in/technologies', 88, 25);
-
-          ctx.font = 'bold 20px system-ui, sans-serif';
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillText('CUSTOM SOFTWARE PLATFORM', 28, 86);
-
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
-          ctx.fillRect(350, 68, 134, 26);
-          ctx.strokeStyle = '#10b981';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(350, 68, 134, 26);
-          ctx.font = 'bold 11px system-ui, sans-serif';
-          ctx.fillStyle = '#34d399';
-          ctx.fillText('● PERFORMANCE 100', 360, 85);
-
-          ctx.fillStyle = '#131e36';
-          ctx.fillRect(28, 114, 216, 84);
-          ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
-          ctx.strokeRect(28, 114, 216, 84);
-          ctx.font = '11px system-ui, sans-serif';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText('CORE WEB VITALS', 44, 138);
-          ctx.font = 'bold 26px system-ui, sans-serif';
-          ctx.fillStyle = '#22d3ee';
-          ctx.fillText('0.8s LCP', 44, 174);
-
-          ctx.fillStyle = '#131e36';
-          ctx.fillRect(268, 114, 216, 84);
-          ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
-          ctx.strokeRect(268, 114, 216, 84);
-          ctx.font = '11px system-ui, sans-serif';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText('CODEBASE INTEGRITY', 284, 138);
-          ctx.font = 'bold 26px system-ui, sans-serif';
-          ctx.fillStyle = '#818cf8';
-          ctx.fillText('100% OWNED', 284, 174);
-
-          ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
-          ctx.fillRect(28, 222, 456, 16);
-          ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
-          ctx.fillRect(28, 252, 320, 14);
-          ctx.fillRect(28, 276, 240, 14);
-
-          const tex = new THREE.CanvasTexture(c);
-          tex.colorSpace = THREE.SRGBColorSpace;
-          return tex;
-        };
-
-        // Texture 2: Workflow & AI Automation Engine
-        const createAITexture = () => {
-          const c = document.createElement('canvas');
-          c.width = 512;
-          c.height = 320;
-          const ctx = c.getContext('2d')!;
-          const g = ctx.createLinearGradient(0, 0, 512, 320);
-          g.addColorStop(0, '#120d24');
-          g.addColorStop(1, '#090714');
-          ctx.fillStyle = g;
-          ctx.fillRect(0, 0, 512, 320);
-
-          ctx.strokeStyle = 'rgba(168, 85, 247, 0.55)';
-          ctx.lineWidth = 3;
-          ctx.strokeRect(1.5, 1.5, 509, 317);
-
-          ctx.font = 'bold 18px system-ui, sans-serif';
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillText('AI & WHATSAPP AUTOMATION', 28, 48);
-
-          ctx.font = '12px system-ui, sans-serif';
-          ctx.fillStyle = '#a855f7';
-          ctx.fillText('Official Meta Cloud API ── Autonomous Triage', 28, 72);
-
-          // Node 1
-          ctx.fillStyle = '#1e1438';
-          ctx.fillRect(28, 108, 120, 70);
-          ctx.strokeStyle = '#c084fc';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(28, 108, 120, 70);
-          ctx.font = 'bold 11px system-ui, sans-serif';
-          ctx.fillStyle = '#e9d5ff';
-          ctx.fillText('WHATSAPP', 46, 136);
-          ctx.font = '10px system-ui, sans-serif';
-          ctx.fillStyle = '#34d399';
-          ctx.fillText('● Inbound Webhook', 38, 156);
-
-          // Connector line 1
-          ctx.strokeStyle = '#a855f7';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(148, 143);
-          ctx.lineTo(196, 143);
-          ctx.stroke();
-
-          // Node 2
-          ctx.fillStyle = '#1e1438';
-          ctx.fillRect(196, 108, 120, 70);
-          ctx.strokeStyle = '#38bdf8';
-          ctx.strokeRect(196, 108, 120, 70);
-          ctx.font = 'bold 11px system-ui, sans-serif';
-          ctx.fillStyle = '#e0f2fe';
-          ctx.fillText('AI TRIAGE', 222, 136);
-          ctx.font = '10px system-ui, sans-serif';
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillText('Intent Categorised', 208, 156);
-
-          // Connector line 2
-          ctx.strokeStyle = '#38bdf8';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(316, 143);
-          ctx.lineTo(364, 143);
-          ctx.stroke();
-
-          // Node 3
-          ctx.fillStyle = '#1e1438';
-          ctx.fillRect(364, 108, 120, 70);
-          ctx.strokeStyle = '#10b981';
-          ctx.strokeRect(364, 108, 120, 70);
-          ctx.font = 'bold 11px system-ui, sans-serif';
-          ctx.fillStyle = '#dcfce7';
-          ctx.fillText('CRM & DB', 392, 136);
-          ctx.font = '10px system-ui, sans-serif';
-          ctx.fillStyle = '#4ade80';
-          ctx.fillText('Atomic Commit', 380, 156);
-
-          // Log terminal output
-          ctx.fillStyle = '#06040d';
-          ctx.fillRect(28, 204, 456, 88);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-          ctx.strokeRect(28, 204, 456, 88);
-          ctx.font = '11px monospace';
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillText('> [meta-api] webhook signature verified HMAC-SHA256', 40, 230);
-          ctx.fillStyle = '#a855f7';
-          ctx.fillText('> [workflow] intent categorized: Commercial Project Scope', 40, 252);
-          ctx.fillStyle = '#4ade80';
-          ctx.fillText('> [dispatch] lead assigned to founder review (latency: 18ms)', 40, 274);
-
-          const tex = new THREE.CanvasTexture(c);
-          tex.colorSpace = THREE.SRGBColorSpace;
-          return tex;
-        };
-
-        // Texture 3: Client Portal & IP Handover
-        const createPortalTexture = () => {
-          const c = document.createElement('canvas');
-          c.width = 512;
-          c.height = 320;
-          const ctx = c.getContext('2d')!;
-          const g = ctx.createLinearGradient(0, 0, 512, 320);
-          g.addColorStop(0, '#0a1529');
-          g.addColorStop(1, '#060b14');
-          ctx.fillStyle = g;
-          ctx.fillRect(0, 0, 512, 320);
-
-          ctx.strokeStyle = 'rgba(34, 211, 238, 0.55)';
-          ctx.lineWidth = 3;
-          ctx.strokeRect(1.5, 1.5, 509, 317);
-
-          ctx.font = 'bold 18px system-ui, sans-serif';
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillText('CLIENT PORTAL & REPOSITORIES', 28, 48);
-
-          ctx.font = '12px system-ui, sans-serif';
-          ctx.fillStyle = '#22d3ee';
-          ctx.fillText('Staging Demonstration ── Verified Code Handover', 28, 72);
-
-          const milestones = [
-            { l: 'DISCOVER', s: '✓ APPROVED' },
-            { l: 'DEFINE', s: '✓ APPROVED' },
-            { l: 'BUILD', s: '● SPRINT 3' },
-            { l: 'VERIFY', s: '○ QUEUED' },
-          ];
-
-          milestones.forEach((m, idx) => {
-            const x = 28 + idx * 118;
-            ctx.fillStyle = idx < 2 ? '#0e2b40' : idx === 2 ? '#172545' : '#0a101c';
-            ctx.fillRect(x, 108, 106, 68);
-            ctx.strokeStyle = idx < 2 ? '#22d3ee' : idx === 2 ? '#818cf8' : 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(x, 108, 106, 68);
-
-            ctx.font = 'bold 11px system-ui, sans-serif';
-            ctx.fillStyle = '#f8fafc';
-            ctx.fillText(m.l, x + 16, 134);
-            ctx.font = '10px system-ui, sans-serif';
-            ctx.fillStyle = idx < 2 ? '#22d3ee' : idx === 2 ? '#818cf8' : '#64748b';
-            ctx.fillText(m.s, x + 16, 156);
-          });
-
-          ctx.fillStyle = 'rgba(26, 38, 64, 0.65)';
-          ctx.fillRect(28, 202, 456, 90);
-          ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
-          ctx.strokeRect(28, 202, 456, 90);
-
-          ctx.font = 'bold 13px system-ui, sans-serif';
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillText('🔒 FULL IP & REPOSITORY ASSIGNMENT TRANSFER', 44, 232);
-
-          ctx.font = '11px system-ui, sans-serif';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText('Complete source code, deployment scripts, and intellectual property', 44, 256);
-          ctx.fillText('transfer 100% to your organisation upon final staging sign-off.', 44, 274);
-
-          const tex = new THREE.CanvasTexture(c);
-          tex.colorSpace = THREE.SRGBColorSpace;
-          return tex;
-        };
-
-        const panelMatWeb = new THREE.MeshPhysicalMaterial({
-          map: createWebTexture(),
-          transparent: true,
-          opacity: 0.94,
-          roughness: 0.12,
-          metalness: 0.15,
-          clearcoat: 0.9,
-          side: THREE.DoubleSide,
-        });
-        const panelMatAI = new THREE.MeshPhysicalMaterial({
-          map: createAITexture(),
-          transparent: true,
-          opacity: 0.94,
-          roughness: 0.12,
-          metalness: 0.15,
-          clearcoat: 0.9,
-          side: THREE.DoubleSide,
-        });
-        const panelMatPortal = new THREE.MeshPhysicalMaterial({
-          map: createPortalTexture(),
-          transparent: true,
-          opacity: 0.94,
-          roughness: 0.12,
-          metalness: 0.15,
-          clearcoat: 0.9,
-          side: THREE.DoubleSide,
-        });
-
-        // Panel 1: Web Platform (Top-right of core)
-        const panelGeo1 = new THREE.PlaneGeometry(1.65, 1.05);
-        const panelMeshWeb = new THREE.Mesh(panelGeo1, panelMatWeb);
-        panelMeshWeb.position.set(1.5, 1.15, 0.6);
-        panelMeshWeb.rotation.set(-0.12, -0.32, 0.06);
-        panelMeshWeb.scale.setScalar(0.72);
-        panelsGroup.add(panelMeshWeb);
-
-        // Panel 2: AI & WhatsApp Automation (Bottom-left of core)
-        const panelGeo2 = new THREE.PlaneGeometry(1.55, 0.98);
-        const panelMeshAI = new THREE.Mesh(panelGeo2, panelMatAI);
-        panelMeshAI.position.set(-1.6, -1.05, 0.7);
-        panelMeshAI.rotation.set(0.14, 0.34, -0.05);
-        panelMeshAI.scale.setScalar(0.72);
-        panelsGroup.add(panelMeshAI);
-
-        // Panel 3: Client Portal (Depth layer)
-        const panelGeo3 = new THREE.PlaneGeometry(1.50, 0.94);
-        const panelMeshPortal = new THREE.Mesh(panelGeo3, panelMatPortal);
-        panelMeshPortal.position.set(0.3, -1.45, -0.6);
-        panelMeshPortal.rotation.set(0.20, -0.20, 0.08);
-        panelMeshPortal.scale.setScalar(0.68);
-        panelsGroup.add(panelMeshPortal);
-
-        // -------------------------------------------------------------
-        // 4. Quantum Micro-Particle Field
-        // -------------------------------------------------------------
-        const particleCanvas = document.createElement('canvas');
-        particleCanvas.width = 32;
-        particleCanvas.height = 32;
-        const pCtx = particleCanvas.getContext('2d');
-        if (pCtx) {
-          const pGrad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
-          pGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-          pGrad.addColorStop(0.3, 'rgba(34, 211, 238, 0.85)');
-          pGrad.addColorStop(0.7, 'rgba(99, 102, 241, 0.3)');
-          pGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          pCtx.fillStyle = pGrad;
-          pCtx.fillRect(0, 0, 32, 32);
-        }
-        const particleTexture = new THREE.CanvasTexture(particleCanvas);
-
-        const particlesCount = 140;
-        const particleGeo = new THREE.BufferGeometry();
-        const positions = new Float32Array(particlesCount * 3);
-
-        for (let i = 0; i < particlesCount; i++) {
+        for (let i = 0; i < particleCount; i++) {
+          const i3 = i * 3;
           const u = Math.random();
           const v = Math.random();
           const theta = u * 2.0 * Math.PI;
           const phi = Math.acos(2.0 * v - 1.0);
-          const r = 2.2 + Math.random() * 0.9;
+          const r = Math.cbrt(Math.random()) * 4.6 + 1.2;
 
-          const sinPhi = Math.sin(phi);
-          positions[i * 3] = r * sinPhi * Math.cos(theta);
-          positions[i * 3 + 1] = r * sinPhi * Math.sin(theta);
-          positions[i * 3 + 2] = r * Math.cos(phi);
+          particlePositions[i3] = r * Math.sin(phi) * Math.cos(theta);
+          particlePositions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+          particlePositions[i3 + 2] = r * Math.cos(phi);
+          particleScales[i] = Math.random() * 0.7 + 0.3;
         }
 
-        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleGeo = new THREE.BufferGeometry();
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        particleGeo.setAttribute('scale', new THREE.BufferAttribute(particleScales, 1));
+
+        // Soft Circular Stardust Particle Texture
+        const partCanvas = document.createElement('canvas');
+        partCanvas.width = 64;
+        partCanvas.height = 64;
+        const partCtx = partCanvas.getContext('2d');
+        if (partCtx) {
+          const grad = partCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+          grad.addColorStop(0.3, 'rgba(192, 132, 252, 0.85)');
+          grad.addColorStop(0.7, 'rgba(168, 85, 247, 0.3)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          partCtx.fillStyle = grad;
+          partCtx.fillRect(0, 0, 64, 64);
+        }
+        const particleTexture = new THREE.CanvasTexture(partCanvas);
+
         const particleMat = new THREE.PointsMaterial({
-          map: particleTexture,
           size: 0.12,
+          map: particleTexture,
           transparent: true,
           blending: THREE.AdditiveBlending,
           depthWrite: false,
-          opacity: 0.85,
+          color: 0xe9d5ff,
         });
+
         const particleSystem = new THREE.Points(particleGeo, particleMat);
         rootGroup.add(particleSystem);
 
         // -------------------------------------------------------------
-        // 5. Interaction Tracking & Choreographed Scroll Engine
+        // 4. Interaction Tracking & Choreographed Scroll Engine
         // -------------------------------------------------------------
         let targetX = 0;
         let targetY = 0;
@@ -770,7 +477,6 @@
         const onScroll = () => {
           const heroEl = document.querySelector('.hero') as HTMLElement | null;
           const heroHeight = heroEl ? heroEl.offsetHeight : window.innerHeight;
-          // Progress through the first 1.5 viewports (Hero + Capabilities transition)
           const progress = Math.min(1.5, Math.max(0, window.scrollY / heroHeight));
           targetScrollProgress = progress;
         };
@@ -791,16 +497,20 @@
           currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.075;
 
           // Rotations: central crystalline core & orbital rings
-          coreGroup.rotation.x += 0.003;
-          coreGroup.rotation.y += 0.004;
+          coreGroup.rotation.x += 0.0035;
+          coreGroup.rotation.y += 0.0045;
+
+          // Subtle breathing singularity
+          const pulse = Math.sin(time * 2.2) * 0.12 + 1.0;
+          singularityMesh.scale.setScalar(pulse);
 
           innerGimbalGroup.rotation.x += 0.0065;
           innerGimbalGroup.rotation.z += 0.0035;
 
           middleGimbalGroup.rotation.y -= 0.0045;
-          middleGimbalGroup.rotation.x += 0.002;
+          middleGimbalGroup.rotation.x += 0.0020;
 
-          outerGimbalGroup.rotation.z += 0.003;
+          outerGimbalGroup.rotation.z += 0.0030;
           outerGimbalGroup.rotation.y -= 0.0025;
 
           haloMesh.rotation.z -= 0.0018;
@@ -810,40 +520,21 @@
           particleSystem.rotation.z += 0.0004;
 
           // Harmonic floating levitation
-          const levitation = Math.sin(time * 1.2) * 0.07;
-          rootGroup.position.y = baseRootY + levitation - currentScrollProgress * 0.35;
+          const levitation = Math.sin(time * 1.3) * 0.08;
+          rootGroup.position.y = baseRootY + levitation - currentScrollProgress * 0.45;
 
-          // Mouse parallax tilt
-          rootGroup.rotation.y = currentX * 0.36 + currentScrollProgress * 0.85;
-          rootGroup.rotation.x = currentY * 0.26 + currentScrollProgress * 0.22;
+          // Mouse parallax tilt & scroll-driven transformation
+          rootGroup.rotation.y = currentX * 0.35 + currentScrollProgress * 0.95;
+          rootGroup.rotation.x = currentY * 0.25 + currentScrollProgress * 0.28;
 
-          // Dynamic camera movement driven by scroll (Phase B: Scroll begins)
-          camera.position.z = baseCamZ - currentScrollProgress * 2.4;
+          // Dynamic camera movement driven by scroll
+          camera.position.z = baseCamZ - currentScrollProgress * 2.2;
           camera.position.x = baseCamX * (1 - currentScrollProgress * 0.7);
-          camera.position.y = baseCamY - currentScrollProgress * 0.35;
+          camera.position.y = baseCamY - currentScrollProgress * 0.30;
 
-          // Floating Dimensional Interface Panels blossoming outward (Phase B & C)
-          // Panel 1: Web Platform
-          panelMeshWeb.position.x = 1.5 + currentScrollProgress * 0.85;
-          panelMeshWeb.position.y = 1.15 + Math.sin(time * 1.1) * 0.05;
-          panelMeshWeb.position.z = 0.6 + currentScrollProgress * 0.75;
-          panelMeshWeb.scale.setScalar(0.72 + currentScrollProgress * 0.28);
-
-          // Panel 2: AI & WhatsApp
-          panelMeshAI.position.x = -1.6 - currentScrollProgress * 0.85;
-          panelMeshAI.position.y = -1.05 + Math.cos(time * 1.3) * 0.05;
-          panelMeshAI.position.z = 0.7 + currentScrollProgress * 0.65;
-          panelMeshAI.scale.setScalar(0.72 + currentScrollProgress * 0.28);
-
-          // Panel 3: Client Portal
-          panelMeshPortal.position.x = 0.3 + currentScrollProgress * 0.35;
-          panelMeshPortal.position.y = -1.45 - currentScrollProgress * 0.45;
-          panelMeshPortal.position.z = -0.6 + currentScrollProgress * 0.55;
-          panelMeshPortal.scale.setScalar(0.68 + currentScrollProgress * 0.25);
-
-          // Studio specular highlights follow cursor & scroll smoothly
-          keyLight.position.x = 5.0 + currentX * 2.5;
-          cyanRim.position.y = -3.0 + currentY * 2.0;
+          // Studio specular highlights follow cursor
+          keyLight.position.x = 5.0 + currentX * 2.2;
+          purpleRim.position.y = -3.0 + currentY * 2.0;
           specularSpot.position.x = 1.5 - currentX * 1.8;
 
           renderer.render(scene, camera);
@@ -858,19 +549,19 @@
 
           aspect = containerWidth / containerHeight;
           camera.aspect = aspect;
-          camera.position.z = isMobile ? 11.0 : 8.4;
-          camera.position.x = isMobile ? 0 : 0.4;
-          camera.position.y = isMobile ? 0.4 : 0;
+          camera.position.z = isMobile ? 10.8 : 8.2;
+          camera.position.x = isMobile ? 0 : 0.35;
+          camera.position.y = isMobile ? 0.35 : 0;
           camera.updateProjectionMatrix();
 
-          rootGroup.position.x = isMobile ? 0 : 1.35;
-          rootGroup.position.y = isMobile ? 1.45 : 0.15;
+          rootGroup.position.x = isMobile ? 0 : 1.30;
+          rootGroup.position.y = isMobile ? 1.35 : 0.10;
 
           renderer.setSize(containerWidth, containerHeight);
         };
         window.addEventListener('resize', onResize, { passive: true });
 
-        // IntersectionObserver for 0% CPU/GPU overhead when offscreen (Phase E)
+        // IntersectionObserver for 0% CPU/GPU overhead when offscreen
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -889,23 +580,22 @@
               }
             });
           },
-          { rootMargin: '100px 0px 100px 0px', threshold: 0 }
+          { threshold: 0.05 }
         );
         observer.observe(container);
 
-        // Mark container as loaded to reveal canvas smoothly
+        // Signal first frame rendered & reveal canvas
         container.classList.add('loaded');
-        isRunning = true;
-        animate();
       } catch (err) {
-        console.warn('Three.js initialization gracefully deferred to fallback vector asset:', err);
+        console.warn('Three.js 3D hero gracefully defaulted to accessible fallback:', err);
       }
     };
 
+    // Lazy load after window idle or immediate if DOM already interactive
     if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => loadEngine(), { timeout: 1500 });
+      (window as any).requestIdleCallback(() => loadEngine(), { timeout: 1500 });
     } else {
-      setTimeout(loadEngine, 100);
+      setTimeout(loadEngine, 200);
     }
   }
 

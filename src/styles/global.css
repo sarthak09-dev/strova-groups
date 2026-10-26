@@ -1,57 +1,57 @@
 /*
- * Strova Group — Editorial Design System
- * Aesthetic: Restrained, authoritative, agency-grade (Microsoft clarity, Tesla restraint)
+ * Strova Group — Cinematic Editorial Design System
+ * Aesthetic: Modern 3D Luxury, Black-and-White Foundation, Restrained Purple Accents
  * Typography: Newsreader Variable (editorial serif headlines), Plus Jakarta Sans Variable (clean UI & body)
- * Palette: Light-first Deep Ink (#0F172A), Slate (#475569), Clean White (#FFFFFF), Cobalt Accent (#1D4ED8)
+ * Palette: Deep Pitch Black (#050507), Crisp White (#FFFFFF), Muted Silver (#A1A1AA), Electric Violet (#A855F7)
  */
 
 /* -------------------------------------------------- */
-/* 1. Custom properties — Editorial Light-First Default */
+/* 1. Custom properties — Cinematic Dark Foundation   */
 /* -------------------------------------------------- */
 :root {
-  /* Permanent light color scheme for OS, browser UI, scrollbars, and native form elements */
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* Brand palette */
-  --color-ink:         #0F172A;
-  --color-slate-900:   #0F172A;
-  --color-slate-800:   #1E293B;
-  --color-slate-700:   #334155;
-  --color-slate-600:   #475569;
-  --color-slate-500:   #64748B;
-  --color-slate-400:   #94A3B8;
-  --color-slate-200:   #E2E8F0;
-  --color-slate-100:   #F1F5F9;
-  --color-slate-50:    #F8FAFC;
+  /* Brand monochrome palette */
+  --color-black:       #000000;
+  --color-ink:         #FFFFFF;
+  --color-slate-900:   #050507;
+  --color-slate-800:   #0D0D14;
+  --color-slate-700:   #181822;
+  --color-slate-600:   #272736;
+  --color-slate-500:   #525266;
+  --color-slate-400:   #71717A;
+  --color-slate-200:   #A1A1AA;
+  --color-slate-100:   #D4D4D8;
+  --color-slate-50:    #F4F4F5;
   --color-white:       #FFFFFF;
 
-  /* Accent — Cobalt */
-  --color-cobalt:      #1D4ED8;
-  --color-cobalt-dark: #1E40AF;
-  --color-cobalt-light:#3B82F6;
-  --color-cobalt-tint: rgba(29, 78, 216, 0.08);
+  /* Accent — Restrained Electric Purple / Violet */
+  --color-purple:      #A855F7;
+  --color-purple-dark: #7E22CE;
+  --color-purple-light:#C084FC;
+  --color-purple-tint: rgba(168, 85, 247, 0.12);
 
-  /* Semantic tokens — Predictable Light-First Default (Tesla & Microsoft clarity) */
-  --bg-page:           #FFFFFF;
-  --bg-surface:        #F8FAFC;
-  --bg-elevated:       #FFFFFF;
-  --bg-card:           #FFFFFF;
-  --bg-card-hover:     #FFFFFF;
-  --bg-glass:          rgba(255, 255, 255, 0.94);
+  /* Semantic tokens — Black-and-White Foundation */
+  --bg-page:           #050507;
+  --bg-surface:        #0C0C12;
+  --bg-elevated:       #12121B;
+  --bg-card:           rgba(15, 15, 24, 0.65);
+  --bg-card-hover:     rgba(22, 22, 34, 0.85);
+  --bg-glass:          rgba(5, 5, 7, 0.88);
 
-  --text-primary:      #0F172A;
-  --text-secondary:    #334155;
-  --text-muted:        #64748B;
+  --text-primary:      #FFFFFF;
+  --text-secondary:    #A1A1AA;
+  --text-muted:        #71717A;
 
-  --border-color:      #E2E8F0;
-  --border-subtle:     #F1F5F9;
-  --border-focus:      #1D4ED8;
+  --border-color:      rgba(255, 255, 255, 0.10);
+  --border-subtle:     rgba(255, 255, 255, 0.05);
+  --border-focus:      #A855F7;
 
-  --accent:            #1D4ED8;
-  --accent-hover:      #1E40AF;
-  --accent-subtle:     rgba(29, 78, 216, 0.08);
+  --accent:            #A855F7;
+  --accent-hover:      #C084FC;
+  --accent-subtle:     rgba(168, 85, 247, 0.12);
 
-  --focus-ring:        0 0 0 3px rgba(29, 78, 216, 0.35);
+  --focus-ring:        0 0 0 3px rgba(168, 85, 247, 0.35);
 
   /* Typography scale */
   --font-heading:      'Newsreader Variable', 'Newsreader', Georgia, serif;
@@ -96,10 +96,10 @@
   --duration-fast:   150ms;
   --duration-normal: 250ms;
 
-  /* Restrained Shadows */
-  --shadow-sm:   0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md:   0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg:   0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  /* Cinematic Shadows with Restrained Ambient Glow */
+  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-md:   0 4px 16px -2px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(168, 85, 247, 0.15);
+  --shadow-lg:   0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(168, 85, 247, 0.22);
 }
 
 /* -------------------------------------------------- */
@@ -117,7 +117,7 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -207,7 +207,7 @@ ul, ol {
   left: var(--gutter);
   z-index: 9999;
   padding: var(--space-2) var(--space-4);
-  background: var(--color-ink);
+  background: var(--accent);
   color: #FFFFFF;
   font-family: var(--font-body);
   font-weight: 600;
@@ -261,8 +261,8 @@ select:focus-visible {
   font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  color: var(--color-purple-light);
   margin-bottom: var(--space-3);
   display: block;
 }
@@ -294,43 +294,47 @@ select:focus-visible {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: 0.625rem 1.25rem;
+  padding: 0.6875rem 1.4rem;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 600;
   line-height: 1.4;
   text-decoration: none;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 9999px;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
   white-space: nowrap;
 }
 
 .btn--primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, #9333EA 0%, #6B21A8 100%);
   color: #FFFFFF !important;
-  border-color: var(--accent);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
 }
 
 .btn--primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+  background: linear-gradient(135deg, #A855F7 0%, #7E22CE 100%);
+  border-color: rgba(216, 180, 254, 0.6);
   color: #FFFFFF !important;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn--outline {
-  background: transparent;
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: rgba(255, 255, 255, 0.03);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .btn--outline:hover {
-  background: var(--bg-surface);
-  border-color: var(--text-secondary);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  transform: translateY(-1px);
 }
 
 .btn--whatsapp {
@@ -343,15 +347,16 @@ select:focus-visible {
   background: #166534;
   border-color: #166534;
   color: #FFFFFF !important;
+  transform: translateY(-1px);
 }
 
 .btn--sm {
-  padding: 0.375rem 0.75rem;
+  padding: 0.375rem 0.85rem;
   font-size: var(--text-xs);
 }
 
 .btn--lg {
-  padding: 0.875rem 1.75rem;
+  padding: 0.875rem 1.85rem;
   font-size: var(--text-base);
 }
 
@@ -364,13 +369,17 @@ select:focus-visible {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: var(--space-8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition: border-color var(--duration-normal) var(--ease-out),
-              box-shadow var(--duration-normal) var(--ease-out);
+              box-shadow var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
 }
 
 .card:hover {
-  border-color: var(--border-focus);
+  border-color: rgba(168, 85, 247, 0.4);
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .card--quiet {
@@ -416,23 +425,27 @@ select:focus-visible {
   font-size: var(--text-2xl);
   margin-top: var(--space-12);
   margin-bottom: var(--space-4);
+  color: #FFFFFF;
 }
 
 .prose h3 {
   font-size: var(--text-xl);
   margin-top: var(--space-8);
   margin-bottom: var(--space-3);
+  color: #FFFFFF;
 }
 
 .prose p {
   margin-bottom: var(--space-4);
   line-height: 1.7;
+  color: var(--text-secondary);
 }
 
 .prose ul, .prose ol {
   list-style: disc;
   padding-left: var(--space-6);
   margin-bottom: var(--space-4);
+  color: var(--text-secondary);
 }
 
 .prose ol {
@@ -445,10 +458,12 @@ select:focus-visible {
 
 .prose a {
   text-decoration: underline;
+  color: var(--color-purple-light);
 }
 
 .prose strong {
   font-weight: 600;
+  color: #FFFFFF;
 }
 
 /* -------------------------------------------------- */
@@ -460,7 +475,8 @@ select:focus-visible {
   left: 0;
   height: 2px;
   width: 0%;
-  background: var(--accent);
+  background: linear-gradient(90deg, #9333EA, #C084FC);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
   z-index: 99999;
   pointer-events: none;
   transition: width 0.05s linear;
@@ -485,8 +501,8 @@ body.mobile-menu-open .mobile-quote-bar {
     left: 0;
     right: 0;
     background: var(--bg-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--border-color);
     padding: var(--space-3) var(--space-4);
     z-index: 900;
@@ -512,7 +528,7 @@ body.mobile-menu-open .mobile-quote-bar {
 /* 14. Executive Live IST Status Badge & Topbar       */
 /* -------------------------------------------------- */
 .header__topbar {
-  background: var(--bg-surface);
+  background: rgba(12, 12, 18, 0.85);
   border-bottom: 1px solid var(--border-color);
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -562,15 +578,15 @@ body.mobile-menu-open .mobile-quote-bar {
 }
 
 .topbar-link:hover {
-  color: var(--accent);
+  color: var(--color-purple-light);
 }
 
 .ist-status-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 0.2rem 0.6rem;
-  background: var(--bg-surface);
+  padding: 0.2rem 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-family: var(--font-body);
@@ -588,10 +604,11 @@ body.mobile-menu-open .mobile-quote-bar {
 }
 
 .status-pulse-dot.status-open {
-  background: #16A34A;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
 }
 
 .status-pulse-dot.status-standby {
-  background: #D97706;
+  background: #F59E0B;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
 }
-
