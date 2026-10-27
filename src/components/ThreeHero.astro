@@ -21,12 +21,12 @@
   <!-- Atmospheric studio ambient backglow -->
   <div class="three-hero__glow" aria-hidden="true"></div>
 
-  <!-- Accessible Fallback SVG -->
+  <!-- Accessible Fallback Image -->
   <img
     id="three-hero-fallback"
     class="three-hero__fallback"
-    src="/images/hero-fallback.svg"
-    alt="Strova Group cinematic 3D digital sculpture visual"
+    src="/images/brand/ribbon-s-3d.png"
+    alt="Strova Group 3D purple ribbon monogram sculpture"
     width="640"
     height="640"
     loading="eager"
@@ -58,10 +58,9 @@
     border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(168, 85, 247, 0.22) 0%,
-      rgba(147, 51, 234, 0.12) 30%,
-      rgba(88, 28, 135, 0.04) 55%,
-      transparent 75%
+      rgba(139, 92, 246, 0.22) 0%,
+      rgba(167, 139, 250, 0.10) 35%,
+      transparent 70%
     );
     filter: blur(90px);
     pointer-events: none;
@@ -210,18 +209,18 @@
           envCtx.fillStyle = topLight;
           envCtx.fillRect(80, 0, 352, 80);
 
-          // Electric Purple Left Rim Softbox
+          // Electric Violet Left Rim Softbox
           const purpleGlow = envCtx.createRadialGradient(85, 128, 10, 85, 128, 120);
-          purpleGlow.addColorStop(0, 'rgba(168, 85, 247, 0.95)');
-          purpleGlow.addColorStop(0.5, 'rgba(147, 51, 234, 0.45)');
+          purpleGlow.addColorStop(0, 'rgba(139, 92, 246, 0.95)');
+          purpleGlow.addColorStop(0.5, 'rgba(167, 139, 250, 0.45)');
           purpleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
           envCtx.fillStyle = purpleGlow;
           envCtx.fillRect(0, 25, 210, 210);
 
-          // Bright Violet Right Rim Softbox
+          // Soft Lavender Right Rim Softbox
           const violetGlow = envCtx.createRadialGradient(425, 128, 10, 425, 128, 125);
-          violetGlow.addColorStop(0, 'rgba(192, 132, 252, 0.95)');
-          violetGlow.addColorStop(0.5, 'rgba(126, 34, 206, 0.45)');
+          violetGlow.addColorStop(0, 'rgba(167, 139, 250, 0.95)');
+          violetGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.45)');
           violetGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
           envCtx.fillStyle = violetGlow;
           envCtx.fillRect(300, 20, 212, 215);
@@ -248,11 +247,11 @@
         keyLight.position.set(5.0, 7.5, 5.0);
         scene.add(keyLight);
 
-        const purpleRim = new THREE.PointLight(0xa855f7, 7.5, 45);
+        const purpleRim = new THREE.PointLight(0x8b5cf6, 7.5, 45);
         purpleRim.position.set(-6.5, -3.0, 4.0);
         scene.add(purpleRim);
 
-        const violetBack = new THREE.PointLight(0x7e22ce, 7.0, 45);
+        const violetBack = new THREE.PointLight(0x8b5cf6, 6.0, 45);
         violetBack.position.set(4.5, -5.5, -5.0);
         scene.add(violetBack);
 
@@ -260,7 +259,7 @@
         specularSpot.position.set(1.5, 4.5, 4.5);
         scene.add(specularSpot);
 
-        const ambientLight = new THREE.AmbientLight(0x060610, 1.4);
+        const ambientLight = new THREE.AmbientLight(0x08090d, 1.4);
         scene.add(ambientLight);
 
         // Root Sculpture Group
@@ -279,8 +278,8 @@
         // Radiant Emissive Singularity (Pulsing Heart)
         const singularityGeo = new THREE.OctahedronGeometry(0.42, 2);
         const singularityMat = new THREE.MeshStandardMaterial({
-          color: 0xa855f7,
-          emissive: 0xc084fc,
+          color: 0x8b5cf6,
+          emissive: 0xa78bfa,
           emissiveIntensity: 3.6,
           roughness: 0.05,
           metalness: 0.95,
@@ -293,15 +292,15 @@
         // Transmissive Optical Amethyst Crystal Gem
         const crystalGeo = new THREE.IcosahedronGeometry(0.88, 0);
         const crystalMat = new THREE.MeshPhysicalMaterial({
-          color: 0x140b24,
-          emissive: 0x7e22ce,
+          color: 0x08090d,
+          emissive: 0x8b5cf6,
           emissiveIntensity: 0.8,
           roughness: 0.04,
           metalness: 0.10,
           transmission: 0.90,
           thickness: 2.2,
           ior: 1.62,
-          attenuationColor: new THREE.Color(0xa855f7),
+          attenuationColor: new THREE.Color(0x8b5cf6),
           attenuationDistance: 0.85,
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
@@ -316,7 +315,7 @@
 
         // Micro-offset wireframe cage for mathematical precision aesthetic
         const facetWireMat = new THREE.MeshBasicMaterial({
-          color: 0xd8b4fe,
+          color: 0xa78bfa,
           wireframe: true,
           transparent: true,
           opacity: 0.35,
@@ -472,8 +471,8 @@
 
         const satelliteGeo = new THREE.SphereGeometry(0.08, 20, 20);
         const satelliteMat = new THREE.MeshPhysicalMaterial({
-          color: 0xa855f7,
-          emissive: 0x9333ea,
+          color: 0x8b5cf6,
+          emissive: 0x8b5cf6,
           emissiveIntensity: 1.6,
           metalness: 0.95,
           roughness: 0.05,
@@ -491,8 +490,8 @@
         // Outer Ethereal Horizon Halo Ring
         const haloGeo = new THREE.TorusGeometry(3.35, 0.012, 16, 140);
         const haloMat = new THREE.MeshPhysicalMaterial({
-          color: 0xc084fc,
-          emissive: 0xa855f7,
+          color: 0xa78bfa,
+          emissive: 0x8b5cf6,
           emissiveIntensity: 1.8,
           roughness: 0.08,
           transparent: true,
@@ -513,10 +512,9 @@
 
         const colorPalette = [
           new THREE.Color(0xffffff), // Pure diamond white
-          new THREE.Color(0xe9d5ff), // Lilac
-          new THREE.Color(0xc084fc), // Electric violet
-          new THREE.Color(0xa855f7), // Vivid purple
-          new THREE.Color(0x7e22ce), // Deep cosmic purple
+          new THREE.Color(0xa1a1aa), // Cool gray
+          new THREE.Color(0xa78bfa), // Soft lavender
+          new THREE.Color(0x8b5cf6), // Electric violet
         ];
 
         for (let i = 0; i < particleCount; i++) {
@@ -567,9 +565,9 @@
         if (partCtx) {
           const grad = partCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
           grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-          grad.addColorStop(0.2, 'rgba(233, 213, 255, 0.9)');
-          grad.addColorStop(0.5, 'rgba(192, 132, 252, 0.45)');
-          grad.addColorStop(0.8, 'rgba(168, 85, 247, 0.15)');
+          grad.addColorStop(0.2, 'rgba(167, 139, 250, 0.9)');
+          grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.45)');
+          grad.addColorStop(0.8, 'rgba(139, 92, 246, 0.15)');
           grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
           partCtx.fillStyle = grad;
           partCtx.fillRect(0, 0, 64, 64);
@@ -598,11 +596,8 @@
         const cloudColors = new Float32Array(cloudCount * 3);
 
         const cloudPuffColors = [
-          new THREE.Color(0xa855f7), // Vivid purple
-          new THREE.Color(0xc084fc), // Electric violet
-          new THREE.Color(0x9333ea), // Medium purple
-          new THREE.Color(0x7e22ce), // Deep cosmic purple
-          new THREE.Color(0x581c87), // Dark nebula indigo
+          new THREE.Color(0x8b5cf6), // Electric violet
+          new THREE.Color(0xa78bfa), // Soft lavender
         ];
 
         // Soft radial Gaussian cloud puff texture
@@ -613,9 +608,9 @@
         if (cloudCtx) {
           const g = cloudCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
           g.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-          g.addColorStop(0.25, 'rgba(216, 180, 254, 0.6)');
-          g.addColorStop(0.55, 'rgba(168, 85, 247, 0.25)');
-          g.addColorStop(0.82, 'rgba(126, 34, 206, 0.08)');
+          g.addColorStop(0.25, 'rgba(167, 139, 250, 0.6)');
+          g.addColorStop(0.55, 'rgba(139, 92, 246, 0.25)');
+          g.addColorStop(0.82, 'rgba(139, 92, 246, 0.08)');
           g.addColorStop(1, 'rgba(0, 0, 0, 0)');
           cloudCtx.fillStyle = g;
           cloudCtx.fillRect(0, 0, 128, 128);

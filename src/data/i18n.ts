@@ -59,7 +59,7 @@ export interface I18nContent {
 export const translations: Record<Locale, I18nContent> = {
   en: {
     brand: 'Strova Group',
-    tagline: 'Technology, digital services, and practical automation for growing enterprises.',
+    tagline: 'IDEAS / TECHNOLOGY / GROWTH',
     topbar: {
       country: 'India',
       msme: 'MSME: UDYAM-JH-20-0147452',
@@ -101,7 +101,7 @@ export const translations: Record<Locale, I18nContent> = {
   },
   hi: {
     brand: 'स्ट्रोवा ग्रुप',
-    tagline: 'व्यवसाय के लिए आधुनिक सॉफ़्टवेयर, वेब प्लेटफ़ॉर्म और व्यावहारिक ऑटोमेशन।',
+    tagline: 'विचार / प्रौद्योगिकी / प्रगति &bull; IDEAS / TECHNOLOGY / GROWTH',
     topbar: {
       country: 'भारत',
       msme: 'एमएसएमई: UDYAM-JH-20-0147452',

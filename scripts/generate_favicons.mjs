@@ -11,6 +11,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 const ROOT_DIR = process.cwd();
+const BRAND_ICON_PNG = path.join(ROOT_DIR, 'public/images/brand/app-icon.png');
 const SOURCE_SVG = path.join(ROOT_DIR, 'public/favicon.svg');
 const SOURCE_LOGO_SVG = path.join(ROOT_DIR, 'public/images/logo.svg');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
@@ -21,18 +22,19 @@ async function generate() {
     throw new Error(`Source favicon SVG not found at ${SOURCE_SVG}`);
   }
 
-  const svgBuffer = fs.readFileSync(SOURCE_SVG);
-  const logoBuffer = fs.existsSync(SOURCE_LOGO_SVG) ? fs.readFileSync(SOURCE_LOGO_SVG) : svgBuffer;
+  const iconSource = fs.existsSync(BRAND_ICON_PNG) ? BRAND_ICON_PNG : SOURCE_SVG;
+  const iconBuffer = fs.readFileSync(iconSource);
+  const logoBuffer = fs.existsSync(BRAND_ICON_PNG) ? iconBuffer : (fs.existsSync(SOURCE_LOGO_SVG) ? fs.readFileSync(SOURCE_LOGO_SVG) : iconBuffer);
 
   // 1. Primary Favicon PNGs (multiples of 48: 96x96, 48x48)
-  const png96 = await sharp(svgBuffer, { density: 300 }).resize(96, 96).png().toBuffer();
-  const png48 = await sharp(svgBuffer, { density: 300 }).resize(48, 48).png().toBuffer();
+  const png96 = await sharp(iconBuffer).resize(96, 96).png().toBuffer();
+  const png48 = await sharp(iconBuffer).resize(48, 48).png().toBuffer();
 
   // 2. High-res touch and manifest icons
-  const png180 = await sharp(svgBuffer, { density: 300 }).resize(180, 180).png().toBuffer();
-  const png192 = await sharp(svgBuffer, { density: 300 }).resize(192, 192).png().toBuffer();
-  const png512 = await sharp(svgBuffer, { density: 300 }).resize(512, 512).png().toBuffer();
-  const logoPng512 = await sharp(logoBuffer, { density: 300 }).resize(512, 512).png().toBuffer();
+  const png180 = await sharp(iconBuffer).resize(180, 180).png().toBuffer();
+  const png192 = await sharp(iconBuffer).resize(192, 192).png().toBuffer();
+  const png512 = await sharp(iconBuffer).resize(512, 512).png().toBuffer();
+  const logoPng512 = await sharp(logoBuffer).resize(512, 512).png().toBuffer();
 
   // Save to public/
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon.png'), png96);
@@ -46,7 +48,7 @@ async function generate() {
   // 3. Multi-resolution ICO (16x16, 32x32, 48x48)
   const icoSizes = [16, 32, 48];
   const icoBuffers = await Promise.all(
-    icoSizes.map((s) => sharp(svgBuffer, { density: 300 }).resize(s, s).png().toBuffer())
+    icoSizes.map((s) => sharp(iconBuffer).resize(s, s).png().toBuffer())
   );
 
   const count = icoSizes.length;

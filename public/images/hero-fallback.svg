@@ -2,10 +2,10 @@
   <defs>
     <!-- Background purple nebula glow -->
     <radialGradient id="ambientGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#C084FC" stop-opacity="0.32" />
-      <stop offset="30%" stop-color="#A855F7" stop-opacity="0.18" />
-      <stop offset="65%" stop-color="#7E22CE" stop-opacity="0.05" />
-      <stop offset="100%" stop-color="#050507" stop-opacity="0" />
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.32" />
+      <stop offset="30%" stop-color="#8B5CF6" stop-opacity="0.18" />
+      <stop offset="65%" stop-color="#8B5CF6" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#08090D" stop-opacity="0" />
     </radialGradient>
 
     <!-- Liquid Mirror Chrome Gradient -->
@@ -19,33 +19,33 @@
 
     <!-- Electric Violet Kinetic Ring -->
     <linearGradient id="violetRing" x1="160" y1="140" x2="480" y2="500" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#C084FC" />
-      <stop offset="50%" stop-color="#9333EA" />
-      <stop offset="100%" stop-color="#3B0764" />
+      <stop offset="0%" stop-color="#A78BFA" />
+      <stop offset="50%" stop-color="#8B5CF6" />
+      <stop offset="100%" stop-color="#08090D" />
     </linearGradient>
 
     <!-- Horizon Halo Gradient -->
     <linearGradient id="haloGrad" x1="80" y1="320" x2="560" y2="320" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#C084FC" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#E9D5FF" stop-opacity="0.2" />
-      <stop offset="100%" stop-color="#A855F7" stop-opacity="0.8" />
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.8" />
     </linearGradient>
 
     <!-- Central Crystal Facet Gradients -->
     <linearGradient id="crystalFacet1" x1="260" y1="240" x2="380" y2="400" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#C084FC" stop-opacity="0.85" />
-      <stop offset="100%" stop-color="#1E0B36" stop-opacity="0.95" />
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#08090D" stop-opacity="0.95" />
     </linearGradient>
 
     <linearGradient id="crystalFacet2" x1="280" y1="220" x2="360" y2="420" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#E9D5FF" stop-opacity="0.7" />
-      <stop offset="100%" stop-color="#0F051D" stop-opacity="0.9" />
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#08090D" stop-opacity="0.9" />
     </linearGradient>
 
     <linearGradient id="singularityCore" x1="290" y1="290" x2="350" y2="350" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="40%" stop-color="#C084FC" />
-      <stop offset="100%" stop-color="#9333EA" />
+      <stop offset="40%" stop-color="#A78BFA" />
+      <stop offset="100%" stop-color="#8B5CF6" />
     </linearGradient>
 
     <filter id="coreGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -68,11 +68,11 @@
   <ellipse cx="320" cy="320" rx="195" ry="195" stroke="url(#chromeRing)" stroke-width="4" transform="rotate(-40 320 320)" />
 
   <!-- Satellites on Chronometer Ring -->
-  <circle cx="182" cy="182" r="8" fill="#C084FC" filter="url(#coreGlow)" />
+  <circle cx="182" cy="182" r="8" fill="#A78BFA" filter="url(#coreGlow)" />
   <circle cx="182" cy="182" r="3" fill="#FFFFFF" />
-  <circle cx="458" cy="458" r="7" fill="#A855F7" />
+  <circle cx="458" cy="458" r="7" fill="#8B5CF6" />
   <circle cx="458" cy="458" r="2.5" fill="#FFFFFF" />
-  <circle cx="458" cy="182" r="6" fill="#E9D5FF" />
+  <circle cx="458" cy="182" r="6" fill="#A78BFA" />
 
   <!-- Inner Gimbal Ring (Polished titanium) -->
   <ellipse cx="320" cy="320" rx="150" ry="150" stroke="#71717A" stroke-width="2.5" stroke-dasharray="1 3" transform="rotate(65 320 320)" />
@@ -80,17 +80,17 @@
 
   <!-- Micro constellation star points -->
   <circle cx="160" cy="220" r="1.5" fill="#FFFFFF" opacity="0.8" />
-  <circle cx="210" cy="140" r="2" fill="#C084FC" opacity="0.9" />
+  <circle cx="210" cy="140" r="2" fill="#A78BFA" opacity="0.9" />
   <circle cx="480" cy="190" r="1.5" fill="#FFFFFF" opacity="0.7" />
-  <circle cx="510" cy="280" r="2" fill="#E9D5FF" opacity="0.85" />
+  <circle cx="510" cy="280" r="2" fill="#A78BFA" opacity="0.85" />
   <circle cx="430" cy="480" r="1.5" fill="#FFFFFF" opacity="0.6" />
-  <circle cx="150" cy="410" r="2" fill="#A855F7" opacity="0.8" />
-  <circle cx="270" cy="510" r="1.5" fill="#C084FC" opacity="0.75" />
+  <circle cx="150" cy="410" r="2" fill="#8B5CF6" opacity="0.8" />
+  <circle cx="270" cy="510" r="1.5" fill="#A78BFA" opacity="0.75" />
 
   <!-- Central Crystalline Sculpture -->
   <!-- Back facets -->
-  <polygon points="320,220 395,270 320,320 245,270" fill="#1E0B36" opacity="0.9" />
-  <polygon points="320,420 395,370 320,320 245,370" fill="#0F051D" opacity="0.9" />
+  <polygon points="320,220 395,270 320,320 245,270" fill="#08090D" opacity="0.9" />
+  <polygon points="320,420 395,370 320,320 245,370" fill="#08090D" opacity="0.9" />
 
   <!-- Side facets -->
   <polygon points="320,220 395,270 415,320 320,320" fill="url(#crystalFacet1)" />
@@ -99,13 +99,13 @@
   <polygon points="320,420 245,370 225,320 320,320" fill="url(#crystalFacet1)" />
 
   <!-- Geometric wireframe lines -->
-  <line x1="320" y1="220" x2="320" y2="420" stroke="#D8B4FE" stroke-width="1" stroke-opacity="0.6" />
-  <line x1="225" y1="320" x2="415" y2="320" stroke="#D8B4FE" stroke-width="1" stroke-opacity="0.6" />
-  <line x1="245" y1="270" x2="395" y2="370" stroke="#D8B4FE" stroke-width="0.75" stroke-opacity="0.4" />
-  <line x1="245" y1="370" x2="395" y2="270" stroke="#D8B4FE" stroke-width="0.75" stroke-opacity="0.4" />
+  <line x1="320" y1="220" x2="320" y2="420" stroke="#A78BFA" stroke-width="1" stroke-opacity="0.6" />
+  <line x1="225" y1="320" x2="415" y2="320" stroke="#A78BFA" stroke-width="1" stroke-opacity="0.6" />
+  <line x1="245" y1="270" x2="395" y2="370" stroke="#A78BFA" stroke-width="0.75" stroke-opacity="0.4" />
+  <line x1="245" y1="370" x2="395" y2="270" stroke="#A78BFA" stroke-width="0.75" stroke-opacity="0.4" />
 
   <!-- Radiant Core Singularity -->
   <circle cx="320" cy="320" r="32" fill="url(#singularityCore)" filter="url(#coreGlow)" />
   <polygon points="320,296 344,320 320,344 296,320" fill="#FFFFFF" />
-  <polygon points="320,305 335,320 320,335 305,320" fill="#E9D5FF" />
+  <polygon points="320,305 335,320 320,335 305,320" fill="#A78BFA" />
 </svg>

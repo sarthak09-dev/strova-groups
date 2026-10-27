@@ -1,8 +1,8 @@
 /*
  * Strova Group — Cinematic Editorial Design System
- * Aesthetic: Modern 3D Luxury, Black-and-White Foundation, Restrained Purple Accents
+ * Aesthetic: Modern 3D Luxury, Black-and-White Foundation, Official Purple Accents
  * Typography: Newsreader Variable (editorial serif headlines), Plus Jakarta Sans Variable (clean UI & body)
- * Palette: Deep Pitch Black (#050507), Crisp White (#FFFFFF), Muted Silver (#A1A1AA), Electric Violet (#A855F7)
+ * Palette: Canvas (#08090D), Crisp White (#FFFFFF), Accent Violet (#8B5CF6 / #A78BFA)
  */
 
 /* -------------------------------------------------- */
@@ -14,10 +14,10 @@
   /* Brand monochrome palette */
   --color-black:       #000000;
   --color-ink:         #FFFFFF;
-  --color-slate-900:   #050507;
-  --color-slate-800:   #0D0D14;
-  --color-slate-700:   #181822;
-  --color-slate-600:   #272736;
+  --color-slate-900:   #08090D;
+  --color-slate-800:   #101018;
+  --color-slate-700:   #181824;
+  --color-slate-600:   #272738;
   --color-slate-500:   #525266;
   --color-slate-400:   #71717A;
   --color-slate-200:   #A1A1AA;
@@ -25,33 +25,35 @@
   --color-slate-50:    #F4F4F5;
   --color-white:       #FFFFFF;
 
-  /* Accent — Restrained Electric Purple / Violet */
-  --color-purple:      #A855F7;
-  --color-purple-dark: #7E22CE;
-  --color-purple-light:#C084FC;
-  --color-purple-tint: rgba(168, 85, 247, 0.12);
+  /* Accent — User Specified Palette (Electric Violet #8B5CF6, Soft Lavender #A78BFA) */
+  --color-violet:      #8B5CF6;
+  --color-lavender:    #A78BFA;
+  --color-purple:      #8B5CF6;
+  --color-purple-dark: #8B5CF6;
+  --color-purple-light:#A78BFA;
+  --color-purple-tint: rgba(139, 92, 246, 0.12);
 
-  /* Semantic tokens — Black-and-White Foundation */
-  --bg-page:           #050507;
-  --bg-surface:        #0C0C12;
-  --bg-elevated:       #12121B;
-  --bg-card:           rgba(15, 15, 24, 0.65);
-  --bg-card-hover:     rgba(22, 22, 34, 0.85);
-  --bg-glass:          rgba(5, 5, 7, 0.88);
+  /* Semantic tokens — Obsidian Black #08090D, Electric Violet #8B5CF6, Pure White #FFFFFF, Cool Gray #A1A1AA */
+  --bg-page:           #08090D;
+  --bg-surface:        #101018;
+  --bg-elevated:       #161622;
+  --bg-card:           rgba(16, 16, 26, 0.65);
+  --bg-card-hover:     rgba(24, 24, 38, 0.85);
+  --bg-glass:          rgba(8, 9, 13, 0.88);
 
   --text-primary:      #FFFFFF;
   --text-secondary:    #A1A1AA;
   --text-muted:        #71717A;
 
-  --border-color:      rgba(255, 255, 255, 0.10);
+  --border-color:      rgba(255, 255, 255, 0.08);
   --border-subtle:     rgba(255, 255, 255, 0.05);
-  --border-focus:      #A855F7;
+  --border-focus:      #8B5CF6;
 
-  --accent:            #A855F7;
-  --accent-hover:      #C084FC;
-  --accent-subtle:     rgba(168, 85, 247, 0.12);
+  --accent:            #8B5CF6;
+  --accent-hover:      #A78BFA;
+  --accent-subtle:     rgba(139, 92, 246, 0.12);
 
-  --focus-ring:        0 0 0 3px rgba(168, 85, 247, 0.35);
+  --focus-ring:        0 0 0 3px rgba(139, 92, 246, 0.35);
 
   /* Typography scale */
   --font-heading:      'Newsreader Variable', 'Newsreader', Georgia, serif;
@@ -98,8 +100,8 @@
 
   /* Cinematic Shadows with Restrained Ambient Glow */
   --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.6);
-  --shadow-md:   0 4px 16px -2px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(168, 85, 247, 0.15);
-  --shadow-lg:   0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(168, 85, 247, 0.22);
+  --shadow-md:   0 4px 16px -2px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(139, 92, 246, 0.15);
+  --shadow-lg:   0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(139, 92, 246, 0.22);
 }
 
 /* -------------------------------------------------- */
@@ -308,17 +310,17 @@ select:focus-visible {
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, #9333EA 0%, #6B21A8 100%);
+  background: #8B5CF6;
   color: #FFFFFF !important;
-  border: 1px solid rgba(192, 132, 252, 0.4);
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
 
 .btn--primary:hover {
-  background: linear-gradient(135deg, #A855F7 0%, #7E22CE 100%);
-  border-color: rgba(216, 180, 254, 0.6);
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  border-color: rgba(167, 139, 250, 0.6);
   color: #FFFFFF !important;
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
   transform: translateY(-1px);
 }
 
@@ -377,7 +379,7 @@ select:focus-visible {
 }
 
 .card:hover {
-  border-color: rgba(168, 85, 247, 0.4);
+  border-color: rgba(139, 92, 246, 0.4);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -475,8 +477,8 @@ select:focus-visible {
   left: 0;
   height: 2px;
   width: 0%;
-  background: linear-gradient(90deg, #9333EA, #C084FC);
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
+  background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
   z-index: 99999;
   pointer-events: none;
   transition: width 0.05s linear;
@@ -611,4 +613,263 @@ body.mobile-menu-open .mobile-quote-bar {
 .status-pulse-dot.status-standby {
   background: #F59E0B;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+/* -------------------------------------------------- */
+/* 15. Cinematic Scroll-Triggered Reveal System       */
+/* -------------------------------------------------- */
+
+/*
+ * Inspired by Digital Heroes' scroll-reveal pattern:
+ * Default state: visible (no JS / blocked script fallback).
+ * The inline <script> at the top of index.astro adds .js-reveal
+ * to <html>, which hides elements. IntersectionObserver then
+ * adds .in to reveal them with a smooth entrance.
+ */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-reveal .reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered reveal delays for grouped content */
+.js-reveal .reveal.rd-1 { transition-delay: 0.08s; }
+.js-reveal .reveal.rd-2 { transition-delay: 0.16s; }
+.js-reveal .reveal.rd-3 { transition-delay: 0.24s; }
+.js-reveal .reveal.rd-4 { transition-delay: 0.32s; }
+.js-reveal .reveal.rd-5 { transition-delay: 0.40s; }
+.js-reveal .reveal.rd-6 { transition-delay: 0.48s; }
+
+/* Scale-up variant */
+.js-reveal .reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-reveal .reveal-scale.in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide-from-left / right variants */
+.js-reveal .reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-reveal .reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-reveal .reveal-left.in,
+.js-reveal .reveal-right.in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Ensure reveals work even without JS (visible by default) */
+.reveal, .reveal-scale, .reveal-left, .reveal-right {
+  /* no-op: visible by default, .js-reveal overrides above */
+}
+
+/* Respect reduced-motion: instant appearance */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .reveal,
+  .js-reveal .reveal-scale,
+  .js-reveal .reveal-left,
+  .js-reveal .reveal-right {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 16. Hero Entrance Animations                       */
+/* -------------------------------------------------- */
+@keyframes heroTitleReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes heroFlankSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroEyebrowFade {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.js-reveal .hero__eyebrow {
+  animation: heroEyebrowFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.js-reveal .hero__status-badge {
+  animation: heroEyebrowFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.js-reveal .hero__title-left {
+  animation: heroTitleReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.js-reveal .hero__title-right {
+  animation: heroTitleReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.50s both;
+}
+
+.js-reveal .hero__flank-card--left {
+  animation: heroFlankSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+}
+
+.js-reveal .hero__flank-card--right {
+  animation: heroFlankSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+
+.js-reveal .hero__scroll-wrap {
+  animation: heroFlankSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.0s both;
+}
+
+/* Disable hero entrance on reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .hero__eyebrow,
+  .js-reveal .hero__status-badge,
+  .js-reveal .hero__title-left,
+  .js-reveal .hero__title-right,
+  .js-reveal .hero__flank-card--left,
+  .js-reveal .hero__flank-card--right,
+  .js-reveal .hero__scroll-wrap {
+    animation: none;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 17. Film Grain Texture Overlay (Digital Heroes)    */
+/* -------------------------------------------------- */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 18. Animated Counter for Stat Numbers              */
+/* -------------------------------------------------- */
+.stat-number[data-count] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------- */
+/* 19. Enhanced FAQ Smooth Transitions                */
+/* -------------------------------------------------- */
+.faq-answer {
+  overflow: hidden;
+}
+
+.faq-item:not([open]) .faq-answer {
+  max-height: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+/* -------------------------------------------------- */
+/* 20. Enhanced Service Card Hover (Interactive)      */
+/* -------------------------------------------------- */
+.service {
+  position: relative;
+  overflow: hidden;
+}
+
+.service::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(139, 92, 246, 0.12) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.service:hover::before {
+  opacity: 1;
+}
+
+.service > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------- */
+/* 21. Smooth Scrollbar Styling (cinematic)           */
+/* -------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.35);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.55);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.35) var(--bg-page);
 }
