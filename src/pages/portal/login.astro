@@ -49,12 +49,6 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
             />
           </div>
 
-          <!-- Cloudflare Turnstile Live Widget Slot -->
-          <div class="turnstile-box">
-            <div id="turnstile-widget" data-sitekey={TURNSTILE_SITE_KEY}></div>
-            <p id="turnstile-status" class="turnstile-hint">Verifying browser authenticity...</p>
-          </div>
-
           <div id="request-error-msg" class="alert-error" style="display: none;"></div>
 
           <button type="submit" id="request-code-btn" class="btn btn-primary btn-block">
@@ -115,6 +109,30 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           </div>
         </form>
       </div>
+
+      <div class="turnstile-box">
+        <div id="turnstile-widget" data-sitekey={TURNSTILE_SITE_KEY}></div>
+        <p id="turnstile-status" class="turnstile-hint">Verifying browser authenticity...</p>
+      </div>
+
+      <section class="access-request" aria-labelledby="access-request-heading">
+        <p class="access-prompt">Not a client yet?</p>
+        <button class="btn btn-secondary btn-block" type="button" id="toggle-access-request" aria-expanded="false" aria-controls="access-request-panel">Request client access</button>
+        <div id="access-request-panel" class="access-panel" hidden>
+          <h2 id="access-request-heading">Request workspace access</h2>
+          <p class="access-explainer">Share a few details about your business and what you need. Requests are reviewed by our team; submitting this form does not create an account or grant access.</p>
+          <form id="access-request-form" class="auth-form">
+            <div class="form-group"><label for="applicant-name" class="form-label">Full name</label><input class="form-input" id="applicant-name" name="fullName" autocomplete="name" maxlength="120" required /></div>
+            <div class="form-group"><label for="applicant-email" class="form-label">Business email</label><input class="form-input" id="applicant-email" name="email" type="email" autocomplete="email" maxlength="254" required /></div>
+            <div class="form-group"><label for="applicant-company" class="form-label">Company <span>(optional)</span></label><input class="form-input" id="applicant-company" name="companyName" autocomplete="organization" maxlength="160" /></div>
+            <div class="form-group"><label for="applicant-context" class="form-label">What would you use the client workspace for?</label><textarea class="form-input" id="applicant-context" name="requestContext" rows="4" minlength="10" maxlength="1500" required></textarea></div>
+            <div class="form-group consent-row"><input id="privacy-accepted" name="privacyAccepted" type="checkbox" required /><label for="privacy-accepted">I have read the <a href="https://www.strovagroups.in/privacy/" target="_blank" rel="noopener noreferrer">Privacy Notice</a> and agree to Strova Group using these details to review my request.</label></div>
+            <div class="honeypot" aria-hidden="true"><label for="applicant-website">Leave this field empty</label><input id="applicant-website" name="website" tabindex="-1" autocomplete="off" /></div>
+            <p id="access-request-status" class="request-status" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary btn-block" id="submit-access-request" type="submit">Send access request</button>
+          </form>
+        </div>
+      </section>
     </div>
 
     <!-- Legal & Compliance Links -->
@@ -332,12 +350,26 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
       text-decoration: none;
       cursor: not-allowed;
     }
+    .access-request { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border); text-align: center; }
+    .access-prompt { margin-bottom: .65rem; font-size: .875rem; color: var(--color-text-muted); }
+    .access-panel { margin-top: 1.5rem; text-align: left; }
+    .access-panel h2 { font: 600 1.35rem/1.2 var(--font-serif); margin-bottom: .5rem; }
+    .access-explainer { color: var(--color-text-muted); font-size: .82rem; line-height: 1.55; margin-bottom: 1rem; }
+    .access-panel textarea { resize: vertical; min-height: 6rem; }
+    .consent-row { display: grid; grid-template-columns: 1.1rem 1fr; gap: .6rem; align-items: start; font-size: .78rem; line-height: 1.5; }
+    .consent-row input { width: 1rem; height: 1rem; accent-color: var(--color-primary); margin-top: .15rem; }
+    .request-status { font-size: .83rem; line-height: 1.5; color: var(--color-text-main); }
+    .request-status[data-state="error"] { color: var(--color-primary); }
+    .request-status[data-state="success"] { padding: .75rem; background: var(--color-bg); border-radius: 4px; }
+    .honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    @media (max-width: 480px) { .login-card { padding: 1.5rem 1.15rem; } .otp-cell { width: min(13vw, 48px); } }
   </style>
 
   <script>
     import { supabase, isSupabaseConfigured, signInWithOtp, verifyOtp, getSession } from '../../lib/portal/supabaseClient';
 
     let turnstileToken = '';
+    let turnstileWidgetId: string | number | null = null;
 
     // Check if user already has an active authenticated session
     async function checkExistingSession() {
@@ -363,9 +395,10 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
         }
 
         try {
-          win.turnstile.render(widget, {
+          turnstileWidgetId = win.turnstile.render(widget, {
             sitekey: siteKey,
             theme: 'light',
+            action: 'client_access_request',
             callback: (token: string) => {
               turnstileToken = token;
               if (status) status.textContent = '✓ Bot challenge verified';
@@ -395,6 +428,56 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
     const requestError = document.getElementById('request-error-msg');
     const verifyError = document.getElementById('verify-error-msg');
     const changeEmailBtn = document.getElementById('change-email-btn');
+    const accessToggle = document.getElementById('toggle-access-request') as HTMLButtonElement;
+    const accessPanel = document.getElementById('access-request-panel') as HTMLDivElement;
+    const accessForm = document.getElementById('access-request-form') as HTMLFormElement;
+    const accessStatus = document.getElementById('access-request-status');
+
+    function resetTurnstile() {
+      turnstileToken = '';
+      const win = window as any;
+      if (turnstileWidgetId !== null && win.turnstile) win.turnstile.reset(turnstileWidgetId);
+      const status = document.getElementById('turnstile-status');
+      if (status) status.textContent = 'Please complete the browser verification again.';
+    }
+
+    accessToggle?.addEventListener('click', () => {
+      const open = accessToggle.getAttribute('aria-expanded') !== 'true';
+      accessToggle.setAttribute('aria-expanded', String(open));
+      if (accessPanel) accessPanel.hidden = !open;
+      if (open) document.getElementById('applicant-name')?.focus();
+    });
+
+    accessForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!accessForm.reportValidity()) return;
+      if (!supabase || !turnstileToken) {
+        if (accessStatus) { accessStatus.textContent = !supabase ? 'The request service is not configured yet. Please contact support@strovagroups.in.' : 'Complete the browser verification before sending your request.'; accessStatus.setAttribute('data-state', 'error'); }
+        return;
+      }
+      const submitButton = document.getElementById('submit-access-request') as HTMLButtonElement;
+      const data = new FormData(accessForm);
+      const originalLabel = submitButton.textContent || 'Send access request';
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending…';
+      if (accessStatus) { accessStatus.textContent = ''; accessStatus.removeAttribute('data-state'); }
+      try {
+        const { error } = await supabase.functions.invoke('request-client-access', { body: {
+          fullName: String(data.get('fullName') || ''), email: String(data.get('email') || ''),
+          companyName: String(data.get('companyName') || ''), requestContext: String(data.get('requestContext') || ''),
+          privacyAccepted: data.get('privacyAccepted') === 'on', website: String(data.get('website') || ''), turnstileToken,
+        } });
+        if (error) throw error;
+        accessForm.reset();
+        if (accessStatus) { accessStatus.textContent = 'Your request has been received for review. This does not create a client account. If approved, we will contact you with next steps.'; accessStatus.setAttribute('data-state', 'success'); }
+      } catch {
+        if (accessStatus) { accessStatus.textContent = 'We could not submit your request just now. Please try again later or contact support@strovagroups.in.'; accessStatus.setAttribute('data-state', 'error'); }
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalLabel;
+        resetTurnstile();
+      }
+    });
 
     let activeEmail = '';
     let resendCountdown = 60;
@@ -488,6 +571,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
 
         try {
           await signInWithOtp(activeEmail, turnstileToken);
+          resetTurnstile();
 
           if (btnText) btnText.style.display = 'inline';
           if (btnSpinner) btnSpinner.style.display = 'none';
@@ -498,6 +582,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           if (otpCells[0]) otpCells[0].focus();
           startResendCountdown();
         } catch (err: any) {
+          resetTurnstile();
           if (btnText) btnText.style.display = 'inline';
           if (btnSpinner) btnSpinner.style.display = 'none';
           if (btn) btn.disabled = false;
@@ -530,6 +615,8 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
             verifyError.textContent = err?.message || 'Error resending code.';
             verifyError.style.display = 'block';
           }
+        } finally {
+          resetTurnstile();
         }
       });
     }
