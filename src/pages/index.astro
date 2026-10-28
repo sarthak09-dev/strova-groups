@@ -1,3 +1,4 @@
+
 ---
 /**
  * Home Page — Premium Editorial Redesign
@@ -19,7 +20,6 @@
  * - "Every engagement follows the same disciplined sequence."
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ThreeHero from '../components/ThreeHero.astro';
 import CredentialsStrip from '../components/CredentialsStrip.astro';
 
 const faqs = [
@@ -65,49 +65,46 @@ const faqJsonLd = {
 ---
 
 <BaseLayout
-  title="Strova Group — Technology, Commerce & Growth"
-  description="Strova Group builds websites, applications, and practical business automation that help teams work better and serve their customers."
+  title="Strova Group — Digital, Automation & Software Products"
+  description="Strova Technology brings digital services, practical business automation, and software products together within Strova Group."
   jsonLd={[faqJsonLd]}
 >
-  {/* Reveal-animation gate: adds .js-reveal so CSS hides .reveal elements before IO triggers them */}
-  <script is:inline>document.documentElement.classList.add('js-reveal');</script>
   <!-- Cinematic Hero & Manifesto Stage Wrapper -->
   <div class="cinematic-wrapper" id="cinematic-wrapper">
-    <div class="cinematic-backdrop" aria-hidden="true">
-      <ThreeHero />
-    </div>
-
-    <!-- 1. Hero Viewport Stage -->
+<!-- 1. Hero Viewport Stage -->
     <section class="hero" id="hero-stage" aria-labelledby="hero-title">
       <div class="container hero__inner">
         <!-- Top Status Flank -->
         <div class="hero__top-flank">
           <span class="hero__eyebrow">
             <span class="eyebrow-dot"></span>
-            Strova Group &bull; Creative Technology &amp; Engineering
+            Strova Group &bull; Strova Technology
           </span>
           <span class="hero__status-badge">
-            IDEAS / TECHNOLOGY / GROWTH
+            DIGITAL / AUTOMATION / PRODUCTS
           </span>
         </div>
 
-        <!-- Dramatic Framing Headline with Official Brand Sheet Headline -->
         <div class="hero__centerpiece">
+          <p class="hero__overline">Strova Group / Strova Technology</p>
           <h1 id="hero-title" class="hero__title">
-            <span class="hero__title-split hero__title-left">BUILDING TECHNOLOGY</span>
-            <span class="hero__title-split hero__title-right">FOR A BIGGER TOMORROW</span>
+            <span class="hero__title-split">Useful technology,</span>
+            <span class="hero__title-split hero__title-accent">built around your business.</span>
           </h1>
+          <p class="hero__intro">Digital services, practical automation, and software products—connected under one technology business.</p>
+        </div>
+        <div class="hero__art" aria-hidden="true">
+          <svg viewBox="0 0 520 520" role="presentation">
+            <circle class="hero__orbit hero__orbit--outer" cx="260" cy="260" r="214" />
+            <circle class="hero__orbit hero__orbit--middle" cx="260" cy="260" r="166" />
+            <path class="hero__mark" d="M325 160c0-24-19-43-43-43h-67c-29 0-52 23-52 52s23 52 52 52h90c29 0 52 23 52 52s-23 52-52 52h-67c-24 0-43-19-43-43" />
+            <circle class="hero__point" cx="356" cy="273" r="9" />
+          </svg>
+          <span>Ideas / Technology / Growth</span>
         </div>
 
         <!-- Bottom Flanking Intelligence & Action Modules -->
         <div class="hero__bottom-flank">
-          <div class="hero__flank-card hero__flank-card--left">
-            <span class="flank-card__kicker">IDEAS / TECHNOLOGY / GROWTH</span>
-            <p class="flank-card__lead">
-              We create digital solutions, products and experiences that help businesses grow, scale and lead in a changing world.
-            </p>
-          </div>
-
           <div class="hero__flank-card hero__flank-card--right">
             <div class="hero__actions">
               <a href="/contact/" class="btn btn--primary btn--lg" data-track="quote_click">
@@ -118,7 +115,7 @@ const faqJsonLd = {
               </a>
             </div>
             <p class="hero__note">
-              Direct founder review &bull; Itemised quote in 1 business day
+              Tell us what your business needs to do better.
             </p>
           </div>
         </div>
@@ -137,14 +134,14 @@ const faqJsonLd = {
 
     <!-- 2. Cinematic Scroll Manifesto & Volumetric Nebula Bloom (Reference 1 Frame 4) -->
     <section class="section manifesto-section" id="manifesto" aria-label="Our Core Purpose">
-      <div class="container manifesto__inner">
+      <div class="container manifesto__inner reveal">
         <div class="manifesto__eyebrow">
           <span class="manifesto__spark">✦</span>
-          <span>CREATIVE TECHNOLOGY AT SCALE</span>
+          <span>ONE TECHNOLOGY BUSINESS / THREE CONNECTED PILLARS</span>
         </div>
 
         <p class="manifesto__statement">
-          Strova Group is a creative technology and engineering studio at the intersection of modern software, AI automation, and digital commerce. We design digital experiences and resilient systems that captivate, scale, and transform enterprise operations.
+          Strova Group is the parent brand. Strova Technology brings together digital services, business automation, and software products as three connected pillars—not separate companies.
         </p>
 
         <!-- Interactive Pill Controls (Video 1 & 2 Luxury Pill Badges) -->
@@ -153,13 +150,13 @@ const faqJsonLd = {
             <svg class="pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <span>Bespoke Engineering</span>
+            <span>Digital</span>
           </a>
           <a href="/technologies/" class="manifesto__pill" role="listitem">
             <svg class="pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
-            <span>AI &amp; Workflows</span>
+            <span>Automation</span>
           </a>
           <a href="/digital/" class="manifesto__pill" role="listitem">
             <svg class="pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -167,27 +164,10 @@ const faqJsonLd = {
               <line x1="2" y1="12" x2="22" y2="12"></line>
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
             </svg>
-            <span>Growth &amp; SEO</span>
+            <span>Products</span>
           </a>
         </div>
 
-        <!-- Cinematic Metric Strip (+ 78 style from Reference 1) -->
-        <div class="manifesto__stats">
-          <div class="stat-card">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Source code ownership &amp; IP transfer</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat-card">
-            <span class="stat-number">1 Day</span>
-            <span class="stat-label">Written fixed-scope quote turnaround</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat-card">
-            <span class="stat-number">0 Lock-in</span>
-            <span class="stat-label">Independent cloud deployment freedom</span>
-          </div>
-        </div>
       </div>
     </section>
   </div>
@@ -198,45 +178,34 @@ const faqJsonLd = {
   <!-- Official Engineering & Product Showcase -->
   <section class="section showcase-section" id="showcase" aria-labelledby="showcase-heading">
     <div class="container">
-      <div class="section-header showcase__header">
+      <div class="section-header showcase__header reveal">
         <div class="showcase__badge">
           <span class="badge-dot"></span>
-          <span>IDEAS / TECHNOLOGY / GROWTH</span>
+          <span>STROVA GROUP / STROVA TECHNOLOGY</span>
         </div>
         <h2 id="showcase-heading" class="section-title">
-          Building Technology for a Bigger Tomorrow
+          Three connected pillars. One technology business.
         </h2>
         <p class="section-subtitle text-secondary">
-          We create digital solutions, products and experiences that help businesses grow, scale and lead in a changing world.
+          Strova Technology connects digital delivery, workflow automation, and software products within Strova Group.
         </p>
       </div>
 
-      <div class="showcase__grid">
+      <div class="showcase__grid reveal">
         <!-- Showcase Card 1: Core Platform Engineering -->
         <article class="showcase-card showcase-card--featured">
           <div class="showcase-card__visual">
-            <picture>
-              <source srcset="/images/brand/card-mockup.webp" type="image/webp" />
-              <img
-                src="/images/brand/card-mockup.png"
-                alt="Strova Group Digital Platform Card Architecture"
-                class="showcase-card__img"
-                loading="lazy"
-                decoding="async"
-                width="690"
-                height="540"
-              />
-            </picture>
+            <div class="showcase-art showcase-art--platform" aria-hidden="true"><div class="art-window"><div class="art-top"><i></i><i></i><i></i><span>STROVA / SYSTEMS</span></div><div class="art-panel"><small>OPERATIONS OVERVIEW</small><strong>One clear view.</strong><div class="art-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div><div class="art-line"></div></div></div></div>
             <div class="showcase-card__overlay"></div>
           </div>
           <div class="showcase-card__content">
             <span class="showcase-card__tag">Platform Architecture</span>
-            <h3 class="showcase-card__title">Enterprise Web &amp; Systems</h3>
+            <h3 class="showcase-card__title">Business websites &amp; platforms</h3>
             <p class="showcase-card__desc text-secondary">
-              High-availability web platforms with microsecond database querying, transactional integrity, and complete client data isolation.
+              Websites, web applications, customer portals, e-commerce solutions, and custom digital platforms shaped around business needs.
             </p>
-            <a href="/technologies/" class="showcase-card__link">
-              Explore Technologies &rarr;
+            <a href="/technologies/#pillar-digital" class="showcase-card__link">
+              Explore Digital &rarr;
             </a>
           </div>
         </article>
@@ -244,28 +213,17 @@ const faqJsonLd = {
         <!-- Showcase Card 2: Mobile & Cloud Solutions -->
         <article class="showcase-card">
           <div class="showcase-card__visual">
-            <picture>
-              <source srcset="/images/brand/mobile-mockup.webp" type="image/webp" />
-              <img
-                src="/images/brand/mobile-mockup.png"
-                alt="Strova Group Mobile Application & Cloud Experience"
-                class="showcase-card__img"
-                loading="lazy"
-                decoding="async"
-                width="560"
-                height="540"
-              />
-            </picture>
+            <div class="showcase-art showcase-art--mobile" aria-hidden="true"><div class="art-phone"><div class="art-speaker"></div><small>YOUR STORE</small><strong>Made to<br/>move with you.</strong><div class="art-product"></div><span class="art-cta">Explore collection</span></div></div>
             <div class="showcase-card__overlay"></div>
           </div>
           <div class="showcase-card__content">
             <span class="showcase-card__tag">Mobile &amp; Cloud</span>
             <h3 class="showcase-card__title">Native Mobile Engineering</h3>
             <p class="showcase-card__desc text-secondary">
-              Responsive client applications, offline-first architectures, and enterprise mobility engineered with strict adherence to security and performance.
+              Workflow automation, CRM and operations integrations, and carefully scoped AI integrations for repetitive business tasks.
             </p>
-            <a href="/technologies/" class="showcase-card__link">
-              View Mobile Capabilities &rarr;
+            <a href="/technologies/#pillar-automation" class="showcase-card__link">
+              Explore Automation &rarr;
             </a>
           </div>
         </article>
@@ -273,28 +231,17 @@ const faqJsonLd = {
         <!-- Showcase Card 3: Interactive Visuals & Brand Fluidity -->
         <article class="showcase-card">
           <div class="showcase-card__visual">
-            <picture>
-              <source srcset="/images/brand/hero-purple-waves.webp" type="image/webp" />
-              <img
-                src="/images/brand/hero-purple-waves.png"
-                alt="Strova Group Luminous Purple Fluid Visual"
-                class="showcase-card__img"
-                loading="lazy"
-                decoding="async"
-                width="856"
-                height="1020"
-              />
-            </picture>
+            <div class="showcase-art showcase-art--growth" aria-hidden="true"><div class="art-growth"><span>01 / DISCOVER</span><b>Find the signal.</b><i></i><span>02 / BUILD</span><b>Make it useful.</b><i></i><span>03 / GROW</span><b>Keep moving.</b></div></div>
             <div class="showcase-card__overlay"></div>
           </div>
           <div class="showcase-card__content">
-            <span class="showcase-card__tag">Digital Experience</span>
-            <h3 class="showcase-card__title">Fluid 3D &amp; Motion Design</h3>
+            <span class="showcase-card__tag">Products</span>
+            <h3 class="showcase-card__title">Software built around validated needs</h3>
             <p class="showcase-card__desc text-secondary">
-              Award-worthy digital craft with 60 FPS GPU-accelerated interaction, bespoke typography, and unforgettable brand touchpoints.
+              SaaS applications, reusable software, and digital tools developed in response to validated customer needs.
             </p>
-            <a href="/digital/" class="showcase-card__link">
-              Discover Digital Growth &rarr;
+            <a href="/technologies/#pillar-products" class="showcase-card__link">
+              Explore Strova Technology &rarr;
             </a>
           </div>
         </article>
@@ -308,45 +255,41 @@ const faqJsonLd = {
       <div class="section-header">
         <h2 id="capabilities-heading" class="section-title">What we build</h2>
         <p class="section-subtitle text-secondary">
-          We build for owners who measure twice before they invest.
-          Three areas, one standard of engineering.
+          Strova Group is the parent brand. Digital, Automation, and Products are connected pillars of Strova Technology.
         </p>
       </div>
 
-      <div class="services">
+      <div class="services reveal">
         <article class="service">
           <span class="service__number">01</span>
-          <h3 class="service__title">Custom Software</h3>
+          <h3 class="service__title">Digital</h3>
           <p class="service__desc text-secondary">
-            High-speed web platforms, native Android applications, and custom
-            cloud software — built to your specifications, owned entirely by you.
+            Business websites, landing pages, web applications, customer portals, e-commerce, and custom digital platforms.
           </p>
-          <a href="/technologies/" class="service__link">
-            Strova Technologies &rarr;
+          <a href="/technologies/#pillar-digital" class="service__link">
+            Explore digital services &rarr;
           </a>
         </article>
 
         <article class="service">
           <span class="service__number">02</span>
-          <h3 class="service__title">AI &amp; Automation</h3>
+          <h3 class="service__title">Automation</h3>
           <p class="service__desc text-secondary">
-            Official WhatsApp Business automations, CRM integrations, and
-            workflow orchestration that eliminate repetitive manual tasks.
+            Business workflows, CRM and operations integrations, and AI integrations where they fit the task.
           </p>
-          <a href="/technologies/" class="service__link">
+          <a href="/technologies/#pillar-automation" class="service__link">
             Explore automation &rarr;
           </a>
         </article>
 
         <article class="service">
           <span class="service__number">03</span>
-          <h3 class="service__title">Digital Growth</h3>
+          <h3 class="service__title">Products</h3>
           <p class="service__desc text-secondary">
-            Technical SEO, search performance campaigns, and structured
-            inbound funnels — measured by inquiries, not vanity impressions.
+            SaaS applications, reusable software, and digital tools developed around validated customer needs.
           </p>
-          <a href="/digital/" class="service__link">
-            Strova Digital &rarr;
+          <a href="/technologies/#pillar-products" class="service__link">
+            Explore the technology business &rarr;
           </a>
         </article>
       </div>
@@ -364,7 +307,7 @@ const faqJsonLd = {
         </p>
       </div>
 
-      <ol class="steps">
+      <ol class="steps reveal">
         <li class="step">
           <span class="step__number">01</span>
           <h3 class="step__title">Discover</h3>
@@ -420,7 +363,7 @@ const faqJsonLd = {
         </p>
       </div>
 
-      <div class="principles">
+      <div class="principles reveal">
         <div class="principle">
           <h3 class="principle__title">Written fixed scope</h3>
           <p class="text-secondary text-sm">
@@ -462,17 +405,17 @@ const faqJsonLd = {
   <!-- 6. Founder Accountability -->
   <section class="section founder" aria-labelledby="founder-heading">
     <div class="container">
-      <div class="founder__inner">
+      <div class="founder__inner reveal">
         <h2 id="founder-heading" class="section-title">Direct founder accountability</h2>
         <p class="text-secondary founder__text">
-          Strova Group was founded by Sarthak Shresht, with legal proprietorship
+          Strova Group was founded by Sarthak Shreshth, with legal proprietorship
           registered under Babita Kumari (Udyam: UDYAM-JH-20-0147452). When you
           partner with Strova Group, your project is not handed off to an account
           executive or an anonymous outsourcing layer. We maintain direct,
           hands-on architectural oversight on every engagement.
         </p>
         <div class="founder__meta">
-          <span class="founder__name">Sarthak Shresht</span>
+          <span class="founder__name">Sarthak Shreshth</span>
           <span class="founder__role text-muted">Founder · Strova Group</span>
         </div>
       </div>
@@ -486,7 +429,7 @@ const faqJsonLd = {
         <h2 id="faq-heading" class="section-title">Frequently asked questions</h2>
       </div>
 
-      <div class="faq-list">
+      <div class="faq-list reveal">
         {faqs.map((faq, index) => (
           <details class="faq-item" id={`faq-${index}`}>
             <summary class="faq-question">
@@ -507,7 +450,7 @@ const faqJsonLd = {
   <!-- 8. Final CTA -->
   <section class="section cta" aria-labelledby="cta-heading">
     <div class="container">
-      <div class="cta__inner">
+      <div class="cta__inner reveal">
         <h2 id="cta-heading" class="cta__title">
           Tell us what you want to build.
         </h2>
@@ -532,913 +475,62 @@ const faqJsonLd = {
 </BaseLayout>
 
 <style>
-  /* ============================================================
-     HOMEPAGE CINEMATIC EDITORIAL DESIGN SYSTEM
-     ============================================================ */
-
-  /* ---------- Cinematic Stage & Sticky Backdrop ---------- */
-  .cinematic-wrapper {
-    position: relative;
-    width: 100%;
-    background: var(--bg-page);
-  }
-
-  .cinematic-backdrop {
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    height: 100svh;
-    margin-bottom: -100vh;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-  }
-
-  @supports (height: 100svh) {
-    .cinematic-backdrop {
-      margin-bottom: -100svh;
-    }
-  }
-
-  /* ---------- Hero Viewport Section ---------- */
-  .hero {
-    position: relative;
-    z-index: 2;
-    min-height: calc(100vh - 4.25rem);
-    min-height: calc(100svh - 4.25rem);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: var(--space-4);
-    padding-bottom: var(--space-6);
-  }
-
-  .hero__inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-    width: 100%;
-    min-height: calc(100vh - 8rem);
-    min-height: calc(100svh - 8rem);
-  }
-
-  /* Top Flank (Status & Eyebrow) */
-  .hero__top-flank {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: var(--space-4);
-    padding-top: var(--space-2);
-  }
-
-  .hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #A78BFA;
-  }
-
-  .eyebrow-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #A78BFA;
-    box-shadow: 0 0 10px #A78BFA;
-    animation: dotPulse 2.4s ease-in-out infinite;
-  }
-
-  @keyframes dotPulse {
-    0%, 100% { opacity: 0.7; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 14px #A78BFA; }
-  }
-
-  .hero__status-badge {
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Centerpiece Headline (Cinematic Framing around 3D core) */
-  .hero__centerpiece {
-    margin-block: auto;
-    width: 100%;
-    padding-block: var(--space-6);
-    pointer-events: none;
-  }
-
-  .hero__title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 6.2vw, 5.8rem);
-    font-weight: 500;
-    line-height: 0.95;
-    letter-spacing: 0.035em;
-    color: #FFFFFF;
-    text-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
-  }
-
-  .hero__title-split {
-    display: inline-block;
-    pointer-events: auto;
-  }
-
-  .hero__title-left {
-    text-align: left;
-  }
-
-  .hero__title-right {
-    text-align: right;
-  }
-
-  /* Bottom Flanking Modules */
-  .hero__bottom-flank {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    width: 100%;
-    gap: var(--space-6);
-    padding-top: var(--space-4);
-  }
-
-  .hero__flank-card--left {
-    max-width: 26rem;
-    background: rgba(10, 10, 18, 0.65);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-left: 2px solid #8B5CF6;
-    padding: var(--space-4) var(--space-5);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8);
-  }
-
-  .flank-card__kicker {
-    display: block;
-    font-family: var(--font-body);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #A78BFA;
-    margin-bottom: var(--space-2);
-  }
-
-  .flank-card__lead {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  .hero__flank-card--right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-3);
-    text-align: right;
-  }
-
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    align-items: center;
-  }
-
-  .hero__note {
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-    letter-spacing: 0.01em;
-  }
-
-  /* Scroll Indicator */
-  .hero__scroll-wrap {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding-top: var(--space-4);
-  }
-
-  .hero__scroll-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    color: var(--text-muted);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: color var(--duration-fast) var(--ease-out);
-    width: fit-content;
-  }
-
-  .hero__scroll-indicator:hover {
-    color: #A78BFA;
-  }
-
-  .scroll-indicator__track {
-    width: 20px;
-    height: 32px;
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-    border-radius: 999px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    padding-top: 4px;
-    transition: border-color var(--duration-fast) var(--ease-out);
-  }
-
-  .hero__scroll-indicator:hover .scroll-indicator__track {
-    border-color: #A78BFA;
-  }
-
-  .scroll-indicator__dot {
-    width: 4px;
-    height: 7px;
-    background: #A78BFA;
-    box-shadow: 0 0 8px #A78BFA;
-    border-radius: 999px;
-    animation: scrollDotMove 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  }
-
-  @keyframes scrollDotMove {
-    0% { transform: translateY(0); opacity: 0; }
-    30% { opacity: 1; }
-    70% { transform: translateY(12px); opacity: 1; }
-    100% { transform: translateY(16px); opacity: 0; }
-  }
-
-  /* ---------- Responsive Hero Adjustments ---------- */
-  @media (max-width: 59.99rem) {
-    .hero {
-      min-height: auto;
-      padding-top: var(--space-4);
-      padding-bottom: var(--space-10);
-    }
-    .hero__inner {
-      min-height: auto;
-      gap: var(--space-6);
-    }
-    .hero__top-flank {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-2);
-    }
-    .hero__title {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      font-size: clamp(1.75rem, 7.5vw, 3.25rem);
-      gap: var(--space-1);
-    }
-    .hero__title-left,
-    .hero__title-right {
-      text-align: center;
-    }
-    .hero__bottom-flank {
-      flex-direction: column;
-      align-items: stretch;
-      gap: var(--space-4);
-    }
-    .hero__flank-card--left {
-      max-width: 100%;
-    }
-    .hero__flank-card--right {
-      align-items: stretch;
-      text-align: left;
-    }
-    .hero__actions {
-      flex-direction: column;
-      width: 100%;
-    }
-    .hero__actions .btn {
-      width: 100%;
-    }
-  }
-
-  /* ---------- 2. Cinematic Scroll Manifesto (Reference 1 Frame 4) ---------- */
-  .manifesto-section {
-    position: relative;
-    z-index: 2;
-    min-height: 90vh;
-    min-height: 90svh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding-block: var(--space-20);
-  }
-
-  .manifesto__inner {
-    max-width: 54rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .manifesto__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #A78BFA;
-    margin-bottom: var(--space-6);
-    background: rgba(139, 92, 246, 0.12);
-    border: 1px solid rgba(139, 92, 246, 0.25);
-    padding: 0.35rem 1rem;
-    border-radius: 9999px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .manifesto__spark {
-    color: #A78BFA;
-    animation: sparkSpin 6s linear infinite;
-  }
-
-  @keyframes sparkSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .manifesto__statement {
-    font-family: var(--font-heading);
-    font-size: clamp(1.4rem, 2.6vw, 2.3rem);
-    font-weight: 400;
-    line-height: 1.38;
-    color: #FFFFFF;
-    max-width: 42ch;
-    margin-inline: auto;
-    margin-bottom: var(--space-8);
-    text-wrap: balance;
-    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.95), 0 0 45px rgba(139, 92, 246, 0.20);
-  }
-
-  /* Interactive Luxury Pill Badges */
-  .manifesto__pills {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-bottom: var(--space-10);
-  }
-
-  .manifesto__pill {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0.65rem 1.35rem;
-    border-radius: 9999px;
-    background: rgba(16, 16, 26, 0.75);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #FFFFFF;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    text-decoration: none;
-    transition: all var(--duration-fast) var(--ease-out);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-  }
-
-  .manifesto__pill:hover {
-    background: rgba(139, 92, 246, 0.16);
-    border-color: #8B5CF6;
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    color: #FFFFFF;
-  }
-
-  .pill-icon {
-    color: #A78BFA;
-    flex-shrink: 0;
-  }
-
-  /* Cinematic Metric Strip (+ 78 style) */
-  .manifesto__stats {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: clamp(var(--space-4), 4vw, var(--space-10));
-    flex-wrap: wrap;
-    padding-top: var(--space-8);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    width: 100%;
-  }
-
-  .stat-card {
-    text-align: center;
-  }
-
-  .stat-number {
-    display: block;
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 3.8vw, 3.25rem);
-    font-weight: 600;
-    color: #FFFFFF;
-    line-height: 1.1;
-    margin-bottom: var(--space-1);
-    text-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
-  }
-
-  .stat-label {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    max-width: 22ch;
-    display: block;
-  }
-
-  .stat-divider {
-    width: 1px;
-    height: 2.5rem;
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  @media (max-width: 48rem) {
-    .stat-divider {
-      display: none;
-    }
-  }
-
-  /* ---------- Section Headers ---------- */
-  .section-header {
-    max-width: 44rem;
-    margin-bottom: var(--space-10);
-  }
-
-  .section-title {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-3);
-  }
-
-  .section-subtitle {
-    line-height: 1.65;
-  }
-
-  /* ---------- Service Areas ---------- */
-  .services {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-
-  @media (min-width: 48rem) {
-    .services {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
-    }
-  }
-
-  .service {
-    padding: var(--space-8) var(--space-6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 2px solid var(--accent);
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: var(--radius-lg);
-    transition: transform var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
-  }
-
-  .service:hover {
-    transform: translateY(-4px);
-    border-color: rgba(139, 92, 246, 0.4);
-    box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6), 0 0 28px -8px rgba(139, 92, 246, 0.2);
-  }
-
-  .service__number {
-    display: block;
-    font-family: var(--font-heading);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    color: #A78BFA;
-    margin-bottom: var(--space-4);
-  }
-
-  .service__title {
-    font-size: var(--text-xl);
-    margin-bottom: var(--space-3);
-  }
-
-  .service__desc {
-    font-size: var(--text-sm);
-    line-height: 1.65;
-    margin-bottom: var(--space-5);
-  }
-
-  .service__link {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: #A78BFA;
-    text-decoration: none;
-    transition: color var(--duration-fast) var(--ease-out);
-  }
-
-  .service__link:hover {
-    color: #FFFFFF;
-    text-decoration: underline;
-  }
-
-  /* ---------- Approach / Steps ---------- */
-  .approach {
-    background: var(--bg-surface);
-    border-block: 1px solid var(--border-subtle);
-  }
-
-  .steps {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    counter-reset: step;
-  }
-
-  @media (min-width: 64rem) {
-    .steps {
-      grid-template-columns: repeat(5, 1fr);
-      gap: var(--space-5);
-    }
-  }
-
-  .step {
-    position: relative;
-    padding: var(--space-6) 0;
-    border-top: 1px solid var(--border-color);
-  }
-
-  @media (min-width: 64rem) {
-    .step {
-      border-top: none;
-      border-left: 1px solid var(--border-color);
-      padding: 0 var(--space-5);
-    }
-
-    .step:first-child {
-      border-left: none;
-      padding-left: 0;
-    }
-  }
-
-  .step__number {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    color: #A78BFA;
-    margin-bottom: var(--space-3);
-  }
-
-  .step__title {
-    font-size: var(--text-base);
-    margin-bottom: var(--space-2);
-  }
-
-  .step__desc {
-    font-size: var(--text-xs);
-    line-height: 1.65;
-  }
-
-  /* ---------- Principles (How We Work) ---------- */
-  .principles {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
-  }
-
-  @media (min-width: 48rem) {
-    .principles {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .principles {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .principle {
-    padding: var(--space-5);
-    background: rgba(15, 15, 24, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-left: 2px solid rgba(139, 92, 246, 0.5);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    transition: border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
-  }
-
-  .principle:hover {
-    border-left-color: var(--accent);
-    transform: translateX(2px);
-  }
-
-  .principle__title {
-    font-size: var(--text-base);
-    margin-bottom: var(--space-2);
-  }
-
-  .principles__cta {
-    padding-top: var(--space-2);
-  }
-
-  /* ---------- Founder ---------- */
-  .founder {
-    background: linear-gradient(180deg, rgba(12, 12, 18, 0.6) 0%, rgba(8, 8, 12, 0.8) 100%);
-    border-block: 1px solid var(--border-subtle);
-  }
-
-  .founder__inner {
-    max-width: 52rem;
-  }
-
-  .founder__text {
-    line-height: 1.7;
-    margin-bottom: var(--space-6);
-    margin-top: var(--space-4);
-  }
-
-  .founder__meta {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .founder__name {
-    font-family: var(--font-heading);
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .founder__role {
-    font-size: var(--text-xs);
-  }
-
-  /* ---------- FAQ ---------- */
-  .faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    max-width: 52rem;
-  }
-
-  .faq-item {
-    border-bottom: 1px solid var(--border-color);
-    overflow: hidden;
-  }
-
-  .faq-question {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-5) 0;
-    font-family: var(--font-heading);
-    font-size: var(--text-base);
-    font-weight: 500;
-    cursor: pointer;
-    list-style: none;
-    gap: var(--space-4);
-    transition: color var(--duration-fast) var(--ease-out);
-  }
-
-  .faq-question:hover {
-    color: #A78BFA;
-  }
-
-  .faq-question::-webkit-details-marker {
-    display: none;
-  }
-
-  .faq-chevron {
-    transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
-    flex-shrink: 0;
-    color: var(--text-muted);
-  }
-
-  .faq-item[open] .faq-chevron {
-    transform: rotate(180deg);
-    color: var(--accent);
-  }
-
-  .faq-answer {
-    padding-bottom: var(--space-5);
-    font-size: var(--text-sm);
-    line-height: 1.7;
-  }
-
-  /* ---------- Showcase Section ---------- */
-  .showcase-section {
-    padding-block: var(--space-20);
-    border-top: 1px solid var(--border-subtle);
-    position: relative;
-    background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%), var(--bg-page);
-  }
-
-  .showcase__header {
-    text-align: center;
-    max-width: 48rem;
-    margin-inline: auto;
-    margin-bottom: var(--space-12);
-  }
-
-  .showcase__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--accent);
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.25);
-    padding: 0.35rem 0.85rem;
-    border-radius: 9999px;
-    margin-bottom: var(--space-4);
-  }
-
-  .badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-  }
-
-  .showcase__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-
-  @media (min-width: 48rem) {
-    .showcase__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .showcase-card--featured {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      align-items: center;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .showcase__grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .showcase-card--featured {
-      grid-column: auto;
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .showcase-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
-  }
-
-  .showcase-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(139, 92, 246, 0.4);
-    box-shadow: var(--shadow-md);
-  }
-
-  .showcase-card__visual {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: #08080C;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .showcase-card__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transition: transform 0.6s var(--ease-out);
-  }
-
-  .showcase-card:hover .showcase-card__img {
-    transform: scale(1.04);
-  }
-
-  .showcase-card__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 60%, rgba(16, 16, 24, 0.8) 100%);
-    pointer-events: none;
-  }
-
-  .showcase-card__content {
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: var(--space-2);
-  }
-
-  .showcase-card__tag {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-  }
-
-  .showcase-card__title {
-    font-family: var(--font-heading);
-    font-size: var(--text-xl);
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.25;
-  }
-
-  .showcase-card__desc {
-    font-size: var(--text-sm);
-    line-height: 1.6;
-    margin-bottom: var(--space-3);
-  }
-
-  .showcase-card__link {
-    margin-top: auto;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    transition: gap var(--duration-fast) var(--ease-out);
-  }
-
-  .showcase-card__link:hover {
-    gap: 0.5rem;
-    text-decoration: underline;
-  }
-
-  /* ---------- Final CTA ---------- */
-  .cta {
-    padding-block: var(--space-24);
-    position: relative;
-    background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.08) 0%, rgba(10, 10, 15, 0) 70%), var(--bg-page);
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .cta__inner {
-    max-width: 44rem;
-    position: relative;
-    z-index: 2;
-  }
-
-  .cta__title {
-    font-size: var(--text-4xl);
-    letter-spacing: -0.02em;
-    margin-bottom: var(--space-4);
-  }
-
-  .cta__desc {
-    line-height: 1.65;
-    margin-bottom: var(--space-8);
-  }
-
-  .cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-  }
+  .cinematic-wrapper { position: relative; overflow: clip; background: var(--bg-page); }
+  .hero { position: relative; min-height: min(760px, calc(100svh - 4rem)); padding-block: clamp(2.5rem, 5vw, 4.5rem); display: flex; align-items: center; }
+  .hero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(18rem, .9fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); }
+  .hero__top-flank { grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+  .hero__eyebrow,.hero__status-badge,.flank-card__kicker,.hero__overline,.hero__art > span,.manifesto__eyebrow,.showcase__badge { color:#49202B; font-size:.72rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; }
+  .eyebrow-dot,.badge-dot { width:.45rem;height:.45rem;border-radius:50%;background:#6F7969;display:inline-block;margin-right:.55rem; }
+  .hero__centerpiece { grid-column:1; grid-row:2; position:relative; z-index:1; max-width:46rem; }
+  .hero__overline { margin-bottom:1.15rem; }
+  .hero__title { display:block; max-width:14ch; font-size:clamp(3.1rem,6.4vw,6.2rem); line-height:.95; letter-spacing:-.055em; font-weight:500; }
+  .hero__title-split { display:block; }
+  .js-reveal .hero__overline { animation:heroEyebrowFade .55s var(--ease-out) .08s both; }
+  .js-reveal .hero__title-split { animation:heroTitleReveal .7s var(--ease-out) .18s both; }
+  .js-reveal .hero__title-accent { animation-delay:.3s; }
+  .js-reveal .hero__intro { animation:heroFlankSlideIn .6s var(--ease-out) .42s both; }
+  .js-reveal .hero__art { animation:heroTitleReveal .9s var(--ease-out) .22s both; }
+  .js-reveal .hero__eyebrow,.js-reveal .hero__status-badge { animation:heroEyebrowFade .5s var(--ease-out) .08s both; }
+  .js-reveal .hero__flank-card--left,.js-reveal .hero__flank-card--right { animation:heroFlankSlideIn .55s var(--ease-out) .42s both; }
+  .hero__title-accent { color:#49202B; font-style:italic; }
+  .hero__intro { max-width:34rem; margin-top:1.6rem; color:#6F7969; font-size:clamp(1.05rem,1.5vw,1.25rem); line-height:1.7; }
+  .hero__art { grid-column:2; grid-row:2 / 4; align-self:center; justify-self:center; width:min(100%,31rem); aspect-ratio:1; display:grid; place-items:center; position:relative; color:#49202B; }
+  .hero__art svg { width:100%; overflow:visible; }
+  .hero__orbit { fill:none; stroke:#6F7969; stroke-width:1; opacity:.33; }
+  .hero__orbit--middle { stroke:#49202B; stroke-dasharray:2 7; opacity:.45; }
+  .hero__mark { fill:none; stroke:#49202B; stroke-width:25; stroke-linecap:round; stroke-linejoin:round; }
+  .hero__point { fill:#6F7969; }
+  .hero__art > span { position:absolute; bottom:9%; right:0; }
+  .hero__bottom-flank { grid-column:1; grid-row:3; display:flex; flex-direction:column; align-items:flex-start; gap:1.25rem; max-width:38rem; }
+  .hero__flank-card--left { border-left:2px solid #6F7969; padding-left:1rem; }
+  .flank-card__kicker { display:block; margin-bottom:.4rem; }
+  .flank-card__lead { color:#6F7969; font-size:.95rem; margin:0; }
+  .hero__flank-card--right { display:flex;flex-direction:column;align-items:flex-start;gap:.75rem; }
+  .hero__actions { display:flex;gap:.75rem;flex-wrap:wrap; }
+  .hero__note { color:#6F7969;font-size:.78rem; }
+  .hero__scroll-wrap { grid-column:1 / -1; display:flex;justify-content:center;padding-top:1rem; }
+  .hero__scroll-indicator { display:flex;align-items:center;gap:.65rem;color:#6F7969;text-decoration:none;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase; }
+  .scroll-indicator__track { width:1rem;height:1.5rem;border:1px solid #6F7969;border-radius:1rem;display:grid;place-items:start center;padding-top:.25rem; }
+  .scroll-indicator__dot { width:3px;height:5px;border-radius:2px;background:#49202B; }
+  .manifesto-section { background:#292A27;color:#FFFCF7;padding-block:clamp(5rem,10vw,9rem);text-align:center; }
+  .manifesto__inner { max-width:58rem;display:flex;flex-direction:column;align-items:center; }
+  .manifesto__eyebrow { color:#F4EFE6;border:1px solid rgba(244,239,230,.22);border-radius:999px;padding:.5rem 1rem;margin-bottom:1.5rem; }
+  .manifesto__spark { color:#6F7969; }
+  .manifesto__statement { color:#FFFCF7;font:400 clamp(1.7rem,3.5vw,3rem)/1.25 var(--font-heading);max-width:30ch;margin:0 auto 2rem; }
+  .manifesto__pills { display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-bottom:3.5rem; }
+  .manifesto__pill { display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1rem;border:1px solid rgba(255,252,247,.24);border-radius:999px;color:#FFFCF7;text-decoration:none;transition:background .2s ease,border-color .2s ease,transform .2s ease; }
+  .manifesto__pill:hover { background:rgba(111,121,105,.28);border-color:#6F7969;transform:translateY(-2px);color:#FFFCF7; }
+  .pill-icon { color:#6F7969; }
+  .manifesto__stats { width:100%;display:flex;justify-content:space-around;gap:1.5rem;flex-wrap:wrap;border-top:1px solid rgba(255,252,247,.2);padding-top:2rem; }
+  .stat-card { text-align:center; }.stat-number { display:block;color:#FFFCF7;font:500 clamp(2rem,4vw,3.5rem)/1.1 var(--font-heading); }.stat-label { display:block;color:#F4EFE6;font-size:.8rem;max-width:22ch; }.stat-divider { width:1px;background:rgba(255,252,247,.2); }
+  .js-reveal .reveal { opacity:0;transform:translateY(20px);transition:opacity .55s var(--ease-out),transform .55s var(--ease-out); }
+  .js-reveal .reveal.in { opacity:1;transform:none; }
+  .section { padding-block:clamp(4rem,8vw,7rem); }.section-header { max-width:52rem;margin-bottom:2.5rem; }.section-title { font-size:clamp(2.2rem,4.5vw,4rem);letter-spacing:-.04em; }.section-subtitle { font-size:1.05rem;max-width:50ch;margin-top:.8rem; }
+  .showcase__header { margin-inline:auto;text-align:center; }.showcase__grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem; }.showcase-card { overflow:hidden;background:#FFFCF7;border:1px solid rgba(41,42,39,.12);border-radius:1rem;transition:transform .25s ease,box-shadow .25s ease; }.showcase-card:hover { transform:translateY(-4px);box-shadow:0 18px 40px -25px rgba(41,42,39,.4); }.showcase-card--featured { grid-column:span 2;display:grid;grid-template-columns:1.2fr 1fr; }.showcase-card__visual { position:relative;overflow:hidden;background:#292A27;aspect-ratio:1.55; }.showcase-card--featured .showcase-card__visual { aspect-ratio:auto;min-height:20rem; }.showcase-card__img { width:100%;height:100%;object-fit:cover;transition:transform .5s ease; }.showcase-card:hover .showcase-card__img { transform:scale(1.035); }.showcase-card__overlay { position:absolute;inset:0;background:linear-gradient(0deg,rgba(41,42,39,.3),transparent 55%);pointer-events:none; }.showcase-card__content { padding:clamp(1.25rem,3vw,2.25rem); }.showcase-card__tag { color:#49202B;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase; }.showcase-card__title { font-size:clamp(1.5rem,2.5vw,2.25rem);margin:.65rem 0; }.showcase-card__desc { font-size:.9rem; }.showcase-card__link,.service__link { display:inline-block;color:#49202B;font-weight:700;text-decoration:none;margin-top:1rem; }.showcase-card__link:hover,.service__link:hover { color:#292A27; }
+  .services { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem; }.service,.principle,.step { padding:1.5rem;border:1px solid rgba(41,42,39,.13);border-radius:.8rem;background:#FFFCF7;transition:transform .22s ease,border-color .22s ease; }.service:hover { transform:translateY(-3px);border-color:#6F7969; }.service__number,.step__number { color:#6F7969;font-size:.78rem;font-weight:700;letter-spacing:.1em; }.service__title,.step__title,.principle__title { margin:.8rem 0;font-size:1.45rem; }.service__desc,.step__desc { font-size:.9rem; }
+  .steps { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem; }.approach { background:#F4EFE6; }.principles { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem; }.principles__cta { margin-top:1.5rem; }.founder { background:#292A27;color:#FFFCF7; }.founder .section-title { color:#FFFCF7; }.founder__inner { max-width:54rem; }.founder__text { max-width:66ch;margin:1rem 0 1.5rem; }.founder__name { font:500 1.7rem var(--font-heading); }.founder__meta { display:flex;flex-direction:column; }
+  .faq-list { border-top:1px solid rgba(41,42,39,.16); }.faq-item { border-bottom:1px solid rgba(41,42,39,.16); }.faq-question { cursor:pointer;list-style:none;padding:1.2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-weight:600; }.faq-question::-webkit-details-marker { display:none; }.faq-chevron { transition:transform .2s ease; }.faq-item[open] .faq-chevron { transform:rotate(180deg); }.faq-answer { padding:0 2.5rem 1.2rem 0; }
+  .cta { background:#49202B;color:#FFFCF7; }.cta__inner { max-width:55rem;text-align:center;margin:auto; }.cta__title { color:#FFFCF7;font-size:clamp(2.4rem,5vw,4.5rem); }.cta__desc { color:#F4EFE6;margin:1rem auto 2rem; }.cta__actions { display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem; }
+  @media (max-width: 760px) { .hero { min-height:auto;padding-block:2.5rem; }.hero__inner { grid-template-columns:1fr;gap:1.25rem; }.hero__top-flank { grid-column:1;flex-direction:column;align-items:flex-start; }.hero__centerpiece { grid-column:1;grid-row:2; }.hero__bottom-flank { grid-column:1;grid-row:3; }.hero__art { grid-column:1;grid-row:4;width:min(70vw,18rem);margin:0 auto; }.hero__scroll-wrap { grid-row:5; }.hero__title { font-size:clamp(3rem,12vw,4.2rem); }.hero__status-badge { font-size:.65rem; }.showcase__grid,.services,.principles { grid-template-columns:1fr; }.showcase-card--featured { grid-column:auto;display:block; }.showcase-card--featured .showcase-card__visual { min-height:0;aspect-ratio:1.35; }.steps { grid-template-columns:repeat(2,minmax(0,1fr)); }.stat-divider { display:none; }.manifesto__stats { justify-content:center; }.cta__actions { flex-direction:column;align-items:stretch; }.cta__actions .btn { width:100%;white-space:normal; } }
+  @media (prefers-reduced-motion: reduce) { .showcase-card,.showcase-card__img,.service,.manifesto__pill,.reveal { transition:none!important;animation:none!important;opacity:1!important;transform:none!important; } }
 </style>

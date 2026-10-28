@@ -1,25 +1,21 @@
 ---
 /**
- * Commerce Division Page (src/pages/commerce.astro)
- *
- * Division: Strova Commerce (Marked "Coming Soon")
- * Launch Target: Coming soon
+ * E-commerce solutions page within the Digital pillar of Strova Technology.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Strova Commerce — Headless Retail & Conversational Commerce',
+  name: 'E-commerce solutions by Strova Technology',
   provider: {
     '@type': 'Organization',
     name: 'Strova Group',
     url: 'https://strovagroups.in',
   },
-  serviceType: 'Headless E-commerce & WhatsApp Conversational Checkout',
-  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  serviceType: 'E-commerce websites and integrations',
   description:
-    'Next-generation headless commerce storefronts, native WhatsApp catalog checkouts, omnichannel inventory synchronization, and Cash-on-Delivery RTO fraud protection (Coming soon).',
+    'E-commerce websites and integrations planned around a business’s catalog, checkout, and operational requirements.',
 };
 
 const breadcrumbJsonLd = {
@@ -43,29 +39,29 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="Strova Commerce (Coming Soon) — Strova Group"
-  description="Strova Commerce is building high-speed headless storefronts, WhatsApp conversational checkouts, and omnichannel inventory engines. Coming soon."
+  title="E-commerce Solutions — Strova Technology | Strova Group"
+  description="Explore e-commerce websites and integrations as part of the Digital pillar within Strova Technology."
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
 >
   <section class="commerce-hero">
     <div class="container text-center">
       <div class="coming-soon-badge">
         <span class="badge-dot"></span>
-        <span>Strova Commerce &bull; Coming Soon</span>
+        <span>Strova Technology &bull; Digital</span>
       </div>
       <h1 class="commerce-title">
-        The Future of Conversational &amp; Headless Commerce
+        E-commerce shaped around your business
       </h1>
       <p class="commerce-lead">
-        We are engineering a unified retail engine that bridges lightning-fast static storefronts with native WhatsApp catalog checkout and intelligent COD fraud prevention for Indian and global merchants.
+        Strova Technology can bring storefronts, checkout, catalog management, and relevant business integrations together in a scoped e-commerce project.
       </p>
 
       <div class="commerce-actions">
         <a href="/contact/?service=commerce" class="btn btn--primary btn--lg">
-          Join Early Access Partner Waitlist
+          Discuss an e-commerce project
         </a>
         <a href="/technologies/" class="btn btn--outline btn--lg">
-          View Active Tech Capabilities
+          Explore Strova Technology
         </a>
       </div>
     </div>
@@ -78,19 +74,19 @@ const breadcrumbJsonLd = {
         <div class="service-overview-grid">
           <div class="overview-item">
             <span class="overview-item__label">What It Is</span>
-            <p class="overview-item__val">Headless high-speed storefronts, conversational WhatsApp catalog checkouts, omnichannel inventory synchronization, and automated COD Return-to-Origin (RTO) fraud protection.</p>
+            <p class="overview-item__val">An e-commerce project may include a storefront, checkout, catalog workflows, and integrations selected for the business requirements.</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">Who It Is For</span>
-            <p class="overview-item__val">Direct-to-Consumer (D2C) brands, omnichannel retail merchants in India, and global e-commerce sellers requiring sub-100ms checkout experiences.</p>
+            <p class="overview-item__val">Businesses that want to sell products online or connect their storefront with existing business systems.</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">Commercial Status</span>
-            <p class="overview-item__val">Currently in private engineering development. Pilot partner onboarding and technical architectural reviews are open.</p>
+            <p class="overview-item__val">Features, integrations, and delivery timing are confirmed after requirements review.</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">Typical Timeline</span>
-            <p class="overview-item__val">Division coming soon. Early partner inquiries and technical architecture reviews currently open.</p>
+            <p class="overview-item__val">A written proposal sets the project scope, milestones, and estimated schedule.</p>
           </div>
         </div>
       </div>
@@ -101,9 +97,9 @@ const breadcrumbJsonLd = {
   <section class="section" aria-labelledby="roadmap-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="roadmap-title" class="section-title">What Strova Commerce is Engineering</h2>
+        <h2 id="roadmap-title" class="section-title">Options within the Digital pillar</h2>
         <p class="section-subtitle">
-          Solving the core pain points of modern e-commerce: slow load times, high checkout drop-offs, and Return-to-Origin (RTO) cash-on-delivery losses.
+          The right combination depends on your catalog, customers, and existing systems.
         </p>
       </div>
 
@@ -112,7 +108,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">01</div>
           <h3 class="pillar-title">Headless Edge Storefronts</h3>
           <p class="pillar-desc">
-            Decoupled frontend catalog experiences built on Astro and modern edge CDNs. Page transitions take under 100ms, completely eliminating user drop-off on mobile networks.
+            A responsive storefront organized around your products, content, and customer journeys.
           </p>
         </div>
 
@@ -120,7 +116,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">02</div>
           <h3 class="pillar-title">WhatsApp Catalog &amp; Conversational Checkout</h3>
           <p class="pillar-desc">
-            Allow customers to browse product catalogs, select sizes, and complete transactions entirely within WhatsApp without ever navigating away from their chat interface.
+            Where suitable, product discovery and customer inquiries can connect with messaging workflows.
           </p>
         </div>
 
@@ -128,7 +124,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">03</div>
           <h3 class="pillar-title">Intelligent COD &amp; RTO Shield</h3>
           <p class="pillar-desc">
-            Automated WhatsApp OTP verification and AI-driven buyer risk scoring before Cash-on-Delivery dispatches, reducing non-delivery returns by an anticipated 30-45%.
+            Checkout and order workflows can be designed around the payment and delivery options your business supports.
           </p>
         </div>
 
@@ -136,7 +132,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">04</div>
           <h3 class="pillar-title">Omnichannel Real-Time Sync</h3>
           <p class="pillar-desc">
-            Synchronize stock levels between retail POS systems, your web storefront, Amazon India, and quick-commerce channels using fault-tolerant message queues.
+            Connect catalog or order data with other business systems when the required integrations are available and included in scope.
           </p>
         </div>
 
@@ -144,7 +140,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">05</div>
           <h3 class="pillar-title">Localized Indian Payment Routing</h3>
           <p class="pillar-desc">
-            Native 1-click UPI intent flows, automated refund webhooks, and multi-gateway fallbacks across Razorpay, Cashfree, and PayU.
+            Payment options are selected for the target market and confirmed project requirements.
           </p>
         </div>
 
@@ -152,7 +148,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">06</div>
           <h3 class="pillar-title">Global Currency &amp; Tax Compliance</h3>
           <p class="pillar-desc">
-            Built-in multi-currency pricing, automated GST electronic invoicing for Indian domestic transactions, and Stripe tax calculations for cross-border exports.
+            Tax, currency, and invoicing requirements are reviewed and scoped for each project.
           </p>
         </div>
       </div>
@@ -164,23 +160,23 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="early-access-box">
         <div class="early-access-content">
-          <h2 class="early-access-title">Seeking 5 Direct-to-Consumer Brands for Beta Deployment</h2>
+          <h2 class="early-access-title">Planning an e-commerce project?</h2>
           <p class="early-access-desc">
-            We are collaborating with a select group of established D2C brands in India and Southeast Asia to pilot our WhatsApp conversational checkout and headless speed architecture prior to public launch.
+            Share your products, customer journey, and operational requirements. We can discuss a suitable scope and provide a written proposal.
           </p>
           <div class="early-access-perks">
             <div class="perk-item">
-              <strong>Zero Platform Licensing Fees</strong> during the beta cycle.
+              <strong>Project scope</strong> based on your requirements.
             </div>
             <div class="perk-item">
-              <strong>Dedicated Engineering Support</strong> directly from Strova Group's core technical team.
+              <strong>Relevant integrations</strong> identified during discovery.
             </div>
             <div class="perk-item">
-              <strong>Custom Integration Work</strong> for your existing ERP or warehouse inventory system.
+              <strong>Clear milestones</strong> included in the written proposal.
             </div>
           </div>
           <a href="/contact/?service=commerce" class="btn btn--primary btn--lg">
-            Apply as a Design Partner
+            Discuss your requirements
           </a>
         </div>
       </div>

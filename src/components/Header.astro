@@ -113,8 +113,8 @@ const hiUrl = getLocalizedPath(currentPath, 'hi');
   <div class="container header__inner">
     <a href={lang === 'hi' ? '/hi/' : '/'} class="header__logo" aria-label={lang === 'hi' ? 'स्ट्रोवा ग्रुप — मुख्य पृष्ठ' : 'Strova Group — Home'}>
       <img
-        src="/images/brand/icon-mark.png"
-        alt="Strova Group ribbon monogram"
+        src="/images/logo.svg"
+        alt=""
         width="34"
         height="34"
         class="header__logo-img"
@@ -333,7 +333,7 @@ const hiUrl = getLocalizedPath(currentPath, 'hi');
     object-fit: contain;
     display: block;
     border-radius: 6px;
-    filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.35));
+    filter: none;
     transition: transform var(--duration-fast) var(--ease-out);
   }
 
@@ -428,7 +428,7 @@ const hiUrl = getLocalizedPath(currentPath, 'hi');
 
   .lang-switch__btn--active {
     background: var(--color-ink);
-    color: #FFFFFF !important;
+    color: #FFFCF7 !important;
   }
 
   .lang-switch__divider {
@@ -505,6 +505,15 @@ const hiUrl = getLocalizedPath(currentPath, 'hi');
 
   .header__nav-mobile[hidden] {
     display: none !important;
+  }
+
+  .header__nav-mobile:not([hidden]) {
+    animation: menu-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes menu-panel-in {
+    from { opacity: 0; transform: translateY(-0.5rem); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .header__mobile-links {
@@ -610,9 +619,9 @@ const hiUrl = getLocalizedPath(currentPath, 'hi');
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #10B981;
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-    animation: pulse-green 2s infinite;
+    background-color: #6F7969;
+    box-shadow: none;
+    animation: none;
   }
 
   @keyframes pulse-green {

@@ -45,7 +45,7 @@ export interface ClientOrder {
   order_ref: string;
   client_id: string;
   title: string;
-  division: 'technologies' | 'digital' | 'commerce';
+  division: 'technologies' | 'digital' | 'commerce' | 'automation' | 'products';
   current_stage: PortalStage | string;
   scope_reference?: string;
   target_completion_date?: string;

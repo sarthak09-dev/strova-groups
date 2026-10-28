@@ -21,6 +21,7 @@ interface Env {
   TURNSTILE_SECRET_KEY?: string;
   CONTACT_API_KEY?: string;
   WEB3FORMS_ACCESS_KEY?: string;
+  FORMSPREE_KEY?: string;
 }
 
 // In-memory rate limiting map for edge worker instance
@@ -53,6 +54,7 @@ function generateTrackingId(): string {
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const requestId = crypto.randomUUID();
   try {
     const request = context.request;
     const isTestEnv = context.env.ENVIRONMENT === 'test';
@@ -73,7 +75,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const bodyText = await request.text();
-    if (bodyText.length > MAX_BODY_BYTES) {
+    if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -330,11 +332,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
           method: 'POST',
           body: turnstileFormData,
+          signal: AbortSignal.timeout(5000),
         });
 
-        const outcome = (await verifyRes.json()) as { success?: boolean; 'error-codes'?: string[] };
+        const outcome = (await verifyRes.json()) as { success?: boolean; hostname?: string; action?: string; 'error-codes'?: string[] };
 
-        if (!outcome.success) {
+        if (!verifyRes.ok || !outcome.success || outcome.hostname !== requestHostname || outcome.action !== 'privacy-request') {
           return new Response(
             JSON.stringify({
               success: false,
@@ -360,15 +363,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     }
 
-    // 8. Generate Tracking Reference and Dispatch Notification
+    // 8. Forward to the configured relay. A reference is issued only after acceptance.
+    const web3formsKey = context.env.WEB3FORMS_ACCESS_KEY;
+    const formspreeKey = context.env.FORMSPREE_KEY;
+    if (!isTestEnv && !web3formsKey && !formspreeKey) {
+      return new Response(JSON.stringify({ success: false, error: t('Privacy request delivery is not configured. Please email info@strovagroups.in directly.', 'गोपनीयता अनुरोध सेवा कॉन्फ़िगर नहीं है। कृपया सीधे info@strovagroups.in पर ईमेल करें।') }), {
+        status: 503, headers: { 'Content-Type': 'application/json', ...rateLimitHeaders },
+      });
+    }
+
     const trackingId = generateTrackingId();
     const receivedAt = new Date().toISOString();
-
-    // If Web3Forms or external relay is configured, forward details to Grievance Desk
-    const web3formsKey = context.env.WEB3FORMS_ACCESS_KEY;
-    if (web3formsKey && !isTestEnv) {
+    if (!isTestEnv) {
       try {
-        await fetch('https://api.web3forms.com/submit', {
+        const relayRes = web3formsKey
+          ? await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
@@ -384,26 +393,39 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             relationship: relationship || 'Client / User',
             details: details,
             received_at: receivedAt,
-            source_ip: clientIp,
           }),
+          signal: AbortSignal.timeout(8000),
+        })
+          : await fetch(`https://formspree.io/f/${formspreeKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ subject: `[Privacy Request ${trackingId}] ${requestType.toUpperCase()}`, tracking_id: trackingId, request_type: requestType, name, email, phone, relationship, details, received_at: receivedAt }),
+            signal: AbortSignal.timeout(8000),
+          });
+        const relayBody = await relayRes.json().catch(() => ({})) as { success?: boolean; ok?: boolean };
+        if (!relayRes.ok || (web3formsKey && relayBody.success === false) || (formspreeKey && relayBody.ok === false)) {
+          throw new Error('relay-rejected');
+        }
+      } catch {
+        const requestId = crypto.randomUUID();
+        console.error(JSON.stringify({ event: 'privacy_request_delivery_failed', requestId }));
+        return new Response(JSON.stringify({ success: false, error: t('We could not deliver your request just now. Please try again or email info@strovagroups.in.', 'अभी आपका अनुरोध भेजा नहीं जा सका। कृपया पुनः प्रयास करें या info@strovagroups.in पर ईमेल करें।'), requestId }), {
+          status: 502, headers: { 'Content-Type': 'application/json', ...rateLimitHeaders },
         });
-      } catch (e) {
-        // Non-fatal if relay fails as long as tracking ID is returned to client
-        console.error('Failed to dispatch privacy request relay notification:', e);
       }
     }
 
-    // 9. Successful Response with Statutory Timelines
+    // 9. Successful Response with a company service target, not a statutory deadline.
     return new Response(
       JSON.stringify({
         success: true,
         trackingId,
         receivedAt,
-        statutoryAcknowledgmentHours: 48,
-        statutoryResolutionDays: 30,
+        acknowledgmentTargetHours: 48,
+        responseTargetDays: 30,
         message: t(
-          `Your privacy request has been recorded under tracking reference ${trackingId}. In accordance with DPDP Rules 2025 and our Grievance Redressal SOP, our Data Protection & Grievance Desk will acknowledge your submission within 48 hours and resolve it within 30 calendar days.`,
-          `आपका गोपनीयता अनुरोध ट्रैकिंग संदर्भ ${trackingId} के अंतर्गत दर्ज कर लिया गया है। DPDP नियमावली 2025 और हमारी शिकायत निवारण SOP के अनुसार, हमारी डेटा सुरक्षा और शिकायत निवारण डेस्क 48 घंटों के भीतर पावती जारी करेगी और 30 दिनों के भीतर समाधान करेगी।`
+          `Your request was sent under reference ${trackingId}. We aim to acknowledge it within 48 hours and respond within 30 days. These are service targets, not statutory deadlines.`,
+          `आपका अनुरोध संदर्भ ${trackingId} के तहत भेजा गया है। हम 48 घंटों में पावती और 30 दिनों में उत्तर देने का लक्ष्य रखते हैं। ये सेवा लक्ष्य हैं, वैधानिक समय-सीमाएं नहीं।`
         ),
         contact: 'info@strovagroups.in',
         requestType,
@@ -411,12 +433,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       { status: 200, headers: { 'Content-Type': 'application/json', ...rateLimitHeaders } }
     );
   } catch (error: any) {
+    console.error(JSON.stringify({ event: 'privacy_request_unhandled', requestId, name: error?.name || 'Error' }));
     return new Response(
       JSON.stringify({
         success: false,
+        requestId,
         error: 'An internal error occurred processing your request. Please email info@strovagroups.in directly.',
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json', 'X-Request-ID': requestId } }
     );
   }
 };

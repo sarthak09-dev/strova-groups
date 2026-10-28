@@ -68,8 +68,8 @@ async function verify() {
     const svgContent = fs.readFileSync(svgPath, 'utf8');
     assert(svgContent.includes('<svg') && svgContent.includes('xmlns="http://www.w3.org/2000/svg"'), 'favicon.svg has valid SVG xmlns');
     assert(svgContent.includes('viewBox="0 0 36 36"'), 'favicon.svg has 1:1 square viewBox');
-    assert(svgContent.includes('#0F172A'), 'favicon.svg contains brand background #0F172A');
-    assert(svgContent.includes('#3B82F6'), 'favicon.svg contains brand accent #3B82F6');
+    assert(svgContent.includes('#49202B'), 'favicon.svg contains the brand burgundy');
+    assert(svgContent.includes('#6F7969'), 'favicon.svg contains the brand sage');
   }
 
   // Check favicon.ico

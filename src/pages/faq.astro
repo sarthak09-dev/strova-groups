@@ -2,7 +2,7 @@
 /**
  * FAQ Page (src/pages/faq.astro)
  *
- * Dedicated Frequently Asked Questions page covering all divisions,
+ * Dedicated Frequently Asked Questions page covering Strova Technology's pillars,
  * commercial terms, 50% upfront milestone model, and engineering standards.
  * Structured with FAQPage and BreadcrumbList JSON-LD schemas.
  */
@@ -38,7 +38,7 @@ const faqs: FAQItem[] = [
     category: 'Engagement & Process',
     question: 'Do we own the full source code and intellectual property?',
     answer:
-      'Yes, 100%. Upon final milestone settlement, complete ownership of all custom codebase, repositories, documentation, and configuration scripts transfers entirely to your organization without proprietary platform lock-in.',
+      'Project agreements specify ownership of custom code and project deliverables. After final milestone settlement, the agreed custom code, repository, and documentation are handed over to your organization.',
   },
   {
     category: 'Engagement & Process',
@@ -49,19 +49,19 @@ const faqs: FAQItem[] = [
 
   // Technologies
   {
-    category: 'Strova Technologies',
+    category: 'Strova Technology · Digital',
     question: 'How do you build websites for clinics and healthcare providers in India?',
     answer:
-      'We engineer ultra-fast, mobile-first static platforms designed for patients on mobile 4G/5G networks. They feature clear doctor schedules, direct WhatsApp consultation booking, and strict DISHA and DPDP Act 2023 data hygiene with zero insecure third-party ad tracking.',
+      'A clinic website can organize services, clinician information, and contact or appointment details for mobile visitors. Privacy and data-handling requirements should be scoped for each project.',
   },
   {
-    category: 'Strova Technologies',
+    category: 'Strova Technology · Automation',
     question: 'How does WhatsApp automation work with our existing business tools?',
     answer:
       'We build automated workflows using the official Meta WhatsApp Cloud API. We connect webhooks directly to your CRM (Zoho, HubSpot), relational database, or Google Sheets to qualify inbound leads, send automated appointment reminders, and escalate to human staff with full conversation history.',
   },
   {
-    category: 'Strova Technologies',
+    category: 'Strova Technology · Digital',
     question: 'What mobile application stacks do you build on Android?',
     answer:
       'We build native Android applications using modern Kotlin and Jetpack Compose. Our mobile architectures prioritize offline-first data caching via Room SQLite, hardware sensor integrations, and strict background battery efficiency.',
@@ -69,13 +69,13 @@ const faqs: FAQItem[] = [
 
   // Digital
   {
-    category: 'Strova Digital',
+    category: 'Digital growth services',
     question: 'What does a Technical SEO sprint include?',
     answer:
       'Our technical SEO audits address Core Web Vitals (LCP, CLS, INP), Schema.org JSON-LD microdata architecture, crawl budget optimization, server response headers, internal link topology, and indexing cleanups. We solve root technical causes rather than superficial cosmetic suggestions.',
   },
   {
-    category: 'Strova Digital',
+    category: 'Digital growth services',
     question: 'How do you manage paid ad campaigns on Google and Meta?',
     answer:
       'We manage campaigns with server-side Conversion API (CAPI) tracking and clean UTM attribution. We focus strictly on bottom-line Return on Ad Spend (ROAS) and qualified customer acquisition costs (CPA), accompanied by transparent bi-weekly reports.',
@@ -83,10 +83,10 @@ const faqs: FAQItem[] = [
 
   // Commerce
   {
-    category: 'Strova Commerce',
-    question: 'What is Strova Commerce and when will it launch?',
+    category: 'Strova Technology · Digital',
+    question: 'Can Strova Technology build an e-commerce website?',
     answer:
-      'Strova Commerce is our upcoming division dedicated to high-speed headless storefronts, native WhatsApp catalog checkouts, omnichannel stock synchronization, and Cash-on-Delivery (COD) RTO fraud reduction. The division is marked Coming soon, with early partner inquiries currently open.',
+      'E-commerce sits within the Digital pillar of Strova Technology. A project can include a storefront, checkout, catalog workflows, and integrations selected for your requirements. Features and timing are agreed in the project scope.',
   },
 
   // Commercial & International
@@ -186,6 +186,20 @@ const categories = Array.from(new Set(faqs.map((f) => f.category)));
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Client support -->
+  <section class="section" aria-labelledby="client-support-title">
+    <div class="container">
+      <div class="card card--quiet support-cta">
+        <div>
+          <span class="section-eyebrow">Client support</span>
+          <h2 id="client-support-title" class="section-title">Need help with an active project?</h2>
+          <p class="section-subtitle">Clients can raise and track a request in the portal, or email <a href="mailto:support@strovagroups.in">support@strovagroups.in</a>. We aim to respond within 24 hours; timing can vary by request and operating hours.</p>
+        </div>
+        <a href="/portal/login/" class="btn btn--primary">Open client portal</a>
       </div>
     </div>
   </section>
@@ -319,6 +333,19 @@ const categories = Array.from(new Set(faqs.map((f) => f.category)));
 
   .faq-answer p {
     margin: 0;
+  }
+
+  .support-cta {
+    padding: var(--space-8);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 640px) {
+    .support-cta { grid-template-columns: 1fr; padding: var(--space-6); }
+    .support-cta .btn { width: 100%; min-height: 44px; }
   }
 
   /* Bottom CTA */

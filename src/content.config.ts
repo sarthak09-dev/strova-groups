@@ -7,7 +7,7 @@ const journalCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     publishDate: z.date(),
-    author: z.string().default('Sarthak Shresht'),
+    author: z.string().default('Sarthak Shreshth'),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),

@@ -26,8 +26,8 @@ const isHi = lang === 'hi';
       <div class="footer__brand">
         <a href={isHi ? '/hi/' : '/'} class="footer__logo" aria-label={isHi ? 'स्ट्रोवा ग्रुप — मुख्य पृष्ठ' : 'Strova Group — Home'}>
           <img
-            src="/images/brand/icon-mark.png"
-            alt="Strova Group ribbon monogram"
+            src="/images/logo.svg"
+            alt=""
             width="34"
             height="34"
             class="footer__logo-img"
@@ -50,18 +50,17 @@ const isHi = lang === 'hi';
         <ul class="footer__list" role="list">
           <li>
             <a href={isHi ? '/hi/technologies/' : '/technologies/'}>
-              {isHi ? 'स्ट्रोवा टेक्नोलॉजीज' : 'Strova Technologies'}
+              {isHi ? 'स्ट्रोवा टेक्नोलॉजी' : 'Strova Technology'}
             </a>
           </li>
           <li>
             <a href={isHi ? '/hi/digital/' : '/digital/'}>
-              {isHi ? 'स्ट्रोवा डिजिटल' : 'Strova Digital'}
+              {isHi ? 'डिजिटल विकास सेवाएं' : 'Digital growth services'}
             </a>
           </li>
           <li>
             <a href={isHi ? '/hi/commerce/' : '/commerce/'}>
-              {isHi ? 'स्ट्रोवा कॉमर्स' : 'Strova Commerce'}
-              <span class="badge-subtle">{isHi ? 'जल्द उपलब्ध' : 'Coming soon'}</span>
+              {isHi ? 'ई-कॉमर्स समाधान' : 'E-commerce solutions'}
             </a>
           </li>
         </ul>
@@ -157,6 +156,7 @@ const isHi = lang === 'hi';
         <h2 class="footer__heading" style="margin-top: var(--space-6);">{isHi ? 'सीधा संपर्क' : 'Contact'}</h2>
         <address class="footer__contact">
           <p><a href="mailto:info@strovagroups.in">info@strovagroups.in</a></p>
+          <p>{isHi ? 'ग्राहक सहायता' : 'Client support'}: <a href="mailto:support@strovagroups.in">support@strovagroups.in</a></p>
           <p>
             <a href="tel:+919288077802">+91 92880 77802</a><br/>
             <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">WhatsApp: +91 92880 77802</a>
@@ -225,7 +225,7 @@ const isHi = lang === 'hi';
     object-fit: contain;
     display: block;
     border-radius: 6px;
-    filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.35));
+    filter: none;
   }
 
   .footer__wordmark {

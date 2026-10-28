@@ -69,7 +69,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
         return;
       }
 
-      const profile = await getUserProfile(session.user.id);
+      const profile = await getUserProfile();
       const orders = await fetchMyOrders();
 
       const channelsList = document.getElementById('project-channels-list');
@@ -114,7 +114,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
           <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">
             ${isClient ? 'You' : 'Strova Team'} • ${escapeHtml(time)}
           </span>
-          <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+          <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#FFFCF7' : 'var(--color-text-main)'};">
             ${escapeHtml(m.message_text)}
           </div>
         `;
@@ -143,7 +143,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
             return `
               <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
                 <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
-                <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+                <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#FFFCF7' : 'var(--color-text-main)'};">
                   ${escapeHtml(m.message_text)}
                 </div>
               </div>
@@ -167,7 +167,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
       function renderChannels() {
         if (!channelsList) return;
         channelsList.innerHTML = orders.map((o) => `
-          <button type="button" class="channel-btn btn btn-secondary" data-id="${escapeHtml(o.id)}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${o.id === activeOrder.id ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${o.id === activeOrder.id ? '#EFF6FF' : '#fff'};">
+          <button type="button" class="channel-btn btn btn-secondary" data-id="${escapeHtml(o.id)}" style="width: 100%; text-align: left; justify-content: flex-start; padding: 0.75rem; border-color: ${o.id === activeOrder.id ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${o.id === activeOrder.id ? '#F4EFE6' : '#FFFCF7'};">
             <div>
               <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-main);">${escapeHtml(o.title)}</p>
               <p style="font-size: 0.75rem; color: var(--color-text-dim);">${escapeHtml(o.order_ref)} • ${escapeHtml(o.current_stage)}</p>

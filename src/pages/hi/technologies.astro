@@ -1,25 +1,21 @@
 ---
 /**
- * टेक्नोलॉजीज डिवीजन पृष्ठ (src/pages/hi/technologies.astro)
- * 
- * डिवीजन: स्ट्रोवा टेक्नोलॉजीज (Strova Technologies)
- * मुख्य कार्य: उच्च-प्रदर्शन वेबसाइट्स, एंड्रॉइड ऐप्स, कस्टम सास, एआई एवं व्हाट्सएप ऑटोमेशन।
+ * स्ट्रोवा टेक्नोलॉजी का परिचय और इसके तीन जुड़े हुए सेवा स्तंभ।
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'स्ट्रोवा टेक्नोलॉजीज — कस्टम सॉफ्टवेयर एवं एआई इंजीनियरिंग',
+  name: 'स्ट्रोवा टेक्नोलॉजी — डिजिटल, ऑटोमेशन एवं सॉफ़्टवेयर उत्पाद',
   provider: {
     '@type': 'Organization',
     name: 'Strova Group',
     url: 'https://strovagroups.in',
   },
-  serviceType: 'सॉफ्टवेयर विकास और एआई ऑटोमेशन',
-  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  serviceType: 'डिजिटल सेवाएं, व्यवसाय ऑटोमेशन और सॉफ़्टवेयर उत्पाद',
   description:
-    'कस्टम वेब प्लेटफॉर्म, नेटिव एंड्रॉइड ऐप्स, मल्टी-टेनेंट सास डैशबोर्ड और आधिकारिक व्हाट्सएप क्लाउड एपीआई ऑटोमेशन का निर्माण।',
+    'स्ट्रोवा ग्रुप के अंतर्गत डिजिटल सेवाएं, व्यवसाय ऑटोमेशन और सॉफ़्टवेयर उत्पाद।',
 };
 
 const breadcrumbJsonLd = {
@@ -43,8 +39,8 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="स्ट्रोवा टेक्नोलॉजीज — सॉफ्टवेयर एवं एआई | Strova Group"
-  description="स्ट्रोवा टेक्नोलॉजीज द्वारा निर्मित हाई-परफॉर्मेंस वेबसाइट्स, एंड्रॉइड ऐप्स, सास प्लेटफ़ॉर्म और सुरक्षित व्हाट्सएप एआई ऑटोमेशन सॉल्यूशंस।"
+  title="स्ट्रोवा टेक्नोलॉजी | स्ट्रोवा ग्रुप"
+  description="स्ट्रोवा टेक्नोलॉजी, स्ट्रोवा ग्रुप का एकीकृत टेक्नोलॉजी व्यवसाय है। इसके तीन जुड़े स्तंभ डिजिटल, ऑटोमेशन और उत्पाद हैं।"
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
   lang="hi"
 >
@@ -52,21 +48,48 @@ const breadcrumbJsonLd = {
   <section class="page-hero">
     <div class="container">
       <div class="page-hero__content">
-        <span class="section-eyebrow">स्ट्रोवा टेक्नोलॉजीज</span>
+        <span class="section-eyebrow">स्ट्रोवा ग्रुप / स्ट्रोवा टेक्नोलॉजी</span>
         <h1 class="page-hero__title">
-          कस्टम सॉफ़्टवेयर, आधुनिक मोबाइल ऐप्स एवं व्यावहारिक ऑटोमेशन
+          डिजिटल समाधान, व्यावहारिक ऑटोमेशन और सॉफ़्टवेयर उत्पाद
         </h1>
         <p class="page-hero__lead">
-          हम मजबूत डिजिटल इंफ्रास्ट्रक्चर तैयार करते हैं। सब-सेकंड स्टेटिक वेब प्लेटफॉर्म से लेकर नेटिव एंड्रॉइड ऐप्स और व्हाट्सएप वर्कफ़्लो ऑटोमेशन तक, जो परिचालन जटिलता को समाप्त करते हैं।
+          स्ट्रोवा ग्रुप के अंतर्गत स्ट्रोवा टेक्नोलॉजी डिजिटल सेवाओं, व्यवसाय प्रक्रियाओं के ऑटोमेशन और ग्राहक आवश्यकताओं पर आधारित सॉफ़्टवेयर उत्पादों को जोड़ती है।
         </p>
         <div class="page-hero__actions">
           <a href="/hi/contact/?service=technologies" class="btn btn--primary btn--lg">
-            इंजीनियरिंग कोटेशन अनुरोध करें
+            प्रोजेक्ट पर चर्चा करें
           </a>
           <a href="#offerings" class="btn btn--outline btn--lg">
-            सेवा वास्तुकला की समीक्षा करें &rarr;
+            तीन स्तंभ देखें &rarr;
           </a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pillars" aria-labelledby="pillars-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="pillars-title" class="section-title">एक टेक्नोलॉजी व्यवसाय। तीन जुड़े हुए स्तंभ।</h2>
+        <p class="section-subtitle">डिजिटल, ऑटोमेशन और उत्पाद—स्ट्रोवा ग्रुप के अंतर्गत स्ट्रोवा टेक्नोलॉजी के हिस्से हैं।</p>
+      </div>
+      <div class="grid grid--3">
+        <article class="card capability-card" id="pillar-digital">
+          <h3 class="capability-title">डिजिटल</h3>
+          <p class="capability-text">व्यवसाय वेबसाइट और लैंडिंग पेज, वेब ऐप व ग्राहक पोर्टल, ई-कॉमर्स समाधान और कस्टम डिजिटल प्लेटफ़ॉर्म।</p>
+          <a class="showcase-card__link" href="/hi/digital/">डिजिटल सेवाएं देखें &rarr;</a>
+          <a class="showcase-card__link" href="/hi/commerce/">ई-कॉमर्स समाधान देखें &rarr;</a>
+        </article>
+        <article class="card capability-card" id="pillar-automation">
+          <h3 class="capability-title">ऑटोमेशन</h3>
+          <p class="capability-text">व्यवसाय प्रक्रियाएं, CRM और संचालन इंटीग्रेशन, उपयुक्त AI इंटीग्रेशन और दोहराए जाने वाले कार्यों का ऑटोमेशन।</p>
+          <a class="showcase-card__link" href="#automation">ऑटोमेशन क्षमताएं देखें &rarr;</a>
+        </article>
+        <article class="card capability-card" id="pillar-products">
+          <h3 class="capability-title">उत्पाद</h3>
+          <p class="capability-text">SaaS ऐप्लिकेशन, पुन: उपयोग योग्य सॉफ़्टवेयर, डिजिटल टूल और ग्राहक आवश्यकताओं के आधार पर प्लेटफ़ॉर्म।</p>
+          <p class="text-secondary text-sm">यह उत्पादों पर कार्य का परिचय है; किसी उत्पाद के लॉन्च की घोषणा नहीं।</p>
+        </article>
       </div>
     </div>
   </section>
@@ -78,19 +101,19 @@ const breadcrumbJsonLd = {
         <div class="service-overview-grid">
           <div class="overview-item">
             <span class="overview-item__label">सेवा का विवरण</span>
-            <p class="overview-item__val">प्रोडक्शन वेब प्लेटफॉर्म, नेटिव एंड्रॉइड एप्लिकेशन, मल्टी-टेनेंट सास सिस्टम और आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई ऑटोमेशन वर्कफ़्लो।</p>
+            <p class="overview-item__val">डिजिटल सेवाएं, व्यवसाय वर्कफ़्लो ऑटोमेशन और ग्राहक आवश्यकताओं के आधार पर सॉफ़्टवेयर उत्पाद।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">किसके लिए उपयुक्त</span>
-            <p class="overview-item__val">व्यावसायिक उद्यम, क्लीनिक, तेजी से बढ़ते स्टार्टअप और ऐसे संगठन जो बिना किसी वेंडर लॉक-इन के मजबूत डिजिटल समाधान चाहते हैं।</p>
+            <p class="overview-item__val">वे व्यवसाय जिन्हें अपनी ऑनलाइन सेवाओं, आंतरिक प्रक्रियाओं या डिजिटल उत्पादों के लिए तकनीकी सहायता चाहिए।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">कोटेशन प्रक्रिया</span>
-            <p class="overview-item__val">1 कार्यदिवस के भीतर विस्तृत और निश्चित-मूल्य लिखित प्रस्ताव। कार्य लिखित सहमति और 50% अग्रिम के बाद शुरू होता है।</p>
+            <p class="overview-item__val">आवश्यकताओं और दायरे की समीक्षा के बाद लिखित प्रस्ताव दिया जाता है।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">अनुमानित समयसीमा</span>
-            <p class="overview-item__val">व्हाट्सएप ऑटोमेशन के लिए 2-4 सप्ताह &bull; कस्टम वेब ऐप्स के लिए 4-6 सप्ताह &bull; प्रोडक्शन सास और एंड्रॉइड एमवीपी के लिए 8-12 सप्ताह।</p>
+            <p class="overview-item__val">प्रस्ताव में प्रोजेक्ट के दायरे और आवश्यकताओं के आधार पर अनुमानित समयसीमा दी जाती है।</p>
           </div>
         </div>
       </div>
@@ -103,7 +126,7 @@ const breadcrumbJsonLd = {
       <div class="section-header text-center">
         <h2 id="offerings-title" class="section-title">हम क्या बनाते हैं और हमारी तकनीक</h2>
         <p class="section-subtitle">
-          दोष-सहिष्णुता (fault tolerance), कठोर सुरक्षा और स्वच्छ डेवलपर हैंडओवर के लिए निर्मित।
+          स्पष्ट आवश्यकताओं, अनुरक्षण योग्य डिलीवरी और लिखित हैंडओवर पर केंद्रित।
         </p>
       </div>
 
@@ -119,12 +142,12 @@ const breadcrumbJsonLd = {
           </div>
           <h3 class="capability-title">हाई-परफॉर्मेंस वेब प्लेटफ़ॉर्म</h3>
           <p class="capability-text">
-            हम भारी मोनोलिथिक सीएमएस के बजाय स्टेटिक-फर्स्ट (Astro) और हाइब्रिड एज-रेंडर्ड आर्किटेक्चर का उपयोग करते हैं। इससे सब-सेकंड टाइम-टू-फर्स्ट-बाइट, उत्कृष्ट कोर वेब वाइटल्स और न्यूनतम सर्वर लागत मिलती है।
+            परियोजना की जरूरत के अनुसार हम उपयुक्त वेब आर्किटेक्चर और टूल चुनते हैं। प्राथमिकताएं उपयोगिता, अनुरक्षण और आवश्यक प्रदर्शन पर केंद्रित रहती हैं।
           </p>
           <ul class="capability-features">
             <li><strong>फ्रेमवर्क:</strong> Astro, Next.js, TypeScript, Tailwind CSS</li>
-            <li><strong>परफॉर्मेंस:</strong> 95+ मोबाइल लाइटहाउस लक्ष्य स्कोर</li>
-            <li><strong>अभिगम्यता:</strong> WCAG 2.2 AA अनुपालन मार्कअप</li>
+            <li><strong>परफॉर्मेंस:</strong> कोर वेब वाइटल्स और मोबाइल उपयोगिता पर ध्यान</li>
+            <li><strong>अभिगम्यता:</strong> मानक सुलभता अभ्यासों पर आधारित markup</li>
             <li><strong>एज डिप्लॉयमेंट:</strong> Cloudflare Pages और Vercel कैशिंग</li>
           </ul>
         </article>
@@ -177,12 +200,12 @@ const breadcrumbJsonLd = {
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
             </svg>
           </div>
-          <h3 class="capability-title">व्हाट्सएप बिजनेस एवं एआई ऑटोमेशन</h3>
+          <h3 class="capability-title" id="automation">व्हाट्सएप बिजनेस एवं एआई ऑटोमेशन</h3>
           <p class="capability-text">
             ग्राहक वार्तालाप को स्वचालित व्यावसायिक कार्यों में बदलें। हम आधिकारिक मेटा क्लाउड एपीआई, वेबहुक और अनुकूलित एलएलएम को एकीकृत कर सहायता ट्राइएज, लीड योग्यता और सीआरएम सिंक प्रदान करते हैं।
           </p>
           <ul class="capability-features">
-            <li><strong>आधिकारिक एपीआई:</strong> सत्यापित मेटा बिजनेस मैनेजर एवं व्हाट्सएप क्लाउड एपीआई</li>
+            <li><strong>मैसेजिंग integrations:</strong> account access और setup उपलब्ध होने पर WhatsApp Cloud API का दायरा तय किया जा सकता है</li>
             <li><strong>लीड कैप्चर:</strong> इंटरैक्टिव संदेश टेम्पलेट और त्वरित उत्तर</li>
             <li><strong>एलएलएम ट्राइएज:</strong> संदर्भ-आधारित सामान्य प्रश्नोत्तर और मानव एस्केलेशन</li>
             <li><strong>डेटा सिंक:</strong> ज़ोहो, हबस्पॉट, ईआरपी या स्प्रेडशीट के लिए सीधा वेबहुक</li>
@@ -221,10 +244,10 @@ const breadcrumbJsonLd = {
           <div class="solution-card__badge">संवादात्मक ऑटोमेशन</div>
           <h3 class="solution-card__title">व्यवसायों के लिए व्हाट्सएप ऑटोमेशन</h3>
           <p class="solution-card__desc">
-            धीमे उत्तरों और मैन्युअल संदेश प्रबंधन के कारण लीड खोना बंद करें। हम आधिकारिक मेटा व्हाट्सएप क्लाउड एपीआई वेबहुक तैनात करते हैं जो पूछताछ को संभालते हैं और 24/7 डेटा सिंक करते हैं।
+            WhatsApp पूछताछ को सहमत व्यावसायिक workflow से जोड़ें ताकि दोहराए जाने वाले संदेश प्रबंधन को कम करने और अनुरोध सही अगले चरण तक पहुँचाने में मदद मिले।
           </p>
           <ul class="solution-card__list">
-            <li><strong>आधिकारिक सत्यापित एपीआई:</strong> मेटा क्लाउड एपीआई पर निर्मित, असुरक्षित ब्राउज़र स्क्रैपर्स पर शून्य निर्भरता।</li>
+            <li><strong>जुड़े हुए workflow:</strong> आवश्यक access और setup उपलब्ध होने पर WhatsApp Cloud API integration का दायरा तय किया जा सकता है।</li>
             <li><strong>बुद्धिमान लीड योग्यता:</strong> इंटरैक्टिव बटन मेनू और संरचित प्रवाह के माध्यम से ग्राहक की आवश्यकता और बजट का स्वचालित संग्रह।</li>
             <li><strong>सहज सीआरएम एकीकरण:</strong> संपर्क विवरण और चैट सारांश रीयल-टाइम में Zoho CRM, PostgreSQL या Google Sheets में सुरक्षित रूप से दर्ज।</li>
             <li><strong>लाइव एजेंट एस्केलेशन:</strong> जब कोई ग्राहक लाइव परामर्श चाहता है, तो कार्यप्रवाह पूरी चैट संदर्भ के साथ तुरंत आपकी टीम को सतर्क करता है।</li>
@@ -303,15 +326,15 @@ const breadcrumbJsonLd = {
               </p>
             </div>
             <div class="standard-item">
-              <h3 class="standard-item__title">कठोर सुरक्षा एवं डेटा स्वच्छता</h3>
+              <h3 class="standard-item__title">परियोजना के दायरे में सुरक्षा</h3>
               <p class="standard-item__text">
-                इनपुट सैनिटाइजेशन, एन्क्रिप्टेड एनवायरनमेंट वेरिएबल्स, पैरामीटराइज्ड डेटाबेस क्वेरीज़ और आधुनिक कंटेंट सिक्योरिटी पॉलिसी (CSP) प्रत्येक प्रोजेक्ट में अनिवार्य।
+                डेटा प्रबंधन और access controls पर हर परियोजना में चर्चा होती है। विशेष सुरक्षा आवश्यकताएं और controls सहमत दायरे में दर्ज होते हैं।
               </p>
             </div>
             <div class="standard-item">
               <h3 class="standard-item__title">माइलस्टोन परीक्षण एवं वारंटी</h3>
               <p class="standard-item__text">
-                प्रत्येक रिलीज क्रॉस-ब्राउज़र परीक्षण से गुजरती है। हम वितरित कार्य पर 30-दिवसीय निःशुल्क बग वारंटी प्रदान करते हैं ताकि किसी भी अप्रत्याशित समस्या का समाधान तुरंत हो सके।
+                परीक्षण का दायरा, समर्थित ब्राउज़र और लॉन्च के बाद की वारंटी प्रस्ताव और समझौते में दर्ज होते हैं।
               </p>
             </div>
           </div>
@@ -347,7 +370,7 @@ const breadcrumbJsonLd = {
         </div>
         <div class="card card--quiet">
           <span class="section-eyebrow">चरण 3 &bull; वितरण एवं हैंडओवर</span>
-          <h3 class="pillar-title">100% कोड स्वामित्व</h3>
+          <h3 class="pillar-title">कोड स्वामित्व एवं हैंडओवर</h3>
           <p class="text-secondary text-sm">
             कार्य शुरू करने के लिए 50% अग्रिम, स्टेजिंग स्वीकृति पर 50% शेष। पूर्ण स्रोत कोड रिपॉजिटरी और बौद्धिक संपदा आपको हस्तांतरित।
           </p>

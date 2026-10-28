@@ -1,25 +1,21 @@
 ---
 /**
- * कॉमर्स डिवीजन पृष्ठ (src/pages/hi/commerce.astro)
- * 
- * डिवीजन: स्ट्रोवा कॉमर्स (Strova Commerce) — "जल्द उपलब्ध" (Coming Soon)
- * स्थिति: विकासधीन
+ * स्ट्रोवा टेक्नोलॉजी के डिजिटल स्तंभ के अंतर्गत ई-कॉमर्स समाधान।
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'स्ट्रोवा कॉमर्स — हेडलेस रिटेल एवं संवादात्मक कॉमर्स',
+  name: 'स्ट्रोवा टेक्नोलॉजी के ई-कॉमर्स समाधान',
   provider: {
     '@type': 'Organization',
     name: 'Strova Group',
     url: 'https://strovagroups.in',
   },
-  serviceType: 'हेडलेस ई-कॉमर्स और व्हाट्सएप संवादात्मक चेकआउट',
-  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  serviceType: 'ई-कॉमर्स वेबसाइट और इंटीग्रेशन',
   description:
-    'अगली पीढ़ी के हेडलेस कॉमर्स स्टोरफ्रंट, नेटिव व्हाट्सएप कैटलॉग चेकआउट, ओमनीचैनल इन्वेंटरी सिंक और कैश-ऑन-डिलीवरी आरटीओ धोखाधड़ी सुरक्षा (जल्द उपलब्ध)।',
+    'व्यवसाय की कैटलॉग, चेकआउट और संचालन आवश्यकताओं के अनुसार ई-कॉमर्स वेबसाइट और इंटीग्रेशन।',
 };
 
 const breadcrumbJsonLd = {
@@ -35,7 +31,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: 'कॉमर्स',
+      name: 'ई-कॉमर्स समाधान',
       item: 'https://strovagroups.in/hi/commerce/',
     },
   ],
@@ -43,8 +39,8 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="स्ट्रोवा कॉमर्स (जल्द उपलब्ध) — Strova Group"
-  description="स्ट्रोवा कॉमर्स: आधुनिक हेडलेस स्टोरफ्रंट्स, व्हाट्सएप संवादात्मक चेकआउट और ओमनीचैनल इन्वेंटरी इंजन। जल्द उपलब्ध।"
+  title="ई-कॉमर्स समाधान — स्ट्रोवा टेक्नोलॉजी | स्ट्रोवा ग्रुप"
+  description="स्ट्रोवा टेक्नोलॉजी के डिजिटल स्तंभ के अंतर्गत ई-कॉमर्स वेबसाइट और इंटीग्रेशन।"
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
   lang="hi"
 >
@@ -52,21 +48,21 @@ const breadcrumbJsonLd = {
     <div class="container text-center">
       <div class="coming-soon-badge">
         <span class="badge-dot"></span>
-        <span>स्ट्रोवा कॉमर्स &bull; जल्द उपलब्ध</span>
+        <span>स्ट्रोवा टेक्नोलॉजी &bull; डिजिटल</span>
       </div>
       <h1 class="commerce-title">
-        संवादात्मक एवं हेडलेस ई-कॉमर्स का भविष्य
+        आपके व्यवसाय के अनुसार ई-कॉमर्स
       </h1>
       <p class="commerce-lead">
-        हम एक एकीकृत रिटेल इंजन का निर्माण कर रहे हैं जो भारतीय और वैश्विक व्यापारियों के लिए अल्ट्रा-फास्ट स्टैटिक स्टोरफ्रंट, नेटिव व्हाट्सएप कैटलॉग चेकआउट और बुद्धिमान सीओडी धोखाधड़ी रोकथाम को जोड़ता है।
+        एक ई-कॉमर्स प्रोजेक्ट में स्टोरफ्रंट, चेकआउट, कैटलॉग और व्यवसाय की ज़रूरत के अनुसार इंटीग्रेशन शामिल हो सकते हैं।
       </p>
 
       <div class="commerce-actions">
         <a href="/hi/contact/?service=commerce" class="btn btn--primary btn--lg">
-          अर्ली एक्सेस पार्टनर सूची में शामिल हों
+          ई-कॉमर्स प्रोजेक्ट पर चर्चा करें
         </a>
         <a href="/hi/technologies/" class="btn btn--outline btn--lg">
-          सक्रिय तकनीकी क्षमताएं देखें
+          स्ट्रोवा टेक्नोलॉजी देखें
         </a>
       </div>
     </div>
@@ -79,19 +75,19 @@ const breadcrumbJsonLd = {
         <div class="service-overview-grid">
           <div class="overview-item">
             <span class="overview-item__label">सेवा का विवरण</span>
-            <p class="overview-item__val">हेडलेस हाई-स्पीड स्टोरफ्रंट्स, संवादात्मक व्हाट्सएप कैटलॉग चेकआउट, ओमनीचैनल इन्वेंटरी सिंक और स्वचालित सीओडी आरटीओ सुरक्षा।</p>
+            <p class="overview-item__val">प्रोजेक्ट में स्टोरफ्रंट, चेकआउट, कैटलॉग वर्कफ़्लो और आवश्यकतानुसार चुने गए इंटीग्रेशन शामिल हो सकते हैं।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">किसके लिए उपयुक्त</span>
-            <p class="overview-item__val">डायरेक्ट-टू-कंज्यूमर (D2C) ब्रांड्स, भारत में खुदरा व्यापारी और वैश्विक ई-कॉमर्स विक्रेता जो 100ms से कम चेकआउट अनुभव चाहते हैं।</p>
+            <p class="overview-item__val">वे व्यवसाय जो उत्पाद ऑनलाइन बेचना चाहते हैं या अपने स्टोरफ्रंट को मौजूदा व्यावसायिक सिस्टम से जोड़ना चाहते हैं।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">वाणिज्यिक स्थिति</span>
-            <p class="overview-item__val">वर्तमान में निजी इंजीनियरिंग विकास में। पायलट पार्टनर ऑनबोर्डिंग और तकनीकी वास्तुकला समीक्षाएं खुली हैं।</p>
+            <p class="overview-item__val">आवश्यकताओं की समीक्षा के बाद सुविधाएं, इंटीग्रेशन और समयसीमा तय की जाती है।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">अनुमानित समयसीमा</span>
-            <p class="overview-item__val">डिवीजन जल्द उपलब्ध होगा। प्रारंभिक साझेदार पूछताछ और तकनीकी वास्तुकला परामर्श वर्तमान में सक्रिय हैं।</p>
+            <p class="overview-item__val">लिखित प्रस्ताव में प्रोजेक्ट का दायरा, चरण और अनुमानित समयसीमा दी जाती है।</p>
           </div>
         </div>
       </div>
@@ -102,9 +98,9 @@ const breadcrumbJsonLd = {
   <section class="section" aria-labelledby="roadmap-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="roadmap-title" class="section-title">स्ट्रोवा कॉमर्स क्या तैयार कर रहा है</h2>
+        <h2 id="roadmap-title" class="section-title">डिजिटल स्तंभ के अंतर्गत विकल्प</h2>
         <p class="section-subtitle">
-          आधुनिक ई-कॉमर्स की मुख्य समस्याओं का समाधान: धीमी गति, चेकआउट ड्रॉप-ऑफ और कैश-ऑन-डिलीवरी आरटीओ घाटा।
+          उपयुक्त समाधान आपके कैटलॉग, ग्राहकों और मौजूदा सिस्टम पर निर्भर करता है।
         </p>
       </div>
 
@@ -113,7 +109,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">01</div>
           <h3 class="pillar-title">हेडलेस एज स्टोरफ्रंट्स</h3>
           <p class="pillar-desc">
-            Astro और आधुनिक एज सीडीएन पर निर्मित कैटलॉग अनुभव। पेज ट्रांज़िशन 100ms से कम समय लेते हैं, जो मोबाइल उपयोगकर्ताओं के ड्रॉप-ऑफ को समाप्त करते हैं।
+            उत्पादों, सामग्री और ग्राहक यात्रा के अनुसार तैयार किया गया उत्तरदायी स्टोरफ्रंट।
           </p>
         </div>
 
@@ -121,7 +117,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">02</div>
           <h3 class="pillar-title">व्हाट्सएप कैटलॉग एवं चेकआउट</h3>
           <p class="pillar-desc">
-            ग्राहकों को चैट छोड़े बिना सीधे व्हाट्सएप के भीतर उत्पाद कैटलॉग ब्राउज़ करने, आकार चुनने और लेनदेन पूरा करने की सुविधा।
+            जहां उपयुक्त हो, उत्पाद खोज और ग्राहक पूछताछ को मैसेजिंग वर्कफ़्लो से जोड़ा जा सकता है।
           </p>
         </div>
 
@@ -129,7 +125,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">03</div>
           <h3 class="pillar-title">बुद्धिमान सीओडी एवं आरटीओ सुरक्षा</h3>
           <p class="pillar-desc">
-            कैश-ऑन-डिलीवरी प्रेषण से पहले स्वचालित व्हाट्सएप ओटीपी सत्यापन और एआई-संचालित खरीदार जोखिम मूल्यांकन, जिससे रिटर्न 30-45% तक कम होता है।
+            चेकआउट और ऑर्डर वर्कफ़्लो आपके व्यवसाय द्वारा समर्थित भुगतान व डिलीवरी विकल्पों के अनुसार तैयार किए जा सकते हैं।
           </p>
         </div>
 
@@ -137,7 +133,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">04</div>
           <h3 class="pillar-title">ओमनीचैनल रीयल-टाइम सिंक</h3>
           <p class="pillar-desc">
-            मजबूत मैसेज कतारों का उपयोग करके पीओएस सिस्टम, वेब स्टोरफ्रंट, अमेजन और क्विक-कॉमर्स चैनलों के बीच स्टॉक स्तरों का स्वचालित समन्वय।
+            उपलब्ध इंटीग्रेशन और तय दायरे के अनुसार कैटलॉग या ऑर्डर डेटा को अन्य व्यावसायिक सिस्टम से जोड़ा जा सकता है।
           </p>
         </div>
 
@@ -145,7 +141,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">05</div>
           <h3 class="pillar-title">भारतीय भुगतान रूटिंग</h3>
           <p class="pillar-desc">
-            नेटिव 1-क्लिक यूपीआई इंटेंट फ्लो, स्वचालित रिफंड वेबहुक और Razorpay, Cashfree और PayU में मल्टी-गेटवे फॉलबैक।
+            भुगतान विकल्प लक्ष्य बाजार और प्रोजेक्ट आवश्यकताओं की समीक्षा के बाद चुने जाते हैं।
           </p>
         </div>
 
@@ -153,7 +149,7 @@ const breadcrumbJsonLd = {
           <div class="pillar-number">06</div>
           <h3 class="pillar-title">वैश्विक मुद्रा एवं कर अनुपालन</h3>
           <p class="pillar-desc">
-            अंतर्निहित बहु-मुद्रा मूल्य निर्धारण, भारतीय घरेलू लेनदेन के लिए स्वचालित जीएसटी ई-इनवॉइसिंग और निर्यात के लिए स्ट्राइप टैक्स गणना।
+            कर, मुद्रा और इनवॉइस की आवश्यकताओं की हर प्रोजेक्ट में समीक्षा की जाती है।
           </p>
         </div>
       </div>
@@ -165,23 +161,23 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="early-access-box">
         <div class="early-access-content">
-          <h2 class="early-access-title">बीटा परिनियोजन के लिए 5 D2C ब्रांड्स की तलाश</h2>
+          <h2 class="early-access-title">ई-कॉमर्स प्रोजेक्ट की योजना बना रहे हैं?</h2>
           <p class="early-access-desc">
-            हम सार्वजनिक लॉन्च से पहले हमारे व्हाट्सएप संवादात्मक चेकआउट और हेडलेस स्पीड आर्किटेक्चर का संचालन करने के लिए चुनिंदा ब्रांडों के साथ सहयोग कर रहे हैं।
+            अपने उत्पादों, ग्राहक यात्रा और संचालन की ज़रूरतें साझा करें। हम उपयुक्त दायरे और लिखित प्रस्ताव पर चर्चा करेंगे।
           </p>
           <div class="early-access-perks">
             <div class="perk-item">
-              <strong>शून्य प्लेटफॉर्म लाइसेंसिंग शुल्क</strong> बीटा परीक्षण चक्र के दौरान।
+              <strong>प्रोजेक्ट का दायरा</strong> आपकी ज़रूरतों के आधार पर।
             </div>
             <div class="perk-item">
-              <strong>समर्पित इंजीनियरिंग सहायता</strong> सीधे स्ट्रोवा ग्रुप की कोर तकनीकी टीम से।
+              <strong>उपयुक्त इंटीग्रेशन</strong> आवश्यकता समीक्षा के दौरान।
             </div>
             <div class="perk-item">
-              <strong>कस्टम एकीकरण कार्य</strong> आपके मौजूदा ईआरपी या इन्वेंटरी सिस्टम के लिए।
+              <strong>स्पष्ट चरण</strong> लिखित प्रस्ताव में।
             </div>
           </div>
           <a href="/hi/contact/?service=commerce" class="btn btn--primary btn--lg">
-            डिज़ाइन पार्टनर के रूप में आवेदन करें
+            अपनी आवश्यकताओं पर चर्चा करें
           </a>
         </div>
       </div>

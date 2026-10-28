@@ -1,59 +1,66 @@
 /*
- * Strova Group — Cinematic Editorial Design System
- * Aesthetic: Modern 3D Luxury, Black-and-White Foundation, Official Purple Accents
+ * Strova Group — Warm editorial design system
+ * Palette: cream, sage, burgundy, charcoal, and warm white
  * Typography: Newsreader Variable (editorial serif headlines), Plus Jakarta Sans Variable (clean UI & body)
- * Palette: Canvas (#08090D), Crisp White (#FFFFFF), Accent Violet (#8B5CF6 / #A78BFA)
+ * Brand palette: sage (#6F7969), cream (#F4EFE6), burgundy (#49202B), charcoal (#292A27), warm white (#FFFCF7).
  */
 
 /* -------------------------------------------------- */
-/* 1. Custom properties — Cinematic Dark Foundation   */
+/* 1. Custom properties — Warm Light Brand Foundation */
 /* -------------------------------------------------- */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+
+  --brand-sage: #6F7969;
+  --brand-cream: #F4EFE6;
+  --brand-burgundy: #49202B;
+  --brand-charcoal: #292A27;
+  --brand-white: #FFFCF7;
+  --color-sage: var(--brand-sage);
 
   /* Brand monochrome palette */
-  --color-black:       #000000;
-  --color-ink:         #FFFFFF;
-  --color-slate-900:   #08090D;
-  --color-slate-800:   #101018;
-  --color-slate-700:   #181824;
-  --color-slate-600:   #272738;
-  --color-slate-500:   #525266;
-  --color-slate-400:   #71717A;
-  --color-slate-200:   #A1A1AA;
-  --color-slate-100:   #D4D4D8;
-  --color-slate-50:    #F4F4F5;
-  --color-white:       #FFFFFF;
+  --color-black:       #292A27;
+  --color-ink:         #292A27;
+  --color-slate-900:   #292A27;
+  --color-slate-800:   #49202B;
+  --color-slate-700:   #6F7969;
+  --color-slate-600:   #6F7969;
+  --color-slate-500:   #6F7969;
+  --color-slate-400:   #6F7969;
+  --color-slate-200:   #6F7969;
+  --color-slate-100:   #F4EFE6;
+  --color-slate-50:    #FFFCF7;
+  --color-white:       #FFFCF7;
 
-  /* Accent — User Specified Palette (Electric Violet #8B5CF6, Soft Lavender #A78BFA) */
-  --color-violet:      #8B5CF6;
-  --color-lavender:    #A78BFA;
-  --color-purple:      #8B5CF6;
-  --color-purple-dark: #8B5CF6;
-  --color-purple-light:#A78BFA;
-  --color-purple-tint: rgba(139, 92, 246, 0.12);
+  /* Compatibility aliases mapped to the approved brand palette. */
+  --color-violet:      #49202B;
+  --color-lavender:    #6F7969;
+  --color-purple:      #49202B;
+  --color-purple-dark: #49202B;
+  --color-purple-light:#6F7969;
+  --color-purple-tint: rgba(111, 121, 105, 0.12);
 
-  /* Semantic tokens — Obsidian Black #08090D, Electric Violet #8B5CF6, Pure White #FFFFFF, Cool Gray #A1A1AA */
-  --bg-page:           #08090D;
-  --bg-surface:        #101018;
-  --bg-elevated:       #161622;
-  --bg-card:           rgba(16, 16, 26, 0.65);
-  --bg-card-hover:     rgba(24, 24, 38, 0.85);
-  --bg-glass:          rgba(8, 9, 13, 0.88);
+  /* Semantic tokens mapped to the approved brand palette. */
+  --bg-page:           #F4EFE6;
+  --bg-surface:        #FFFCF7;
+  --bg-elevated:       #F4EFE6;
+  --bg-card:           #FFFCF7;
+  --bg-card-hover:     #F4EFE6;
+  --bg-glass:          rgba(244, 239, 230, 0.94);
 
-  --text-primary:      #FFFFFF;
-  --text-secondary:    #A1A1AA;
-  --text-muted:        #71717A;
+  --text-primary:      #292A27;
+  --text-secondary:    #292A27;
+  --text-muted:        #292A27;
 
-  --border-color:      rgba(255, 255, 255, 0.08);
-  --border-subtle:     rgba(255, 255, 255, 0.05);
-  --border-focus:      #8B5CF6;
+  --border-color:      rgba(41, 42, 39, 0.14);
+  --border-subtle:     rgba(41, 42, 39, 0.08);
+  --border-focus:      #49202B;
 
-  --accent:            #8B5CF6;
-  --accent-hover:      #A78BFA;
-  --accent-subtle:     rgba(139, 92, 246, 0.12);
+  --accent:            #49202B;
+  --accent-hover:      #292A27;
+  --accent-subtle:     rgba(73, 32, 43, 0.09);
 
-  --focus-ring:        0 0 0 3px rgba(139, 92, 246, 0.35);
+  --focus-ring:        0 0 0 3px rgba(73, 32, 43, 0.25);
 
   /* Typography scale */
   --font-heading:      'Newsreader Variable', 'Newsreader', Georgia, serif;
@@ -99,9 +106,9 @@
   --duration-normal: 250ms;
 
   /* Cinematic Shadows with Restrained Ambient Glow */
-  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.6);
-  --shadow-md:   0 4px 16px -2px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(139, 92, 246, 0.15);
-  --shadow-lg:   0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(139, 92, 246, 0.22);
+  --shadow-sm:   0 1px 2px rgba(41, 42, 39, 0.08);
+  --shadow-md:   0 8px 24px -10px rgba(41, 42, 39, 0.2);
+  --shadow-lg:   0 20px 48px -20px rgba(41, 42, 39, 0.28);
 }
 
 /* -------------------------------------------------- */
@@ -119,7 +126,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -210,7 +217,7 @@ ul, ol {
   z-index: 9999;
   padding: var(--space-2) var(--space-4);
   background: var(--accent);
-  color: #FFFFFF;
+  color: #FFFCF7;
   font-family: var(--font-body);
   font-weight: 600;
   font-size: var(--text-sm);
@@ -310,45 +317,45 @@ select:focus-visible {
 }
 
 .btn--primary {
-  background: #8B5CF6;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(167, 139, 250, 0.4);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  background: #49202B;
+  color: #FFFCF7 !important;
+  border: 1px solid rgba(111, 121, 105, 0.2);
+  box-shadow: 0 0 20px rgba(73, 32, 43, 0.16);
 }
 
 .btn--primary:hover {
-  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
-  border-color: rgba(167, 139, 250, 0.6);
-  color: #FFFFFF !important;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+  background: linear-gradient(135deg, #49202B 0%, #6F7969 100%);
+  border-color: rgba(111, 121, 105, 0.25);
+  color: #FFFCF7 !important;
+  box-shadow: 0 0 30px rgba(73, 32, 43, 0.2);
   transform: translateY(-1px);
 }
 
 .btn--outline {
-  background: rgba(255, 255, 255, 0.03);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 252, 247, 0.03);
+  color: #FFFCF7;
+  border: 1px solid rgba(255, 252, 247, 0.16);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .btn--outline:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #FFFFFF;
+  background: rgba(255, 252, 247, 0.08);
+  border-color: rgba(255, 252, 247, 0.35);
+  color: #FFFCF7;
   transform: translateY(-1px);
 }
 
 .btn--whatsapp {
-  background: #15803D;
-  color: #FFFFFF !important;
-  border-color: #15803D;
+  background: #6F7969;
+  color: #FFFCF7 !important;
+  border-color: #6F7969;
 }
 
 .btn--whatsapp:hover {
-  background: #166534;
-  border-color: #166534;
-  color: #FFFFFF !important;
+  background: #292A27;
+  border-color: #292A27;
+  color: #FFFCF7 !important;
   transform: translateY(-1px);
 }
 
@@ -379,7 +386,7 @@ select:focus-visible {
 }
 
 .card:hover {
-  border-color: rgba(139, 92, 246, 0.4);
+  border-color: rgba(73, 32, 43, 0.2);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -427,14 +434,14 @@ select:focus-visible {
   font-size: var(--text-2xl);
   margin-top: var(--space-12);
   margin-bottom: var(--space-4);
-  color: #FFFFFF;
+  color: #FFFCF7;
 }
 
 .prose h3 {
   font-size: var(--text-xl);
   margin-top: var(--space-8);
   margin-bottom: var(--space-3);
-  color: #FFFFFF;
+  color: #FFFCF7;
 }
 
 .prose p {
@@ -465,7 +472,7 @@ select:focus-visible {
 
 .prose strong {
   font-weight: 600;
-  color: #FFFFFF;
+  color: #FFFCF7;
 }
 
 /* -------------------------------------------------- */
@@ -477,8 +484,8 @@ select:focus-visible {
   left: 0;
   height: 2px;
   width: 0%;
-  background: linear-gradient(90deg, #8B5CF6, #A78BFA);
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+  background: linear-gradient(90deg, #49202B, #6F7969);
+  box-shadow: 0 0 10px rgba(73, 32, 43, 0.2);
   z-index: 99999;
   pointer-events: none;
   transition: width 0.05s linear;
@@ -530,7 +537,7 @@ body.mobile-menu-open .mobile-quote-bar {
 /* 14. Executive Live IST Status Badge & Topbar       */
 /* -------------------------------------------------- */
 .header__topbar {
-  background: rgba(12, 12, 18, 0.85);
+  background: rgba(41, 42, 39, 0.94);
   border-bottom: 1px solid var(--border-color);
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -588,7 +595,7 @@ body.mobile-menu-open .mobile-quote-bar {
   align-items: center;
   gap: var(--space-2);
   padding: 0.2rem 0.65rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 252, 247, 0.04);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-family: var(--font-body);
@@ -606,13 +613,13 @@ body.mobile-menu-open .mobile-quote-bar {
 }
 
 .status-pulse-dot.status-open {
-  background: #10B981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  background: #6F7969;
+  box-shadow: 0 0 8px rgba(111, 121, 105, 0.25);
 }
 
 .status-pulse-dot.status-standby {
-  background: #F59E0B;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  background: #6F7969;
+  box-shadow: 0 0 8px rgba(111, 121, 105, 0.25);
 }
 
 /* -------------------------------------------------- */
@@ -628,9 +635,9 @@ body.mobile-menu-open .mobile-quote-bar {
  */
 .js-reveal .reveal {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(18px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .js-reveal .reveal.in {
@@ -830,7 +837,7 @@ body::after {
   inset: 0;
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(139, 92, 246, 0.12) 0%,
+    rgba(73, 32, 43, 0.09) 0%,
     transparent 60%
   );
   opacity: 0;
@@ -861,15 +868,36 @@ body::after {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.35);
+  background: rgba(73, 32, 43, 0.25);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.55);
+  background: rgba(73, 32, 43, 0.2);
 }
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgba(139, 92, 246, 0.35) var(--bg-page);
+  scrollbar-color: rgba(73, 32, 43, 0.25) var(--bg-page);
 }
+
+/* Strova's restrained brand palette across shared site chrome and controls. */
+.btn--primary { background:#49202B; color:#FFFCF7!important; border-color:#49202B; box-shadow:none; }
+.btn--primary:hover { background:#292A27; border-color:#292A27; color:#FFFCF7!important; box-shadow:none; }
+.btn--outline { background:transparent; color:#49202B; border-color:rgba(73,32,43,.35); backdrop-filter:none; }
+.btn--outline:hover { background:#F4EFE6; border-color:#49202B; color:#49202B; }
+.btn--whatsapp { background:#49202B; border-color:#49202B; color:#FFFCF7!important; }
+.btn--whatsapp:hover { background:#292A27; border-color:#292A27; color:#FFFCF7!important; }
+.header__topbar { background:#292A27; color:#F4EFE6; }
+.site-header .header__link--active,.site-header .header__mobile-link.header__link--active { color:#49202B; background:#F4EFE6; }
+.header__menu-btn,.header__nav-mobile { color:#292A27; background:#F4EFE6; }
+.header__logo-img { filter:none; }
+.status-pulse-dot.status-open { background:#6F7969; box-shadow:none; }
+.status-pulse-dot { animation:none!important; }
+.skip-link { background:#49202B; color:#FFFCF7; }
+.scroll-progress-bar { background:#49202B; box-shadow:none; }
+.service::before { background:radial-gradient(circle at var(--mouse-x,50%) var(--mouse-y,50%),rgba(111,121,105,.12),transparent 60%); }
+::-webkit-scrollbar-thumb { background:#6F7969; }
+::-webkit-scrollbar-thumb:hover { background:#49202B; }
+html { scrollbar-color:#6F7969 #F4EFE6; }
+@media (prefers-reduced-motion: reduce) { .status-pulse-dot { animation:none!important; } }

@@ -15,9 +15,10 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
     <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.8125rem;">
       <span style="color: var(--color-text-dim);">Response Target:</span>
-      <span class="badge badge-success">Within 1 Business Day</span>
+      <span class="badge badge-success">We aim to respond within 24 hours</span>
     </div>
   </div>
+  <p style="margin: -1rem 0 2rem; font-size: 0.875rem; color: var(--color-text-muted);">Prefer email? Contact <a href="mailto:support@strovagroups.in">support@strovagroups.in</a>.</p>
 
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
     <!-- Create Ticket Form -->
@@ -34,7 +35,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
         <div>
           <label for="ticket-order" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Associated Project (Optional)</label>
-          <select id="ticket-order" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+          <select id="ticket-order" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FFFCF7;">
             <option value="">General inquiry / Non-project specific</option>
             <!-- Injected dynamically from authorized orders -->
           </select>
@@ -42,7 +43,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
         <div>
           <label for="ticket-priority" style="display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
-          <select id="ticket-priority" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+          <select id="ticket-priority" style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FFFCF7;">
             <option value="normal">Normal (Standard operational response)</option>
             <option value="high">High (Production or staging blocker)</option>
             <option value="urgent">Urgent (Service downtime)</option>
@@ -66,12 +67,13 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
         Your Ticket History
       </h3>
 
+      <p id="ticket-status" role="status" aria-live="polite" style="margin: 0 0 1rem; color: var(--color-text-muted);"></p>
       <div id="tickets-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
         <!-- Injected tickets -->
       </div>
 
       <div id="tickets-empty" style="display: none; padding: 3rem 1rem; text-align: center; color: var(--color-text-dim);">
-        No support requests recorded for your account.
+        No support requests found for your account.
       </div>
     </div>
   </div>
@@ -107,12 +109,14 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
       // Populate tickets history
       async function loadTickets() {
+        const statusEl = document.getElementById('ticket-status');
         const tickets = await fetchSupportTickets();
         const container = document.getElementById('tickets-list-container');
         const emptyEl = document.getElementById('tickets-empty');
 
         if (!container || !emptyEl) return;
 
+        if (statusEl) statusEl.textContent = '';
         if (tickets.length === 0) {
           emptyEl.style.display = 'block';
           container.innerHTML = '';
@@ -149,7 +153,12 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
         }
       }
 
-      await loadTickets();
+      try {
+        await loadTickets();
+      } catch {
+        const statusEl = document.getElementById('ticket-status');
+        if (statusEl) statusEl.textContent = 'Your support requests could not be loaded. Please refresh or email support@strovagroups.in.';
+      }
 
       // Form submission
       const form = document.getElementById('new-ticket-form') as HTMLFormElement;
@@ -161,6 +170,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
           const priorityEl = document.getElementById('ticket-priority') as HTMLSelectElement;
           const descEl = document.getElementById('ticket-description') as HTMLTextAreaElement;
           const submitBtn = document.getElementById('submit-ticket-btn') as HTMLButtonElement;
+          const statusEl = document.getElementById('ticket-status');
 
           const subject = subjectEl?.value.trim();
           const description = descEl?.value.trim();
@@ -175,9 +185,9 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
             await createSupportTicket({ subject, description, priority, order_id });
             form.reset();
             await loadTickets();
-            alert('Support ticket submitted successfully. Our engineering team has been notified.');
-          } catch (err: any) {
-            alert(err?.message || 'Error creating support ticket.');
+            if (statusEl) statusEl.textContent = 'Your support request was submitted. We aim to respond within 24 hours.';
+          } catch {
+            if (statusEl) statusEl.textContent = 'We could not submit your request. Please check your connection and try again, or email support@strovagroups.in.';
           } finally {
             if (submitBtn) submitBtn.disabled = false;
           }

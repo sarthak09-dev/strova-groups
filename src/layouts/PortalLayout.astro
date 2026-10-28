@@ -23,17 +23,17 @@ const { title, currentNav = 'overview' } = Astro.props;
     <style is:global>
       :root {
         color-scheme: light;
-        --color-bg: #F8FAFC;
-        --color-surface: #FFFFFF;
-        --color-sidebar: #FFFFFF;
-        --color-border: #E2E8F0;
-        --color-border-subtle: #F1F5F9;
-        --color-text-main: #0F172A;
-        --color-text-muted: #475569;
-        --color-text-dim: #64748B;
-        --color-primary: #1D4ED8;
-        --color-primary-hover: #1E40AF;
-        --color-primary-tint: rgba(29, 78, 216, 0.08);
+        --color-bg: #F4EFE6;
+        --color-surface: #FFFCF7;
+        --color-sidebar: #FFFCF7;
+        --color-border: rgba(41, 42, 39, 0.16);
+        --color-border-subtle: rgba(41, 42, 39, 0.09);
+        --color-text-main: #292A27;
+        --color-text-muted: #292A27;
+        --color-text-dim: #292A27;
+        --color-primary: #49202B;
+        --color-primary-hover: #292A27;
+        --color-primary-tint: rgba(73, 32, 43, 0.09);
         --color-success: #059669;
         --color-success-bg: #ECFDF5;
         --color-warning: #D97706;
@@ -86,7 +86,7 @@ const { title, currentNav = 'overview' } = Astro.props;
 
       .btn-primary {
         background-color: var(--color-primary);
-        color: #ffffff !important;
+        color: #FFFCF7 !important;
         border-color: var(--color-primary);
       }
 
@@ -102,8 +102,8 @@ const { title, currentNav = 'overview' } = Astro.props;
       }
 
       .btn-secondary:hover {
-        background-color: #F8FAFC;
-        border-color: #CBD5E1;
+        background-color: #F4EFE6;
+        border-color: rgba(41, 42, 39, 0.16);
       }
 
       .btn-outline {
@@ -124,9 +124,9 @@ const { title, currentNav = 'overview' } = Astro.props;
       }
 
       .badge-progress {
-        background-color: #EFF6FF;
-        color: #1D4ED8;
-        border: 1px solid #BFDBFE;
+        background-color: #F4EFE6;
+        color: #49202B;
+        border: 1px solid rgba(73, 32, 43, 0.25);
       }
 
       .badge-review {
@@ -183,13 +183,13 @@ const { title, currentNav = 'overview' } = Astro.props;
         width: 28px;
         height: 28px;
         border-radius: 4px;
-        background: #1D4ED8;
+        background: #49202B;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: var(--font-serif);
         font-weight: 700;
-        color: #FFFFFF;
+        color: #FFFCF7;
         font-size: 1rem;
       }
 
@@ -204,11 +204,11 @@ const { title, currentNav = 'overview' } = Astro.props;
         font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        background: #EFF6FF;
-        border: 1px solid #BFDBFE;
+        background: #F4EFE6;
+        border: 1px solid rgba(73, 32, 43, 0.25);
         padding: 0.1rem 0.35rem;
         border-radius: 2px;
-        color: #1D4ED8;
+        color: #49202B;
         margin-left: 0.25rem;
       }
 
@@ -239,8 +239,8 @@ const { title, currentNav = 'overview' } = Astro.props;
       }
 
       .nav-item.active {
-        background: #EFF6FF;
-        color: #1D4ED8;
+        background: #F4EFE6;
+        color: #49202B;
         font-weight: 600;
       }
 
@@ -342,7 +342,7 @@ const { title, currentNav = 'overview' } = Astro.props;
         top: -4px;
         right: -4px;
         background: var(--color-danger);
-        color: #ffffff;
+        color: #FFFCF7;
         font-size: 0.625rem;
         font-weight: 700;
         min-width: 16px;
@@ -505,8 +505,8 @@ const { title, currentNav = 'overview' } = Astro.props;
         <aside class="app-sidebar" id="app-sidebar">
           <a href="/portal/" class="sidebar-brand">
             <img
-              src="/images/brand/icon-mark.png"
-              alt="Strova Group"
+              src="/images/logo.svg"
+              alt=""
               width="28"
               height="28"
               style="width: 28px; height: 28px; object-fit: contain; border-radius: 4px;"
@@ -801,7 +801,7 @@ const { title, currentNav = 'overview' } = Astro.props;
             const adminLink = document.getElementById('sidebar-admin-link');
 
             if (emailEl) emailEl.textContent = session.user.email || '';
-            const profile = await getUserProfile(session.user.id);
+            const profile = await getUserProfile();
             if (nameEl) nameEl.textContent = profile?.full_name || session.user.email?.split('@')[0] || 'Client';
             if (adminLink && profile?.role === 'admin') {
               adminLink.style.display = 'flex';

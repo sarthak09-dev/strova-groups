@@ -57,11 +57,11 @@ const orgJsonLd: Record<string, unknown> = {
   email: 'info@strovagroups.in',
   telephone: '+919288077802',
   description: lang === 'hi'
-    ? 'व्यवसाय के लिए आधुनिक सॉफ़्टवेयर, वेब प्लेटफ़ॉर्म और डिजिटल विकास। स्ट्रोवा ग्रुप बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान है।'
-    : 'Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.',
+    ? 'स्ट्रोवा ग्रुप के अंतर्गत स्ट्रोवा टेक्नोलॉजी डिजिटल समाधान, व्यवसाय ऑटोमेशन और ग्राहक आवश्यकताओं पर आधारित सॉफ़्टवेयर उत्पाद विकसित करता है।'
+    : 'Strova Technology is the integrated technology business within Strova Group, bringing together digital solutions, business automation, and software products.',
   founder: {
     '@type': 'Person',
-    name: 'Sarthak Shresht',
+    name: 'Sarthak Shreshth',
     jobTitle: lang === 'hi' ? 'संस्थापक (Founder)' : 'Founder',
   },
   identifier: {
@@ -149,6 +149,36 @@ const allJsonLd = [
         </a>
       </div>
     </div>
+
+    <!-- One-shot section reveals: grouped content only, with a visible no-JS/reduced-motion fallback. -->
+    <script is:inline>
+      if (
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        'IntersectionObserver' in window
+      ) {
+        const targets = new Set(document.querySelectorAll('main .reveal'));
+        document.querySelectorAll('main .page-hero__content, main section.section > .container').forEach((element) => {
+          if (!element.querySelector('.reveal')) targets.add(element);
+        });
+
+        if (targets.size > 0) {
+          document.documentElement.classList.add('js-reveal');
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+          targets.forEach((element) => {
+            element.classList.add('reveal');
+            observer.observe(element);
+          });
+        }
+      }
+    </script>
 
     <!-- Global Client Interactions -->
     <script src="../scripts/globalInteractions.ts"></script>

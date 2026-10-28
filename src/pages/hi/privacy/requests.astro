@@ -2,7 +2,7 @@
 /**
  * Data Principal Privacy Rights & Grievance Request Desk - Hindi (src/pages/hi/privacy/requests.astro)
  *
- * Implements self-service intake for statutory rights under:
+ * Provides a Hindi-language intake route for privacy requests.
  * - भारत का डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 (धाराएँ 11, 12, 13, 14) एवं DPDP नियमावली 2025
  * - सूचना प्रौद्योगिकी (उचित सुरक्षा पद्धतियाँ) नियमावली, 2011
  *
@@ -45,7 +45,7 @@ const pageJsonLd = {
   '@type': 'ContactPage',
   name: 'डेटा अधिकार एवं शिकायत निवारण केंद्र — Strova Group',
   description:
-    'भारत के DPDP Act 2023 के तहत डेटा एक्सेस, सुधार, विलोपन, सहमति वापसी या शिकायत निवारण अनुरोध सबमिट करें।',
+    'व्यक्तिगत जानकारी या डेटा प्रबंधन के बारे में Strova Group को गोपनीयता अनुरोध भेजें।',
   mainEntity: {
     '@type': 'Organization',
     name: 'Strova Group',
@@ -60,8 +60,8 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 ---
 
 <BaseLayout
-  title="डेटा अधिकार एवं शिकायत निवारण केंद्र — Strova Group"
-  description="भारत के DPDP Act 2023 के तहत अपने वैधानिक डेटा अधिकारों का प्रयोग करें। डेटा एक्सेस, सुधार, विलोपन और शिकायत अनुरोध दर्ज करें।"
+  title="गोपनीयता अनुरोध — Strova Group"
+  description="व्यक्तिगत जानकारी या डेटा प्रबंधन से जुड़ा गोपनीयता अनुरोध Strova Group को भेजें।"
   jsonLd={[pageJsonLd, breadcrumbJsonLd]}
   lang="hi"
 >
@@ -72,7 +72,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
         <span class="section-eyebrow">डेटा सुरक्षा एवं अधिकार</span>
         <h1 class="page-hero__title">डेटा अधिकार एवं शिकायत निवारण केंद्र</h1>
         <p class="page-hero__lead">
-          डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 (DPDP Act) के तहत अपने वैधानिक डेटा अधिकारों का प्रयोग करें। सीधे हमारे डेटा संरक्षण एवं शिकायत निवारण अधिकारी को डेटा एक्सेस, सुधार, विलोपन, नामांकन या शिकायत अनुरोध भेजें।
+          व्यक्तिगत जानकारी के बारे में पूछने, सुधार या हटाने का अनुरोध करने, लागू होने पर सहमति वापस लेने या गोपनीयता संबंधी चिंता साझा करने के लिए इस फ़ॉर्म का उपयोग करें। हम लागू कानून और परिस्थिति के अनुसार अनुरोध की समीक्षा करेंगे।
         </p>
       </div>
     </div>
@@ -87,7 +87,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           <div class="form-header">
             <h2 id="privacy-request-heading" class="form-title">गोपनीयता अनुरोध दर्ज करें</h2>
             <p class="form-subtitle text-sm text-secondary">
-              सभी अनुरोधों को दर्ज किया जाता है, 48 घंटों में पावती दी जाती है, और 30 कैलेंडर दिनों में समाधान किया जाता है।
+              यदि डिलीवरी सेवा आपका अनुरोध स्वीकार करती है, तो हम 48 घंटों में पावती और 30 दिनों में उत्तर देने का लक्ष्य रखते हैं। ये कंपनी के सेवा लक्ष्य हैं, वैधानिक समय-सीमा नहीं।
             </p>
           </div>
 
@@ -170,13 +170,13 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
               </label>
               <select id="request-type" name="requestType" required class="form-select" aria-required="true">
                 <option value="" selected disabled>अनुरोध की श्रेणी चुनें...</option>
-                <option value="access">डेटा पहुंच एवं सारांश (DPDP धारा 11) — संग्रहीत डेटा का विवरण प्राप्त करें</option>
-                <option value="correction">सुधार एवं अद्यतन (DPDP धारा 12) — गलत या अधूरी जानकारी ठीक करें</option>
-                <option value="erasure">डेटा विलोपन (DPDP धारा 12) — गैर-वैधानिक रिकॉर्ड हटाएँ (7 वर्ष कर सीमा लागू)</option>
-                <option value="consent_withdrawal">सहमति वापसी (DPDP धारा 6) — वैकल्पिक डेटा उपयोग बंद करें</option>
+                <option value="access">मेरी व्यक्तिगत जानकारी के बारे में पूछताछ</option>
+                <option value="correction">मेरी जानकारी में सुधार या अद्यतन</option>
+                <option value="erasure">मेरी जानकारी हटाने का अनुरोध</option>
+                <option value="consent_withdrawal">जहां लागू हो, सहमति वापस लेना</option>
                 <option value="marketing_optout">मार्केटिंग ऑप्ट-आउट — प्रचार संचार प्राप्त करना बंद करें</option>
-                <option value="nomination">नामांकन का अधिकार (DPDP धारा 14) — असमर्थता की स्थिति में प्रतिनिधि नियुक्त करें</option>
-                <option value="grievance">शिकायत निवारण (DPDP धारा 13) — डेटा सुरक्षा या गोपनीयता संबंधी शिकायत</option>
+                <option value="nomination">नामांकन या प्रतिनिधि से जुड़ा अनुरोध</option>
+                <option value="grievance">डेटा प्रबंधन या गोपनीयता संबंधी चिंता</option>
               </select>
               <span class="form-error" id="type-error" role="alert"></span>
             </div>
@@ -222,6 +222,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
                 <div
                   class="cf-turnstile"
                   data-sitekey={turnstileSiteKey}
+                  data-action="privacy-request"
                   data-theme="light"
                   data-size="flexible"
                 ></div>
@@ -242,7 +243,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
             <!-- Notice under submit -->
             <p class="text-xs text-muted" style="margin-top: 1rem; line-height: 1.5;">
-              DPDP अधिनियम 2023 की धारा 6 के तहत सूचना: इस फॉर्म में दिए गए विवरण केवल आपकी पहचान सत्यापित करने और आपके वैधानिक अनुरोध को पूरा करने के लिए स्ट्रोवा ग्रुप के डेटा संरक्षण एवं शिकायत निवारण डेस्क द्वारा संसाधित किए जाते हैं। विनियामक अनुपालन प्रदर्शित करने के लिए इन्हें 3 वर्षों तक सुरक्षित रखा जाता है।
+              हम इन विवरणों का उपयोग आपके अनुरोध की समीक्षा और उत्तर देने के लिए करते हैं। फ़ॉर्म जमा करने के लिए कॉन्फ़िगर की गई डिलीवरी सेवा का उपयोग होता है। पासवर्ड, भुगतान विवरण या असंबंधित संवेदनशील जानकारी न भेजें। विफलता पर info@strovagroups.in पर ईमेल करें।
             </p>
 
             <!-- Dynamic Form Status Box -->
@@ -253,7 +254,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           <div id="request-success-box" class="card card--quiet" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid #16A34A;">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
               <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #DCFCE7; color: #16A34A; font-weight: bold;">✓</span>
-              <h3 style="margin: 0; font-size: 1.1rem; color: #16A34A;">अनुरोध सफलतापूर्वक दर्ज किया गया</h3>
+              <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">अनुरोध भेज दिया गया</h3>
             </div>
             <p class="text-sm text-secondary" id="success-message-text" style="line-height: 1.6; margin-bottom: 1rem;"></p>
             <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
@@ -261,8 +262,8 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
               <div id="tracking-reference-code" style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #0F172A;"></div>
             </div>
             <ul class="text-xs text-muted" style="margin: 0; padding-left: 1.25rem; line-height: 1.6;">
-              <li><strong>48 घंटों</strong> के भीतर औपचारिक पावती भेजी जाएगी।</li>
-              <li><strong>30 कैलेंडर दिनों</strong> के भीतर जांच और समाधान पूर्ण किया जाएगा।</li>
+              <li>हम <strong>48 घंटों</strong> में पावती देने का लक्ष्य रखते हैं।</li>
+              <li>हम <strong>30 दिनों</strong> में उत्तर देने का लक्ष्य रखते हैं। यह कंपनी का सेवा लक्ष्य है।</li>
               <li>भविष्य के सभी पत्राचार के लिए अपनी ट्रैकिंग संदर्भ संख्या सुरक्षित रखें।</li>
             </ul>
           </div>
@@ -272,10 +273,10 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
         <div class="contact-channels">
           <!-- Statutory SLA Commitment -->
           <div class="channel-card card card--quiet">
-            <span class="section-eyebrow">वैधानिक प्रतिबद्धता</span>
+            <span class="section-eyebrow">सेवा लक्ष्य</span>
             <h3 class="channel-title">48-घंटे में पावती</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              DPDP अधिनियम 2023 की धारा 13 और हमारे आंतरिक नियमों के तहत, प्रत्येक शिकायत को समय-मुहर के साथ दर्ज किया जाता है और 48 घंटों में पावती जारी की जाती है।
+              क्लाइंट सहायता अनुरोधों का उत्तर 24 घंटों में देने का हमारा लक्ष्य है। गोपनीयता अनुरोधों के लिए हम 48 घंटों में पावती और 30 दिनों में उत्तर देने का प्रयास करते हैं। ये वैधानिक समय-सीमाएं नहीं हैं।
             </p>
           </div>
 
@@ -283,10 +284,10 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           <div class="channel-card card">
             <h3 class="channel-title">शिकायत निवारण डेस्क</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              सीधे ईमेल या पत्राचार पसंद करते हैं? हमारे शिकायत निवारण अधिकारी से संपर्क करें:
+              सीधे ईमेल या पत्राचार पसंद करते हैं? हमसे संपर्क करें:
             </p>
             <div style="font-size: 0.8125rem; margin-top: 0.75rem; line-height: 1.7; color: var(--color-text-secondary);">
-              <p><strong>पद:</strong> डेटा संरक्षण एवं शिकायत निवारण अधिकारी</p>
+              <p><strong>गोपनीयता संपर्क:</strong> Strova Group</p>
               <p><strong>प्रतिष्ठान:</strong> Strova Group (बबिता कुमारी का एकल स्वामित्व प्रतिष्ठान)</p>
               <p><strong>ईमेल:</strong> <a href="mailto:info@strovagroups.in?subject=DPDP%20Grievance">info@strovagroups.in</a></p>
               <p><strong>सीधा फोन:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
@@ -296,10 +297,10 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
           <!-- Statutory Retentions -->
           <div class="channel-card card card--quiet">
-            <span class="section-eyebrow">वैधानिक अपवाद</span>
-            <h3 class="channel-title">7-वर्षीय कर रिकॉर्ड सीमा</h3>
+            <span class="section-eyebrow">रिकॉर्ड संबंधी जानकारी</span>
+            <h3 class="channel-title">कुछ रिकॉर्ड बनाए रखने पड़ सकते हैं</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              कृपया ध्यान दें कि धारा 12 के तहत डेटा विलोपन अनुरोध भुगतान किए गए चालानों या कर प्राप्तियों को नहीं मिटा सकता है। केंद्रीय वस्तु एवं सेवा कर (CGST) अधिनियम 2017 की धारा 36 और आयकर अधिनियम 1961 की धारा 44AA के तहत वित्तीय बहीखातों को 7 वर्षों (84 महीनों) तक बनाए रखना अनिवार्य है।
+              लागू कानून के अनुसार कुछ व्यावसायिक या लेनदेन रिकॉर्ड सुरक्षित रखने पड़ सकते हैं। हम हर अनुरोध की संबंधित दायित्वों के अनुसार समीक्षा करेंगे।
             </p>
           </div>
 
@@ -308,7 +309,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             <span class="section-eyebrow">नियामक अपील</span>
             <h3 class="channel-title">भारतीय डेटा संरक्षण बोर्ड (DPB)</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              यदि हमारा शिकायत निवारण डेस्क 30 कैलेंडर दिनों में उत्तर नहीं देता है या आप हमारे समाधान से असंतुष्ट हैं, तो DPDP अधिनियम 2023 की धारा 13(3) के तहत आपको <strong>भारतीय डेटा संरक्षण बोर्ड</strong> में अपील करने का कानूनी अधिकार है।
+              यदि आपको अपने अनुरोध के प्रबंधन के बारे में चिंता हो, तो info@strovagroups.in पर संपर्क करें। आगे के वैधानिक विकल्प आपकी परिस्थिति और लागू कानून पर निर्भर करते हैं।
             </p>
           </div>
         </div>

@@ -70,12 +70,14 @@ export async function getSession() {
 /**
  * Retrieves the user profile matching the authenticated user.
  */
-export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+export async function getUserProfile(): Promise<UserProfile | null> {
   if (!supabase) return null;
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) return null;
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', userId)
+    .eq('id', user.id)
     .single();
 
   if (error || !data) return null;
@@ -275,13 +277,13 @@ export async function sendOrderMessage(orderId: string, messageText: string, rol
  * Queries support tickets.
  */
 export async function fetchSupportTickets(): Promise<SupportTicket[]> {
-  if (!supabase) return [];
+  if (!supabase) throw new Error('Support service is not configured.');
   const { data, error } = await supabase
     .from('support_tickets')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return [];
+  if (error) throw error;
   return (data || []) as SupportTicket[];
 }
 

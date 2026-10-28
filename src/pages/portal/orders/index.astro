@@ -148,11 +148,11 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
           type="search"
           id="project-search"
           placeholder="Search projects or ref..."
-          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
+          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FFFCF7;"
         />
         <select
           id="stage-filter"
-          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;"
+          style="padding: 0.45rem 0.75rem; font-size: 0.8125rem; border: 1px solid var(--color-border); border-radius: 4px; background: #FFFCF7;"
         >
           <option value="ALL">All Stages</option>
           <option value="In progress">In progress</option>
@@ -174,11 +174,19 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
       <p style="font-size: 0.875rem; color: var(--color-text-muted); max-width: 440px; margin: 0 auto 1.5rem;">
         When an engagement scope or quotation is finalized, your dedicated project tracking timeline appears here automatically.
       </p>
-      <a href="mailto:info@strovagroups.in" class="btn btn-secondary">Contact project coordinator</a>
+      <a href="mailto:support@strovagroups.in" class="btn btn-secondary">Contact project support</a>
     </div>
   </div>
 
   <script>
+    const divisionLabels: Record<string, string> = {
+      digital: 'Digital · Strova Technology',
+      automation: 'Automation · Strova Technology',
+      products: 'Products · Strova Technology',
+      technologies: 'Strova Technology',
+      commerce: 'E-commerce · Digital',
+    };
+
     import {
       getSession,
       getUserProfile,
@@ -235,7 +243,7 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
         const totalAmountEl = document.getElementById('order-total-amount');
         const balanceAmountEl = document.getElementById('order-balance-amount');
 
-        if (divBadge) divBadge.textContent = order.division;
+        if (divBadge) divBadge.textContent = divisionLabels[order.division] || 'Strova Technology';
         if (refEl) refEl.textContent = order.order_ref;
         if (titleEl) titleEl.textContent = order.title;
         if (stageBadge) {
@@ -331,7 +339,7 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
                 return `
                   <div style="display: flex; flex-direction: column; align-items: ${isClient ? 'flex-end' : 'flex-start'};">
                     <span style="font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 2px;">${isClient ? 'You' : 'Strova Team'} • ${time}</span>
-                    <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#fff' : 'var(--color-text-main)'};">
+                    <div style="max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.8125rem; line-height: 1.45; background: ${isClient ? 'var(--color-primary)' : '#F1F5F9'}; color: ${isClient ? '#FFFCF7' : 'var(--color-text-main)'};">
                       ${escapeHtml(m.message_text)}
                     </div>
                   </div>
@@ -356,7 +364,7 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
             if (sendBtn) sendBtn.disabled = true;
 
             try {
-              const profile = await getUserProfile(session.user.id);
+              const profile = await getUserProfile();
               await sendOrderMessage(order.id, text, profile?.role || 'client');
               if (input) input.value = '';
               await loadMessages();
@@ -402,7 +410,7 @@ import PortalLayout from '../../../layouts/PortalLayout.astro';
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
                     <div>
                       <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${escapeHtml(order.division)}</span>
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary);">${escapeHtml(divisionLabels[order.division] || 'Strova Technology')}</span>
                         <span style="color: var(--color-border);">•</span>
                         <span style="font-size: 0.75rem; font-family: monospace; color: var(--color-text-dim);">${escapeHtml(order.order_ref)}</span>
                         <span style="color: var(--color-border);">•</span>

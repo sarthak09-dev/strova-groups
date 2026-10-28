@@ -2,14 +2,14 @@
 /**
  * Data Principal Privacy Rights & Grievance Request Desk (src/pages/privacy/requests.astro)
  *
- * Implements self-service intake for statutory rights under:
+ * Provides an intake route for privacy requests:
  * - India Digital Personal Data Protection Act, 2023 (Sections 11, 12, 13, 14) & DPDP Rules, 2025
  * - Information Technology (Reasonable Security Practices) Rules, 2011
  * - EU & UK GDPR (Articles 15-22)
  * - California Consumer Privacy Act / CPRA
  *
  * Features:
- * - 48-hour statutory acknowledgment SLA
+ * - 48-hour company acknowledgment target
  * - 30-day resolution commitment
  * - Cloudflare Turnstile bot verification + anti-spam honeypot
  * - Strict client-side and serverless validation via /api/privacy-request
@@ -47,7 +47,7 @@ const pageJsonLd = {
   '@type': 'ContactPage',
   name: 'Privacy Rights & Grievance Redressal Desk — Strova Group',
   description:
-    'Submit statutory data principal access, correction, erasure, consent withdrawal, or grievance requests under India DPDP Act 2023 and GDPR.',
+    'Send Strova Group a privacy request about access, correction, deletion, consent, or a concern.',
   mainEntity: {
     '@type': 'Organization',
     name: 'Strova Group',
@@ -63,7 +63,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
 <BaseLayout
   title="Privacy Rights & Grievance Desk — Strova Group"
-  description="Exercise statutory data principal rights under India's DPDP Act 2023. Submit and track data access, correction, erasure, and grievance requests."
+  description="Contact Strova Group about a privacy request, personal information, or a data-handling concern."
   jsonLd={[pageJsonLd, breadcrumbJsonLd]}
 >
   <!-- Hero Section -->
@@ -73,7 +73,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
         <span class="section-eyebrow">Data Governance</span>
         <h1 class="page-hero__title">Privacy Rights &amp; Grievance Desk</h1>
         <p class="page-hero__lead">
-          Exercise your statutory data principal rights under the Digital Personal Data Protection Act, 2023 (DPDP Act) and international data protection laws. Submit access, rectification, erasure, nomination, or grievance requests directly to our Data Protection &amp; Grievance Officer.
+          Use this form to ask about personal information Strova Group handles, request a correction or deletion, withdraw consent where applicable, or raise a privacy concern. Requests are reviewed under the laws applicable to your situation.
         </p>
       </div>
     </div>
@@ -88,7 +88,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           <div class="form-header">
             <h2 id="privacy-request-heading" class="form-title">Submit a Privacy Request</h2>
             <p class="form-subtitle text-sm text-secondary">
-              All requests are logged, acknowledged within 48 hours, and resolved within 30 calendar days.
+              If the delivery service accepts your submission, we aim to acknowledge it within 48 hours and respond within 30 days. These are company service targets, not statutory deadlines.
             </p>
           </div>
 
@@ -167,17 +167,17 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             <!-- Request Type Selector -->
             <div class="form-group">
               <label for="request-type" class="form-label">
-                Statutory Request Category <span class="required" aria-hidden="true">*</span>
+                Request category <span class="required" aria-hidden="true">*</span>
               </label>
               <select id="request-type" name="requestType" required class="form-select" aria-required="true">
                 <option value="" selected disabled>Select the category of your request...</option>
-                <option value="access">Data Access &amp; Summary (DPDP Sec 11 / GDPR Art 15) — Obtain a summary of data held</option>
-                <option value="correction">Correction &amp; Rectification (DPDP Sec 12 / GDPR Art 16) — Update inaccurate or incomplete details</option>
-                <option value="erasure">Data Erasure &amp; Deletion (DPDP Sec 12 / GDPR Art 17) — Delete records (excluding 7-yr tax hold)</option>
-                <option value="consent_withdrawal">Withdrawal of Consent (DPDP Sec 6 / GDPR Art 7) — Cease optional processing activities</option>
+                <option value="access">Ask about personal information associated with you</option>
+                <option value="correction">Request a correction or update</option>
+                <option value="erasure">Request deletion of personal information</option>
+                <option value="consent_withdrawal">Withdraw consent where applicable</option>
                 <option value="marketing_optout">Marketing Opt-Out — Stop receiving commercial communications</option>
-                <option value="nomination">Right of Nomination (DPDP Sec 14) — Appoint representative in case of incapacity</option>
-                <option value="grievance">Grievance or Redressal Complaint (DPDP Sec 13) — Formal data governance escalation</option>
+                <option value="nomination">Nomination or representative request</option>
+                <option value="grievance">Raise a privacy or data-handling concern</option>
               </select>
               <span class="form-error" id="type-error" role="alert"></span>
             </div>
@@ -223,6 +223,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
                 <div
                   class="cf-turnstile"
                   data-sitekey={turnstileSiteKey}
+                  data-action="privacy-request"
                   data-theme="light"
                   data-size="flexible"
                 ></div>
@@ -243,7 +244,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
             <!-- Notice under submit -->
             <p class="text-xs text-muted" style="margin-top: 1rem; line-height: 1.5;">
-              Notice under Section 6 of DPDP Act 2023: Details provided in this form are processed solely by Strova Group's Data Protection &amp; Grievance Redressal Desk to verify identity and fulfill your statutory request. They are retained in an immutable compliance ledger for 3 years to demonstrate regulatory compliance.
+              We use these details to review and respond to your request. The form sends your submission through the configured delivery provider; do not include passwords, payment credentials, or unrelated sensitive information. If submission fails, please email info@strovagroups.in.
             </p>
 
             <!-- Dynamic Form Status Box -->
@@ -251,19 +252,19 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           </form>
 
           <!-- Success Reference Box (Hidden by default) -->
-          <div id="request-success-box" class="card card--quiet" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid #16A34A;">
+          <div id="request-success-box" class="card card--quiet" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid var(--accent);">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-              <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #DCFCE7; color: #16A34A; font-weight: bold;">✓</span>
-              <h3 style="margin: 0; font-size: 1.1rem; color: #16A34A;">Request Successfully Logged</h3>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface); color: var(--accent); font-weight: bold;">✓</span>
+              <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Request sent</h3>
             </div>
             <p class="text-sm text-secondary" id="success-message-text" style="line-height: 1.6; margin-bottom: 1rem;"></p>
-            <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+            <div style="background: #FFFCF7; border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
               <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Tracking Reference Number</div>
-              <div id="tracking-reference-code" style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #0F172A;"></div>
+              <div id="tracking-reference-code" style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);"></div>
             </div>
             <ul class="text-xs text-muted" style="margin: 0; padding-left: 1.25rem; line-height: 1.6;">
-              <li>Formal statutory acknowledgment dispatched within <strong>48 hours</strong>.</li>
-              <li>Substantive investigation and resolution delivered within <strong>30 calendar days</strong>.</li>
+              <li>We aim to acknowledge your request within <strong>48 hours</strong>.</li>
+              <li>We aim to respond within <strong>30 days</strong>. These are service targets, not statutory deadlines.</li>
               <li>Save your tracking reference code for all communications with our grievance desk.</li>
             </ul>
           </div>
@@ -271,12 +272,12 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
         <!-- Sidebar Information Card -->
         <div class="contact-channels">
-          <!-- Statutory SLA Commitment -->
+          <!-- Service target -->
           <div class="channel-card card card--quiet">
-            <span class="section-eyebrow">Statutory Commitment</span>
-            <h3 class="channel-title">48-Hour Acknowledgment</h3>
+            <span class="section-eyebrow">Service target</span>
+            <h3 class="channel-title">A response within 24 hours</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              Under Section 13 of the DPDP Act 2023 and our Internal SOP, every data principal grievance is formally logged with an immutable timestamp and acknowledged within 48 hours.
+              We aim to respond to client support requests within 24 hours. For privacy requests, we aim to acknowledge within 48 hours and respond within 30 days. These are service targets, not statutory deadlines.
             </p>
           </div>
 
@@ -287,7 +288,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
               Prefer direct email or written communication? Contact our designated Grievance Officer:
             </p>
             <div style="font-size: 0.8125rem; margin-top: 0.75rem; line-height: 1.7; color: var(--color-text-secondary);">
-              <p><strong>Designation:</strong> Data Protection &amp; Grievance Officer</p>
+              <p><strong>Privacy contact:</strong> Strova Group</p>
               <p><strong>Entity:</strong> Strova Group (Proprietorship of Babita Kumari)</p>
               <p><strong>Email:</strong> <a href="mailto:info@strovagroups.in?subject=DPDP%20Grievance">info@strovagroups.in</a></p>
               <p><strong>Direct Phone:</strong> <a href="tel:+919288077802">+91 92880 77802</a></p>
@@ -295,12 +296,12 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             </div>
           </div>
 
-          <!-- Statutory Retentions -->
+          <!-- Record keeping -->
           <div class="channel-card card card--quiet">
-            <span class="section-eyebrow">Statutory Exceptions</span>
-            <h3 class="channel-title">7-Year Tax &amp; Invoicing Hold</h3>
+            <span class="section-eyebrow">Record keeping</span>
+            <h3 class="channel-title">Some records may need to be retained</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              Please note that requests for erasure under Section 12 cannot purge paid commercial invoices, tax receipts, or transaction ledger entries. Under Section 36 of the Central Goods and Services Tax (CGST) Act 2017 and Section 44AA of the Income Tax Act 1961, financial books and invoices must be retained for 7 years (84 months).
+              We may need to retain certain transaction or business records where applicable law requires it. We will review any request in light of relevant obligations.
             </p>
           </div>
 
@@ -309,7 +310,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             <span class="section-eyebrow">Regulatory Escalation</span>
             <h3 class="channel-title">Data Protection Board of India</h3>
             <p class="channel-desc text-secondary text-sm" style="line-height: 1.6;">
-              If our Grievance Redressal Desk fails to respond within 30 calendar days, or if you are unsatisfied with our resolution, you have the legal right under Section 13(3) of the DPDP Act 2023 to file an appeal before the <strong>Data Protection Board of India</strong>.
+              You may contact us by email if you have a concern about how your request was handled. Applicable escalation rights depend on the law in force for your situation.
             </p>
           </div>
         </div>
@@ -432,14 +433,14 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           const msgEl = document.getElementById('success-message-text');
 
           if (codeEl) codeEl.textContent = result.trackingId || 'PR-CONFIRMED';
-          if (msgEl) msgEl.textContent = result.message || 'Your privacy request has been logged successfully.';
+          if (msgEl) msgEl.textContent = result.message || 'Your request was sent successfully.';
           if (successBox) successBox.style.display = 'block';
 
           // Trigger analytics event
           try {
             window.dispatchEvent(
               new CustomEvent('strova:analytics', {
-                detail: { event: 'privacy_request_submitted', trackingId: result.trackingId, timestamp: Date.now() },
+                detail: { event: 'privacy_request_submitted', timestamp: Date.now() },
               })
             );
           } catch {}
@@ -536,7 +537,7 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
-    background: #FFFFFF;
+    background: #FFFCF7;
     color: var(--color-ink);
     font-family: inherit;
     font-size: 0.9375rem;

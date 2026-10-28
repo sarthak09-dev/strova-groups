@@ -1,11 +1,11 @@
 {
   "name": "Strova Group",
   "short_name": "Strova Group",
-  "description": "Technology, commerce, and digital growth for growing businesses. Strova Group is a proprietorship of Babita Kumari.",
+  "description": "Strova Technology brings digital services, business automation, and software products together within Strova Group.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#08090D",
-  "theme_color": "#08090D",
+  "background_color": "#F4EFE6",
+  "theme_color": "#F4EFE6",
   "icons": [
     {
       "src": "/favicon.svg",

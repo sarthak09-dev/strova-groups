@@ -26,6 +26,7 @@ const MAX_BODY_BYTES = 64 * 1024; // 64KB
 const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const requestId = crypto.randomUUID();
   try {
     const request = context.request;
     const isTestEnv = context.env.ENVIRONMENT === 'test';
@@ -47,7 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     // Read body text first to guarantee exact byte size enforcement
     const bodyText = await request.text();
-    if (bodyText.length > MAX_BODY_BYTES) {
+    if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -309,10 +310,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
           method: 'POST',
           body: verifyFormData,
+          signal: AbortSignal.timeout(5000),
         });
 
-        const outcome = (await turnstileRes.json()) as { success: boolean; 'error-codes'?: string[] };
-        if (!outcome.success) {
+        const outcome = (await turnstileRes.json()) as { success?: boolean; hostname?: string; action?: string; 'error-codes'?: string[] };
+        if (!turnstileRes.ok || !outcome.success || outcome.hostname !== requestHostname || outcome.action !== 'contact-form') {
           return new Response(
             JSON.stringify({
               success: false,
@@ -408,12 +410,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       { status: 200, headers: { 'Content-Type': 'application/json', ...rateLimitHeaders } }
     );
   } catch (err: any) {
+    console.error(JSON.stringify({ event: 'contact_request_unhandled', requestId, name: err?.name || 'Error' }));
     return new Response(
       JSON.stringify({
         success: false,
+        requestId,
         error: 'An unexpected server error occurred while processing your brief. Please email info@strovagroups.in directly.',
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json', 'X-Request-ID': requestId } }
     );
   }
 };

@@ -22,7 +22,8 @@ async function generate() {
     throw new Error(`Source favicon SVG not found at ${SOURCE_SVG}`);
   }
 
-  const iconSource = fs.existsSync(BRAND_ICON_PNG) ? BRAND_ICON_PNG : SOURCE_SVG;
+  // Favicons follow the approved site palette; the full-color logo remains a separate brand asset.
+  const iconSource = SOURCE_SVG;
   const iconBuffer = fs.readFileSync(iconSource);
   const logoBuffer = fs.existsSync(BRAND_ICON_PNG) ? iconBuffer : (fs.existsSync(SOURCE_LOGO_SVG) ? fs.readFileSync(SOURCE_LOGO_SVG) : iconBuffer);
 

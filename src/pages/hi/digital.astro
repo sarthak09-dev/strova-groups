@@ -2,24 +2,22 @@
 /**
  * डिजिटल डिवीजन पृष्ठ (src/pages/hi/digital.astro)
  * 
- * डिवीजन: स्ट्रोवा डिजिटल (Strova Digital)
- * मुख्य कार्य: तकनीकी एसईओ, परफॉर्मेंस विज्ञापन, लीड जनरेशन फनल्स, रूपांतरण दर अनुकूलन (CRO)।
+ * स्ट्रोवा टेक्नोलॉजी के डिजिटल स्तंभ में वेबसाइट, ऐप्लिकेशन, ई-कॉमर्स और प्लेटफ़ॉर्म शामिल हैं।
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'स्ट्रोवा डिजिटल — परफॉर्मेंस मार्केटिंग एवं एसईओ',
+  name: 'डिजिटल — स्ट्रोवा टेक्नोलॉजी',
   provider: {
     '@type': 'Organization',
     name: 'Strova Group',
     url: 'https://strovagroups.in',
   },
-  serviceType: 'डिजिटल मार्केटिंग और सर्च इंजन ऑप्टिमाइज़ेशन',
-  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  serviceType: 'व्यावसायिक वेबसाइट, वेब ऐप्लिकेशन, ई-कॉमर्स और कस्टम डिजिटल प्लेटफ़ॉर्म',
   description:
-    'तकनीकी एसईओ, उच्च-इरादा गूगल एवं मेटा परफॉर्मेंस विज्ञापन, सर्वर-साइड रूपांतरण ट्रैकिंग और स्वचालित लीड जनरेशन फनल्स।',
+    'डिजिटल सेवाओं में व्यावसायिक वेबसाइट और लैंडिंग पेज, वेब ऐप्लिकेशन और ग्राहक पोर्टल, ई-कॉमर्स समाधान तथा कस्टम डिजिटल प्लेटफ़ॉर्म शामिल हैं।',
 };
 
 const breadcrumbJsonLd = {
@@ -35,7 +33,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: 'डिजिटल विकास',
+      name: 'डिजिटल',
       item: 'https://strovagroups.in/hi/digital/',
     },
   ],
@@ -43,8 +41,8 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="स्ट्रोवा डिजिटल — एसईओ एवं डिजिटल विकास | Strova Group"
-  description="डेटा-आधारित सर्च इंजन ऑप्टिमाइज़ेशन (SEO), गूगल एवं मेटा विज्ञापन और ठोस व्यावसायिक परिणामों के लिए निर्मित कन्वर्जन फनल्स।"
+  title="डिजिटल समाधान | स्ट्रोवा टेक्नोलॉजी"
+  description="स्ट्रोवा टेक्नोलॉजी से व्यवसाय वेबसाइट, लैंडिंग पेज, वेब ऐप्लिकेशन, ग्राहक पोर्टल, ई-कॉमर्स और कस्टम डिजिटल प्लेटफ़ॉर्म।"
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
   lang="hi"
 >
@@ -52,16 +50,16 @@ const breadcrumbJsonLd = {
   <section class="page-hero">
     <div class="container">
       <div class="page-hero__content">
-        <span class="section-eyebrow">स्ट्रोवा डिजिटल</span>
+        <span class="section-eyebrow">स्ट्रोवा ग्रुप / स्ट्रोवा टेक्नोलॉजी / डिजिटल</span>
         <h1 class="page-hero__title">
-          डेटा-संचालित विकास, तकनीकी एसईओ एवं उच्च-इरादा इनबाउंड पाइपलाइन्स
+          आपके व्यवसाय के लिए उपयोगी डिजिटल अनुभव
         </h1>
         <p class="page-hero__lead">
-          हम डिजिटल मार्केटिंग को एक इंजीनियरिंग अनुशासन के रूप में देखते हैं। हम प्रोग्रामेटिक खोज अनुकूलन, सर्वर-साइड एट्रिब्यूशन और शुद्ध राजस्व पर केंद्रित परफॉर्मेंस विज्ञापनों द्वारा विश्वसनीय ग्राहक अधिग्रहण प्रणाली बनाते हैं।
+          स्ट्रोवा टेक्नोलॉजी के Digital pillar में वेबसाइट, ऐप्लिकेशन, ई-कॉमर्स और कस्टम प्लेटफ़ॉर्म शामिल हैं। हर समाधान को उसके उपयोगकर्ताओं और व्यावसायिक जरूरतों के अनुसार तैयार किया जाता है।
         </p>
         <div class="page-hero__actions">
           <a href="/hi/contact/?service=digital" class="btn btn--primary btn--lg">
-            ग्रोथ ऑडिट का अनुरोध करें
+            डिजिटल परियोजना पर चर्चा करें
           </a>
           <a href="#services" class="btn btn--outline btn--lg">
             क्षमताएं देखें &rarr;
@@ -78,11 +76,11 @@ const breadcrumbJsonLd = {
         <div class="service-overview-grid">
           <div class="overview-item">
             <span class="overview-item__label">सेवा का विवरण</span>
-            <p class="overview-item__val">तकनीकी एसईओ सुधार, सशुल्क परफॉर्मेंस मीडिया (गूगल एवं मेटा विज्ञापन), प्रोग्रामेटिक लैंडिंग पेज और स्वचालित लीड कैप्चर फनल्स।</p>
+            <p class="overview-item__val">व्यवसाय वेबसाइट और लैंडिंग पेज, वेब ऐप्लिकेशन और ग्राहक पोर्टल, ई-कॉमर्स समाधान तथा कस्टम डिजिटल प्लेटफ़ॉर्म।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">किसके लिए उपयुक्त</span>
-            <p class="overview-item__val">व्यावसायिक उद्यम, भारत में पेशेवर क्लीनिक और वैश्विक ब्रांड जो अनुमानित आरओएएस (ROAS) और सत्यापित ग्राहक अधिग्रहण चाहते हैं।</p>
+            <p class="overview-item__val">ऐसे संगठन जिन्हें उपयोगी डिजिटल अनुभव या किसी मान्य व्यावसायिक जरूरत के अनुसार प्लेटफ़ॉर्म चाहिए।</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">कोटेशन प्रक्रिया</span>
@@ -90,7 +88,7 @@ const breadcrumbJsonLd = {
           </div>
           <div class="overview-item">
             <span class="overview-item__label">अनुमानित समयसीमा</span>
-            <p class="overview-item__val">प्रारंभिक ऑडिट और CAPI ट्रैकिंग के लिए 2-4 सप्ताह &bull; कीवर्ड रैंकिंग वृद्धि के लिए 8-12 सप्ताह &bull; द्विसाप्ताहिक स्प्रिंट पुनरावृत्ति।</p>
+            <p class="overview-item__val">समयसीमा सहमत दायरे, इंटीग्रेशन, सामग्री और समीक्षा प्रक्रिया पर निर्भर करती है। माइलस्टोन प्रस्ताव में दर्ज होते हैं।</p>
           </div>
         </div>
       </div>
@@ -101,14 +99,14 @@ const breadcrumbJsonLd = {
   <section class="section" id="services" aria-labelledby="digital-services-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="digital-services-title" class="section-title">मापने योग्य विकास प्रणालियां</h2>
+        <h2 id="digital-services-title" class="section-title">डिजिटल सेवाएं</h2>
         <p class="section-subtitle">
-          कोई व्यर्थ मेट्रिक्स या नकली फॉलोअर्स नहीं। प्रत्येक अभियान सीधे सत्यापित राजस्व पाइपलाइन से जुड़ा होता है।
+          केंद्रित लैंडिंग पेज से कस्टम प्लेटफ़ॉर्म तक, काम की शुरुआत व्यवसाय और ग्राहकों की जरूरतों से होती है।
         </p>
       </div>
 
       <div class="grid grid--2 capability-grid">
-        <!-- 1. Technical & Programmatic SEO -->
+        <!-- 1. Business websites and landing pages -->
         <article class="card capability-card">
           <div class="capability-icon" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -118,15 +116,15 @@ const breadcrumbJsonLd = {
               <line x1="8" y1="11" x2="14" y2="11"/>
             </svg>
           </div>
-          <h3 class="capability-title">तकनीकी एवं प्रोग्रामेटिक एसईओ</h3>
+          <h3 class="capability-title">व्यवसाय वेबसाइट एवं लैंडिंग पेज</h3>
           <p class="capability-text">
-            सर्च इंजन गति और संरचना को पुरस्कृत करते हैं। हम इंडेक्सेशन संरचना का ऑडिट करते हैं, कोर वेब वाइटल्स बाधाओं (INP, LCP, CLS) को दूर करते हैं, समृद्ध JSON-LD स्कीमा लागू करते हैं और वाणिज्यिक खोज इरादे को लक्षित करते हैं।
+            स्पष्ट, responsive वेबसाइट और केंद्रित लैंडिंग पेज आपके प्रस्ताव को समझाते हैं, आगंतुकों का मार्गदर्शन करते हैं और अगले कदम को आसान बनाते हैं।
           </p>
           <ul class="capability-features">
-            <li><strong>कोर वेब वाइटल्स:</strong> 2.5 सेकंड से कम LCP और शून्य लेआउट शिफ्ट</li>
-            <li><strong>स्ट्रक्चर्ड डेटा:</strong> रिच स्निपेट्स के लिए पूर्ण Schema.org ग्राफ</li>
-            <li><strong>क्रॉल दक्षता:</strong> XML साइटमैप, कैनोनिकल टैग और आंतरिक लिंक ट्री</li>
-            <li><strong>सामग्री संरचना:</strong> टॉपिकल क्लस्टर मैप्स एवं वाणिज्यिक खोज विश्लेषण</li>
+            <li><strong>Responsive layout:</strong> डेस्कटॉप, टैबलेट और मोबाइल के लिए डिज़ाइन</li>
+            <li><strong>उपयोगी सामग्री:</strong> स्पष्ट सूचना संरचना और कार्रवाई के विकल्प</li>
+            <li><strong>Search foundations:</strong> वर्णनात्मक metadata और crawl योग्य पेज संरचना</li>
+            <li><strong>सुलभ पैटर्न:</strong> semantic markup और keyboard-friendly controls</li>
           </ul>
         </article>
 
@@ -137,15 +135,15 @@ const breadcrumbJsonLd = {
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
           </div>
-          <h3 class="capability-title">सशुल्क मीडिया एवं आरओएएस अनुकूलन</h3>
+          <h3 class="capability-title">वेब ऐप्लिकेशन एवं ग्राहक पोर्टल</h3>
           <p class="capability-text">
-            सख्त विज्ञापन व्यय रिटर्न (ROAS) लक्ष्यों पर निर्मित उच्च-इरादा गूगल खोज और मेटा (इंस्टाग्राम/फेसबुक) अभियान। हम ब्राउज़र विज्ञापन अवरोधक नुकसान को रोकने के लिए सर्वर-साइड ट्रैकिंग (Meta CAPI) लागू करते हैं।
+            वेब ऐप्लिकेशन और ग्राहक पोर्टल जानकारी, अनुरोधों और उपयोगी workflows को एक स्पष्ट interface में ला सकते हैं। access और integration का दायरा हर परियोजना के अनुसार तय होता है।
           </p>
           <ul class="capability-features">
-            <li><strong>चैनल्स:</strong> Google Search, Performance Max, Meta Ads, LinkedIn</li>
-            <li><strong>ट्रैकिंग:</strong> सर्वर-साइड Conversions API (CAPI) एवं GA4 रूटिंग</li>
-            <li><strong>एट्रिब्यूशन:</strong> फर्स्ट-पार्टी UTM पैरामीटर और CRM राजस्व मिलान</li>
-            <li><strong>परीक्षण:</strong> व्यवस्थित शीर्षक, रचनात्मक दृष्टिकोण और दर्शक विभाजन</li>
+            <li><strong>Purpose-built flows:</strong> फ़ॉर्म, डैशबोर्ड और विशिष्ट कार्य के interface</li>
+            <li><strong>Account areas:</strong> जरूरत पड़ने पर ग्राहक access और भूमिका-आधारित views</li>
+            <li><strong>Integrations:</strong> सहमत data sources और business tools</li>
+            <li><strong>Delivery:</strong> scope, access rules और handover पहले से लिखित</li>
           </ul>
         </article>
 
@@ -156,15 +154,15 @@ const breadcrumbJsonLd = {
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
             </svg>
           </div>
-          <h3 class="capability-title">इनबाउंड लीड जनरेशन फनल्स</h3>
+          <h3 class="capability-title">ई-कॉमर्स समाधान</h3>
           <p class="capability-text">
-            बिना रूपांतरण के ट्रैफ़िक केवल लागत है। हम समर्पित, घर्षण-रहित लैंडिंग पेज और इंटरैक्टिव कोटेशन टूल डिज़ाइन करते हैं जो त्वरित फॉर्म भरने, सत्यापित फोन नंबर और आपकी टीम को त्वरित व्हाट्सएप अधिसूचना सुनिश्चित करते हैं।
+            ई-कॉमर्स अनुभव ग्राहकों को उत्पाद खोजने, विकल्प समझने और व्यवसाय के अनुकूल storefront तथा checkout के माध्यम से खरीदारी पूरी करने में मदद करते हैं।
           </p>
           <ul class="capability-features">
-            <li><strong>लैंडिंग पेज:</strong> शून्य विचलित करने वाले नेविगेशन के साथ सब-सेकंड लोड गति</li>
-            <li><strong>फॉर्म संरचना:</strong> प्रगतिशील प्रकटीकरण और मोबाइल सत्यापन</li>
-            <li><strong>सीआरएम रूटिंग:</strong> HubSpot, Zoho या Sheets में त्वरित वेबहुक सिंक</li>
-            <li><strong>स्पैम फ़िल्टर:</strong> हनीपॉट फ़ील्ड और एल्गोरिद्मिक बॉट सुरक्षा</li>
+            <li><strong>Storefront:</strong> उत्पाद खोज और स्पष्ट उत्पाद जानकारी</li>
+            <li><strong>Commerce flows:</strong> जरूरत के अनुसार cart, checkout और order journey</li>
+            <li><strong>Integrations:</strong> सहमत payment, inventory और fulfilment सेवाएं</li>
+            <li><strong>Responsive design:</strong> अलग-अलग screen size पर सहज अनुभव</li>
           </ul>
         </article>
 
@@ -177,82 +175,82 @@ const breadcrumbJsonLd = {
               <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </div>
-          <h3 class="capability-title">रूपांतरण दर अनुकूलन (CRO)</h3>
+          <h3 class="capability-title">कस्टम डिजिटल प्लेटफ़ॉर्म</h3>
           <p class="capability-text">
-            हम क्लिक डेटा को राजस्व वृद्धि में बदलते हैं। उपयोगकर्ता सत्र ऑडिटिंग, फॉर्म परित्याग विश्लेषण और स्वच्छ ए/बी स्प्लिट परीक्षणों के माध्यम से, हम आपके प्राथमिक वाणिज्यिक मार्गों पर रूपांतरण दरों में निरंतर सुधार करते हैं।
+            जब तैयार टूल उपयुक्त न हो, कस्टम प्लेटफ़ॉर्म विशिष्ट data, प्रक्रियाओं या सेवाओं को साथ ला सकता है। scope ग्राहक और व्यवसाय की मान्य जरूरतों पर आधारित होता है।
           </p>
           <ul class="capability-features">
-            <li><strong>ऑडिट:</strong> स्क्रॉल मैप्स, ड्रॉप-ऑफ हीटमैप्स और फनल ड्रॉप विश्लेषण</li>
-            <li><strong>ए/बी परीक्षण:</strong> टेक्स्ट और लेआउट का सांख्यिकीय परिकल्पना परीक्षण</li>
-            <li><strong>गोपनीयता-प्रथम:</strong> DPDP और GDPR अनुरूप कुकी-रहित एनालिटिक्स</li>
-            <li><strong>रिपोर्टिंग:</strong> प्रति-लीड लागत पर केंद्रित द्विसाप्ताहिक डैशबोर्ड</li>
+            <li><strong>Business logic:</strong> workflow और नियम लिखित scope में</li>
+            <li><strong>Data models:</strong> उत्पाद के अनुसार सूचना संरचना</li>
+            <li><strong>Connected services:</strong> परियोजना के लिए चुने गए तृतीय-पक्ष integrations</li>
+            <li><strong>Future growth:</strong> सहमत अगले चरणों के लिए maintainable आधार</li>
           </ul>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Growth Methodology -->
+  <!-- Digital Project Process -->
   <section class="section methodology-section" aria-labelledby="methodology-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="methodology-title" class="section-title">तीन चरणीय विकास ढांचा</h2>
+        <h2 id="methodology-title" class="section-title">आवश्यकताओं से डिलीवरी तक</h2>
         <p class="section-subtitle">
-          हम व्यावसायिक ग्राहक अधिग्रहण को व्यवस्थित रूप से कैसे परीक्षण, प्रमाणित और स्केल करते हैं।
+          स्पष्ट प्रक्रिया से परियोजना का दायरा, निर्णय और हैंडओवर पूरी अवधि में समझने योग्य रहते हैं।
         </p>
       </div>
 
       <div class="methodology-grid">
         <div class="methodology-step">
           <div class="methodology-step__num">01</div>
-          <h3 class="methodology-step__title">इन्फ्रास्ट्रक्चर एवं आधारभूत ऑडिट</h3>
+          <h3 class="methodology-step__title">समझें और परिभाषित करें</h3>
           <p class="methodology-step__text">
-            हम पिक्सेल स्वास्थ्य की जांच करते हैं, सर्वर-साइड CAPI वितरण सत्यापित करते हैं, ऐतिहासिक खोज प्रदर्शन का ऑडिट करते हैं और उच्च खरीदारी इरादे वाली खोजों को मैप करते हैं।
+            समाधान प्रस्तावित करने से पहले हम उपयोगकर्ताओं, आवश्यकताओं, सामग्री, integrations और सीमाओं को स्पष्ट करते हैं।
           </p>
         </div>
         <div class="methodology-step">
           <div class="methodology-step__num">02</div>
-          <h3 class="methodology-step__title">त्वरित रचनात्मक सत्यापन</h3>
+          <h3 class="methodology-step__title">योजना बनाएं और तैयार करें</h3>
           <p class="methodology-step__text">
-            हम नियंत्रित बजट के साथ लक्षित विज्ञापन प्रयोग शुरू करते हैं और बुनियादी तकनीकी एसईओ सुधार लागू करते हैं। हम ठोस अधिग्रहण लागत (CPA) बेंचमार्क स्थापित करते हैं।
+            हम माइलस्टोन और डिलिवरेबल्स पर सहमति बनाते हैं, फिर लिखित दायरे के अनुसार काम बनाते और समीक्षा करते हैं।
           </p>
         </div>
         <div class="methodology-step">
           <div class="methodology-step__num">03</div>
-          <h3 class="methodology-step__title">चैनल स्केलिंग एवं एट्रिब्यूशन</h3>
+          <h3 class="methodology-step__title">समीक्षा और हैंडओवर</h3>
           <p class="methodology-step__text">
-            हम सफल विज्ञापन कोणों को स्केल करते हैं, प्रोग्रामेटिक लैंडिंग पेज बनाते हैं और स्थिर अधिग्रहण लागत पर मासिक लीड मात्रा बढ़ाने के लिए रूपांतरण मार्गों को अनुकूलित करते हैं।
+            सहमत डिलिवरेबल्स की समीक्षा के बाद हैंडओवर की जरूरतें पूरी की जाती हैं। किसी भी ongoing support को प्रस्ताव में दर्ज किया जाता है।
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- How Quotes Work for Digital Growth -->
+  <!-- Digital Project Scope -->
   <section class="section" aria-labelledby="digital-pricing-title">
     <div class="container">
       <div class="section-header text-center">
-        <h2 id="digital-pricing-title" class="section-title">डिजिटल विकास के लिए कोटेशन प्रक्रिया</h2>
+        <h2 id="digital-pricing-title" class="section-title">परियोजना का दायरा और अनुमान</h2>
         <p class="section-subtitle">
-          आपके लक्षित चैनलों, बाजार प्रतिस्पर्धा और लक्ष्यों पर आधारित पारदर्शी प्रस्ताव।
+          आवश्यकताएं, integrations और सामग्री लागत को प्रभावित करती हैं। लिखित प्रस्ताव सहमत काम, माइलस्टोन और व्यावसायिक शर्तें स्पष्ट करता है।
         </p>
       </div>
 
       <div class="grid grid--3">
         <div class="card card--quiet">
-          <span class="section-eyebrow">चरण 1 &bull; तकनीकी ऑडिट</span>
-          <h3 class="pillar-title">तकनीकी ऑडिट एवं CAPI</h3>
-          <p class="text-secondary text-sm">व्यापक कोर वेब वाइटल्स सुधार, Schema.org ग्राफ और सर्वर-साइड ट्रैकिंग सेटअप।</p>
+          <span class="section-eyebrow">चरण 1 &bull; आवश्यकताएं</span>
+          <h3 class="pillar-title">काम परिभाषित करें</h3>
+          <p class="text-secondary text-sm">उपयोगकर्ता, workflows, सुविधाएं, सामग्री, integrations और सीमाएं स्पष्ट करें।</p>
         </div>
         <div class="card card--quiet">
           <span class="section-eyebrow">चरण 2 &bull; लिखित प्रस्ताव</span>
-          <h3 class="pillar-title">लिखित विकास स्कोप</h3>
-          <p class="text-secondary text-sm">1 कार्यदिवस में अभियानों, लैंडिंग पेजों और एट्रिब्यूशन का विवरण देने वाला स्पष्ट कोटेशन।</p>
+          <h3 class="pillar-title">लिखित परियोजना प्रस्ताव</h3>
+          <p class="text-secondary text-sm">काम शुरू होने से पहले डिलिवरेबल्स, माइलस्टोन, समयसीमा और शर्तें देखें।</p>
         </div>
         <div class="card card--quiet">
-          <span class="section-eyebrow">चरण 3 &bull; पुनरावृत्ति एवं रिपोर्ट</span>
-          <h3 class="pillar-title">द्विसाप्ताहिक रिपोर्टिंग</h3>
-          <p class="text-secondary text-sm">वास्तविक लीड्स और राजस्व आंकड़ों पर केंद्रित पारदर्शी द्विसाप्ताहिक रिपोर्ट और समीक्षा।</p>
+          <span class="section-eyebrow">चरण 3 &bull; डिलीवरी</span>
+          <h3 class="pillar-title">समीक्षा और हैंडओवर</h3>
+          <p class="text-secondary text-sm">माइलस्टोन की समीक्षा करें और हैंडओवर तथा सहायता की व्यवस्था तय करें।</p>
         </div>
       </div>
     </div>
@@ -263,16 +261,16 @@ const breadcrumbJsonLd = {
     <div class="container">
       <div class="cta-banner">
         <div class="cta-content">
-          <h2 class="cta-title">विकास रणनीति पर चर्चा के लिए तैयार हैं?</h2>
+          <h2 class="cta-title">क्या आपके पास डिजिटल परियोजना का विचार है?</h2>
           <p class="cta-desc">
-            अपने वर्तमान ट्रैफ़िक आंकड़े या विकास लक्ष्य साझा करें। हम एक तकनीकी ऑडिट करेंगे और 1 कार्यदिवस के भीतर स्पष्ट प्रस्ताव प्रदान करेंगे।
+            बताएं कि आप क्या बनाना चाहते हैं। हम आवश्यकताओं, संभावित दायरे और व्यावहारिक अगले कदम पर चर्चा कर सकते हैं।
           </p>
           <div class="cta-buttons">
             <a href="/hi/contact/?service=digital" class="btn btn--primary btn--lg">
-              डिजिटल विकास चर्चा शुरू करें
+              परियोजना पर चर्चा करें
             </a>
             <a href="/hi/case-studies/" class="btn btn--outline btn--lg">
-              हमारी कार्यप्रणाली देखें
+              Strova Technology देखें
             </a>
           </div>
         </div>

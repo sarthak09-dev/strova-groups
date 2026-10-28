@@ -106,7 +106,7 @@ import PortalLayout from '../layouts/PortalLayout.astro';
         return;
       }
 
-      const profile = await getUserProfile(session.user.id);
+      const profile = await getUserProfile();
       const welcomeEl = document.getElementById('welcome-client-name');
       const roleBadge = document.getElementById('client-role-badge');
 

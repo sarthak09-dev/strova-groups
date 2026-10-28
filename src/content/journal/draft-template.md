@@ -2,7 +2,7 @@
 title: "Draft Article Template"
 description: "Template for future journal articles"
 publishDate: 2026-10-12
-author: "Sarthak Shresht"
+author: "Sarthak Shreshth"
 tags: []
 draft: true
 ---

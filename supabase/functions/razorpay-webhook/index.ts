@@ -167,7 +167,7 @@ serve(async (req) => {
         }
 
         // Paid under different payment ID
-        console.error(`Invoice ${invoice.id} already Paid under different payment reference than ${rzpPaymentId}`);
+        console.error(JSON.stringify({ event: 'webhook_paid_reference_conflict' }));
         return new Response(JSON.stringify({
           error: 'Invoice is already settled under a different transaction reference',
         }), {
@@ -178,7 +178,7 @@ serve(async (req) => {
 
       // Validate captured amount matches invoice amount exactly
       if (amountPaise !== invoice.amount_paise) {
-        console.error(`Amount mismatch: gateway ${amountPaise} vs invoice ${invoice.amount_paise}`);
+        console.error(JSON.stringify({ event: 'webhook_amount_mismatch' }));
         return new Response(JSON.stringify({ error: 'Amount mismatch' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -188,7 +188,7 @@ serve(async (req) => {
       // Validate currency matches invoice currency exactly
       const invoiceCurrency = (invoice.currency || 'INR').toUpperCase();
       if (currency !== invoiceCurrency) {
-        console.error(`Currency mismatch: gateway ${currency} vs invoice ${invoiceCurrency}`);
+        console.error(JSON.stringify({ event: 'webhook_currency_mismatch' }));
         return new Response(JSON.stringify({ error: 'Currency mismatch' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -204,7 +204,7 @@ serve(async (req) => {
         .maybeSingle();
 
       if (otherPayment) {
-        console.error(`Payment ID ${rzpPaymentId} is already linked to another invoice`);
+        console.error(JSON.stringify({ event: 'webhook_payment_reuse_rejected' }));
         return new Response(JSON.stringify({
           error: 'Gateway payment ID is already bound to another invoice',
         }), {
@@ -231,7 +231,7 @@ serve(async (req) => {
       });
 
       if (rpcErr) {
-        console.error('finalize_payment RPC error in webhook:', rpcErr);
+        console.error(JSON.stringify({ event: 'webhook_payment_finalize_failed', code: rpcErr.code || 'unknown' }));
         // Return 500 so Razorpay retries webhook delivery later
         // NEVER perform non-atomic direct write fallbacks!
         return new Response(JSON.stringify({
@@ -307,7 +307,7 @@ serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err: any) {
-    console.error('Unhandled webhook exception:', err);
+    console.error(JSON.stringify({ event: 'webhook_unhandled', name: err?.name || 'Error' }));
     return new Response(JSON.stringify({ error: 'Internal server error processing webhook' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

@@ -211,10 +211,11 @@ serve(async (req) => {
           Authorization: `Basic ${basicAuth}`,
           Accept: 'application/json',
         },
+        signal: AbortSignal.timeout(10000),
       });
 
       if (!rzpRes.ok) {
-        console.error(`Razorpay API verification returned HTTP ${rzpRes.status} for payment ${razorpay_payment_id}`);
+        console.error(JSON.stringify({ event: 'razorpay_payment_lookup_failed', status: rzpRes.status }));
         return new Response(JSON.stringify({
           error: 'Gateway payment verification could not be confirmed. Gateway returned non-success response.',
         }), {
@@ -224,8 +225,8 @@ serve(async (req) => {
       }
 
       rzpPayData = await rzpRes.json();
-    } catch (fetchErr) {
-      console.error('Razorpay API request failed or timed out:', fetchErr);
+    } catch {
+      console.error(JSON.stringify({ event: 'razorpay_payment_lookup_unavailable' }));
       return new Response(JSON.stringify({
         error: 'Gateway communication failure during payment verification. Please retry.',
       }), {
@@ -306,7 +307,7 @@ serve(async (req) => {
     });
 
     if (rpcError) {
-      console.error('finalize_payment RPC error in verify-razorpay-payment:', rpcError);
+      console.error(JSON.stringify({ event: 'payment_finalize_rpc_failed', code: rpcError.code || 'unknown' }));
       // FAIL CLOSED: Never perform manual un-atomic fallback writes!
       return new Response(JSON.stringify({
         error: 'Payment reconciliation could not be finalized. Support has been notified.',
@@ -339,7 +340,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err: any) {
-    console.error('Unhandled exception in verify-razorpay-payment:', err);
+    console.error(JSON.stringify({ event: 'payment_verification_unhandled', name: err?.name || 'Error' }));
     return new Response(JSON.stringify({
       error: 'An internal error occurred during payment verification.',
     }), {

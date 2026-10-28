@@ -73,7 +73,7 @@ import { RAZORPAY_KEY_ID } from '../../lib/portal/supabaseClient';
 
   <!-- Payment Processing Status Modal -->
   <div id="payment-status-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;">
-    <div style="background: #fff; max-width: 440px; width: 100%; border-radius: 8px; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+    <div style="background: #FFFCF7; max-width: 440px; width: 100%; border-radius: 8px; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
       <div id="modal-spinner" style="font-size: 2.5rem; margin-bottom: 1rem;">⏳</div>
       <h3 id="modal-title" style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem;">Processing Payment</h3>
       <p id="modal-desc" style="font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.5rem;">
@@ -231,7 +231,7 @@ import { RAZORPAY_KEY_ID } from '../../lib/portal/supabaseClient';
                     email: session.user.email,
                   },
                   theme: {
-                    color: '#1D4ED8',
+                    color: '#49202B',
                   },
                   handler: async (response: any) => {
                     modal.style.display = 'flex';

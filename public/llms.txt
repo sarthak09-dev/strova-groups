@@ -1,30 +1,32 @@
 # Strova Group
 
-> Technology, commerce, and digital growth for growing businesses.
+> Digital services, business automation, and software products under one technology business.
 
-Strova Group is an India-based engineering and digital growth firm delivering high-performance web systems, native Android applications, automated WhatsApp pipelines, and data-driven customer acquisition for Indian and international businesses.
+Strova Group is the parent brand. Strova Technology is its integrated technology business, organized around three connected pillars: Digital, Automation, and Products.
 
 - **Canonical Origin**: https://strovagroups.in
 - **Email**: info@strovagroups.in
+- **Client support**: support@strovagroups.in
 - **Phone & WhatsApp**: +91 92880 77802 (tel:+919288077802, https://wa.me/919288077802)
 - **Headquarters**: Operating from India (Hours: Mon–Sat, 10:00 AM – 7:00 PM IST / UTC+05:30)
-- **Leadership & Ownership**: Sarthak Shresht (Founder). Legal owner per Udyam: Babita Kumari, proprietor. Strova Group is a proprietorship of Babita Kumari.
+- **Leadership & Ownership**: Sarthak Shreshth (Founder). Legal owner per Udyam: Babita Kumari, proprietor. Strova Group is a proprietorship of Babita Kumari.
 - **MSME Registration**: UDYAM-JH-20-0147452
 - **Commercial Model**: Fixed-scope written quotes delivered within 1 business day; 50% advance upon scope agreement and 50% upon staging demonstration prior to final handover. Invoices in INR or USD upon request.
 
 ## Divisions
 
-- **Strova Technologies** (https://strovagroups.in/technologies/): High-performance static and hybrid web platforms, native Android applications, custom SaaS dashboards, and official Meta WhatsApp Cloud API automation workflows.
-- **Strova Digital** (https://strovagroups.in/digital/): Technical SEO, Core Web Vitals remediation, paid performance advertising (Google Ads, Meta Ads) with server-side CAPI tracking, and B2B inbound lead generation funnels.
-- **Strova Commerce** (https://strovagroups.in/commerce/): Headless e-commerce storefronts, conversational WhatsApp catalog checkouts, and multi-channel inventory synchronization (Coming soon).
+- **Strova Technology** is the integrated technology business within Strova Group. Its three connected pillars are Digital, Automation, and Products (https://strovagroups.in/technologies/).
+- **Digital**: Business websites and landing pages, web applications and customer portals, e-commerce solutions, and custom digital platforms.
+- **Automation**: Business process and workflow automation, CRM and operational integrations, suitable AI-powered integrations, and repetitive task automation.
+- **Products**: SaaS applications, reusable software products, digital tools, and platforms developed around validated customer needs.
 
 ## Key Pages
 
-- [Home](https://strovagroups.in/): Overview of Strova Group, active divisions, four-step execution process, and fixed-scope quotation framework.
-- [Strova Technologies](https://strovagroups.in/technologies/): Technical specifications for custom web platforms, native Android apps, SaaS portals, and WhatsApp automations.
-- [Strova Digital](https://strovagroups.in/digital/): Performance marketing methodology, technical SEO architecture, and conversion rate optimization.
-- [Strova Commerce](https://strovagroups.in/commerce/): Architectural roadmap for headless commerce and conversational catalog checkout.
-- [About](https://strovagroups.in/about/): Founder background (Sarthak Shresht), proprietorship details (Babita Kumari), and engineering standards.
+- [Home](https://strovagroups.in/): Overview of Strova Group and the Digital, Automation, and Products pillars within Strova Technology.
+- [Strova Technology](https://strovagroups.in/technologies/): Overview of the Digital, Automation, and Products pillars.
+- [Digital services](https://strovagroups.in/digital/): Business websites, applications, e-commerce, and digital platforms.
+- [E-commerce solutions](https://strovagroups.in/commerce/): E-commerce solutions within the Digital pillar.
+- [About](https://strovagroups.in/about/): Founder background (Sarthak Shreshth), proprietorship details (Babita Kumari), and engineering standards.
 - [Request a Quote / Contact](https://strovagroups.in/contact/): Quick quote request form with 1-business-day response promise, direct phone, and WhatsApp contact.
 - [Frequently Asked Questions](https://strovagroups.in/faq/): Direct answers regarding project quotation, 50% milestone payments, full code ownership, and international billing.
 - [Privacy Policy](https://strovagroups.in/privacy/): Comprehensive DPDP Act 2023 aligned data protection disclosures, data subject rights, and grievance officer contact.

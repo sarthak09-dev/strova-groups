@@ -900,7 +900,7 @@ console.log('\n[Test Suite 19: Permanent Light Theme & Dark Mode Regression Prev
   const globalCss = fs.readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf-8');
   assert(!globalCss.includes(':root[data-theme="dark"]'), 'global.css contains zero :root[data-theme="dark"] override selectors');
   assert(!globalCss.includes('@media (prefers-color-scheme: dark)'), 'global.css contains zero @media (prefers-color-scheme: dark) override blocks');
-  assert(globalCss.includes('color-scheme: dark;'), 'global.css explicitly enforces color-scheme: dark on :root and html');
+  assert(globalCss.includes('color-scheme: light;'), 'global.css explicitly enforces the requested light color scheme on :root and html');
 
   // 2. Verify Header.astro has no visible theme toggle controls
   const headerAstro = fs.readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf-8');
@@ -916,7 +916,7 @@ console.log('\n[Test Suite 19: Permanent Light Theme & Dark Mode Regression Prev
   // 4. Verify PortalLayout.astro enforces light theme and light sidebar
   const portalLayout = fs.readFileSync(new URL('../portal/src/layouts/PortalLayout.astro', import.meta.url), 'utf-8');
   assert(portalLayout.includes('color-scheme: light;') || portalLayout.includes('color-scheme: dark;'), 'PortalLayout.astro explicitly enforces valid color-scheme');
-  assert(portalLayout.includes('--color-sidebar: #FFFFFF;'), 'PortalLayout.astro enforces light sidebar (--color-sidebar: #FFFFFF)');
+  assert(portalLayout.includes('--color-sidebar: #FFFCF7;'), 'PortalLayout.astro uses the warm-white brand surface for the sidebar');
 
   // 5. Simulate client-side theme initialization with legacy 'dark' stored in localStorage
   function simulateThemeInit(mockStorage) {
@@ -1542,12 +1542,12 @@ console.log('\n--- Test Suite 25: Legal Parity, Entity Consistency & DPDP Rights
 
   // 6. Verify statutory retention exceptions (CGST 7-year hold)
   assert(
-    privacyEn.includes('CGST Act 2017') && privacyEn.includes('7 years'),
-    'English privacy policy accurately states 7-year mandatory tax retention exception under CGST Act'
+    privacyEn.includes('applicable legal obligations') && privacyEn.includes('Some records may need to be retained'),
+    'English privacy policy describes retention without an unverified statutory schedule'
   );
   assert(
-    privacyHi.includes('CGST') && privacyHi.includes('7 वर्ष'),
-    'Hindi privacy policy accurately states 7-year mandatory tax retention exception under CGST Act'
+    privacyHi.includes('लागू कानूनी दायित्वों') && privacyHi.includes('कुछ रिकॉर्ड'),
+    'Hindi privacy policy describes retention without an unverified statutory schedule'
   );
 
   // 7. Verify Portal legal footer links

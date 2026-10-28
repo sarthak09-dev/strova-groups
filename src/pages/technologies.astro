@@ -1,25 +1,21 @@
 ---
 /**
- * Technologies Division Page (src/pages/technologies.astro)
- *
- * Division: Strova Technologies
- * Focus: High-performance websites, Android apps, custom SaaS, AI & WhatsApp automation.
+ * Strova Technology overview and integrated service pillars.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Strova Technologies — Custom Software & AI Engineering',
+  name: 'Strova Technology',
   provider: {
     '@type': 'Organization',
     name: 'Strova Group',
     url: 'https://strovagroups.in',
   },
-  serviceType: 'Software Development and AI Automation',
-  areaServed: ['IN', 'US', 'GB', 'AE', 'EU'],
+  serviceType: 'Digital services, business automation, and software products',
   description:
-    'Engineering custom web platforms, native Android applications, multi-tenant SaaS dashboards, and production WhatsApp Cloud API automation workflows.',
+    'The integrated technology business within Strova Group, bringing together business websites and platforms, workflow automation, and software products developed around validated customer needs.',
 };
 
 const breadcrumbJsonLd = {
@@ -35,7 +31,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: 'Technologies',
+      name: 'Strova Technology',
       item: 'https://strovagroups.in/technologies/',
     },
   ],
@@ -43,29 +39,56 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="Strova Technologies — Web, Apps & AI | Strova Group"
-  description="High-performance websites, native Android applications, multi-tenant SaaS systems, and production WhatsApp AI workflows engineered by Strova Technologies."
+  title="Strova Technology | Strova Group"
+  description="Strova Technology is the integrated technology business within Strova Group, bringing together digital services, business automation, and software products."
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
 >
   <!-- Division Header -->
   <section class="page-hero">
     <div class="container">
       <div class="page-hero__content">
-        <span class="section-eyebrow">Strova Technologies</span>
+        <span class="section-eyebrow">Strova Group / Strova Technology</span>
         <h1 class="page-hero__title">
-          Custom Software, Modern Mobile &amp; Practical Automation
+          Digital solutions, practical automation, and software products
         </h1>
         <p class="page-hero__lead">
-          We engineer robust digital infrastructure. From sub-second static web platforms to native Android applications and WhatsApp workflow automations that eliminate operational overhead.
+          Strova Technology brings three connected pillars together: digital services, business process automation, and products developed around validated customer needs.
         </p>
         <div class="page-hero__actions">
           <a href="/contact/?service=technologies" class="btn btn--primary btn--lg">
-            Request an engineering quote
+            Discuss a project
           </a>
           <a href="#offerings" class="btn btn--outline btn--lg">
-            Review service architecture &rarr;
+            Explore the three pillars &rarr;
           </a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pillars" aria-labelledby="pillars-title">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 id="pillars-title" class="section-title">One technology business. Three connected pillars.</h2>
+        <p class="section-subtitle">Digital, Automation, and Products are part of Strova Technology within Strova Group.</p>
+      </div>
+      <div class="grid grid--3">
+        <article class="card capability-card" id="pillar-digital">
+          <h3 class="capability-title">Digital</h3>
+          <p class="capability-text">Business websites and landing pages, web applications and customer portals, e-commerce solutions, and custom digital platforms.</p>
+          <a class="showcase-card__link" href="/digital/">Explore digital services &rarr;</a>
+          <a class="showcase-card__link" href="/commerce/">Explore e-commerce solutions &rarr;</a>
+        </article>
+        <article class="card capability-card" id="pillar-automation">
+          <h3 class="capability-title">Automation</h3>
+          <p class="capability-text">Business process and workflow automation, CRM and operations integrations, suitable AI integrations, and repetitive-task automation.</p>
+          <a class="showcase-card__link" href="#automation">Explore automation capabilities &rarr;</a>
+        </article>
+        <article class="card capability-card" id="pillar-products">
+          <h3 class="capability-title">Products</h3>
+          <p class="capability-text">SaaS applications, reusable software, digital tools, and platforms shaped by validated customer needs.</p>
+          <p class="text-secondary text-sm">This pillar describes the product focus; it does not announce a product launch.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -81,7 +104,7 @@ const breadcrumbJsonLd = {
           </div>
           <div class="overview-item">
             <span class="overview-item__label">Who It Is For</span>
-            <p class="overview-item__val">Commercial businesses, healthcare clinics, fast-growing startups, and enterprises seeking robust digital infrastructure without proprietary platform lock-in.</p>
+            <p class="overview-item__val">Organizations that need a website, application, workflow, or software product shaped around a clear business need.</p>
           </div>
           <div class="overview-item">
             <span class="overview-item__label">How Quotes Work</span>
@@ -102,7 +125,7 @@ const breadcrumbJsonLd = {
       <div class="section-header text-center">
         <h2 id="offerings-title" class="section-title">What We Build &amp; How We Build It</h2>
         <p class="section-subtitle">
-          Engineered for fault tolerance, strict security, and clean developer handover.
+          Built around clear requirements, maintainable delivery, and a documented handover.
         </p>
       </div>
 
@@ -116,15 +139,14 @@ const breadcrumbJsonLd = {
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
-          <h3 class="capability-title">High-Performance Web Platforms</h3>
+          <h3 class="capability-title">Websites &amp; Web Applications</h3>
           <p class="capability-text">
-            We abandon heavy monolithic CMS architectures in favor of static-first generation (Astro) and hybrid edge-rendered solutions. This yields sub-second Time-to-First-Byte, near-perfect Core Web Vitals, and near-zero server maintenance costs.
+            We build business websites, landing pages, and web applications around the content, workflows, and integrations each project requires.
           </p>
           <ul class="capability-features">
             <li><strong>Frameworks:</strong> Astro, Next.js, TypeScript, Tailwind CSS</li>
-            <li><strong>Performance:</strong> 95+ Mobile Lighthouse target scores</li>
-            <li><strong>Accessibility:</strong> WCAG 2.2 AA compliant markup</li>
-            <li><strong>Edge Deployment:</strong> Cloudflare Pages &amp; Vercel caching</li>
+            <li><strong>Focus:</strong> Responsive layouts, clear navigation, and maintainable code</li>
+            <li><strong>Delivery:</strong> Deployment and handover agreed in the project scope</li>
           </ul>
         </article>
 
@@ -157,7 +179,7 @@ const breadcrumbJsonLd = {
               <line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
           </div>
-          <h3 class="capability-title">Custom SaaS &amp; Internal Dashboards</h3>
+          <h3 class="capability-title" id="pillar-products-card">SaaS &amp; Business Platforms</h3>
           <p class="capability-text">
             Operational portals, role-based client dashboards, and custom business management software designed around your specific relational data models. No generic templates that force you to adapt your workflow.
           </p>
@@ -176,12 +198,12 @@ const breadcrumbJsonLd = {
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
             </svg>
           </div>
-          <h3 class="capability-title">WhatsApp Business &amp; AI Agents</h3>
+          <h3 class="capability-title" id="automation">Business Automation &amp; Integrations</h3>
           <p class="capability-text">
-            Transform customer conversations into automated business actions. We integrate the official Meta Cloud API with enterprise webhooks and tailored LLMs to triage support, qualify leads, and push data directly into your CRM.
+            Connect business workflows with suitable CRM, operations, and messaging tools. AI integrations can be considered where they fit the task and safeguards.
           </p>
           <ul class="capability-features">
-            <li><strong>Official API:</strong> Verified Meta Business Manager &amp; WhatsApp Cloud API</li>
+            <li><strong>Messaging integrations:</strong> WhatsApp Cloud API can be scoped when account access and setup are available</li>
             <li><strong>Lead Capture:</strong> Dynamic interactive message templates &amp; quick replies</li>
             <li><strong>LLM Triage:</strong> Context-grounded FAQ answering &amp; human escalation</li>
             <li><strong>Sync:</strong> Direct webhook connections to Zoho, HubSpot, ERP, or Sheets</li>
@@ -209,10 +231,10 @@ const breadcrumbJsonLd = {
             When patients search for specialists or diagnostic tests, every millisecond counts. We engineer ultra-fast, mobile-first web platforms for dental clinics, diagnostic centers, and multi-speciality medical practices across India.
           </p>
           <ul class="solution-card__list">
-            <li><strong>Instant Mobile Access:</strong> Sub-second page load speeds on mobile networks so prospective patients can find doctor schedules immediately.</li>
+            <li><strong>Mobile access:</strong> Service and contact information organized for visitors using phones and tablets.</li>
             <li><strong>Frictionless WhatsApp Booking:</strong> Click-to-WhatsApp appointment routing with pre-filled department inquiries that staff can confirm in seconds.</li>
-            <li><strong>DPDP &amp; DISHA Data Hygiene:</strong> Zero intrusive third-party trackers or data leakages; patient inquiry forms are encrypted and sent directly to your verified practice email or CRM.</li>
-            <li><strong>Local SEO Schema:</strong> MedicalClinic and Physician structured data configured to win local map packs and high-intent searches.</li>
+            <li><strong>Privacy considerations:</strong> Data collection, handling, and integrations are defined with the project requirements.</li>
+            <li><strong>Search foundations:</strong> Descriptive service information and appropriate structured data can be scoped as needed.</li>
           </ul>
         </article>
 
@@ -220,10 +242,10 @@ const breadcrumbJsonLd = {
           <div class="solution-card__badge">CONVERSATIONAL AUTOMATION</div>
           <h3 class="solution-card__title">WhatsApp Automation for Businesses</h3>
           <p class="solution-card__desc">
-            Stop losing leads to delayed replies and manual message reading. We deploy official Meta WhatsApp Cloud API webhooks that triage inquiries, qualify buyers, and sync data 24/7.
+            Connect WhatsApp inquiries with agreed business workflows to reduce repetitive message handling and help teams route requests to the right next step.
           </p>
           <ul class="solution-card__list">
-            <li><strong>Official Verified API:</strong> Built on Meta Cloud API webhooks with zero reliance on fragile browser scrapers or unverified third-party numbers.</li>
+            <li><strong>Connected workflows:</strong> WhatsApp Cloud API integrations can be scoped where the required access and setup are available.</li>
             <li><strong>Intelligent Lead Qualification:</strong> Dynamic interactive button menus and structured automation flows capture inbound buyer goals, timeline, and functional requirements automatically.</li>
             <li><strong>Seamless CRM Synchronization:</strong> Inbound contact details and chat summaries push straight into Zoho CRM, HubSpot, PostgreSQL, or Google Sheets in real-time.</li>
             <li><strong>Live Agent Escalation:</strong> When a high-value customer requests a live call or bespoke quotation, the workflow instantly alerts your team with full conversation context.</li>
@@ -302,15 +324,15 @@ const breadcrumbJsonLd = {
               </p>
             </div>
             <div class="standard-item">
-              <h3 class="standard-item__title">Strict Security &amp; Data Hygiene</h3>
+              <h3 class="standard-item__title">Security in the project scope</h3>
               <p class="standard-item__text">
-                Input sanitization, encrypted environment variable vaults, parameterized database queries, and modern Content Security Policies (CSP) configured on every build.
+                Data handling and access controls are discussed for each project. Specific security requirements and controls are documented in the agreed scope.
               </p>
             </div>
             <div class="standard-item">
               <h3 class="standard-item__title">Milestone Testing &amp; Warranty</h3>
               <p class="standard-item__text">
-                Every release undergoes cross-browser testing and device validation. We provide a complimentary 30-day bug warranty on all delivered scope to resolve unexpected regressions.
+                Testing scope, supported browsers, and post-launch warranty terms are documented in the project proposal and agreement.
               </p>
             </div>
           </div>
@@ -346,7 +368,7 @@ const breadcrumbJsonLd = {
         </div>
         <div class="card card--quiet">
           <span class="section-eyebrow">Step 3 &bull; Delivery &amp; Handover</span>
-          <h3 class="pillar-title">100% Code Ownership</h3>
+          <h3 class="pillar-title">Code Ownership &amp; Handover</h3>
           <p class="text-secondary text-sm">
             50% deposit to begin sprints, 50% upon staging approval. Complete source code repository and IP transferred to you.
           </p>

@@ -36,24 +36,23 @@ const breadcrumbJsonLd = {
         <strong>Strova Group</strong> believes in privacy by design and radical transparency. This Cookie Policy explains how cookies and browser storage technologies are used on our marketing website (<a href="https://strovagroups.in">https://strovagroups.in</a>) and client portal (<a href="https://strovagroups.in/portal/">https://strovagroups.in/portal</a>).
       </p>
 
-      <h2>1. Marketing Website (Zero Tracking Cookies)</h2>
+      <h2>1. Marketing Website</h2>
       <p>
         On our public marketing website (<code>strovagroups.in</code>), we <strong>do not set any tracking cookies, third-party advertising cookies, or behavioral profiling cookies</strong>.
       </p>
       <p>
-        We use privacy-friendly, cookieless analytics that do not store persistent identifiers on your device and do not track you across different websites. We also respect the browser's <code>Do Not Track</code> (DNT) header.
+        The current site code does not configure a third-party analytics provider. Hosting, security, and embedded services may use their own technical storage as configured.
       </p>
 
-      <h2>2. Client Portal (Strictly Essential Cookies)</h2>
+      <h2>2. Client Portal</h2>
       <p>
-        On our invite-only client portal (<code>strovagroups.in/portal</code>), cookies are used exclusively for authentication and session security:
+        The invite-only client portal uses Supabase browser authentication. Its session is persisted in browser storage by the Supabase client, rather than an HttpOnly cookie.
       </p>
       <ul>
-        <li><strong>Session Authentication Cookie:</strong> An encrypted authentication token set upon one-time passcode (OTP) verification. Attributes: <code>HttpOnly</code> (inaccessible to browser JavaScript), <code>Secure</code> (transmitted over HTTPS only), and <code>SameSite=Lax</code> (cross-site request forgery protection).</li>
         <li><strong>Security / Bot Verification:</strong> Cloudflare Turnstile security tokens during authentication to protect against automated credential attacks.</li>
       </ul>
       <p>
-        These cookies are classified as strictly necessary for the technical operation of the authenticated portal and do not require marketing consent under applicable data protection laws.
+        Sign out after using a shared device and protect access to your browser profile.
       </p>
 
       <h2>3. Payment Gateway Modal Storage (Razorpay)</h2>
@@ -63,7 +62,7 @@ const breadcrumbJsonLd = {
 
       <h2>4. Local Storage &amp; Cache</h2>
       <p>
-        Our website operates on a permanent, light-first corporate design system and does not write tracking preferences or behavioral profiles to <code>localStorage</code>. Cached assets are restricted to standard static files (fonts and scripts) stored by your browser for optimal performance.
+        The portal stores its authenticated session in browser storage. The public site also uses local storage for a visitor-selected theme preference. Your browser may cache static site assets.
       </p>
 
       <h2>5. Managing Your Privacy Choices</h2>
@@ -73,7 +72,7 @@ const breadcrumbJsonLd = {
       <ul>
         <li>You may clear your browser cache and local storage at any time via your browser settings.</li>
         <li>You can configure your browser to block third-party cookies or alert you when cookies are being sent.</li>
-        <li>Logging out of the client portal immediately terminates the active authentication session and removes the session cookie.</li>
+        <li>Logging out of the client portal signs out the Supabase session and clears its locally persisted authentication state.</li>
       </ul>
 
       <h2>6. Inquiries &amp; Data Principal Rights</h2>
