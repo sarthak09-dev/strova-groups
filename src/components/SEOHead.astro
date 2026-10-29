@@ -20,7 +20,7 @@ const {
   title,
   description,
   canonical,
-  ogImage = '/images/og-default.png',
+  ogImage = '/images/og-strova-group.png',
   ogType = 'website',
   jsonLd,
   noindex = false,
@@ -40,7 +40,7 @@ const canonicalHref = canonical
 const ogImageUrl = new URL(ogImage, Astro.site);
 const defaultImageAlt = lang === 'hi'
   ? 'स्ट्रोवा ग्रुप — भारत में उन्नत प्रौद्योगिकी एवं डिजिटल विकास'
-  : 'Strova Group — Technology & Digital Services in India';
+  : 'Strova Group — Web development, business automation, and digital products';
 ---
 
 <title>{fullTitle}</title>
@@ -68,10 +68,10 @@ const defaultImageAlt = lang === 'hi'
 <meta name="theme-color" content="#F4EFE6" />
 
 <!-- Icons & PWA Manifest -->
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-strova-96.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon-strova.svg" />
+<link rel="shortcut icon" href="/favicon-strova.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-strova.png" />
 <link rel="manifest" href="/site.webmanifest" />
 
 <!-- Open Graph -->
@@ -83,6 +83,7 @@ const defaultImageAlt = lang === 'hi'
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={defaultImageAlt} />
+<meta property="og:image:type" content="image/png" />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content={lang === 'hi' ? 'hi_IN' : 'en_IN'} />
 <meta property="og:locale:alternate" content={lang === 'hi' ? 'en_IN' : 'hi_IN'} />
