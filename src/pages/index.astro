@@ -21,6 +21,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CredentialsStrip from '../components/CredentialsStrip.astro';
+import { showcaseConcepts } from '../data/showcase';
 
 const faqs = [
   {
@@ -175,7 +176,7 @@ const faqJsonLd = {
   <!-- Verifiable Credentials -->
   <CredentialsStrip />
 
-  <!-- Official Engineering & Product Showcase -->
+  <!-- Illustrative interface concepts, not client case studies -->
   <section class="section showcase-section" id="showcase" aria-labelledby="showcase-heading">
     <div class="container">
       <div class="section-header showcase__header reveal">
@@ -184,67 +185,35 @@ const faqJsonLd = {
           <span>STROVA GROUP / STROVA TECHNOLOGY</span>
         </div>
         <h2 id="showcase-heading" class="section-title">
-          Three connected pillars. One technology business.
+          Interfaces and systems, designed with purpose.
         </h2>
         <p class="section-subtitle text-secondary">
-          Strova Technology connects digital delivery, workflow automation, and software products within Strova Group.
+          A selection of illustrative directions across digital experiences, automation, and software products. These are interface concepts, not client case studies.
         </p>
       </div>
 
       <div class="showcase__grid reveal">
-        <!-- Showcase Card 1: Core Platform Engineering -->
-        <article class="showcase-card showcase-card--featured">
-          <div class="showcase-card__visual">
-            <div class="showcase-art showcase-art--platform" aria-hidden="true"><div class="art-window"><div class="art-top"><i></i><i></i><i></i><span>STROVA / SYSTEMS</span></div><div class="art-panel"><small>OPERATIONS OVERVIEW</small><strong>One clear view.</strong><div class="art-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div><div class="art-line"></div></div></div></div>
-            <div class="showcase-card__overlay"></div>
-          </div>
-          <div class="showcase-card__content">
-            <span class="showcase-card__tag">Platform Architecture</span>
-            <h3 class="showcase-card__title">Business websites &amp; platforms</h3>
-            <p class="showcase-card__desc text-secondary">
-              Websites, web applications, customer portals, e-commerce solutions, and custom digital platforms shaped around business needs.
-            </p>
-            <a href="/technologies/#pillar-digital" class="showcase-card__link">
-              Explore Digital &rarr;
-            </a>
-          </div>
-        </article>
-
-        <!-- Showcase Card 2: Mobile & Cloud Solutions -->
-        <article class="showcase-card">
-          <div class="showcase-card__visual">
-            <div class="showcase-art showcase-art--mobile" aria-hidden="true"><div class="art-phone"><div class="art-speaker"></div><small>YOUR STORE</small><strong>Made to<br/>move with you.</strong><div class="art-product"></div><span class="art-cta">Explore collection</span></div></div>
-            <div class="showcase-card__overlay"></div>
-          </div>
-          <div class="showcase-card__content">
-            <span class="showcase-card__tag">Mobile &amp; Cloud</span>
-            <h3 class="showcase-card__title">Native Mobile Engineering</h3>
-            <p class="showcase-card__desc text-secondary">
-              Workflow automation, CRM and operations integrations, and carefully scoped AI integrations for repetitive business tasks.
-            </p>
-            <a href="/technologies/#pillar-automation" class="showcase-card__link">
-              Explore Automation &rarr;
-            </a>
-          </div>
-        </article>
-
-        <!-- Showcase Card 3: Interactive Visuals & Brand Fluidity -->
-        <article class="showcase-card">
-          <div class="showcase-card__visual">
-            <div class="showcase-art showcase-art--growth" aria-hidden="true"><div class="art-growth"><span>01 / DISCOVER</span><b>Find the signal.</b><i></i><span>02 / BUILD</span><b>Make it useful.</b><i></i><span>03 / GROW</span><b>Keep moving.</b></div></div>
-            <div class="showcase-card__overlay"></div>
-          </div>
-          <div class="showcase-card__content">
-            <span class="showcase-card__tag">Products</span>
-            <h3 class="showcase-card__title">Software built around validated needs</h3>
-            <p class="showcase-card__desc text-secondary">
-              SaaS applications, reusable software, and digital tools developed in response to validated customer needs.
-            </p>
-            <a href="/technologies/#pillar-products" class="showcase-card__link">
-              Explore Strova Technology &rarr;
-            </a>
-          </div>
-        </article>
+        {showcaseConcepts.map((concept) => (
+          <article class="showcase-card">
+            <div class="showcase-card__visual">
+              <img
+                class="showcase-card__img"
+                src={concept.image}
+                alt={concept.alt.en}
+                width="1200"
+                height="760"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="showcase-card__content">
+              <span class="showcase-card__tag">{concept.pillar.en}</span>
+              <h3 class="showcase-card__title">{concept.title.en}</h3>
+              <p class="showcase-card__desc text-secondary">{concept.description.en}</p>
+              <a href={concept.href} class="showcase-card__link">{concept.link.en} &rarr;</a>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
@@ -526,11 +495,12 @@ const faqJsonLd = {
   .js-reveal .reveal { opacity:0;transform:translateY(20px);transition:opacity .55s var(--ease-out),transform .55s var(--ease-out); }
   .js-reveal .reveal.in { opacity:1;transform:none; }
   .section { padding-block:clamp(4rem,8vw,7rem); }.section-header { max-width:52rem;margin-bottom:2.5rem; }.section-title { font-size:clamp(2.2rem,4.5vw,4rem);letter-spacing:-.04em; }.section-subtitle { font-size:1.05rem;max-width:50ch;margin-top:.8rem; }
-  .showcase__header { margin-inline:auto;text-align:center; }.showcase__grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem; }.showcase-card { overflow:hidden;background:#FFFCF7;border:1px solid rgba(41,42,39,.12);border-radius:1rem;transition:transform .25s ease,box-shadow .25s ease; }.showcase-card:hover { transform:translateY(-4px);box-shadow:0 18px 40px -25px rgba(41,42,39,.4); }.showcase-card--featured { grid-column:span 2;display:grid;grid-template-columns:1.2fr 1fr; }.showcase-card__visual { position:relative;overflow:hidden;background:#292A27;aspect-ratio:1.55; }.showcase-card--featured .showcase-card__visual { aspect-ratio:auto;min-height:20rem; }.showcase-card__img { width:100%;height:100%;object-fit:cover;transition:transform .5s ease; }.showcase-card:hover .showcase-card__img { transform:scale(1.035); }.showcase-card__overlay { position:absolute;inset:0;background:linear-gradient(0deg,rgba(41,42,39,.3),transparent 55%);pointer-events:none; }.showcase-card__content { padding:clamp(1.25rem,3vw,2.25rem); }.showcase-card__tag { color:#49202B;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase; }.showcase-card__title { font-size:clamp(1.5rem,2.5vw,2.25rem);margin:.65rem 0; }.showcase-card__desc { font-size:.9rem; }.showcase-card__link,.service__link { display:inline-block;color:#49202B;font-weight:700;text-decoration:none;margin-top:1rem; }.showcase-card__link:hover,.service__link:hover { color:#292A27; }
+  .showcase__header { margin-inline:auto;text-align:center; }.showcase__grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem; }.showcase-card { overflow:hidden;background:#FFFCF7;border:1px solid rgba(41,42,39,.12);border-radius:.75rem;transition:transform .2s ease,border-color .2s ease; }.showcase-card:hover { transform:translateY(-3px);border-color:#6F7969; }.showcase-card__visual { overflow:hidden;background:#F4EFE6;aspect-ratio:1.58; }.showcase-card__img { width:100%;height:100%;object-fit:cover;transition:transform .3s ease; }.showcase-card:hover .showcase-card__img { transform:scale(1.015); }.showcase-card__content { padding:1.25rem 1.4rem 1.5rem; }.showcase-card__tag { color:#49202B;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase; }.showcase-card__title { font-size:clamp(1.35rem,2vw,1.8rem);margin:.55rem 0; }.showcase-card__desc { font-size:.88rem; }.showcase-card__link,.service__link { display:inline-block;color:#49202B;font-weight:700;text-decoration:none;margin-top:.85rem; }.showcase-card__link:hover,.service__link:hover { color:#292A27; }
   .services { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem; }.service,.principle,.step { padding:1.5rem;border:1px solid rgba(41,42,39,.13);border-radius:.8rem;background:#FFFCF7;transition:transform .22s ease,border-color .22s ease; }.service:hover { transform:translateY(-3px);border-color:#6F7969; }.service__number,.step__number { color:#6F7969;font-size:.78rem;font-weight:700;letter-spacing:.1em; }.service__title,.step__title,.principle__title { margin:.8rem 0;font-size:1.45rem; }.service__desc,.step__desc { font-size:.9rem; }
   .steps { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem; }.approach { background:#F4EFE6; }.principles { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem; }.principles__cta { margin-top:1.5rem; }.founder { background:#292A27;color:#FFFCF7; }.founder .section-title { color:#FFFCF7; }.founder__inner { max-width:54rem; }.founder__text { max-width:66ch;margin:1rem 0 1.5rem; }.founder__name { font:500 1.7rem var(--font-heading); }.founder__meta { display:flex;flex-direction:column; }
   .faq-list { border-top:1px solid rgba(41,42,39,.16); }.faq-item { border-bottom:1px solid rgba(41,42,39,.16); }.faq-question { cursor:pointer;list-style:none;padding:1.2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-weight:600; }.faq-question::-webkit-details-marker { display:none; }.faq-chevron { transition:transform .2s ease; }.faq-item[open] .faq-chevron { transform:rotate(180deg); }.faq-answer { padding:0 2.5rem 1.2rem 0; }
   .cta { background:#49202B;color:#FFFCF7; }.cta__inner { max-width:55rem;text-align:center;margin:auto; }.cta__title { color:#FFFCF7;font-size:clamp(2.4rem,5vw,4.5rem); }.cta__desc { color:#F4EFE6;margin:1rem auto 2rem; }.cta__actions { display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem; }
-  @media (max-width: 760px) { .hero { min-height:auto;padding-block:2.5rem; }.hero__inner { grid-template-columns:1fr;gap:1.25rem; }.hero__top-flank { grid-column:1;flex-direction:column;align-items:flex-start; }.hero__centerpiece { grid-column:1;grid-row:2; }.hero__bottom-flank { grid-column:1;grid-row:3; }.hero__art { grid-column:1;grid-row:4;width:min(70vw,18rem);margin:0 auto; }.hero__scroll-wrap { grid-row:5; }.hero__title { font-size:clamp(3rem,12vw,4.2rem); }.hero__status-badge { font-size:.65rem; }.showcase__grid,.services,.principles { grid-template-columns:1fr; }.showcase-card--featured { grid-column:auto;display:block; }.showcase-card--featured .showcase-card__visual { min-height:0;aspect-ratio:1.35; }.steps { grid-template-columns:repeat(2,minmax(0,1fr)); }.stat-divider { display:none; }.manifesto__stats { justify-content:center; }.cta__actions { flex-direction:column;align-items:stretch; }.cta__actions .btn { width:100%;white-space:normal; } }
+  @media (max-width: 980px) { .showcase__grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width: 760px) { .hero { min-height:auto;padding-block:2.5rem; }.hero__inner { grid-template-columns:1fr;gap:1.25rem; }.hero__top-flank { grid-column:1;flex-direction:column;align-items:flex-start; }.hero__centerpiece { grid-column:1;grid-row:2; }.hero__bottom-flank { grid-column:1;grid-row:3; }.hero__art { display:none; }.hero__scroll-wrap { grid-row:4; }.hero__title { font-size:clamp(3rem,12vw,4.2rem); }.hero__status-badge { font-size:.65rem; }.showcase__grid,.services,.principles { grid-template-columns:1fr; }.steps { grid-template-columns:repeat(2,minmax(0,1fr)); }.stat-divider { display:none; }.manifesto__stats { justify-content:center; }.cta__actions { flex-direction:column;align-items:stretch; }.cta__actions .btn { width:100%;white-space:normal; } }
   @media (prefers-reduced-motion: reduce) { .showcase-card,.showcase-card__img,.service,.manifesto__pill,.reveal { transition:none!important;animation:none!important;opacity:1!important;transform:none!important; } }
 </style>

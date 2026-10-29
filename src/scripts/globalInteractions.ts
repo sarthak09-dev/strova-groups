@@ -29,6 +29,7 @@ export function initGlobalInteractions() {
 
   // 2. Top Scroll Progress Indicator
   const progressBar = document.getElementById('scroll-progress-bar');
+  let progressFrame = 0;
   const updateScrollProgress = (currentScroll: number) => {
     if (!progressBar) return;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -38,13 +39,13 @@ export function initGlobalInteractions() {
     }
   };
 
-  window.addEventListener(
-    'scroll',
-    () => {
+  window.addEventListener('scroll', () => {
+    if (progressFrame) return;
+    progressFrame = window.requestAnimationFrame(() => {
       updateScrollProgress(window.scrollY);
-    },
-    { passive: true }
-  );
+      progressFrame = 0;
+    });
+  }, { passive: true });
   updateScrollProgress(window.scrollY);
 
   // 3. Live IST Time & Operating Hours Status Ticker
@@ -94,7 +95,7 @@ export function initGlobalInteractions() {
   }
 
   updateISTBadges();
-  setInterval(updateISTBadges, 15000);
+  setInterval(updateISTBadges, 60000);
 
   // 4. Interactive Cursor Sheen Micro-Interactions
   if (!prefersReducedMotion && window.matchMedia('(pointer: fine)').matches) {
