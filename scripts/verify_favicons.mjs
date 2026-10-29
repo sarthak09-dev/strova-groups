@@ -38,10 +38,12 @@ async function verify() {
   console.log('[Phase 1: Favicon Asset Format & Dimension Verification]');
 
   const iconChecks = [
-    { file: 'favicon.png', width: 96, height: 96, format: 'png', desc: 'Google Search Recommended 96x96 PNG' },
+    { file: 'favicon-strova-96.png', width: 96, height: 96, format: 'png', desc: 'Versioned Google Search 96x96 branded PNG' },
+    { file: 'favicon-strova-192.png', width: 192, height: 192, format: 'png', desc: 'Versioned PWA 192x192 PNG' },
+    { file: 'favicon-strova-512.png', width: 512, height: 512, format: 'png', desc: 'Versioned PWA 512x512 PNG' },
     { file: 'favicon-96x96.png', width: 96, height: 96, format: 'png', desc: 'Canonical 96x96 PNG' },
     { file: 'favicon-48x48.png', width: 48, height: 48, format: 'png', desc: 'Baseline 48x48 PNG (multiple of 48)' },
-    { file: 'apple-touch-icon.png', width: 180, height: 180, format: 'png', desc: 'Apple Touch 180x180 PNG' },
+    { file: 'apple-touch-icon-strova.png', width: 180, height: 180, format: 'png', desc: 'Versioned Apple Touch 180x180 PNG' },
     { file: 'favicon-192x192.png', width: 192, height: 192, format: 'png', desc: 'PWA 192x192 PNG' },
     { file: 'favicon-512x512.png', width: 512, height: 512, format: 'png', desc: 'PWA Splash 512x512 PNG' },
   ];
@@ -55,26 +57,26 @@ async function verify() {
       assert(meta.width === check.width && meta.height === check.height, `${check.file} has exact ${check.width}x${check.height} dimensions (${check.desc})`);
       assert(meta.width === meta.height, `${check.file} is strictly 1:1 square`);
       assert(
-        meta.width % 48 === 0 || check.file === 'apple-touch-icon.png' || check.file === 'favicon-512x512.png',
+        meta.width % 48 === 0 || check.file === 'apple-touch-icon-strova.png' || check.file === 'apple-touch-icon.png' || check.file === 'favicon-512x512.png' || check.file === 'favicon-strova-512.png',
         `${check.file} width (${meta.width}px) is a multiple of 48px or valid device/PWA icon`
       );
     }
   }
 
   // Check favicon.svg
-  const svgPath = path.join(PUBLIC_DIR, 'favicon.svg');
-  assert(fs.existsSync(svgPath), 'favicon.svg exists on disk');
+  const svgPath = path.join(PUBLIC_DIR, 'favicon-strova.svg');
+  assert(fs.existsSync(svgPath), 'versioned favicon-strova.svg exists on disk');
   if (fs.existsSync(svgPath)) {
     const svgContent = fs.readFileSync(svgPath, 'utf8');
-    assert(svgContent.includes('<svg') && svgContent.includes('xmlns="http://www.w3.org/2000/svg"'), 'favicon.svg has valid SVG xmlns');
-    assert(svgContent.includes('viewBox="0 0 36 36"'), 'favicon.svg has 1:1 square viewBox');
-    assert(svgContent.includes('#49202B'), 'favicon.svg contains the brand burgundy');
-    assert(svgContent.includes('#6F7969'), 'favicon.svg contains the brand sage');
+    assert(svgContent.includes('<svg') && svgContent.includes('xmlns="http://www.w3.org/2000/svg"'), 'favicon SVG has valid namespace');
+    assert(svgContent.includes('viewBox="0 0 36 36"'), 'favicon SVG has 1:1 square viewBox');
+    assert(svgContent.includes('#49202B'), 'favicon SVG contains brand burgundy');
+    assert(svgContent.includes('#6F7969'), 'favicon SVG contains brand sage');
   }
 
   // Check favicon.ico
-  const icoPath = path.join(PUBLIC_DIR, 'favicon.ico');
-  assert(fs.existsSync(icoPath), 'favicon.ico exists on disk');
+  const icoPath = path.join(PUBLIC_DIR, 'favicon-strova.ico');
+  assert(fs.existsSync(icoPath), 'versioned favicon-strova.ico exists on disk');
   if (fs.existsSync(icoPath)) {
     const buf = fs.readFileSync(icoPath);
     assert(buf.length > 0, `favicon.ico is non-empty (${buf.length} bytes)`);
@@ -118,27 +120,36 @@ async function verify() {
     
     // Check primary 96x96 PNG favicon
     assert(
-      html.includes('rel="icon"') && html.includes('type="image/png"') && html.includes('sizes="96x96"') && html.includes('href="/favicon.png"'),
-      'dist/index.html includes primary Google Search <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />'
+      html.includes('rel="icon"') && html.includes('type="image/png"') && html.includes('sizes="96x96"') && html.includes('href="/favicon-strova-96.png"'),
+      'dist/index.html includes versioned 96x96 branded favicon link'
     );
 
     // Check SVG favicon
     assert(
-      html.includes('rel="icon"') && html.includes('type="image/svg+xml"') && html.includes('href="/favicon.svg"'),
-      'dist/index.html includes vector <link rel="icon" type="image/svg+xml" href="/favicon.svg" />'
+      html.includes('rel="icon"') && html.includes('type="image/svg+xml"') && html.includes('href="/favicon-strova.svg"'),
+      'dist/index.html includes versioned SVG favicon link'
     );
 
     // Check ICO shortcut icon
     assert(
-      html.includes('rel="shortcut icon"') && html.includes('href="/favicon.ico"'),
-      'dist/index.html includes legacy fallback <link rel="shortcut icon" href="/favicon.ico" />'
+      html.includes('rel="shortcut icon"') && html.includes('href="/favicon-strova.ico"'),
+      'dist/index.html includes versioned ICO fallback link'
     );
 
     // Check Apple Touch icon
     assert(
-      html.includes('rel="apple-touch-icon"') && html.includes('href="/apple-touch-icon.png"'),
-      'dist/index.html includes <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />'
+      html.includes('rel="apple-touch-icon"') && html.includes('href="/apple-touch-icon-strova.png"'),
+      'dist/index.html includes versioned Apple Touch icon link'
     );
+
+    assert(html.includes('https://strovagroups.in/images/og-strova-group.png'), 'dist/index.html declares the branded social preview image');
+    const socialImage = path.join(PUBLIC_DIR, 'images/og-strova-group.png');
+    assert(fs.existsSync(socialImage), 'branded Open Graph image exists in public assets');
+    if (fs.existsSync(socialImage)) {
+      const meta = await sharp(socialImage).metadata();
+      assert(meta.format === 'png' && meta.width === 1200 && meta.height === 630, 'Open Graph image is a 1200x630 PNG');
+    }
+    assert(html.includes('India-based Strova Group builds business websites, web apps, e-commerce, workflow automation and digital products through Strova Technology.'), 'homepage meta description explains the actual offer and geography');
 
     // Check that every declared href in dist exists in dist/
     const iconHrefRegex = /<link[^>]+rel=["'](?:shortcut )?icon["'][^>]+href=["']([^"']+)["']/g;

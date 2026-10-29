@@ -57,3 +57,22 @@
 
 /site.webmanifest
   Cache-Control: public, max-age=86400
+
+# Versioned brand icons can be cached long-term without keeping old search icons alive
+/favicon-strova-96.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon-strova-192.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon-strova-512.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon-strova.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon-strova.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+/apple-touch-icon-strova.png
+  Cache-Control: public, max-age=31536000, immutable

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F4EFE6"/>
+  <path d="M0 512H1200" stroke="#6F7969" stroke-opacity=".34" stroke-width="2"/>
+  <circle cx="978" cy="284" r="250" fill="#FFFCF7"/>
+  <circle cx="978" cy="284" r="212" fill="none" stroke="#6F7969" stroke-opacity=".35" stroke-width="2"/>
+  <circle cx="978" cy="284" r="168" fill="none" stroke="#49202B" stroke-opacity=".22" stroke-width="2" stroke-dasharray="3 10"/>
+  <rect x="86" y="72" width="58" height="58" rx="15" fill="#49202B"/>
+  <path d="M123 91c0-4.5-3.7-8-8.2-8H99c-5.8 0-10.5 4.7-10.5 10.5S93.2 104 99 104h18.2c5.8 0 10.5 4.7 10.5 10.5S123 125 117.2 125H103c-4.5 0-8.2-3.6-8.2-8" fill="none" stroke="#FFFCF7" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="115" cy="114" r="2.8" fill="#6F7969"/>
+  <text x="164" y="114" fill="#292A27" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" letter-spacing=".2">Strova Group</text>
+  <text x="86" y="246" fill="#49202B" font-family="Georgia, 'Times New Roman', serif" font-size="61" font-weight="700">Useful technology,</text>
+  <text x="86" y="319" fill="#49202B" font-family="Georgia, 'Times New Roman', serif" font-size="61" font-weight="700">for your business.</text>
+  <text x="90" y="382" fill="#292A27" font-family="Arial, Helvetica, sans-serif" font-size="24">Digital services · Business automation · Software products</text>
+  <path d="M889 220c0-29 23-52 52-52h67c29 0 52 23 52 52s-23 52-52 52h-90c-29 0-52 23-52 52s23 52 52 52h67c24 0 43-19 43-43" fill="none" stroke="#49202B" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1105" cy="324" r="10" fill="#6F7969"/>
+  <rect y="512" width="1200" height="118" fill="#292A27"/>
+  <text x="88" y="579" fill="#FFFCF7" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="1.2">STROVA TECHNOLOGY</text>
+  <text x="1110" y="579" text-anchor="end" fill="#F4EFE6" font-family="Arial, Helvetica, sans-serif" font-size="20">strovagroups.in</text>
+</svg>

@@ -11,9 +11,9 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 const ROOT_DIR = process.cwd();
-const BRAND_ICON_PNG = path.join(ROOT_DIR, 'public/images/brand/app-icon.png');
 const SOURCE_SVG = path.join(ROOT_DIR, 'public/favicon.svg');
 const SOURCE_LOGO_SVG = path.join(ROOT_DIR, 'public/images/logo.svg');
+const SOURCE_OG_SVG = path.join(ROOT_DIR, 'public/images/og-strova-group.svg');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const PORTAL_PUBLIC_DIR = path.join(ROOT_DIR, 'portal/public');
 
@@ -25,7 +25,10 @@ async function generate() {
   // Favicons follow the approved site palette; the full-color logo remains a separate brand asset.
   const iconSource = SOURCE_SVG;
   const iconBuffer = fs.readFileSync(iconSource);
-  const logoBuffer = fs.existsSync(BRAND_ICON_PNG) ? iconBuffer : (fs.existsSync(SOURCE_LOGO_SVG) ? fs.readFileSync(SOURCE_LOGO_SVG) : iconBuffer);
+  // The previous generator accidentally reused app-icon.png as the wordmark source,
+  // leaving stale violet imagery at /images/logo.png. Keep raster aliases derived
+  // from the current approved SVG mark instead.
+  const logoBuffer = fs.existsSync(SOURCE_LOGO_SVG) ? fs.readFileSync(SOURCE_LOGO_SVG) : iconBuffer;
 
   // 1. Primary Favicon PNGs (multiples of 48: 96x96, 48x48)
   const png96 = await sharp(iconBuffer).resize(96, 96).png().toBuffer();
@@ -36,6 +39,10 @@ async function generate() {
   const png192 = await sharp(iconBuffer).resize(192, 192).png().toBuffer();
   const png512 = await sharp(iconBuffer).resize(512, 512).png().toBuffer();
   const logoPng512 = await sharp(logoBuffer).resize(512, 512).png().toBuffer();
+  const ogBuffer = fs.existsSync(SOURCE_OG_SVG) ? fs.readFileSync(SOURCE_OG_SVG) : null;
+  if (!ogBuffer) throw new Error(`Social preview source not found at ${SOURCE_OG_SVG}`);
+  const ogPng = await sharp(ogBuffer).png().toBuffer();
+  const ogWebp = await sharp(ogBuffer).webp({ quality: 86, effort: 6 }).toBuffer();
 
   // Save to public/
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon.png'), png96);
@@ -45,6 +52,9 @@ async function generate() {
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-192x192.png'), png192);
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-512x512.png'), png512);
   fs.writeFileSync(path.join(PUBLIC_DIR, 'images/logo.png'), logoPng512);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'images/og-strova-group.png'), ogPng);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'images/og-default.png'), ogPng);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'images/og-default.webp'), ogWebp);
 
   // 3. Multi-resolution ICO (16x16, 32x32, 48x48)
   const icoSizes = [16, 32, 48];
@@ -79,6 +89,12 @@ async function generate() {
 
   const icoData = Buffer.concat([header, ...entries, ...icoBuffers]);
   fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon.ico'), icoData);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-strova.svg'), iconBuffer);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-strova-96.png'), png96);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-strova-192.png'), png192);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-strova-512.png'), png512);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon-strova.ico'), icoData);
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'apple-touch-icon-strova.png'), png180);
 
   // 4. Sync to portal/public/
   if (fs.existsSync(PORTAL_PUBLIC_DIR)) {
@@ -87,6 +103,12 @@ async function generate() {
     fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-48x48.png'), png48);
     fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon.ico'), icoData);
     fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'apple-touch-icon.png'), png180);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-strova.svg'), iconBuffer);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-strova-96.png'), png96);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-strova-192.png'), png192);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-strova-512.png'), png512);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'favicon-strova.ico'), icoData);
+    fs.writeFileSync(path.join(PORTAL_PUBLIC_DIR, 'apple-touch-icon-strova.png'), png180);
   }
 
   console.log('✓ Successfully generated all favicons and icons:');
@@ -98,6 +120,8 @@ async function generate() {
   console.log('  - favicon-512x512.png (512x512)');
   console.log('  - images/logo.png (512x512)');
   console.log('  - favicon.ico (multi-res 16, 32, 48)');
+  console.log('  - favicon-strova.* (cache-busting branded icon aliases)');
+  console.log('  - images/og-strova-group.png (1200x630 branded social preview)');
 }
 
 generate().catch((err) => {
