@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+  <rect width="1200" height="760" fill="#E7DDD2"/>
+  <rect x="96" y="69" width="1008" height="622" rx="13" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12" stroke-width="2"/>
+  <rect x="96" y="69" width="1008" height="44" rx="13" fill="#292A27"/><path d="M96 100h1008v13H96z" fill="#292A27"/>
+  <circle cx="128" cy="91" r="4" fill="#F4EFE6"/><circle cx="145" cy="91" r="4" fill="#6F7969"/><circle cx="162" cy="91" r="4" fill="#49202B"/><rect x="467" y="82" width="258" height="17" rx="9" fill="#FFFCF7" fill-opacity=".13"/>
+  <text x="151" y="157" fill="#49202B" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">A THOUGHTFUL STOREFRONT / COLLECTION</text>
+  <text x="151" y="203" fill="#292A27" font-family="Georgia,serif" font-size="38">A quieter kind of commerce.</text>
+  <text x="151" y="233" fill="#292A27" fill-opacity=".58" font-family="Arial,sans-serif" font-size="14">Clear product stories. A considered path to checkout.</text>
+  <rect x="151" y="266" width="278" height="326" rx="4" fill="#F4EFE6"/>
+  <path d="M223 421c22-78 104-125 166-93-1 77-54 135-135 136l-31-43Z" fill="#6F7969"/><path d="M235 446c39-44 83-73 138-96" stroke="#FFFCF7" stroke-opacity=".74" stroke-width="3"/><path d="M231 461c31-11 56-20 86-35" stroke="#49202B" stroke-width="2"/>
+  <text x="174" y="555" fill="#6F7969" font-family="Arial,sans-serif" font-size="11" letter-spacing="1">OBJECT / 01</text>
+  <rect x="451" y="266" width="278" height="326" rx="4" fill="#E5E8DE"/>
+  <path d="M512 483h155l-17-131H528l-16 131Z" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".18" stroke-width="2"/><path d="M536 352c0-36 18-57 54-57s54 21 54 57" stroke="#49202B" stroke-width="6"/>
+  <text x="474" y="555" fill="#6F7969" font-family="Arial,sans-serif" font-size="11" letter-spacing="1">OBJECT / 02</text>
+  <rect x="751" y="266" width="278" height="326" rx="4" fill="#E9E1D8"/>
+  <path d="M824 362c17-26 37-39 65-39s48 13 65 39l21 112H803l21-112Z" fill="#49202B"/><path d="M844 363c10-20 25-30 45-30s35 10 45 30" stroke="#FFFCF7" stroke-opacity=".8" stroke-width="3"/>
+  <text x="774" y="555" fill="#6F7969" font-family="Arial,sans-serif" font-size="11" letter-spacing="1">OBJECT / 03</text>
+  <rect x="151" y="620" width="878" height="1" fill="#292A27" fill-opacity=".15"/><text x="151" y="654" fill="#292A27" font-family="Arial,sans-serif" font-size="11" letter-spacing="1.5">COLLECTIONS</text><text x="1029" y="654" fill="#49202B" font-family="Arial,sans-serif" font-size="11" letter-spacing="1.5" text-anchor="end">A DIGITAL STORE CONCEPT</text>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+  <rect width="1200" height="760" fill="#E9E2D6"/>
+  <rect x="91" y="78" width="1018" height="604" rx="14" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12" stroke-width="2"/>
+  <path d="M105 92a14 14 0 0 1 14-14h990a14 14 0 0 1 14 14v38H105V92Z" fill="#292A27"/>
+  <circle cx="132" cy="104" r="5" fill="#F4EFE6"/><circle cx="151" cy="104" r="5" fill="#6F7969"/><circle cx="170" cy="104" r="5" fill="#49202B"/>
+  <rect x="475" y="96" width="252" height="16" rx="8" fill="#FFFCF7" fill-opacity=".12"/>
+  <text x="153" y="177" fill="#49202B" font-family="Georgia,serif" font-size="19" letter-spacing="4">DIGITAL / WEB EXPERIENCE</text>
+  <text x="153" y="265" fill="#292A27" font-family="Georgia,serif" font-size="63">A more considered</text>
+  <text x="153" y="337" fill="#49202B" font-family="Georgia,serif" font-size="63" font-style="italic">way to be online.</text>
+  <rect x="153" y="371" width="400" height="3" rx="2" fill="#6F7969"/>
+  <rect x="153" y="404" width="342" height="12" rx="6" fill="#292A27" fill-opacity=".18"/>
+  <rect x="153" y="429" width="290" height="12" rx="6" fill="#292A27" fill-opacity=".11"/>
+  <rect x="153" y="482" width="168" height="48" rx="3" fill="#49202B"/>
+  <text x="176" y="512" fill="#FFFCF7" font-family="Arial,sans-serif" font-size="13" letter-spacing="1">EXPLORE THE SITE</text>
+  <rect x="690" y="187" width="323" height="374" rx="3" fill="#F4EFE6"/>
+  <path d="M690 439c77-81 147-96 207-44 36 32 72 34 116 1v165H690V439Z" fill="#6F7969"/>
+  <path d="M690 490c74-57 128-43 170-5 41 37 90 34 153-16v92H690v-71Z" fill="#49202B" fill-opacity=".82"/>
+  <circle cx="909" cy="298" r="50" fill="#FFFCF7" fill-opacity=".8"/>
+  <rect x="153" y="613" width="181" height="8" rx="4" fill="#6F7969" fill-opacity=".5"/>
+  <text x="1025" y="633" fill="#6F7969" font-family="Arial,sans-serif" font-size="12" letter-spacing="2" text-anchor="end">INTERFACE CONCEPT / 01</text>
+</svg>

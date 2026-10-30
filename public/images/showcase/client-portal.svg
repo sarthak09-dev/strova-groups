@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+  <rect width="1200" height="760" fill="#DCE0D6"/>
+  <rect x="96" y="70" width="1008" height="620" rx="13" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12" stroke-width="2"/>
+  <rect x="96" y="70" width="225" height="620" rx="13" fill="#292A27"/>
+  <path d="M307 70h14v620h-14z" fill="#292A27"/>
+  <circle cx="143" cy="126" r="16" stroke="#F4EFE6" stroke-width="2"/><path d="M143 116v20m-10-10h20" stroke="#6F7969" stroke-width="2"/>
+  <text x="173" y="132" fill="#FFFCF7" font-family="Arial,sans-serif" font-size="15" letter-spacing="2">CLIENT SPACE</text>
+  <rect x="124" y="176" width="164" height="42" rx="5" fill="#6F7969" fill-opacity=".28"/>
+  <text x="149" y="203" fill="#FFFCF7" font-family="Arial,sans-serif" font-size="14">Overview</text>
+  <text x="149" y="254" fill="#F4EFE6" fill-opacity=".68" font-family="Arial,sans-serif" font-size="14">Projects</text>
+  <text x="149" y="296" fill="#F4EFE6" fill-opacity=".68" font-family="Arial,sans-serif" font-size="14">Files</text>
+  <text x="149" y="338" fill="#F4EFE6" fill-opacity=".68" font-family="Arial,sans-serif" font-size="14">Messages</text>
+  <text x="149" y="380" fill="#F4EFE6" fill-opacity=".68" font-family="Arial,sans-serif" font-size="14">Invoices</text>
+  <text x="365" y="132" fill="#6F7969" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">YOUR WORK / OVERVIEW</text>
+  <text x="365" y="184" fill="#292A27" font-family="Georgia,serif" font-size="36">Project workspace</text>
+  <rect x="365" y="211" width="682" height="1" fill="#292A27" fill-opacity=".12"/>
+  <rect x="365" y="243" width="682" height="138" rx="7" fill="#F4EFE6"/>
+  <text x="394" y="280" fill="#6F7969" font-family="Arial,sans-serif" font-size="11" letter-spacing="1.5">CURRENT PROJECT</text>
+  <text x="394" y="316" fill="#292A27" font-family="Georgia,serif" font-size="23">Website &amp; digital platform</text>
+  <text x="394" y="350" fill="#292A27" fill-opacity=".6" font-family="Arial,sans-serif" font-size="13">Scope, milestones and shared files in one place.</text>
+  <rect x="884" y="267" width="129" height="28" rx="14" fill="#6F7969" fill-opacity=".18"/>
+  <circle cx="902" cy="281" r="4" fill="#6F7969"/><text x="914" y="285" fill="#292A27" font-family="Arial,sans-serif" font-size="10" letter-spacing="1">IN PROGRESS</text>
+  <text x="365" y="430" fill="#292A27" font-family="Arial,sans-serif" font-size="13" font-weight="700">Delivery timeline</text>
+  <path d="M399 477h548" stroke="#6F7969" stroke-opacity=".4" stroke-width="2"/>
+  <circle cx="403" cy="477" r="10" fill="#6F7969"/><circle cx="581" cy="477" r="10" fill="#6F7969"/><circle cx="760" cy="477" r="10" fill="#49202B"/><circle cx="947" cy="477" r="10" fill="#F4EFE6" stroke="#6F7969" stroke-width="2"/>
+  <text x="390" y="510" fill="#292A27" font-family="Arial,sans-serif" font-size="11">Brief</text><text x="562" y="510" fill="#292A27" font-family="Arial,sans-serif" font-size="11">Scope</text><text x="730" y="510" fill="#292A27" font-family="Arial,sans-serif" font-size="11">Build</text><text x="916" y="510" fill="#292A27" font-family="Arial,sans-serif" font-size="11">Review</text>
+  <rect x="365" y="557" width="320" height="76" rx="6" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12"/><rect x="706" y="557" width="341" height="76" rx="6" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12"/>
+  <text x="389" y="587" fill="#6F7969" font-family="Arial,sans-serif" font-size="10" letter-spacing="1">LATEST UPDATE</text><text x="389" y="612" fill="#292A27" font-family="Arial,sans-serif" font-size="13">A clear record of decisions and progress</text>
+  <text x="730" y="587" fill="#6F7969" font-family="Arial,sans-serif" font-size="10" letter-spacing="1">SHARED FILES</text><text x="730" y="612" fill="#292A27" font-family="Arial,sans-serif" font-size="13">Documents and deliverables, securely organized</text>
+</svg>

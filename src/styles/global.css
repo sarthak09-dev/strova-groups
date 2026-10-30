@@ -711,12 +711,10 @@ body.mobile-menu-open .mobile-quote-bar {
   from {
     opacity: 0;
     transform: translateY(24px);
-    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0px);
   }
 }
 
@@ -784,27 +782,7 @@ body.mobile-menu-open .mobile-quote-bar {
 }
 
 /* -------------------------------------------------- */
-/* 17. Film Grain Texture Overlay (Digital Heroes)    */
-/* -------------------------------------------------- */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 60;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: 0.32;
-  mix-blend-mode: overlay;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::after {
-    display: none;
-  }
-}
-
-/* -------------------------------------------------- */
-/* 18. Animated Counter for Stat Numbers              */
+/* 17. Animated Counter for Stat Numbers              */
 /* -------------------------------------------------- */
 .stat-number[data-count] {
   font-variant-numeric: tabular-nums;

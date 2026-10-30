@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+  <rect width="1200" height="760" fill="#DDE2D8"/>
+  <circle cx="600" cy="380" r="247" fill="#F4EFE6"/><circle cx="600" cy="380" r="190" stroke="#6F7969" stroke-opacity=".3"/>
+  <rect x="443" y="87" width="314" height="586" rx="40" fill="#292A27"/>
+  <rect x="455" y="101" width="290" height="558" rx="31" fill="#FFFCF7"/><rect x="550" y="111" width="100" height="14" rx="7" fill="#292A27"/>
+  <text x="486" y="169" fill="#6F7969" font-family="Arial,sans-serif" font-size="10" letter-spacing="2">YOUR ACCOUNT</text><circle cx="708" cy="164" r="14" fill="#F4EFE6"/><path d="M703 164h10m-5-5v10" stroke="#49202B" stroke-width="1.5"/>
+  <text x="486" y="222" fill="#292A27" font-family="Georgia,serif" font-size="30">A good day,</text><text x="486" y="258" fill="#49202B" font-family="Georgia,serif" font-size="30" font-style="italic">well organized.</text>
+  <rect x="486" y="286" width="228" height="147" rx="9" fill="#E7E9E1"/><path d="M486 382c35-39 72-50 102-22s73 16 126-30v103H486v-51Z" fill="#6F7969"/><path d="M486 406c35-26 67-24 96-3 39 29 77 15 132-26v56H486v-27Z" fill="#49202B" fill-opacity=".86"/><circle cx="653" cy="330" r="22" fill="#FFFCF7" fill-opacity=".85"/>
+  <text x="486" y="472" fill="#292A27" font-family="Arial,sans-serif" font-size="13" font-weight="700">Your next steps</text>
+  <rect x="486" y="491" width="228" height="47" rx="6" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12"/><circle cx="506" cy="514" r="6" fill="#6F7969"/><rect x="524" y="509" width="104" height="9" rx="4" fill="#292A27" fill-opacity=".2"/><path d="m684 510 5 5 9-10" stroke="#49202B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="486" y="548" width="228" height="47" rx="6" fill="#FFFCF7" stroke="#292A27" stroke-opacity=".12"/><circle cx="506" cy="571" r="6" fill="#49202B"/><rect x="524" y="566" width="128" height="9" rx="4" fill="#292A27" fill-opacity=".2"/>
+  <path d="M509 624h195" stroke="#292A27" stroke-opacity=".12"/><circle cx="539" cy="640" r="5" fill="#49202B"/><circle cx="600" cy="640" r="5" fill="#6F7969"/><circle cx="661" cy="640" r="5" fill="#292A27" fill-opacity=".2"/>
+  <text x="170" y="634" fill="#49202B" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">MOBILE / INTERFACE CONCEPT</text>
+</svg>
