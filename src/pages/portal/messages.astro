@@ -205,7 +205,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
               created_at: new Date().toISOString(),
             });
           } catch (err: any) {
-            alert(err?.message || 'Error posting message to thread.');
+            alert((typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error posting message to thread.'));
           } finally {
             if (submitBtn) submitBtn.disabled = false;
           }

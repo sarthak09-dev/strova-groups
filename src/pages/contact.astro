@@ -452,8 +452,17 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
           // Navigate to confirmation page
           window.location.href = result.redirectUrl || '/quote/confirmed/';
         } else {
-          // Fail-closed error display (never fake success)
-          const errDetail = result.error || 'Unable to submit your quote request at this time.';
+          // Fail-closed error display (never fake success, never [object Object])
+          let errDetail = 'Unable to submit your quote request at this time.';
+          if (typeof result?.error === 'string' && result.error.trim()) {
+            errDetail = result.error.trim();
+          } else if (result?.error && typeof result.error.message === 'string' && result.error.message.trim()) {
+            errDetail = result.error.message.trim();
+          } else if (typeof result?.message === 'string' && result.message.trim()) {
+            errDetail = result.message.trim();
+          } else if (response.status === 404) {
+            errDetail = 'Quote submission service is temporarily updating.';
+          }
           statusBox.className = 'form-status error';
           statusBox.innerHTML = `${errDetail}<br/>Please email us directly at <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> or message us on WhatsApp at <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a>.`;
         }

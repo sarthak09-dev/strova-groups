@@ -445,8 +445,18 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             );
           } catch {}
         } else {
+          let errDetail = 'Failed to submit privacy request. Please contact info@strovagroups.in.';
+          if (typeof result?.error === 'string' && result.error.trim()) {
+            errDetail = result.error.trim();
+          } else if (result?.error && typeof result.error.message === 'string' && result.error.message.trim()) {
+            errDetail = result.error.message.trim();
+          } else if (typeof result?.message === 'string' && result.message.trim()) {
+            errDetail = result.message.trim();
+          } else if (response.status === 404) {
+            errDetail = 'Privacy request service is temporarily updating. Please email info@strovagroups.in directly.';
+          }
           statusBox.className = 'form-status error';
-          statusBox.textContent = result.error || 'Failed to submit privacy request. Please contact info@strovagroups.in.';
+          statusBox.textContent = errDetail;
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         }

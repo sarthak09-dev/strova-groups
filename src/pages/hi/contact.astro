@@ -449,7 +449,16 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
 
           window.location.href = result.redirectUrl || '/quote/confirmed/';
         } else {
-          const errDetail = result.error || 'इस समय आपका कोटेशन अनुरोध सबमिट नहीं किया जा सका।';
+          let errDetail = 'इस समय आपका कोटेशन अनुरोध सबमिट नहीं किया जा सका।';
+          if (typeof result?.error === 'string' && result.error.trim()) {
+            errDetail = result.error.trim();
+          } else if (result?.error && typeof result.error.message === 'string' && result.error.message.trim()) {
+            errDetail = result.error.message.trim();
+          } else if (typeof result?.message === 'string' && result.message.trim()) {
+            errDetail = result.message.trim();
+          } else if (response.status === 404) {
+            errDetail = 'कोटेशन सबमिशन सेवा वर्तमान में अपडेट हो रही है।';
+          }
           statusBox.className = 'form-status error';
           statusBox.innerHTML = `${errDetail}<br/>कृपया हमें सीधे <a href="mailto:info@strovagroups.in">info@strovagroups.in</a> पर ईमेल करें या व्हाट्सएप <a href="https://wa.me/919288077802" target="_blank" rel="noopener noreferrer">+91 92880 77802</a> पर संपर्क करें।`;
         }

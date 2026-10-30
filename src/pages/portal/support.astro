@@ -155,7 +155,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
 
       try {
         await loadTickets();
-      } catch {
+      } catch (err: any) {
         const statusEl = document.getElementById('ticket-status');
         if (statusEl) statusEl.textContent = 'Your support requests could not be loaded. Please refresh or email support@strovagroups.in.';
       }
@@ -187,7 +187,7 @@ import PortalLayout from '../../layouts/PortalLayout.astro';
             await loadTickets();
             if (statusEl) statusEl.textContent = 'Your support request was submitted. We aim to respond within 24 hours.';
           } catch {
-            if (statusEl) statusEl.textContent = 'We could not submit your request. Please check your connection and try again, or email support@strovagroups.in.';
+            if (statusEl) statusEl.textContent = (typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'We could not submit your request. Please check your connection and try again, or email support@strovagroups.in.');
           } finally {
             if (submitBtn) submitBtn.disabled = false;
           }

@@ -588,7 +588,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           if (btn) btn.disabled = false;
 
           if (requestError) {
-            requestError.textContent = err?.message || 'Unable to dispatch verification code. Please verify email and retry.';
+            requestError.textContent = (typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Unable to dispatch verification code. Please verify email and retry.');
             requestError.style.display = 'block';
           }
         }
@@ -612,7 +612,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           startResendCountdown();
         } catch (err: any) {
           if (verifyError) {
-            verifyError.textContent = err?.message || 'Error resending code.';
+            verifyError.textContent = (typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error resending code.');
             verifyError.style.display = 'block';
           }
         } finally {
@@ -678,7 +678,7 @@ import { TURNSTILE_SITE_KEY, isTurnstileConfigured, isSupabaseConfigured } from 
           if (verifyBtn) verifyBtn.disabled = false;
 
           if (verifyError) {
-            verifyError.textContent = err?.message || `Invalid verification code. ${5 - failedAttempts} attempt(s) remaining.`;
+            verifyError.textContent = (typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : `Invalid verification code. ${5 - failedAttempts} attempt(s) remaining.`);
             verifyError.style.display = 'block';
           }
         }

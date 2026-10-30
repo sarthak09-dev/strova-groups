@@ -444,8 +444,18 @@ const isTurnstileConfigured = Boolean(turnstileSiteKey);
             );
           } catch {}
         } else {
+          let errDetail = 'अनुरोध दर्ज करने में विफल। कृपया info@strovagroups.in पर संपर्क करें।';
+          if (typeof result?.error === 'string' && result.error.trim()) {
+            errDetail = result.error.trim();
+          } else if (result?.error && typeof result.error.message === 'string' && result.error.message.trim()) {
+            errDetail = result.error.message.trim();
+          } else if (typeof result?.message === 'string' && result.message.trim()) {
+            errDetail = result.message.trim();
+          } else if (response.status === 404) {
+            errDetail = 'गोपनीयता अनुरोध सेवा वर्तमान में अपडेट हो रही है। कृपया सीधे info@strovagroups.in पर संपर्क करें।';
+          }
           statusBox.className = 'form-status error';
-          statusBox.textContent = result.error || 'अनुरोध दर्ज करने में विफल। कृपया info@strovagroups.in पर संपर्क करें।';
+          statusBox.textContent = errDetail;
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         }

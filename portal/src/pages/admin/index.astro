@@ -306,7 +306,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
             alert(`Client invite dispatched to ${email}. Once the client signs in, their profile will be active.`);
             clientForm.reset();
           } catch (err: any) {
-            alert(err?.message || 'Error provisioning client.');
+            alert((typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error provisioning client.'));
           }
         });
       }
@@ -343,7 +343,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
             alert(`Project ${orderRef} created successfully.`);
             window.location.reload();
           } catch (err: any) {
-            alert(err?.message || 'Error creating order.');
+            alert((typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error creating order.'));
           }
         });
       }
@@ -374,7 +374,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
             eventForm.reset();
             window.location.reload();
           } catch (err: any) {
-            alert(err?.message || 'Error recording milestone event.');
+            alert((typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error recording milestone event.'));
           }
         });
       }
@@ -408,7 +408,7 @@ import { PORTAL_STAGES } from '../../lib/supabase';
             invForm.reset();
             window.location.reload();
           } catch (err: any) {
-            alert(err?.message || 'Error creating invoice.');
+            alert((typeof err?.message === 'string' && err.message.trim()) ? err.message.trim() : (typeof err === 'string' && err.trim() ? err.trim() : 'Error creating invoice.'));
           }
         });
       }

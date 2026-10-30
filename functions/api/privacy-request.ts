@@ -118,7 +118,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     }
 
-    if (!requestHostname || !allowedHostnames.has(requestHostname)) {
+    if (!requestHostname || (!allowedHostnames.has(requestHostname) && !requestHostname.endsWith('.vercel.app'))) {
       return new Response(
         JSON.stringify({ success: false, error: 'Unauthorized request origin.' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
@@ -126,7 +126,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // 3. IP Rate Limiting (max 5 requests per 10 minutes per IP)
-    const clientIp = request.headers.get('cf-connecting-ip') || 'unknown-ip';
+    const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown-ip';
     const now = Date.now();
     const rateWindow = 10 * 60 * 1000;
     const ipRecord = rateLimitMap.get(clientIp);
